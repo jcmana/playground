@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<deploy>
+    <actions>
+        <var varname="deployroot" value="F:\htdocs\apache\softw\" />
+        <var varname="antivirus_bins_app" valuefromini="antivirus.bins_app" />
+        
+        <copy source="%antivirus_bins_app%" destination="%deployroot%\temp\antivirus_bins_app" />
+        <genctf generator="genctf14x.exe" cmdline="/dir=%deployroot%\temp\antivirus_bins_app" />
+        
+<!--
+        <move source=".\temp\antivirus_bins_app\dircontent.ctf" destination=".\temp\antivirus_bins_app\avg16avi.ctf" />
+        <remove path="" re="" />
+        <genctf generator="genctf14x.exe" cmdline="/dir=.\temp\antivirus_bins_app /prod=av" />
+-->
+    </actions>
+</deploy>

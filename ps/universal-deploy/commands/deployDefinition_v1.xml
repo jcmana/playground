@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<deploy>
+    <product value="antivirus">
+          <configuration name="normal">
+            <bins value="bins_app">
+                <fileset re="" target="" />
+                
+            </bins>
+            <bins value="bins_setup"></bins>
+            <bins value="bins_legacy"></bins>
+        </configuration>
+
+        <bins value="bins_app_fake"></bins>
+        <bins value="bins_setup_fake"></bins>
+        <bins value="bins_legacy_fake"></bins>
+    </product>
+
+    <prodcut value="zen">
+        <bins value="bins_setup">
+
+            <ctf generator="" name="" />
+        </bins>
+        
+    </prodcut>
+</deploy>

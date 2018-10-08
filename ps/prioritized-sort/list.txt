@@ -1,0 +1,67 @@
+* APPS - ANDROID AV - REMOTE ACTIONS - DATA V1
+* APPS - ANDROID AV - REMOTE TILE - DATA V1
+* APPS - AV - BASIC - DATA V3
+* APPS - AV - BASIC - DATA V4
+* APPS - AV - BASIC - DATA V5
+* APPS - AV - LICENSE CHANGES - DATA V4
+* APPS - AV - REMOTE ACTIONS - DATA V4
+* APPS - AV - REMOTE TILE - DATA V4
+* APPS - AV - REMOTE TILE - DATA V5
+* APPS - GENERIC ACTIONS - DATA V2
+* APPS - MAC - REMOTE ACTIONS - DATA V1
+* APPS - MAC - REMOTE TILE - DATA V1
+* APPS - PF - BASIC - DATA V0
+* APPS - TU - BASIC - DATA V2
+* APPS - TU - BASIC - DATA V3
+* APPS - TU - BASIC - DATA V5
+* APPS - TU - BASIC - DATA V6
+* APPS - TU - LICENSE CHANGES - DATA V3
+* APPS - TU - REMOTE ACTIONS - DATA V3
+* APPS - TU - REMOTE ACTIONS - DATA V6
+* APPS - TU - REMOTE TILE - DATA V3
+* APPS - TU - REMOTE TILE - DATA V6
+* APPS - WTU - BASIC - DATA V0
+* APPS - WTU - REMOTE ACTIONS - DATA V0
+* APPS - WTU - REMOTE TILE - DATA V0
+* AUTOMATION - SELFCHECK
+* BAT - Build Acceptance Test - Level 1
+* BUILD - DOC - Dita Doxygen
+* BUILD - UT - Cpp Tests
+* BUILD - UT - Js E2E Tests
+* BUILD - UT - Js Unit Tests
+* CLOUD - Certificate check
+* CLOUD - Invitations
+* CLOUD - Login Logout
+* IAT - FMW - SETUP - Beta UI content
+* IAT - FMW - SETUP - Custom path validation
+* IAT - FMW - SETUP - Language switching
+* IAT - FMW - SETUP - UI Content
+* IAT - FMW - SETUP - Unsupported OS UI content
+* LANGUAGE - Language switching
+* LOGS - Login information is not in logs
+* PERFORMANCE - BINARY SIZE
+* PERFORMANCE - Footprint Gathering
+* SETUP - File Comparison (Online vs Offline)
+* SETUP - Headers
+* SETUP - Online Installation
+* SETUP - Setup Actions - Custom folder
+* SETUP - Setup Actions
+* SETUP - Uninstallation block
+* SETUP - Update from RELEASED to TESTED - b0532
+* SETUP - Update from RELEASED to TESTED - b0547
+* SETUP - Update from RELEASED to TESTED - b0554
+* SETUP - Update from TESTED to FAKE - both FMW and ZEN are fake
+* SETUP - Update from TESTED to FAKE - only FMW is fake
+* SETUP - Update from TESTED to FAKE - only ZEN is fake
+* SVC - Reload and Unload Appapi callbacks
+* SVC - WTU - DEFAULT BROWSER DETECTION
+* UI - ABOUT DIALOG
+* UI - Device Settings dialog
+* UI - IDP Tile
+* UI - Menu functionality
+* UI - My Account
+* UI - OCM - JsApi
+* UI - OCM
+* UI - Overlays
+* UI - PrivacyFix report bubble
+* UI - Remote Device - Offline notification

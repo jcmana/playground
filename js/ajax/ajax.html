@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<script type="text/javascript">
+function OpenHiddenURL(url)
+{
+    console.log("sending GET request to '" + url + "'");
+
+    if (window.XMLHttpRequest)
+    {
+		xhr = new XMLHttpRequest();
+
+		if (xhr)
+        {
+            xhr.onprogress = function()
+            {
+                console.log(xhr.status, xhr.statusText);
+            };
+
+            xhr.onload = function()
+            {
+                onsole.log(xhr.status, xhr.statusText);
+            };
+
+			xhr.open('GET', url, true);
+			xhr.send();
+		}
+	}
+}
+
+window.onerror = function()
+{
+    console.log("error");
+}
+
+</script>
+
+</head>
+<body>
+
+<button onclick="OpenHiddenURL('http://www.nix.cz');">Kokot</button>
+
+</body>
+</html>

@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<deploy>
+    <variable name="htdocs" workingdir />
+
+    <configuration name="normal">
+        <variable name="av_bins_app" fromini="antivirus.bins_app" />
+        <copy source="%av_bins_app%" target="" re="" />
+        <generatectf path="" generator="" name="" />
+    </configuration>
+</deploy>

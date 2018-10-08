@@ -1,0 +1,7 @@
+﻿<Window x:Class="gitimgdiff.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="git-img-diff" Height="560" Width="780" KeyDown="Window_KeyDown">
+    
+    <Image x:Name="image" Width="Auto" Height="Auto" Grid.Row="0" Grid.Column="0"/>
+</Window>

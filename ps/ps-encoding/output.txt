@@ -1,0 +1,1 @@
+this is string which represent some random string representing string variable content in powershell

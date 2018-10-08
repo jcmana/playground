@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="windows-1250"?>
+<deploy>
+    <set name="
+    <copy source="INI.antivirus.bins_app" destination=".\temp\antivirus_bins_app" re=".*\.bin" />
+    <generatectf generator="genctf14x.exe" cmdline="/dir=.\temp\antivirus_bins_app" />
+    <move source=".\temp\antivirus_bins_app\dircontent.ctf" destination=".\temp\antivirus_bins_app\avg16avi.ctf" />
+    <remove path="" re="" />
+
+    <generatectf generator="genctf14x.exe" cmdline="/dir=.\temp\antivirus_bins_app /prod=av" />
+    
+<!--
+    <copy source="INI.antivirus.bins_app" destination="softw\update\ltst\setup" re="" />
+    <copy source="INI.fmw.bins_app" destination="softw\update\ltst\setup" re="" />
+    <copy source="INI.zen.bins_app" destination="softw\update\ltst\setup" re="" />
+    <copy source="INI.setup.bins_app" destination="softw\update\ltst\setup" re="" />
+    <generatectf generator="nakejrandomprofmw.exe" cmdline="" />
+-->
+</deploy>

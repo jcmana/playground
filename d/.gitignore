@@ -1,0 +1,10 @@
+# Directories
+.vs/
+Win32/
+
+# Files
+*.exe
+*.obj
+*.pdb
+*.log
+*.tlog
