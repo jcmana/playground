@@ -7,6 +7,8 @@ class rectangle_impl :
 {
 public:
 	rectangle_impl(int x, int y, int width, int height);
+	rectangle_impl(const rectangle_impl & other) = default;
+	rectangle_impl(rectangle_impl && other) noexcept = default;
 
 public:
 	virtual int width() override;

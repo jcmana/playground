@@ -7,6 +7,8 @@ class element_impl :
 {
 public:
 	element_impl(unsigned int type);
+	element_impl(const element_impl & other) = default;
+	element_impl(element_impl && other) noexcept = default;
 
 public:
 	virtual unsigned int type() override;

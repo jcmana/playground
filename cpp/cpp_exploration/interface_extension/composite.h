@@ -17,5 +17,9 @@ public:
 	};
 
 public:
-	composite(indexable_impl && constructed_indexable_impl);
+	composite(
+		indexable_impl && constructed_indexable_impl,
+		element_impl && constructed_element_impl,
+		rectangle_impl && constructed_rectangle_impl
+	);
 };
