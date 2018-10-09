@@ -2,7 +2,7 @@
 
 #include "extern.h"
 
-void function()
+inline void function()
 {
 	var = var + 1;
 }
