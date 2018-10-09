@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{21171B99-0E33-4874-BF75-735835DB96FA}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>inheritance</RootNamespace>
+    <RootNamespace>__super</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
     <ProjectName>__super</ProjectName>
   </PropertyGroup>
