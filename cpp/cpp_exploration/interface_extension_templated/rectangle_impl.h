@@ -3,6 +3,7 @@
 #include "element_impl.h"
 #include "rectangle.h"
 
+template<typename Interface>
 class rectangle_impl :
 	public element_impl<rectangle>
 {
@@ -22,7 +23,8 @@ private:
 	int m_height;
 };
 
-rectangle_impl::rectangle_impl(int x, int y, int width, int height) :
+template<typename Interface>
+rectangle_impl<Interface>::rectangle_impl(int x, int y, int width, int height) :
 	element_impl(0, 3),
 	m_x(x),
 	m_y(y),
@@ -31,12 +33,14 @@ rectangle_impl::rectangle_impl(int x, int y, int width, int height) :
 {
 }
 
-int rectangle_impl::width() const
+template<typename Interface>
+int rectangle_impl<Interface>::width() const
 {
 	return m_width;
 }
 
-int rectangle_impl::height() const
+template<typename Interface>
+int rectangle_impl<Interface>::height() const
 {
 	return m_height;
 }

@@ -9,7 +9,7 @@ int main()
 {
 	// with shared pointers:
 	{
-		std::shared_ptr<rectangle> sp_rectangle = std::make_shared<rectangle_impl>(5, 5, 20, 15);
+		std::shared_ptr<rectangle> sp_rectangle = std::make_shared<rectangle_impl<rectangle>>(5, 5, 20, 15);
 
 		auto sp_rectangle_to_indexable = std::static_pointer_cast<indexable>(sp_rectangle);
 		std::cout << "indexable::boundary() = " << sp_rectangle_to_indexable->boundary() << std::endl;
