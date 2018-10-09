@@ -35,7 +35,7 @@ int main()
 	customizable<bool> b;
 
 	a.normal();
-	a.complex();
+	//a.complex();
 
 	b.normal();
 	b.complex();
