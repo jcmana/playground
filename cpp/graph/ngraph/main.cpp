@@ -122,14 +122,21 @@ int main()
 			if (desired_scene_node)
 			{
 				std::cout << "   adding edge to: " << desired_scene_node->name() << std::endl;
+
+				// create edge from scene node to related scene node
 				scene_edges.insert(std::make_pair(unchecked_scene_node, desired_scene_node));
+
 				continue;
 			}
 
 			// no unchecked scene node fits, create new one
 			desired_scene_node = std::make_shared<node>("scene_" + model_node_edge->name());
 
+			std::cout << "   creating node: " << desired_scene_node->name() << std::endl;
+
 			// create edge from scene node to related scene node
+			std::cout << "   adding edge to: " << desired_scene_node->name() << std::endl;
+
 			scene_edges.insert(std::make_pair(unchecked_scene_node, desired_scene_node));
 
 			// create edge from scene to model
