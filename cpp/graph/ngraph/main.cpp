@@ -8,10 +8,20 @@
 #include <algorithm>
 #include <utility>
 
+#include "../../generic/generic/bidirectional_map.h"
+
 #include "node.h"
 #include "in_out_graph.h"
 
 static unsigned int counter = 0;
+
+generic::bidirectional_map<in_out_graph::edge_type, std::string> edgetostring 
+{
+	{
+		{ in_out_graph::edge_type::up, "up" },
+		{ in_out_graph::edge_type::down, "down" }
+	}
+};
 
 std::shared_ptr<node> find_node(const std::vector<std::shared_ptr<node>> & nodes, const std::string & name)
 {
@@ -26,8 +36,103 @@ std::shared_ptr<node> find_node(const std::vector<std::shared_ptr<node>> & nodes
 	return std::shared_ptr<node>();
 }
 
+int test_in_out_graph()
+{
+	in_out_graph g;
+
+	auto struct_1 = std::make_shared<node>("struct_1");
+	auto struct_2 = std::make_shared<node>("struct_2");
+	auto struct_3 = std::make_shared<node>("struct_3");
+	auto struct_4 = std::make_shared<node>("struct_4");
+
+	auto ref_1 = std::make_shared<node>("ref_1");
+	auto ref_2 = std::make_shared<node>("ref_2");
+	auto ref_3 = std::make_shared<node>("ref_3");
+	auto ref_4 = std::make_shared<node>("ref_4");
+
+	auto el_1 = std::make_shared<node>("el_1");
+	auto el_2 = std::make_shared<node>("el_2");
+	auto el_3 = std::make_shared<node>("el_3");
+	auto el_4 = std::make_shared<node>("el_4");
+	auto el_5 = std::make_shared<node>("el_5");
+	auto el_6 = std::make_shared<node>("el_6");
+
+	g.add_node(struct_1);
+	g.add_node(struct_2);
+	g.add_node(struct_3);
+	g.add_node(struct_4);
+
+	g.add_node(ref_1);
+	g.add_node(ref_2);
+	g.add_node(ref_3);
+	g.add_node(ref_4);
+
+	g.add_node(el_1);
+	g.add_node(el_2);
+	g.add_node(el_3);
+	g.add_node(el_4);
+	g.add_node(el_5);
+	g.add_node(el_6);
+
+	g.add_edge(struct_1, ref_1, in_out_graph::edge_type::down);
+	g.add_edge(struct_1, ref_2, in_out_graph::edge_type::down);
+	g.add_edge(struct_1, el_1, in_out_graph::edge_type::down);
+
+	g.add_edge(struct_2, ref_3, in_out_graph::edge_type::down);
+	g.add_edge(struct_2, el_2, in_out_graph::edge_type::down);
+	g.add_edge(struct_2, el_3, in_out_graph::edge_type::down);
+
+	g.add_edge(struct_3, el_4, in_out_graph::edge_type::down);
+	g.add_edge(struct_3, ref_4, in_out_graph::edge_type::down);
+
+	g.add_edge(struct_4, el_5, in_out_graph::edge_type::down);
+	g.add_edge(struct_4, el_6, in_out_graph::edge_type::down);
+
+	g.add_edge(ref_1, struct_3, in_out_graph::edge_type::down);
+	g.add_edge(ref_2, struct_2, in_out_graph::edge_type::down);
+	g.add_edge(ref_3, struct_3, in_out_graph::edge_type::down);
+	g.add_edge(ref_4, struct_4, in_out_graph::edge_type::down);
+
+	if (false) for (auto it_node = g.begin_nodes(); it_node != g.end_nodes(); it_node++)
+	{
+		const std::shared_ptr<node> & current_node = *it_node;
+
+		std::cout << current_node->name() << std::endl;
+
+		for (auto & incoming_edge : g.incoming(current_node))
+		{
+			auto & node = incoming_edge.first;
+			auto & type = incoming_edge.second;
+
+			std::cout << "   <- " << node->name() << " (" << edgetostring[type] << ")" << std::endl;
+		}
+
+		for (auto & outgoing_edge : g.outgoing(current_node))
+		{
+			auto & node = outgoing_edge.first;
+			auto & type = outgoing_edge.second;
+
+			std::cout << "   -> " << node->name() << " (" << edgetostring[type] << ")" << std::endl;
+		}
+
+		std::cout << std::endl;
+	}
+
+	std::list<std::shared_ptr<node>> unchecked;
+
+	{
+		auto scene_struct_1 = std::make_shared<node>("scene_struct_1");
+		g.add_node(scene_struct_1);
+		g.add_edge(scene_struct_1, struct_1, in_out_graph::edge_type::below);
+	}
+
+	return 0;
+}
+
 int main()
 {
+	return test_in_out_graph();
+
 	std::vector<std::shared_ptr<node>> model_nodes
 	{
 		std::make_shared<node>("struct_1"),

@@ -7,10 +7,19 @@
 
 #include "node.h"
 
+
+enum class in_out_graph_edge
+{
+	typeless,
+	up, down,		// parent, child 
+	above, below	// layer above, layer below
+};
+
 struct in_out_graph_record
 {
 	using node_type = std::shared_ptr<node>;
-	using container_type = std::set<node_type>;
+	using edge_type = in_out_graph_edge;
+	using container_type = std::set<std::pair<node_type, edge_type>>;
 
 	container_type in;
 	container_type out;
@@ -21,6 +30,7 @@ class in_out_graph
 public:
 	using value_type = in_out_graph_record;
 	using node_type = value_type::node_type;
+	using edge_type = value_type::edge_type;
 	using node_container_type = std::set<node_type>;
 	using edge_container_type = std::map<node_type, value_type>;
 	using node_iterator = node_container_type::iterator;
@@ -32,7 +42,7 @@ public:
 		m_nodes.insert(node);
 	}
 
-	void add_edge(const node_type & from, const node_type & to)
+	void add_edge(const node_type & from, const node_type & to, edge_type type)
 	{
 		if (m_nodes.find(from) == m_nodes.end())
 		{
@@ -44,8 +54,8 @@ public:
 			throw std::invalid_argument(std::string("Unknown node: '" + to->name() + "'"));
 		}
 
-		m_edges[from].out.insert(to);
-		m_edges[to].in.insert(from);
+		m_edges[from].out.insert(std::make_pair(to, type));
+		m_edges[to].in.insert(std::make_pair(from, type));
 	}
 
 	const value_type::container_type & incoming(const node_type & to)
