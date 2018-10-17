@@ -124,6 +124,71 @@ int test_in_out_graph()
 		auto scene_struct_1 = std::make_shared<node>("scene_struct_1");
 		g.add_node(scene_struct_1);
 		g.add_edge(scene_struct_1, struct_1, in_out_graph::edge_type::below);
+
+		unchecked.push_back(scene_struct_1);
+	}
+
+	std::shared_ptr<node> current_scene_node;
+	std::shared_ptr<node> current_model_node;
+
+	while (unchecked.size())
+	{
+		// retrieve current scene node to check
+		current_scene_node = unchecked.front();
+
+		// retrieve related model scene node
+		for (auto & current_scene_node_outgoing : g.outgoing(current_scene_node))
+		{
+			if (current_scene_node_outgoing.second == in_out_graph::edge_type::below)
+			{
+				current_model_node = current_scene_node_outgoing.first;
+			}
+		}
+
+		std::cout << current_scene_node->name() << " -> " << current_model_node->name() << std::endl;
+
+		// scene node completeness flags
+		bool missing_incoming_edges = true;
+		bool missing_outgoing_edges = true;
+
+		// compare scene node and model node incoming edges
+		auto & current_scene_node_incoming = g.incoming(current_scene_node);
+		auto & current_model_node_incoming = g.incoming(current_model_node);
+
+		if (current_model_node_incoming.size() > 0)
+		{
+			for (auto & edge : current_scene_node_incoming)
+			{
+				if (edge.second == in_out_graph::edge_type::down)
+				{
+					// node is not complete => missing incoming edge
+					missing_incoming_edges = false;
+				}
+			}
+		}
+
+		// compare scene node and model node outgoing edges
+		auto & current_scene_node_outgoing = g.outgoing(current_scene_node);
+		auto & current_model_node_outgoing = g.outgoing(current_model_node);
+
+		if (current_model_node_outgoing.size() > 0)
+		{
+			for (auto & edge : current_scene_node_outgoing)
+			{
+				if (edge.second == in_out_graph::edge_type::down)
+				{
+					// node is not complete => missing incoming edge
+					missing_outgoing_edges = false;
+				}
+			}
+		}
+
+
+		// remove from unchecked if 
+		if (missing_incoming_edges == false && missing_outgoing_edges == false)
+		{
+			unchecked.pop_front();
+		}
 	}
 
 	return 0;
