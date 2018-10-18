@@ -25,6 +25,8 @@ public:
 				return pair.second;
 			}
 		}
+
+		throw std::invalid_argument("Value mapping doesn't exist");
 	}
 
 	A btoa(const B & b)
@@ -36,6 +38,8 @@ public:
 				return pair.first;
 			}
 		}
+
+		throw std::invalid_argument("Value mapping doesn't exist");
 	}
 
 private:

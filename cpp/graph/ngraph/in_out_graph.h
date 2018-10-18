@@ -58,12 +58,12 @@ public:
 		m_edges[to].in.insert(std::make_pair(from, type));
 	}
 
-	const value_type::container_type & incoming(const node_type & to)
+	value_type::container_type & incoming(const node_type & to)
 	{
 		return m_edges[to].in;
 	}
 
-	const value_type::container_type & outgoing(const node_type & from)
+	value_type::container_type & outgoing(const node_type & from)
 	{
 		return m_edges[from].out;
 	}

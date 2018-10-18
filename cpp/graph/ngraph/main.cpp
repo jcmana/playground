@@ -36,168 +36,44 @@ std::shared_ptr<node> find_node(const std::vector<std::shared_ptr<node>> & nodes
 	return std::shared_ptr<node>();
 }
 
-int test_in_out_graph()
+/// \brief		Returns first outgoing edge of appropriate edge type from specified node.
+std::shared_ptr<node> follow_outgoing_edge(in_out_graph & g, const std::shared_ptr<node> & n, in_out_graph::edge_type type = in_out_graph::edge_type::typeless)
 {
-	in_out_graph g;
+	std::shared_ptr<node> result;
 
-	auto struct_1 = std::make_shared<node>("struct_1");
-	auto struct_2 = std::make_shared<node>("struct_2");
-	auto struct_3 = std::make_shared<node>("struct_3");
-	auto struct_4 = std::make_shared<node>("struct_4");
+	auto & outgoing_edges = g.outgoing(n);
 
-	auto ref_1 = std::make_shared<node>("ref_1");
-	auto ref_2 = std::make_shared<node>("ref_2");
-	auto ref_3 = std::make_shared<node>("ref_3");
-	auto ref_4 = std::make_shared<node>("ref_4");
-
-	auto el_1 = std::make_shared<node>("el_1");
-	auto el_2 = std::make_shared<node>("el_2");
-	auto el_3 = std::make_shared<node>("el_3");
-	auto el_4 = std::make_shared<node>("el_4");
-	auto el_5 = std::make_shared<node>("el_5");
-	auto el_6 = std::make_shared<node>("el_6");
-
-	g.add_node(struct_1);
-	g.add_node(struct_2);
-	g.add_node(struct_3);
-	g.add_node(struct_4);
-
-	g.add_node(ref_1);
-	g.add_node(ref_2);
-	g.add_node(ref_3);
-	g.add_node(ref_4);
-
-	g.add_node(el_1);
-	g.add_node(el_2);
-	g.add_node(el_3);
-	g.add_node(el_4);
-	g.add_node(el_5);
-	g.add_node(el_6);
-
-	g.add_edge(struct_1, ref_1, in_out_graph::edge_type::down);
-	g.add_edge(struct_1, ref_2, in_out_graph::edge_type::down);
-	g.add_edge(struct_1, el_1, in_out_graph::edge_type::down);
-
-	g.add_edge(struct_2, ref_3, in_out_graph::edge_type::down);
-	g.add_edge(struct_2, el_2, in_out_graph::edge_type::down);
-	g.add_edge(struct_2, el_3, in_out_graph::edge_type::down);
-
-	g.add_edge(struct_3, el_4, in_out_graph::edge_type::down);
-	g.add_edge(struct_3, ref_4, in_out_graph::edge_type::down);
-
-	g.add_edge(struct_4, el_5, in_out_graph::edge_type::down);
-	g.add_edge(struct_4, el_6, in_out_graph::edge_type::down);
-
-	g.add_edge(ref_1, struct_3, in_out_graph::edge_type::down);
-	g.add_edge(ref_2, struct_2, in_out_graph::edge_type::down);
-	g.add_edge(ref_3, struct_3, in_out_graph::edge_type::down);
-	g.add_edge(ref_4, struct_4, in_out_graph::edge_type::down);
-
-	if (false) for (auto it_node = g.begin_nodes(); it_node != g.end_nodes(); it_node++)
+	for (auto & outgoing_edge : outgoing_edges)
 	{
-		const std::shared_ptr<node> & current_node = *it_node;
-
-		std::cout << current_node->name() << std::endl;
-
-		for (auto & incoming_edge : g.incoming(current_node))
+		if (outgoing_edge.second == type)
 		{
-			auto & node = incoming_edge.first;
-			auto & type = incoming_edge.second;
-
-			std::cout << "   <- " << node->name() << " (" << edgetostring[type] << ")" << std::endl;
-		}
-
-		for (auto & outgoing_edge : g.outgoing(current_node))
-		{
-			auto & node = outgoing_edge.first;
-			auto & type = outgoing_edge.second;
-
-			std::cout << "   -> " << node->name() << " (" << edgetostring[type] << ")" << std::endl;
-		}
-
-		std::cout << std::endl;
-	}
-
-	std::list<std::shared_ptr<node>> unchecked;
-
-	{
-		auto scene_struct_1 = std::make_shared<node>("scene_struct_1");
-		g.add_node(scene_struct_1);
-		g.add_edge(scene_struct_1, struct_1, in_out_graph::edge_type::below);
-
-		unchecked.push_back(scene_struct_1);
-	}
-
-	std::shared_ptr<node> current_scene_node;
-	std::shared_ptr<node> current_model_node;
-
-	while (unchecked.size())
-	{
-		// retrieve current scene node to check
-		current_scene_node = unchecked.front();
-
-		// retrieve related model scene node
-		for (auto & current_scene_node_outgoing : g.outgoing(current_scene_node))
-		{
-			if (current_scene_node_outgoing.second == in_out_graph::edge_type::below)
-			{
-				current_model_node = current_scene_node_outgoing.first;
-			}
-		}
-
-		std::cout << current_scene_node->name() << " -> " << current_model_node->name() << std::endl;
-
-		// scene node completeness flags
-		bool missing_incoming_edges = true;
-		bool missing_outgoing_edges = true;
-
-		// compare scene node and model node incoming edges
-		auto & current_scene_node_incoming = g.incoming(current_scene_node);
-		auto & current_model_node_incoming = g.incoming(current_model_node);
-
-		if (current_model_node_incoming.size() > 0)
-		{
-			for (auto & edge : current_scene_node_incoming)
-			{
-				if (edge.second == in_out_graph::edge_type::down)
-				{
-					// node is not complete => missing incoming edge
-					missing_incoming_edges = false;
-				}
-			}
-		}
-
-		// compare scene node and model node outgoing edges
-		auto & current_scene_node_outgoing = g.outgoing(current_scene_node);
-		auto & current_model_node_outgoing = g.outgoing(current_model_node);
-
-		if (current_model_node_outgoing.size() > 0)
-		{
-			for (auto & edge : current_scene_node_outgoing)
-			{
-				if (edge.second == in_out_graph::edge_type::down)
-				{
-					// node is not complete => missing incoming edge
-					missing_outgoing_edges = false;
-				}
-			}
-		}
-
-
-		// remove from unchecked if 
-		if (missing_incoming_edges == false && missing_outgoing_edges == false)
-		{
-			unchecked.pop_front();
+			result = outgoing_edge.first;
+			break;
 		}
 	}
 
-	return 0;
+	return result;
 }
 
-int main()
+std::set<std::shared_ptr<node>> follow_outgoing_edges(in_out_graph & g, const std::shared_ptr<node> & n, in_out_graph::edge_type type = in_out_graph::edge_type::typeless)
 {
-	return test_in_out_graph();
+	std::set<std::shared_ptr<node>> result;
 
+	auto & outgoing_edges = g.outgoing(n);
+
+	for (auto & outgoing_edge : outgoing_edges)
+	{
+		if (outgoing_edge.second == type)
+		{
+			result.insert(outgoing_edge.first);
+		}
+	}
+
+	return result;
+}
+
+int test_plain_graph()
+{
 	std::vector<std::shared_ptr<node>> model_nodes
 	{
 		std::make_shared<node>("struct_1"),
@@ -221,15 +97,15 @@ int main()
 	// 1:N relation
 	std::map<std::shared_ptr<node>, std::set<std::shared_ptr<node>>> model_edges
 	{
-		{ find_node(model_nodes, "struct_1"), { find_node(model_nodes, "ref_1"), find_node(model_nodes, "ref_2"), find_node(model_nodes, "el_1") } },
-		{ find_node(model_nodes, "struct_2"), { find_node(model_nodes, "ref_3"), find_node(model_nodes, "el_2"), find_node(model_nodes, "el_3") } },
-		{ find_node(model_nodes, "struct_3"), { find_node(model_nodes, "el_4"), find_node(model_nodes, "ref_4") } },
-		{ find_node(model_nodes, "struct_4"), { find_node(model_nodes, "el_5"), find_node(model_nodes, "el_6") } },
+		{ find_node(model_nodes, "struct_1"),{ find_node(model_nodes, "ref_1"), find_node(model_nodes, "ref_2"), find_node(model_nodes, "el_1") } },
+		{ find_node(model_nodes, "struct_2"),{ find_node(model_nodes, "ref_3"), find_node(model_nodes, "el_2"), find_node(model_nodes, "el_3") } },
+		{ find_node(model_nodes, "struct_3"),{ find_node(model_nodes, "el_4"), find_node(model_nodes, "ref_4") } },
+		{ find_node(model_nodes, "struct_4"),{ find_node(model_nodes, "el_5"), find_node(model_nodes, "el_6") } },
 
-		{ find_node(model_nodes, "ref_1"), { find_node(model_nodes, "struct_3") } },
-		{ find_node(model_nodes, "ref_2"), { find_node(model_nodes, "struct_2") } },
-		{ find_node(model_nodes, "ref_3"), { find_node(model_nodes, "struct_3") } },
-		{ find_node(model_nodes, "ref_4"), { find_node(model_nodes, "struct_4") } }
+		{ find_node(model_nodes, "ref_1"),{ find_node(model_nodes, "struct_3") } },
+		{ find_node(model_nodes, "ref_2"),{ find_node(model_nodes, "struct_2") } },
+		{ find_node(model_nodes, "ref_3"),{ find_node(model_nodes, "struct_3") } },
+		{ find_node(model_nodes, "ref_4"),{ find_node(model_nodes, "struct_4") } }
 	};
 
 	// 1:1 relation
@@ -270,7 +146,7 @@ int main()
 		std::cout << "checking: " << unchecked_scene_node->name() << " -> " << model_node->name() << std::endl;
 
 		// check related model node outgoing edges
- 		for (auto & model_node_edge : model_edges[model_node])
+		for (auto & model_node_edge : model_edges[model_node])
 		{
 			// is this edge already made?
 			bool alreadyThere = false;
@@ -376,7 +252,7 @@ int main()
 
 			if (checked == false)
 			{
-				std::cout << "   expected incoming not found" <<  std::endl;
+				std::cout << "   expected incoming not found" << std::endl;
 			}
 		}
 		else
@@ -401,5 +277,273 @@ int main()
 		std::cout << std::endl;
 	}
 
-	 return 0;
+	return 0;
+}
+
+int test_in_out_graph()
+{
+	// ================================================================================
+	//	build the graph
+	// ================================================================================
+	in_out_graph g;
+	{
+		auto struct_1 = std::make_shared<node>("struct_1");
+		auto struct_2 = std::make_shared<node>("struct_2");
+		auto struct_3 = std::make_shared<node>("struct_3");
+		auto struct_4 = std::make_shared<node>("struct_4");
+
+		auto ref_1 = std::make_shared<node>("ref_1");
+		auto ref_2 = std::make_shared<node>("ref_2");
+		auto ref_3 = std::make_shared<node>("ref_3");
+		auto ref_4 = std::make_shared<node>("ref_4");
+
+		auto el_1 = std::make_shared<node>("el_1");
+		auto el_2 = std::make_shared<node>("el_2");
+		auto el_3 = std::make_shared<node>("el_3");
+		auto el_4 = std::make_shared<node>("el_4");
+		auto el_5 = std::make_shared<node>("el_5");
+		auto el_6 = std::make_shared<node>("el_6");
+
+		g.add_node(struct_1);
+		g.add_node(struct_2);
+		g.add_node(struct_3);
+		g.add_node(struct_4);
+
+		g.add_node(ref_1);
+		g.add_node(ref_2);
+		g.add_node(ref_3);
+		g.add_node(ref_4);
+
+		g.add_node(el_1);
+		g.add_node(el_2);
+		g.add_node(el_3);
+		g.add_node(el_4);
+		g.add_node(el_5);
+		g.add_node(el_6);
+
+		g.add_edge(struct_1, ref_1, in_out_graph::edge_type::down);
+		g.add_edge(struct_1, ref_2, in_out_graph::edge_type::down);
+		g.add_edge(struct_1, el_1, in_out_graph::edge_type::down);
+
+		g.add_edge(struct_2, ref_3, in_out_graph::edge_type::down);
+		g.add_edge(struct_2, el_2, in_out_graph::edge_type::down);
+		g.add_edge(struct_2, el_3, in_out_graph::edge_type::down);
+
+		g.add_edge(struct_3, el_4, in_out_graph::edge_type::down);
+		g.add_edge(struct_3, ref_4, in_out_graph::edge_type::down);
+
+		g.add_edge(struct_4, el_5, in_out_graph::edge_type::down);
+		g.add_edge(struct_4, el_6, in_out_graph::edge_type::down);
+
+		g.add_edge(ref_1, struct_3, in_out_graph::edge_type::down);
+		g.add_edge(ref_2, struct_2, in_out_graph::edge_type::down);
+		g.add_edge(ref_3, struct_3, in_out_graph::edge_type::down);
+		g.add_edge(ref_4, struct_4, in_out_graph::edge_type::down);
+	}
+
+	// ================================================================================
+	//	print the graph
+	// ================================================================================
+	if (false) for (auto it_node = g.begin_nodes(); it_node != g.end_nodes(); it_node++)
+	{
+		const std::shared_ptr<node> & current_node = *it_node;
+
+		std::cout << current_node->name() << std::endl;
+
+		for (auto & incoming_edge : g.incoming(current_node))
+		{
+			auto & node = incoming_edge.first;
+			auto & type = incoming_edge.second;
+
+			std::cout << "   <- " << node->name() << " (" << edgetostring[type] << ")" << std::endl;
+		}
+
+		for (auto & outgoing_edge : g.outgoing(current_node))
+		{
+			auto & node = outgoing_edge.first;
+			auto & type = outgoing_edge.second;
+
+			std::cout << "   -> " << node->name() << " (" << edgetostring[type] << ")" << std::endl;
+		}
+
+		std::cout << std::endl;
+	}
+
+	// ================================================================================
+	//	find top-level nodes
+	// ================================================================================
+	std::set<std::shared_ptr<node>> toplevel_model_nodes;
+	for (auto it_node = g.begin_nodes(); it_node != g.end_nodes(); it_node++)
+	{
+		auto & current_node = *it_node;
+
+		if (g.incoming(current_node).size() == 0)
+		{
+			toplevel_model_nodes.insert(current_node);
+		}
+	}
+
+
+	// ================================================================================
+	//	unchecked algorithm (unfinished)
+	// ================================================================================
+	if (false)
+	{
+		std::list<std::shared_ptr<node>> unchecked;
+
+		for (auto toplevel_node : toplevel_model_nodes)
+		{
+			// create new scene node
+			auto scene_toplevel_node = std::make_shared<node>("scene_struct_1");
+
+			// add the node and create an edge to the model node
+			g.add_node(scene_toplevel_node);
+			g.add_edge(scene_toplevel_node, toplevel_node, in_out_graph::edge_type::below);
+
+			// queue as unchecked
+			unchecked.push_back(scene_toplevel_node);
+		}
+
+		std::shared_ptr<node> current_scene_node;
+		std::shared_ptr<node> current_model_node;
+
+		while (unchecked.size())
+		{
+			// retrieve current scene node to check
+			current_scene_node = unchecked.front();
+
+			// retrieve related model scene node
+			for (auto & current_scene_node_outgoing : g.outgoing(current_scene_node))
+			{
+				if (current_scene_node_outgoing.second == in_out_graph::edge_type::below)
+				{
+					current_model_node = current_scene_node_outgoing.first;
+				}
+			}
+
+			std::cout << current_scene_node->name() << " -> " << current_model_node->name() << std::endl;
+
+			// scene node completeness flags
+			bool missing_incoming_edges = true;
+			bool missing_outgoing_edges = true;
+
+			// compare scene node and model node incoming edges
+			auto & current_scene_node_incoming = g.incoming(current_scene_node);
+			auto & current_model_node_incoming = g.incoming(current_model_node);
+
+			if (current_model_node_incoming.size() > 0)
+			{
+				for (auto & edge : current_scene_node_incoming)
+				{
+					if (edge.second == in_out_graph::edge_type::down)
+					{
+						// node is not complete => missing incoming edge
+						missing_incoming_edges = false;
+					}
+				}
+			}
+
+			// compare scene node and model node outgoing edges
+			auto & current_scene_node_outgoing = g.outgoing(current_scene_node);
+			auto & current_model_node_outgoing = g.outgoing(current_model_node);
+
+			if (current_model_node_outgoing.size() > 0)
+			{
+				for (auto & edge : current_scene_node_outgoing)
+				{
+					if (edge.second == in_out_graph::edge_type::down)
+					{
+						// node is not complete => missing incoming edge
+						missing_outgoing_edges = false;
+					}
+				}
+			}
+
+
+			// remove from unchecked if 
+			if (missing_incoming_edges == false && missing_outgoing_edges == false)
+			{
+				unchecked.pop_front();
+			}
+		}
+	}
+
+	// ================================================================================
+	//	top-level node stack-recursion algorithm
+	// ================================================================================
+	if (true)
+	{
+		std::list<std::shared_ptr<node>> scene_node_queue;
+
+		// create scene node for each toplevel model node
+		for (auto & toplevel_model_node : toplevel_model_nodes)
+		{
+			// create new scene node
+			auto toplevel_scene_node = std::make_shared<node>("scene_" + toplevel_model_node->name());
+
+			// add node to the graph
+			g.add_node(toplevel_scene_node);
+
+			// add the node and create an edge to the model node
+			g.add_node(toplevel_scene_node);
+			g.add_edge(toplevel_scene_node, toplevel_model_node, in_out_graph::edge_type::below);
+
+			// queue for recursion
+			scene_node_queue.push_back(toplevel_scene_node);
+		}
+
+		while (scene_node_queue.size())
+		{
+			auto & source_scene_node = scene_node_queue.front();
+			auto & source_model_node = follow_outgoing_edge(g, source_scene_node, in_out_graph::edge_type::below);
+
+			for (auto & target_model_node : follow_outgoing_edges(g, source_model_node, in_out_graph::edge_type::down))
+			{
+				// generate scene node
+				auto target_scene_node = std::make_shared<node>("scene_" + target_model_node->name());
+
+				// add node to the graph
+				g.add_node(target_scene_node);
+
+				// create scene node -> model node edge
+				g.add_edge(target_scene_node, target_model_node, in_out_graph::edge_type::below);
+
+				// create source scene node -> target scene node
+				g.add_edge(source_scene_node, target_scene_node, in_out_graph::edge_type::down);
+
+				// add target scene node into scene_node_queue for next recursion
+				scene_node_queue.push_back(target_scene_node);
+			}
+
+			// remove this node from queue
+			scene_node_queue.pop_front();
+		}
+	}
+
+	for (auto it_node = g.begin_nodes(); it_node != g.end_nodes(); it_node++)
+	{
+		auto & current_node = *it_node;
+
+		std::cout << current_node->name() << std::endl;
+
+		auto & outgoing_nodes = follow_outgoing_edges(g, current_node, in_out_graph::edge_type::down);
+
+		for (auto & outgoing_node : outgoing_nodes)
+		{
+			std::cout << "   -> " << outgoing_node->name() << std::endl;
+		}
+	}
+
+	return 0;
+}
+
+int main()
+{
+	if (false)
+		return test_plain_graph();
+
+	if (true)
+		return test_in_out_graph();
+
+	return 0;
 }
