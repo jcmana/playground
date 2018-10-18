@@ -761,12 +761,27 @@ int test_adjacency_graph()
 {
 	adjacency_graph g;
 
-	auto * struct_1 = g.create_node(1);
-	auto * struct_2 = g.create_node(2);
+	{
+		auto * struct_1 = g.create_node("struct_1");
+		auto * struct_2 = g.create_node("struct_2");
 
-	auto * edge = g.create_edge(-6);
+		auto * ref_2 = g.create_node("ref_2");
 
-	g.add_edge(struct_1, struct_2, edge);
+		auto * el_1 = g.create_node("el_1");
+		auto * el_2 = g.create_node("el_2");
+
+		g.add_edge(struct_1, ref_2, g.create_edge(-1));
+		g.add_edge(struct_1, el_1, g.create_edge(-1));
+		g.add_edge(ref_2, struct_2, g.create_edge(-1));
+		g.add_edge(struct_2, el_2, g.create_edge(-1));
+
+		std::cout << struct_1->property() << std::endl;
+
+		for (auto & edge : g.outgoing(struct_1))
+		{
+			std::cout << "   -> " << edge.first->property() << " (" << edge.second->property() << ")" << std::endl;
+		}
+	}
 
 	return 0;
 }

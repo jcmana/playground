@@ -8,16 +8,17 @@
 #include "adjacency_graph_node.hpp"
 #include "adjacency_graph_edge.hpp"
 
-//template<typename NodeProperty, typename EdgeProperty>
-
-using NodeProperty = int;
-using EdgeProperty = unsigned int;
-
 /// \brief		Graph specialization supporting:
 ///					- fast incoming/outgoing edges access
 ///					- directed edges
 ///					- custom node property
 ///					- custom edge property
+
+//template<typename NodeProperty, typename EdgeProperty>
+
+using NodeProperty = std::string;
+using EdgeProperty = int;
+
 class adjacency_graph
 {
 public:
@@ -47,13 +48,17 @@ public:
 	/// \brief		Adds directed edge from source to target with edge property.
 	void add_edge(node_owner_type * source, node_owner_type * target, edge_owner_type * edge)
 	{
-		edge_type edge_pair = std::make_pair(source, edge);
-		m_edges_outgoing[source].insert(edge_pair);
-		m_edges_incoming[target].insert(edge_pair);
+		m_edges_outgoing[source].emplace(std::make_pair(target, edge));
+		m_edges_incoming[target].emplace(std::make_pair(source, edge));
 	}
 
-
 	// enumerations:
+
+	/// \brief		Enumerate all outgoing edges from given node.
+	auto & outgoing(node_owner_type * source)
+	{
+		return m_edges_outgoing[source];
+	}
 
 
 private:
