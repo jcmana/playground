@@ -1,19 +1,19 @@
 #pragma once
 
-template<typename Property>
+template<typename EdgeProperty>
 class adjacency_graph_edge
 {
 public:
-	adjacency_graph_edge(const Property & property) :
+	adjacency_graph_edge(const EdgeProperty & property) :
 		m_property(property)
 	{
 	}
 
-	Property & property()
+	EdgeProperty & property()
 	{
 		return m_property;
 	}
 
 private:
-	Property m_property;
+	EdgeProperty m_property;
 };

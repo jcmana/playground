@@ -777,9 +777,20 @@ int test_adjacency_graph()
 
 		std::cout << struct_1->property() << std::endl;
 
-		for (auto & edge : g.outgoing(struct_1))
+		if (false) for (auto & edge : g.outgoing(struct_1))
 		{
 			std::cout << "   -> " << edge.first->property() << " (" << edge.second->property() << ")" << std::endl;
+		}
+
+		if (true)
+		{
+			auto oee = g.outgoing(struct_1, -1);
+			
+			auto oee_it = oee.begin();
+			auto v = oee_it.deref();
+			oee_it.next();
+			v = oee_it.deref();
+			__nop();
 		}
 	}
 

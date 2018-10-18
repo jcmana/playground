@@ -2,20 +2,20 @@
 
 #include <memory>
 
-template<typename Property>
+template<typename EdgeProperty>
 class adjacency_graph_node
 {
 public:
-	adjacency_graph_node(const Property & property) :
+	adjacency_graph_node(const EdgeProperty & property) :
 		m_property(property)
 	{
 	}
 
-	Property & property()
+	EdgeProperty & property()
 	{
 		return m_property;
 	}
 
 private:
-	Property m_property;
+	EdgeProperty m_property;
 };

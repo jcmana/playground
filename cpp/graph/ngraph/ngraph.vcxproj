@@ -120,14 +120,12 @@
   <ItemGroup>
     <ClInclude Include="adjacency_graph.hpp" />
     <ClInclude Include="adjacency_graph_edge.hpp" />
+    <ClInclude Include="adjacency_graph_enumerator.hpp" />
+    <ClInclude Include="adjacency_graph_enumerator_iterator.hpp" />
     <ClInclude Include="adjacency_graph_node.hpp" />
+    <ClInclude Include="adjacency_graph_types.h" />
     <ClInclude Include="in_out_graph.h" />
     <ClInclude Include="node.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\generic\generic\generic.vcxproj">
-      <Project>{99b037a6-aa80-485e-b227-784d39dc1ba2}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
