@@ -72,6 +72,25 @@ std::set<std::shared_ptr<node>> follow_outgoing_edges(in_out_graph & g, const st
 	return result;
 }
 
+using predicate = bool (*)(const std::shared_ptr<node> & n, in_out_graph::edge_type t);
+
+std::set<std::shared_ptr<node>> follow_outgoing_edges(in_out_graph & g, const std::shared_ptr<node> & n, predicate p)
+{
+	std::set<std::shared_ptr<node>> result;
+
+	auto & outgoing_edges = g.outgoing(n);
+
+	for (auto & outgoing_edge : outgoing_edges)
+	{
+		if (p(outgoing_edge.first, outgoing_edge.second))
+		{
+			result.insert(outgoing_edge.first);
+		}
+	}
+
+	return result;
+}
+
 int test_plain_graph()
 {
 	std::vector<std::shared_ptr<node>> model_nodes
@@ -291,6 +310,7 @@ int test_in_out_graph()
 		auto struct_2 = std::make_shared<node>("struct_2");
 		auto struct_3 = std::make_shared<node>("struct_3");
 		auto struct_4 = std::make_shared<node>("struct_4");
+		auto struct_5 = std::make_shared<node>("struct_5");
 
 		auto ref_1 = std::make_shared<node>("ref_1");
 		auto ref_2 = std::make_shared<node>("ref_2");
@@ -303,11 +323,13 @@ int test_in_out_graph()
 		auto el_4 = std::make_shared<node>("el_4");
 		auto el_5 = std::make_shared<node>("el_5");
 		auto el_6 = std::make_shared<node>("el_6");
+		auto el_7 = std::make_shared<node>("el_7");
 
 		g.add_node(struct_1);
 		g.add_node(struct_2);
 		g.add_node(struct_3);
 		g.add_node(struct_4);
+		g.add_node(struct_5);
 
 		g.add_node(ref_1);
 		g.add_node(ref_2);
@@ -320,6 +342,7 @@ int test_in_out_graph()
 		g.add_node(el_4);
 		g.add_node(el_5);
 		g.add_node(el_6);
+		g.add_node(el_7);
 
 		g.add_edge(struct_1, ref_1, in_out_graph::edge_type::down);
 		g.add_edge(struct_1, ref_2, in_out_graph::edge_type::down);
@@ -334,6 +357,8 @@ int test_in_out_graph()
 
 		g.add_edge(struct_4, el_5, in_out_graph::edge_type::down);
 		g.add_edge(struct_4, el_6, in_out_graph::edge_type::down);
+
+		g.add_edge(struct_5, el_7, in_out_graph::edge_type::down);
 
 		g.add_edge(ref_1, struct_3, in_out_graph::edge_type::down);
 		g.add_edge(ref_2, struct_2, in_out_graph::edge_type::down);
@@ -520,13 +545,64 @@ int test_in_out_graph()
 		}
 	}
 
-	for (auto it_node = g.begin_nodes(); it_node != g.end_nodes(); it_node++)
+	// ================================================================================
+	//	print the graph (outgoing(down) edges only)
+	// ================================================================================
+	if (false) for (auto it_node = g.begin_nodes(); it_node != g.end_nodes(); it_node++)
 	{
 		auto & current_node = *it_node;
 
 		std::cout << current_node->name() << std::endl;
 
 		auto & outgoing_nodes = follow_outgoing_edges(g, current_node, in_out_graph::edge_type::down);
+
+		for (auto & outgoing_node : outgoing_nodes)
+		{
+			std::cout << "   -> " << outgoing_node->name() << std::endl;
+		}
+	}
+
+	// ================================================================================
+	//	leaf identity algorithm
+	// ================================================================================
+	if (true) for (auto it_node = g.begin_nodes(); it_node != g.end_nodes(); it_node++)
+	{
+		auto & current_node = *it_node;
+	
+		// check if node is a scene node (prefix "scene_")
+		// TODO: this obviously needs to be replace by adding and checking node type
+		// in full element nodes implementation
+		std::string scene_node_prefix("scene_");
+		if (scene_node_prefix.compare(0, scene_node_prefix.size(), current_node->name(), 0, scene_node_prefix.size()) != 0)
+		{
+			continue;
+		}
+
+		// check if node is a leaf node (leaf nodes have no outgoing edges)
+		auto & outgoing_nodes = follow_outgoing_edges(g, current_node, in_out_graph::edge_type::down);
+		if (outgoing_nodes.size() > 0)
+		{
+			continue;
+		}
+
+		// create view node
+		auto view_node = std::make_shared<node>("view_" + current_node->name());
+
+		// add the node and create an edge to the scene node
+		g.add_node(view_node);
+		g.add_edge(view_node, current_node, in_out_graph::edge_type::below);
+	}
+
+	// ================================================================================
+	//	print the graph (outgoing(below) edges only)
+	// ================================================================================
+	if (true) for (auto it_node = g.begin_nodes(); it_node != g.end_nodes(); it_node++)
+	{
+		auto & current_node = *it_node;
+
+		std::cout << current_node->name() << std::endl;
+
+		auto & outgoing_nodes = follow_outgoing_edges(g, current_node, in_out_graph::edge_type::below);
 
 		for (auto & outgoing_node : outgoing_nodes)
 		{
