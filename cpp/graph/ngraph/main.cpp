@@ -12,6 +12,7 @@
 
 #include "node.h"
 #include "in_out_graph.h"
+#include "adjacency_graph.hpp"
 
 static unsigned int counter = 0;
 
@@ -713,19 +714,22 @@ int test_in_out_graph()
 
 			for (auto & outgoing_edge : g.outgoing(current_record.node))
 			{
-				if (outgoing_edge.second == type)
+				// skip edges with other than requested type
+				if (outgoing_edge.second != type)
 				{
-					auto & edge_target_node = outgoing_edge.first;
-					auto & edge_type = outgoing_edge.second;
-
-					// build stack record for target node
-					stack_record r;
-					r.node = edge_target_node;
-					r.context = current_context;
-
-					// add stack record for next recursion
-					stack.push_back(r);
+					continue;
 				}
+
+				auto & edge_target_node = outgoing_edge.first;
+				auto & edge_type = outgoing_edge.second;
+
+				// build stack record for target node
+				stack_record r;
+				r.node = edge_target_node;
+				r.context = current_context;
+
+				// add stack record for next recursion
+				stack.push_back(r);
 			}
 
 			// remove this node from queue
@@ -753,13 +757,30 @@ int test_in_out_graph()
 	return 0;
 }
 
+int test_adjacency_graph()
+{
+	adjacency_graph g;
+
+	auto * struct_1 = g.create_node(1);
+	auto * struct_2 = g.create_node(2);
+
+	auto * edge = g.create_edge(-6);
+
+	g.add_edge(struct_1, struct_2, edge);
+
+	return 0;
+}
+
 int main()
 {
 	if (false)
 		return test_plain_graph();
 
-	if (true)
+	if (false)
 		return test_in_out_graph();
+
+	if (true)
+		return test_adjacency_graph();
 
 	return 0;
 }

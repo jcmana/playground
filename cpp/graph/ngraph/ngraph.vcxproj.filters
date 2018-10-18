@@ -26,5 +26,14 @@
     <ClInclude Include="node.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="adjacency_graph.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="adjacency_graph_node.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="adjacency_graph_edge.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
