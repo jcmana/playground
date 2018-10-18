@@ -13,40 +13,43 @@
 using NodeProperty = int;
 using EdgeProperty = unsigned int;
 
+/// \brief		Graph specialization supporting:
+///					- fast incoming/outgoing edges access
+///					- directed edges
+///					- custom node property
+///					- custom edge property
 class adjacency_graph
 {
 public:
+	/// \brief		Node property owning type.
 	using node_owner_type = adjacency_graph_node<NodeProperty>;
+	/// \brief		Edge property owning type.
 	using edge_owner_type = adjacency_graph_edge<EdgeProperty>;
+	/// \brief		Edge owning type.
 	using edge_type = std::pair<node_owner_type *, edge_owner_type *>;
 
 public:
 	// modifiers:
 
+
+	/// \brief		Creates node property owner.
 	node_owner_type * create_node(const NodeProperty & property)
 	{
 		return create_node_owner(property);
 	}
 
+	/// \brief		Creates edge property owner.
 	edge_owner_type * create_edge(const EdgeProperty & property)
 	{
 		return create_edge_owner(property);
 	}
 
+	/// \brief		Adds directed edge from source to target with edge property.
 	void add_edge(node_owner_type * source, node_owner_type * target, edge_owner_type * edge)
 	{
 		edge_type edge_pair = std::make_pair(source, edge);
 		m_edges_outgoing[source].insert(edge_pair);
 		m_edges_incoming[target].insert(edge_pair);
-	}
-
-	void make_edge(const NodeProperty & source, const NodeProperty & target, const EdgeProperty & edge)
-	{
-		auto * source_owner = create_node(source);
-		auto * target_owner = create_node(target);
-		auto * edge_owner = create_edge(edge);
-
-		add_edge(source_owner, target_owner, edge_owner);
 	}
 
 
