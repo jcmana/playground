@@ -613,7 +613,7 @@ int test_in_out_graph()
 	// ================================================================================
 	//	recursive graph traverse
 	// ================================================================================
-	if (true)
+	if (false)
 	{
 		// node stack (initialized with all top-level nodes = recursion starting point)
 		std::list<std::shared_ptr<node>> node_stack(toplevel_model_nodes.begin(), toplevel_model_nodes.end());
@@ -625,12 +625,16 @@ int test_in_out_graph()
 		{
 			auto & current_node = node_stack.front();
 
+			// event: visiting unique-path node
+
 			std::cout << current_node->name() << std::endl;
 
 			for (auto & outgoing_edge : g.outgoing(current_node))
 			{
 				if (outgoing_edge.second == type)
 				{
+					// event: following outgoing edge
+
 					// add the node for next recursion
 					node_stack.push_back(outgoing_edge.first);
 				}
@@ -638,6 +642,111 @@ int test_in_out_graph()
 
 			// remove this node from queue
 			node_stack.pop_front();
+		}
+	}
+
+	// ================================================================================
+	//	recursive graph traverse (with context)
+	// ================================================================================
+	if (true)
+	{
+		// user defined context:
+
+		struct stack_context
+		{
+			std::shared_ptr<node> up_scene_node;
+		};
+
+		// user defined visiting handlers:
+
+		auto handle_node = [&g](const std::shared_ptr<node> & from, stack_context & context)
+		{
+			// create scene node
+			auto scene_node = std::make_shared<node>("scene_" + from->name());
+
+			g.add_node(scene_node);
+
+			// add edge from 'up' scene node to the current
+			if (context.up_scene_node)
+			{
+				g.add_edge(context.up_scene_node, scene_node, in_out_graph::edge_type::down);
+			}
+
+			// modify context for next recursion
+			context.up_scene_node = scene_node;
+		};
+
+		// stack record with context (probably templated later)
+		struct stack_record
+		{
+			std::shared_ptr<node> node;
+			stack_context context;
+		};
+
+		// node stack
+		std::list<stack_record> stack;
+		
+		for (auto & toplevel_model_node : toplevel_model_nodes)
+		{
+			stack_context c;
+			c.up_scene_node = nullptr;
+
+			stack_record r;
+			r.node = toplevel_model_node;
+
+
+			stack.push_back(r);
+		}
+
+		// edge type to follow during recursion (later input parameter)
+		in_out_graph::edge_type type = in_out_graph::edge_type::down;
+
+		while (stack.size())
+		{
+			auto & current_record = stack.front();
+			auto & current_node = current_record.node;
+			
+			stack_context current_context = current_record.context;
+
+			// event: visiting unique-path node
+			handle_node(current_node, current_context);
+
+			for (auto & outgoing_edge : g.outgoing(current_record.node))
+			{
+				if (outgoing_edge.second == type)
+				{
+					auto & edge_target_node = outgoing_edge.first;
+					auto & edge_type = outgoing_edge.second;
+
+					// build stack record for target node
+					stack_record r;
+					r.node = edge_target_node;
+					r.context = current_context;
+
+					// add stack record for next recursion
+					stack.push_back(r);
+				}
+			}
+
+			// remove this node from queue
+			stack.pop_front();
+		}
+	}
+
+	// ================================================================================
+	//	print the graph (outgoing(down) edges only)
+	// ================================================================================
+	if (true) for (auto it_node = g.begin_nodes(); it_node != g.end_nodes(); it_node++)
+	{
+		auto & current_node = *it_node;
+
+		std::cout << current_node->name() << std::endl;
+
+		auto & outgoing_nodes = follow_outgoing_edges(g, current_node, in_out_graph::edge_type::down);
+
+		for (auto & outgoing_node : outgoing_nodes)
+		{
+			std::cout << "   -> " << outgoing_node->name() << std::endl;
 		}
 	}
 
