@@ -29,5 +29,8 @@
     <ClInclude Include="dfs.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="properties.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
