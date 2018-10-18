@@ -496,7 +496,7 @@ int test_in_out_graph()
 	// ================================================================================
 	//	top-level node stack-recursion algorithm
 	// ================================================================================
-	if (true)
+	if (false)
 	{
 		std::list<std::shared_ptr<node>> scene_node_queue;
 
@@ -565,7 +565,7 @@ int test_in_out_graph()
 	// ================================================================================
 	//	leaf identity algorithm
 	// ================================================================================
-	if (true) for (auto it_node = g.begin_nodes(); it_node != g.end_nodes(); it_node++)
+	if (false) for (auto it_node = g.begin_nodes(); it_node != g.end_nodes(); it_node++)
 	{
 		auto & current_node = *it_node;
 	
@@ -596,7 +596,7 @@ int test_in_out_graph()
 	// ================================================================================
 	//	print the graph (outgoing(below) edges only)
 	// ================================================================================
-	if (true) for (auto it_node = g.begin_nodes(); it_node != g.end_nodes(); it_node++)
+	if (false) for (auto it_node = g.begin_nodes(); it_node != g.end_nodes(); it_node++)
 	{
 		auto & current_node = *it_node;
 
@@ -607,6 +607,37 @@ int test_in_out_graph()
 		for (auto & outgoing_node : outgoing_nodes)
 		{
 			std::cout << "   -> " << outgoing_node->name() << std::endl;
+		}
+	}
+
+	// ================================================================================
+	//	recursive graph traverse
+	// ================================================================================
+	if (true)
+	{
+		// node stack (initialized with all top-level nodes = recursion starting point)
+		std::list<std::shared_ptr<node>> node_stack(toplevel_model_nodes.begin(), toplevel_model_nodes.end());
+
+		// edge type to follow during recursion
+		in_out_graph::edge_type type = in_out_graph::edge_type::down;
+
+		while (node_stack.size())
+		{
+			auto & current_node = node_stack.front();
+
+			std::cout << current_node->name() << std::endl;
+
+			for (auto & outgoing_edge : g.outgoing(current_node))
+			{
+				if (outgoing_edge.second == type)
+				{
+					// add the node for next recursion
+					node_stack.push_back(outgoing_edge.first);
+				}
+			}
+
+			// remove this node from queue
+			node_stack.pop_front();
 		}
 	}
 
