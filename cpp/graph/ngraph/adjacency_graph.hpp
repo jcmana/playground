@@ -14,10 +14,7 @@
 ///					- directed edges
 ///					- custom node property
 ///					- custom edge property
-
-using NodeProperty = std::string;
-using EdgeProperty = int;
-//template<typename NodeProperty, typename EdgeProperty>
+template<typename NodeProperty, typename EdgeProperty>
 class adjacency_graph
 {
 public:
@@ -46,16 +43,16 @@ public:
 	std::set<node_owner_type *> nodes();
 
 	/// \brief		Enumerate all outgoing edges from given node.
-	std::set<adjacency_graph::edge_type> outgoing(node_owner_type * source);
+	std::set<edge_type> outgoing(node_owner_type * source);
 
 	/// \brief		Enumerate all outgoing edges from given node with specific edge property.
-	std::set<adjacency_graph::edge_type> outgoing(node_owner_type * source, const EdgeProperty & property);
+	std::set<edge_type> outgoing(node_owner_type * source, const EdgeProperty & property);
 
 	/// \brief		Enumerate all incoming edges to given node.
-	std::set<adjacency_graph::edge_type> incoming(node_owner_type * target);
+	std::set<edge_type> incoming(node_owner_type * target);
 
 	/// \brief		Enumerate all incoming edges to given node with specific edge property.
-	std::set<adjacency_graph::edge_type> incoming(node_owner_type * target, const EdgeProperty & property);
+	std::set<edge_type> incoming(node_owner_type * target, const EdgeProperty & property);
 
 	// traversions:
 
@@ -72,30 +69,34 @@ private:
 
 	std::map<node_owner_type *, std::set<edge_type>> m_edges_incoming;
 	std::map<node_owner_type *, std::set<edge_type>> m_edges_outgoing;
-
-private:
-	friend class adjacency_graph_enumerator;
-	friend class adjacency_graph_enumerator_iterator;
 };
 
 
-adjacency_graph::node_owner_type * adjacency_graph::create_node(const NodeProperty & property)
+template<typename NodeProperty, typename EdgeProperty>
+typename adjacency_graph<NodeProperty, EdgeProperty>::node_owner_type * 
+adjacency_graph<NodeProperty, EdgeProperty>::create_node(const NodeProperty & property)
 {
 	return create_node_owner(property);
 }
 
-adjacency_graph::edge_owner_type * adjacency_graph::create_edge(const EdgeProperty & property)
+template<typename NodeProperty, typename EdgeProperty>
+typename adjacency_graph<NodeProperty, EdgeProperty>::edge_owner_type *
+adjacency_graph<NodeProperty, EdgeProperty>::create_edge(const EdgeProperty & property)
 {
 	return create_edge_owner(property);
 }
 
-void adjacency_graph::add_edge(node_owner_type * source, node_owner_type * target, edge_owner_type * edge)
+template<typename NodeProperty, typename EdgeProperty>
+void 
+adjacency_graph<NodeProperty, EdgeProperty>::add_edge(node_owner_type * source, node_owner_type * target, edge_owner_type * edge)
 {
 	m_edges_outgoing[source].emplace(std::make_pair(target, edge));
 	m_edges_incoming[target].emplace(std::make_pair(source, edge));
 }
 
-std::set<adjacency_graph::node_owner_type *> adjacency_graph::nodes()
+template<typename NodeProperty, typename EdgeProperty>
+std::set<typename adjacency_graph<NodeProperty, EdgeProperty>::node_owner_type *>
+adjacency_graph<NodeProperty, EdgeProperty>::nodes()
 {
 	std::set<adjacency_graph::node_owner_type *> result;
 
@@ -107,7 +108,9 @@ std::set<adjacency_graph::node_owner_type *> adjacency_graph::nodes()
 	return result;
 }
 
-std::set<adjacency_graph::edge_type> adjacency_graph::outgoing(node_owner_type * source)
+template<typename NodeProperty, typename EdgeProperty>
+std::set<typename adjacency_graph<NodeProperty, EdgeProperty>::edge_type>
+adjacency_graph<NodeProperty, EdgeProperty>::outgoing(node_owner_type * source)
 {
 	std::set<adjacency_graph::edge_type> result;
 
@@ -119,7 +122,9 @@ std::set<adjacency_graph::edge_type> adjacency_graph::outgoing(node_owner_type *
 	return result;
 }
 
-std::set<adjacency_graph::edge_type> adjacency_graph::outgoing(node_owner_type * source, const EdgeProperty & property)
+template<typename NodeProperty, typename EdgeProperty>
+std::set<typename adjacency_graph<NodeProperty, EdgeProperty>::edge_type>
+adjacency_graph<NodeProperty, EdgeProperty>::outgoing(node_owner_type * source, const EdgeProperty & property)
 {
 	std::set<adjacency_graph::edge_type> result;
 
@@ -134,7 +139,9 @@ std::set<adjacency_graph::edge_type> adjacency_graph::outgoing(node_owner_type *
 	return result;
 }
 
-std::set<adjacency_graph::edge_type> adjacency_graph::incoming(node_owner_type * target)
+template<typename NodeProperty, typename EdgeProperty>
+std::set<typename adjacency_graph<NodeProperty, EdgeProperty>::edge_type>
+adjacency_graph<NodeProperty, EdgeProperty>::incoming(node_owner_type * target)
 {
 	std::set<adjacency_graph::edge_type> result;
 
@@ -146,7 +153,9 @@ std::set<adjacency_graph::edge_type> adjacency_graph::incoming(node_owner_type *
 	return result;
 }
 
-std::set<adjacency_graph::edge_type> adjacency_graph::incoming(node_owner_type * target, const EdgeProperty & property)
+template<typename NodeProperty, typename EdgeProperty>
+std::set<typename adjacency_graph<NodeProperty, EdgeProperty>::edge_type>
+adjacency_graph<NodeProperty, EdgeProperty>::incoming(node_owner_type * target, const EdgeProperty & property)
 {
 	std::set<adjacency_graph::edge_type> result;
 
@@ -161,7 +170,9 @@ std::set<adjacency_graph::edge_type> adjacency_graph::incoming(node_owner_type *
 	return result;
 }
 
-void adjacency_graph::flood_traverse(node_owner_type * from, const EdgeProperty & follow_property)
+template<typename NodeProperty, typename EdgeProperty>
+void 
+adjacency_graph<NodeProperty, EdgeProperty>::flood_traverse(node_owner_type * from, const EdgeProperty & follow_property)
 {
 	// user defined context
 	struct stack_context
@@ -209,14 +220,18 @@ void adjacency_graph::flood_traverse(node_owner_type * from, const EdgeProperty 
 	}
 }
 
-adjacency_graph::node_owner_type * adjacency_graph::create_node_owner(const NodeProperty & property)
+template<typename NodeProperty, typename EdgeProperty>
+typename adjacency_graph<NodeProperty, EdgeProperty>::node_owner_type *
+adjacency_graph<NodeProperty, EdgeProperty>::create_node_owner(const NodeProperty & property)
 {
 	auto p_node_owner = new node_owner_type(property);
 	m_node_owners.emplace(std::unique_ptr<node_owner_type>(p_node_owner));
 	return p_node_owner;
 }
 
-adjacency_graph::edge_owner_type * adjacency_graph::create_edge_owner(const EdgeProperty & property)
+template<typename NodeProperty, typename EdgeProperty>
+typename adjacency_graph<NodeProperty, EdgeProperty>::edge_owner_type *
+adjacency_graph<NodeProperty, EdgeProperty>::create_edge_owner(const EdgeProperty & property)
 {
 	auto p_edge_owner = new edge_owner_type(property);
 	m_edge_owners.emplace(std::unique_ptr<edge_owner_type>(p_edge_owner));

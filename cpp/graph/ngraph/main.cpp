@@ -759,9 +759,24 @@ int test_in_out_graph()
 
 int test_adjacency_graph()
 {
-	adjacency_graph g;
+	enum class graph_edge_type
+	{
+		up, down,
+		above, below
+	};
 
-	adjacency_graph::node_owner_type * toplevel;
+	generic::bidirectional_map<graph_edge_type, std::string> edgetostring
+	{
+		{
+			{ graph_edge_type::up, "up" },
+			{ graph_edge_type::down, "down" }
+		}
+	};
+
+	using graph = adjacency_graph<std::string, graph_edge_type>;
+
+	graph g;
+	graph::node_owner_type * toplevel;
 
 	{
 		auto * struct_1 = g.create_node("struct_1");
@@ -781,46 +796,49 @@ int test_adjacency_graph()
 		auto * el_5 = g.create_node("el_5");
 		auto * el_6 = g.create_node("el_6");
 
-		g.add_edge(struct_1, ref_1, g.create_edge(-1));
-		g.add_edge(struct_1, ref_2, g.create_edge(-1));
-		g.add_edge(struct_1, el_1, g.create_edge(-1));
+		g.add_edge(struct_1, ref_1, g.create_edge(graph_edge_type::down));
+		g.add_edge(struct_1, ref_2, g.create_edge(graph_edge_type::down));
+		g.add_edge(struct_1, el_1, g.create_edge(graph_edge_type::down));
 
-		g.add_edge(struct_2, ref_3, g.create_edge(-1));
-		g.add_edge(struct_2, el_2, g.create_edge(-1));
-		g.add_edge(struct_2, el_3, g.create_edge(-1));
+		g.add_edge(struct_2, ref_3, g.create_edge(graph_edge_type::down));
+		g.add_edge(struct_2, el_2, g.create_edge(graph_edge_type::down));
+		g.add_edge(struct_2, el_3, g.create_edge(graph_edge_type::down));
 
-		g.add_edge(struct_3, el_4, g.create_edge(-1));
-		g.add_edge(struct_3, ref_4, g.create_edge(-1));
+		g.add_edge(struct_3, el_4, g.create_edge(graph_edge_type::down));
+		g.add_edge(struct_3, ref_4, g.create_edge(graph_edge_type::down));
 
-		g.add_edge(struct_4, el_5, g.create_edge(-1));
-		g.add_edge(struct_4, el_6, g.create_edge(-1));
+		g.add_edge(struct_4, el_5, g.create_edge(graph_edge_type::down));
+		g.add_edge(struct_4, el_6, g.create_edge(graph_edge_type::down));
 
-		g.add_edge(ref_1, struct_3, g.create_edge(-1));
-		g.add_edge(ref_2, struct_2, g.create_edge(-1));
-		g.add_edge(ref_3, struct_3, g.create_edge(-1));
-		g.add_edge(ref_4, struct_4, g.create_edge(-1));
+		g.add_edge(ref_1, struct_3, g.create_edge(graph_edge_type::down));
+		g.add_edge(ref_2, struct_2, g.create_edge(graph_edge_type::down));
+		g.add_edge(ref_3, struct_3, g.create_edge(graph_edge_type::down));
+		g.add_edge(ref_4, struct_4, g.create_edge(graph_edge_type::down));
 
 		toplevel = struct_1;
 	}
 
-	if (false) for (auto * node : g.nodes())
+	if (true) for (auto * node : g.nodes())
 	{
 		std::cout << node->property() << std::endl;
 
 		for (auto & edge : g.outgoing(node))
 		{
-			std::cout << "   -> " << edge.first->property() << " (" << edge.second->property() << ")" << std::endl;
+			std::cout << "   -> " << edge.first->property() << " (" << edgetostring[edge.second->property()] << ")" << std::endl;
 		}
 
 		for (auto & edge : g.incoming(node))
 		{
-			std::cout << "   <- " << edge.first->property() << " (" << edge.second->property() << ")" << std::endl;
+			std::cout << "   <- " << edge.first->property() << " (" << edgetostring[edge.second->property()] << ")" << std::endl;
 		}
 	}
 
-	if (true) g.flood_traverse(toplevel, -1);
+	std::cout << std::endl;
+
+	if (true) g.flood_traverse(toplevel, graph_edge_type::down);
 
 	return 0;
+
 }
 
 int main()
