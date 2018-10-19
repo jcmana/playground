@@ -23,10 +23,10 @@ int main()
 	std::map<custom_key, int> my_map;
 	
 	custom_key k(3);
+	custom_key l(8);
 
-	my_map.insert(std::make_pair(k, 16));	// requires operator >()
-
-	auto v = my_map.at(k);					// requires operator >()
+	my_map.insert(std::make_pair(k, 16));	// requires custom_key::operator <()
+	int v = my_map.at(k);					// requires custom_key::operator <()
 
 	return 0;
 }
