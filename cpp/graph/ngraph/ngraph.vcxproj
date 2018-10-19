@@ -120,10 +120,7 @@
   <ItemGroup>
     <ClInclude Include="adjacency_graph.hpp" />
     <ClInclude Include="adjacency_graph_edge.hpp" />
-    <ClInclude Include="adjacency_graph_enumerator.hpp" />
-    <ClInclude Include="adjacency_graph_enumerator_iterator.hpp" />
     <ClInclude Include="adjacency_graph_node.hpp" />
-    <ClInclude Include="adjacency_graph_types.h" />
     <ClInclude Include="in_out_graph.h" />
     <ClInclude Include="node.h" />
   </ItemGroup>

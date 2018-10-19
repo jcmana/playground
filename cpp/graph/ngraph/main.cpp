@@ -761,38 +761,64 @@ int test_adjacency_graph()
 {
 	adjacency_graph g;
 
+	adjacency_graph::node_owner_type * toplevel;
+
 	{
 		auto * struct_1 = g.create_node("struct_1");
 		auto * struct_2 = g.create_node("struct_2");
+		auto * struct_3 = g.create_node("struct_3");
+		auto * struct_4 = g.create_node("struct_4");
 
+		auto * ref_1 = g.create_node("ref_1");
 		auto * ref_2 = g.create_node("ref_2");
+		auto * ref_3 = g.create_node("ref_3");
+		auto * ref_4 = g.create_node("ref_4");
 
 		auto * el_1 = g.create_node("el_1");
 		auto * el_2 = g.create_node("el_2");
+		auto * el_3 = g.create_node("el_3");
+		auto * el_4 = g.create_node("el_4");
+		auto * el_5 = g.create_node("el_5");
+		auto * el_6 = g.create_node("el_6");
 
+		g.add_edge(struct_1, ref_1, g.create_edge(-1));
 		g.add_edge(struct_1, ref_2, g.create_edge(-1));
 		g.add_edge(struct_1, el_1, g.create_edge(-1));
-		g.add_edge(ref_2, struct_2, g.create_edge(-1));
+
+		g.add_edge(struct_2, ref_3, g.create_edge(-1));
 		g.add_edge(struct_2, el_2, g.create_edge(-1));
+		g.add_edge(struct_2, el_3, g.create_edge(-1));
 
-		std::cout << struct_1->property() << std::endl;
+		g.add_edge(struct_3, el_4, g.create_edge(-1));
+		g.add_edge(struct_3, ref_4, g.create_edge(-1));
 
-		if (false) for (auto & edge : g.outgoing(struct_1))
+		g.add_edge(struct_4, el_5, g.create_edge(-1));
+		g.add_edge(struct_4, el_6, g.create_edge(-1));
+
+		g.add_edge(ref_1, struct_3, g.create_edge(-1));
+		g.add_edge(ref_2, struct_2, g.create_edge(-1));
+		g.add_edge(ref_3, struct_3, g.create_edge(-1));
+		g.add_edge(ref_4, struct_4, g.create_edge(-1));
+
+		toplevel = struct_1;
+	}
+
+	if (false) for (auto * node : g.nodes())
+	{
+		std::cout << node->property() << std::endl;
+
+		for (auto & edge : g.outgoing(node))
 		{
 			std::cout << "   -> " << edge.first->property() << " (" << edge.second->property() << ")" << std::endl;
 		}
 
-		if (true)
+		for (auto & edge : g.incoming(node))
 		{
-			auto oee = g.outgoing(struct_1, -1);
-			
-			auto oee_it = oee.begin();
-			auto v = oee_it.deref();
-			oee_it.next();
-			v = oee_it.deref();
-			__nop();
+			std::cout << "   <- " << edge.first->property() << " (" << edge.second->property() << ")" << std::endl;
 		}
 	}
+
+	if (true) g.flood_traverse(toplevel, -1);
 
 	return 0;
 }

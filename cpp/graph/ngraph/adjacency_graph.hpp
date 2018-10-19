@@ -5,9 +5,8 @@
 #include <map>
 #include <utility>
 
-#include "adjacency_graph_types.h"
-
-class adjacency_graph_enumerator;
+#include "adjacency_graph_node.hpp"
+#include "adjacency_graph_edge.hpp"
 
 /// \brief		Graph specialization for edge traversing and adjacenct enumeration.
 /// \desc		Graph specialization supporting:
@@ -21,25 +20,13 @@ using EdgeProperty = int;
 //template<typename NodeProperty, typename EdgeProperty>
 class adjacency_graph
 {
-private:
-	using types = adjacency_graph_types<NodeProperty, EdgeProperty>;
-
 public:
-	/// \brief		Node property owning type.
-	using node_owner_type = types::node_owner_type;
-	/// \brief		Edge property owning type.
-	using edge_owner_type = types::edge_owner_type;
-	/// \brief		Edge owning type.
-	using edge_type = types::edge_type;
-
-/*
 	/// \brief		Node property owning type.
 	using node_owner_type = adjacency_graph_node<NodeProperty>;
 	/// \brief		Edge property owning type.
 	using edge_owner_type = adjacency_graph_edge<EdgeProperty>;
 	/// \brief		Edge owning type.
 	using edge_type = std::pair<node_owner_type *, edge_owner_type *>;
-*/
 
 public:
 	// modifiers:
@@ -55,10 +42,24 @@ public:
 
 	// enumerations:
 
-	/// \brief		Enumerate all outgoing edges from given node.
-	auto & outgoing(node_owner_type * source);
+	/// \brief		Enumerate all nodes.
+	std::set<node_owner_type *> nodes();
 
-	adjacency_graph_enumerator outgoing(node_owner_type * source, const EdgeProperty & property);
+	/// \brief		Enumerate all outgoing edges from given node.
+	std::set<adjacency_graph::edge_type> outgoing(node_owner_type * source);
+
+	/// \brief		Enumerate all outgoing edges from given node with specific edge property.
+	std::set<adjacency_graph::edge_type> outgoing(node_owner_type * source, const EdgeProperty & property);
+
+	/// \brief		Enumerate all incoming edges to given node.
+	std::set<adjacency_graph::edge_type> incoming(node_owner_type * target);
+
+	/// \brief		Enumerate all incoming edges to given node with specific edge property.
+	std::set<adjacency_graph::edge_type> incoming(node_owner_type * target, const EdgeProperty & property);
+
+	// traversions:
+
+	void flood_traverse(node_owner_type * from, const EdgeProperty & follow_property);
 
 private:
 	node_owner_type * create_node_owner(const NodeProperty & property);
@@ -78,8 +79,6 @@ private:
 };
 
 
-#include "adjacency_graph_enumerator.hpp"
-
 adjacency_graph::node_owner_type * adjacency_graph::create_node(const NodeProperty & property)
 {
 	return create_node_owner(property);
@@ -96,14 +95,118 @@ void adjacency_graph::add_edge(node_owner_type * source, node_owner_type * targe
 	m_edges_incoming[target].emplace(std::make_pair(source, edge));
 }
 
-auto & adjacency_graph::outgoing(node_owner_type * source)
+std::set<adjacency_graph::node_owner_type *> adjacency_graph::nodes()
 {
-	return m_edges_outgoing[source];
+	std::set<adjacency_graph::node_owner_type *> result;
+
+	for (auto & node : m_node_owners)
+	{
+		result.insert(node.get());
+	}
+
+	return result;
 }
 
-adjacency_graph_enumerator adjacency_graph::outgoing(node_owner_type * source, const EdgeProperty & property)
+std::set<adjacency_graph::edge_type> adjacency_graph::outgoing(node_owner_type * source)
 {
-	return adjacency_graph_enumerator(&m_edges_outgoing, source, property);
+	std::set<adjacency_graph::edge_type> result;
+
+	for (auto & edge : m_edges_outgoing[source])
+	{
+		result.insert(edge);
+	}
+
+	return result;
+}
+
+std::set<adjacency_graph::edge_type> adjacency_graph::outgoing(node_owner_type * source, const EdgeProperty & property)
+{
+	std::set<adjacency_graph::edge_type> result;
+
+	for (auto & edge : m_edges_outgoing[source])
+	{
+		if (edge.second->property() == property)
+		{
+			result.insert(edge);
+		}
+	}
+
+	return result;
+}
+
+std::set<adjacency_graph::edge_type> adjacency_graph::incoming(node_owner_type * target)
+{
+	std::set<adjacency_graph::edge_type> result;
+
+	for (auto & edge : m_edges_incoming[target])
+	{
+		result.insert(edge);
+	}
+
+	return result;
+}
+
+std::set<adjacency_graph::edge_type> adjacency_graph::incoming(node_owner_type * target, const EdgeProperty & property)
+{
+	std::set<adjacency_graph::edge_type> result;
+
+	for (auto & edge : m_edges_incoming[target])
+	{
+		if (edge.second->property() == property)
+		{
+			result.insert(edge);
+		}
+	}
+
+	return result;
+}
+
+void adjacency_graph::flood_traverse(node_owner_type * from, const EdgeProperty & follow_property)
+{
+	// user defined context
+	struct stack_context
+	{
+		void * up_scene_node;
+	};
+
+	// stack record with context (probably templated later)
+	struct stack_record
+	{
+		node_owner_type * node;
+		stack_context context;
+	};
+
+	std::list<stack_record> stack;
+	stack.push_back({ from, { nullptr }});
+
+	while (stack.size())
+	{
+		auto & current_record = stack.front();
+		auto & current_node = current_record.node;
+
+		stack_context current_context = current_record.context;
+
+		// event: visiting unique-path node
+		//handle_node(current_node, current_context);
+		std::cout << current_node->property() << std::endl;
+
+		for (auto & outgoing_edge : outgoing(current_record.node, follow_property))
+		{
+			auto & edge_target_node = outgoing_edge.first;
+			auto & edge_type = outgoing_edge.second;
+
+			// build stack record for target node
+			stack_record r;
+			r.node = edge_target_node;
+			r.context = current_context;
+
+			// add stack record for next recursion
+			stack.push_back(r);
+		}
+
+		// remove this node from queue
+		stack.pop_front();
+	}
 }
 
 adjacency_graph::node_owner_type * adjacency_graph::create_node_owner(const NodeProperty & property)

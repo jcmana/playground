@@ -1,13 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2046
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "graph", "graph\graph.vcxproj", "{4A6A90BD-9C95-432B-A458-5090BF225506}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ngraph", "ngraph\ngraph.vcxproj", "{65A23C89-8335-4B5A-AAF4-EF1CD95298C8}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "graph_traverse", "graph_traverse\graph_traverse.vcxproj", "{89C45A02-B83A-40F0-9EB9-DEF3701A7266}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{F6BB3C54-26AF-4057-8DB2-1627F7412D3A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "generic", "..\generic\generic\generic.vcxproj", "{99B037A6-AA80-485E-B227-784D39DC1BA2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,9 +45,20 @@ Global
 		{89C45A02-B83A-40F0-9EB9-DEF3701A7266}.Release|x64.Build.0 = Release|x64
 		{89C45A02-B83A-40F0-9EB9-DEF3701A7266}.Release|x86.ActiveCfg = Release|Win32
 		{89C45A02-B83A-40F0-9EB9-DEF3701A7266}.Release|x86.Build.0 = Release|Win32
+		{99B037A6-AA80-485E-B227-784D39DC1BA2}.Debug|x64.ActiveCfg = Debug|x64
+		{99B037A6-AA80-485E-B227-784D39DC1BA2}.Debug|x64.Build.0 = Debug|x64
+		{99B037A6-AA80-485E-B227-784D39DC1BA2}.Debug|x86.ActiveCfg = Debug|Win32
+		{99B037A6-AA80-485E-B227-784D39DC1BA2}.Debug|x86.Build.0 = Debug|Win32
+		{99B037A6-AA80-485E-B227-784D39DC1BA2}.Release|x64.ActiveCfg = Release|x64
+		{99B037A6-AA80-485E-B227-784D39DC1BA2}.Release|x64.Build.0 = Release|x64
+		{99B037A6-AA80-485E-B227-784D39DC1BA2}.Release|x86.ActiveCfg = Release|Win32
+		{99B037A6-AA80-485E-B227-784D39DC1BA2}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{99B037A6-AA80-485E-B227-784D39DC1BA2} = {F6BB3C54-26AF-4057-8DB2-1627F7412D3A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BA1855F3-3DFE-40A2-B472-1C28603225FD}
