@@ -33,6 +33,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "constexpr", "constexpr\cons
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "std_string", "std_string\std_string.vcxproj", "{8DA2BC71-1B6B-4606-973F-8ADE362EC727}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "std_map", "std_map\std_map.vcxproj", "{9B4487F7-9E4A-4AD5-A3BC-60FA5A35216C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -161,6 +163,14 @@ Global
 		{8DA2BC71-1B6B-4606-973F-8ADE362EC727}.Release|x64.Build.0 = Release|x64
 		{8DA2BC71-1B6B-4606-973F-8ADE362EC727}.Release|x86.ActiveCfg = Release|Win32
 		{8DA2BC71-1B6B-4606-973F-8ADE362EC727}.Release|x86.Build.0 = Release|Win32
+		{9B4487F7-9E4A-4AD5-A3BC-60FA5A35216C}.Debug|x64.ActiveCfg = Debug|x64
+		{9B4487F7-9E4A-4AD5-A3BC-60FA5A35216C}.Debug|x64.Build.0 = Debug|x64
+		{9B4487F7-9E4A-4AD5-A3BC-60FA5A35216C}.Debug|x86.ActiveCfg = Debug|Win32
+		{9B4487F7-9E4A-4AD5-A3BC-60FA5A35216C}.Debug|x86.Build.0 = Debug|Win32
+		{9B4487F7-9E4A-4AD5-A3BC-60FA5A35216C}.Release|x64.ActiveCfg = Release|x64
+		{9B4487F7-9E4A-4AD5-A3BC-60FA5A35216C}.Release|x64.Build.0 = Release|x64
+		{9B4487F7-9E4A-4AD5-A3BC-60FA5A35216C}.Release|x86.ActiveCfg = Release|Win32
+		{9B4487F7-9E4A-4AD5-A3BC-60FA5A35216C}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
