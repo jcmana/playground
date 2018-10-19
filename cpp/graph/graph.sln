@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencie
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "generic", "..\generic\generic\generic.vcxproj", "{99B037A6-AA80-485E-B227-784D39DC1BA2}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "compare_adjacency_graph", "compare_adjacency_graph\compare_adjacency_graph.vcxproj", "{8784D814-F30A-4B0D-8EB9-C5E76899B1A7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -53,6 +55,14 @@ Global
 		{99B037A6-AA80-485E-B227-784D39DC1BA2}.Release|x64.Build.0 = Release|x64
 		{99B037A6-AA80-485E-B227-784D39DC1BA2}.Release|x86.ActiveCfg = Release|Win32
 		{99B037A6-AA80-485E-B227-784D39DC1BA2}.Release|x86.Build.0 = Release|Win32
+		{8784D814-F30A-4B0D-8EB9-C5E76899B1A7}.Debug|x64.ActiveCfg = Debug|x64
+		{8784D814-F30A-4B0D-8EB9-C5E76899B1A7}.Debug|x64.Build.0 = Debug|x64
+		{8784D814-F30A-4B0D-8EB9-C5E76899B1A7}.Debug|x86.ActiveCfg = Debug|Win32
+		{8784D814-F30A-4B0D-8EB9-C5E76899B1A7}.Debug|x86.Build.0 = Debug|Win32
+		{8784D814-F30A-4B0D-8EB9-C5E76899B1A7}.Release|x64.ActiveCfg = Release|x64
+		{8784D814-F30A-4B0D-8EB9-C5E76899B1A7}.Release|x64.Build.0 = Release|x64
+		{8784D814-F30A-4B0D-8EB9-C5E76899B1A7}.Release|x86.ActiveCfg = Release|Win32
+		{8784D814-F30A-4B0D-8EB9-C5E76899B1A7}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
