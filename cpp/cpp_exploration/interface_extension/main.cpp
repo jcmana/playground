@@ -21,17 +21,31 @@ int main()
 	// composite class
 	auto comp = composite::factory::make_composite(5, 5, 20, 10);
 
-	// side-casting
+	// up-casting
 	auto indexable_comp = std::static_pointer_cast<indexable>(comp);
 	auto element_comp = std::static_pointer_cast<element>(comp);
 	auto rectangle_comp = std::static_pointer_cast<rectangle>(comp);
 
-	auto boundary = comp->boundary();
+	// side-casting
+	auto indexable_from_element = std::dynamic_pointer_cast<indexable>(element_comp);
+
+	{
+		auto boundary = comp->boundary();
+		std::cout << boundary << std::endl;
+	}
+
+	// down-casting
+	auto comp_from_element = std::static_pointer_cast<composite>(element_comp);
+
+	{
+		auto boundary = comp->boundary();
+		std::cout << boundary << std::endl;
+	}
 
 	// illegal side-casting attempt
 	auto illegal_comp = std::dynamic_pointer_cast<composite>(i);
 
-	// static_cast will succeed
+	// static_cast will succeed (but returns invalid object)
 	// dynamic_cast will return nullptr
 	if (illegal_comp)
 	{
