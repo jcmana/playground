@@ -18,6 +18,19 @@ int main()
 	lemon::ListDigraph::ArcMap<EdgeType> edgeTypes(g);
 
 	edgeTypes[a] = EdgeType::down;
+
+	for (lemon::ListDigraph::ArcIt n(g); n != lemon::INVALID; ++n)
+	{
+		std::string edgeTypeStr;
+
+		switch (edgeTypes[n])
+		{
+			case EdgeType::up: edgeTypeStr = "up"; break;
+			case EdgeType::down: edgeTypeStr = "down"; break;
+		}
+
+		std::cout << "<- " << edgeTypeStr << std::endl;
+	}
 	
 	return 0;
 }

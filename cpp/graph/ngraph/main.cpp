@@ -14,6 +14,12 @@
 #include "in_out_graph.h"
 #include "adjacency_graph.hpp"
 
+namespace node_centric {
+
+#include "node_centric.hpp"
+
+}
+
 static unsigned int counter = 0;
 
 generic::bidirectional_map<in_out_graph::edge_type, std::string> edgetostring 
@@ -841,6 +847,39 @@ int test_adjacency_graph()
 
 }
 
+int test_node_centric_graph()
+{
+	using namespace node_centric;
+
+	using graph = node_centric_graph<std::string, int>;
+	graph g;
+
+	// add nodes
+	//graph::nc_node * a = new graph::nc_node { {}, {}, "asdfasdf" };
+	graph::nc_node * b = new graph::nc_node();
+
+	graph::nc_node * a = g.create_node("asdfasdfasdf");
+	graph::nc_node * c = g.create_node("utitynbvm");
+
+	//g.m_nodes.insert(std::unique_ptr<graph::nc_node>(a));
+	g.m_nodes.insert(std::unique_ptr<graph::nc_node>(b));
+
+	// add edges
+	graph::nc_edge * u = new graph::nc_edge();
+	u->source = a;
+	u->target = b;
+
+	g.m_edges.insert(std::unique_ptr<graph::nc_edge>(u));
+
+	// connect nodes with edge
+	a->outgoing.insert(u);
+	b->incoming.insert(u);
+
+	graph::nc_edge * v = g.create_edge(a, c, 7);
+
+	return 0;
+}
+
 int main()
 {
 	if (false)
@@ -849,8 +888,11 @@ int main()
 	if (false)
 		return test_in_out_graph();
 
-	if (true)
+	if (false)
 		return test_adjacency_graph();
+
+	if (true)
+		return test_node_centric_graph();
 
 	return 0;
 }
