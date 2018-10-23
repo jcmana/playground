@@ -4,6 +4,12 @@
 #include <set>
 #include <utility>
 
+/// \brief		Graph specialization for edge traversing and adjacenct enumeration.
+/// \desc		Graph specialization supporting:
+///					- fast incoming/outgoing edges access
+///					- directed edges
+///					- custom node property
+///					- custom edge property
 template <typename NodeProperty, typename EdgeProperty>
 struct node_centric_graph
 {
