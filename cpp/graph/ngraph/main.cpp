@@ -855,27 +855,40 @@ int test_node_centric_graph()
 	graph g;
 
 	// add nodes
-	//graph::nc_node * a = new graph::nc_node { {}, {}, "asdfasdf" };
-	graph::nc_node * b = new graph::nc_node();
-
-	graph::nc_node * a = g.create_node("asdfasdfasdf");
-	graph::nc_node * c = g.create_node("utitynbvm");
-
-	//g.m_nodes.insert(std::unique_ptr<graph::nc_node>(a));
-	g.m_nodes.insert(std::unique_ptr<graph::nc_node>(b));
+	graph::nc_node * a = g.create_node("node a");
+	graph::nc_node * b = g.create_node("node b");
+	graph::nc_node * c = g.create_node("node c");
 
 	// add edges
-	graph::nc_edge * u = new graph::nc_edge();
-	u->source = a;
-	u->target = b;
-
-	g.m_edges.insert(std::unique_ptr<graph::nc_edge>(u));
-
-	// connect nodes with edge
-	a->outgoing.insert(u);
-	b->incoming.insert(u);
-
+	graph::nc_edge * u = g.create_edge(a, b, 3);
 	graph::nc_edge * v = g.create_edge(a, c, 7);
+
+	// find node with property
+	auto & res = std::find_if(g.nodes.begin(), g.nodes.end(), [](const auto & ptr) -> bool
+	{
+		return (ptr->property == "node a");
+	});
+
+	if (res != g.nodes.end())
+	{
+		std::cout << "found " << res->get()->property << std::endl;
+	}
+
+	// print graph
+	for (const auto & node_it : g.nodes)
+	{
+		std::cout << node_it->property << std::endl;
+
+		for (const auto & edge_it : node_it->incoming)
+		{
+			std::cout << "   <- " << edge_it->source->property << "(" << edge_it->property << ")" << std::endl;
+		}
+
+		for (const auto & edge_it : node_it->outgoing)
+		{
+			std::cout << "   -> " << edge_it->target->property << "(" << edge_it->property << ")" << std::endl;
+		}
+	}
 
 	return 0;
 }

@@ -28,20 +28,20 @@ public:
 	nc_node * create_node(N node_property)
 	{
 		auto * node_ptr = new nc_node { {},{}, node_property };
-		m_nodes.insert(std::unique_ptr<nc_node>(node_ptr));
+		nodes.insert(std::unique_ptr<nc_node>(node_ptr));
 		return node_ptr;
 	}
 
-	nc_edge * create_edge(nc_node * source, nc_node * target, E edge_property)
+	nc_edge * create_edge(nc_node * source_node, nc_node * target_node, E edge_property)
 	{
-		auto * edge_ptr = new nc_edge { source, target, edge_property };
-		m_edges.insert(std::unique_ptr<nc_edge>(edge_ptr));
-		source->outgoing.insert(edge_ptr);
-		target->incoming.insert(edge_ptr);
+		auto * edge_ptr = new nc_edge { source_node, target_node, edge_property };
+		edges.insert(std::unique_ptr<nc_edge>(edge_ptr));
+		source_node->outgoing.insert(edge_ptr);
+		target_node->incoming.insert(edge_ptr);
 		return edge_ptr;
 	}
 
 public:
-	std::set<std::unique_ptr<nc_node>> m_nodes;
-	std::set<std::unique_ptr<nc_edge>> m_edges;
+	std::set<std::unique_ptr<nc_node>> nodes;
+	std::set<std::unique_ptr<nc_edge>> edges;
 };
