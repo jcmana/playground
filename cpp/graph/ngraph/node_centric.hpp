@@ -4,9 +4,8 @@
 #include <set>
 
 template <typename N, typename E>
-class node_centric_graph
+struct node_centric_graph
 {
-public:
 	class nc_node;
 	class nc_edge;
 
@@ -24,7 +23,6 @@ public:
 		E property;
 	};
 
-public:
 	nc_node * create_node(N node_property)
 	{
 		auto * node_ptr = new nc_node { {},{}, node_property };
@@ -41,7 +39,6 @@ public:
 		return edge_ptr;
 	}
 
-public:
 	std::set<std::unique_ptr<nc_node>> nodes;
 	std::set<std::unique_ptr<nc_edge>> edges;
 };
