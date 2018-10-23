@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{8784D814-F30A-4B0D-8EB9-C5E76899B1A7}</ProjectGuid>
-    <RootNamespace>compare_adjacency_graph</RootNamespace>
+    <ProjectGuid>{D3692E71-DEF7-4909-A3DA-B707E12E8A8F}</ProjectGuid>
+    <RootNamespace>node_centric_graph</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -110,10 +110,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
+    <ClInclude Include="node_centric.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="adjacency_graph.hpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

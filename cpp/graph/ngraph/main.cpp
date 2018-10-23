@@ -14,12 +14,6 @@
 #include "in_out_graph.h"
 #include "adjacency_graph.hpp"
 
-namespace node_centric {
-
-#include "node_centric.hpp"
-
-}
-
 static unsigned int counter = 0;
 
 generic::bidirectional_map<in_out_graph::edge_type, std::string> edgetostring 
@@ -847,78 +841,6 @@ int test_adjacency_graph()
 
 }
 
-int test_node_centric_graph()
-{
-	using namespace node_centric;
-
-	if (false)
-	{
-		using graph = node_centric_graph<std::string, int>;
-		graph g;
-
-		// add nodes
-		graph::nc_node * a = g.create_node("node a");
-		graph::nc_node * b = g.create_node("node b");
-		graph::nc_node * c = g.create_node("node c");
-
-		// add edges
-		graph::nc_edge * u = g.create_edge(a, b, 3);
-		graph::nc_edge * v = g.create_edge(a, c, 7);
-
-		// find node with property
-		auto & res = std::find_if(g.nodes.begin(), g.nodes.end(), [](const auto & ptr) -> bool
-		{
-			return (ptr->property == "node a");
-		});
-
-		if (res != g.nodes.end())
-		{
-			std::cout << "found " << res->get()->property << std::endl;
-		}
-
-		// print graph
-		for (const auto & node_it : g.nodes)
-		{
-			std::cout << node_it->property << std::endl;
-
-			for (const auto & edge_it : node_it->incoming)
-			{
-				std::cout << "   <- " << edge_it->source->property << "(" << edge_it->property << ")" << std::endl;
-			}
-
-			for (const auto & edge_it : node_it->outgoing)
-			{
-				std::cout << "   -> " << edge_it->target->property << "(" << edge_it->property << ")" << std::endl;
-			}
-		}
-	}
-
-	if (true)
-	{
-		struct element
-		{
-			explicit element(int t) : type(t) {}
-			int type;
-		};
-
-		struct polygon :
-			element
-		{
-			explicit polygon(double p) : element(3), point(p) {}
-			double point;
-		};
-
-		using sp_graph = node_centric_graph<std::shared_ptr<element>, int>;
-		sp_graph f;
-
-		auto * a = f.create_node(std::make_shared<polygon>(2.5));
-		std::shared_ptr<polygon> p = std::static_pointer_cast<polygon>(a->property);
-		std::cout << "polygon point = " << p->point << std::endl;
-	}
-
-	return 0;
-}
-
 int main()
 {
 	if (false)
@@ -929,9 +851,6 @@ int main()
 
 	if (false)
 		return test_adjacency_graph();
-
-	if (true)
-		return test_node_centric_graph();
 
 	return 0;
 }

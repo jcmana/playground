@@ -35,8 +35,5 @@
     <ClInclude Include="adjacency_graph.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="node_centric.hpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

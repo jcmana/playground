@@ -123,7 +123,6 @@
     <ClInclude Include="adjacency_graph_node.hpp" />
     <ClInclude Include="in_out_graph.h" />
     <ClInclude Include="node.h" />
-    <ClInclude Include="node_centric.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
