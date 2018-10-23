@@ -2,50 +2,79 @@
 
 #include <memory>
 #include <set>
+#include <utility>
 
-template <typename N, typename E>
+template <typename NodeProperty, typename EdgeProperty>
 struct node_centric_graph
 {
-	class nc_node;
-	class nc_edge;
+	class node;
+	class edge;
 
-	struct nc_node
+	struct node
 	{
-		std::set<nc_edge *> outgoing;
-		std::set<nc_edge *> incoming;
-		N property;
+		template <typename ... Args>
+		node(Args && ... node_property_args);
+
+		std::set<edge *> outgoing;
+		std::set<edge *> incoming;
+		NodeProperty property;
 	};
 
-	struct nc_edge
+	struct edge
 	{
-		nc_node * source;
-		nc_node * target;
-		E property;
+		template <typename ... Args>
+		edge(node * source_node, node * target_node, Args && ... edge_property_args);
+
+		node * source;
+		node * target;
+		EdgeProperty property;
 	};
 
-	nc_node * create_node(N node_property);
-	nc_edge * create_edge(nc_node * source_node, nc_node * target_node, E edge_property);
+	template <typename ... Args>
+	node * create_node(Args && ... node_property_args);
 
-	std::set<std::unique_ptr<nc_node>> nodes;
-	std::set<std::unique_ptr<nc_edge>> edges;
+	template <typename ... Args>
+	edge * create_edge(node * source_node, node * target_node, Args && ... edge_property_args);
+
+	std::set<std::unique_ptr<node>> nodes;
+	std::set<std::unique_ptr<edge>> edges;
 };
 
-
-template <typename N, typename E>
-typename node_centric_graph<N, E>::nc_node * 
-node_centric_graph<N, E>::create_node(N node_property)
+template <typename NodeProperty, typename EdgeProperty>
+template <typename ... Args>
+node_centric_graph<NodeProperty, EdgeProperty>::node::node(Args && ... node_property_args) :
+	outgoing(),
+	incoming(),
+	property(std::forward<Args>(node_property_args)...)
 {
-	auto * node_ptr = new nc_node { {},{}, node_property };
-	nodes.insert(std::unique_ptr<nc_node>(node_ptr));
+}
+
+template <typename NodeProperty, typename EdgeProperty>
+template <typename ... Args>
+node_centric_graph<NodeProperty, EdgeProperty>::edge::edge(node * source_node, node * target_node, Args && ... edge_property_args) :
+	source(source_node),
+	target(target_node),
+	property(std::forward<Args>(edge_property_args)...)
+{
+}
+
+template <typename NodeProperty, typename EdgeProperty>
+template <typename ... Args>
+typename node_centric_graph<NodeProperty, EdgeProperty>::node *
+node_centric_graph<NodeProperty, EdgeProperty>::create_node(Args && ... node_property_args)
+{
+	auto * node_ptr = new node(std::forward<Args>(node_property_args)...);
+	nodes.insert(std::unique_ptr<node>(node_ptr));
 	return node_ptr;
 }
 
-template <typename N, typename E>
-typename node_centric_graph<N, E>::nc_edge * 
-node_centric_graph<N, E>::create_edge(nc_node * source_node, nc_node * target_node, E edge_property)
+template <typename NodeProperty, typename EdgeProperty>
+template <typename ... Args>
+typename node_centric_graph<NodeProperty, EdgeProperty>::edge *
+node_centric_graph<NodeProperty, EdgeProperty>::create_edge(node * source_node, node * target_node, Args && ... edge_property_args)
 {
-	auto * edge_ptr = new nc_edge { source_node, target_node, edge_property };
-	edges.insert(std::unique_ptr<nc_edge>(edge_ptr));
+	auto * edge_ptr = new edge(source_node, target_node, std::forward<Args>(edge_property_args)...);
+	edges.insert(std::unique_ptr<edge>(edge_ptr));
 	source_node->outgoing.insert(edge_ptr);
 	target_node->incoming.insert(edge_ptr);
 	return edge_ptr;
