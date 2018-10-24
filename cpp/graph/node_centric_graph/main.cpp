@@ -3,12 +3,18 @@
 #include <algorithm>
 #include <string>
 
+#include "../../generic/generic/bidirectional_map.h"
 #include "node_centric.hpp"
 
 template <typename Node>
-struct iterator
+class flood_iterator
 {
-	iterator(Node * start)
+public:
+	flood_iterator()
+	{
+	}
+
+	flood_iterator(Node * start)
 	{
 		stack.push_back(start);
 	}
@@ -40,8 +46,79 @@ struct iterator
 		return (stack.size() == 0);
 	}
 
+public:
+	bool operator ==(flood_iterator & other)
+	{
+		return (stack == other.stack);
+	}
+
+	bool operator !=(flood_iterator & other)
+	{
+		return !(operator ==(other));
+	}
+
+	flood_iterator & operator ++()
+	{
+		next();
+		return *this;
+	}
+
+	Node * operator ->()
+	{
+		return get();
+	}
+
+	Node operator *()
+	{
+		return get();
+	}
+
+private:
 	std::list<Node *> stack;
 };
+
+template <typename Node>
+class leaf_iterator
+{
+public:
+	leaf_iterator()
+	{
+
+	}
+
+	void next()
+	{
+
+	}
+
+	Node * get()
+	{
+
+	}
+
+	bool end()
+	{
+
+	}
+};
+
+template <typename Graph>
+void leaves(const Graph & g)
+{
+	auto it = g.nodes.begin();
+
+	while (it != g.nodes.end())
+	{
+		auto & node = *it;
+
+		if (node->outgoing.size() == 0)
+		{
+			std::cout << node->property << std::endl;
+		}
+
+		it++;
+	}
+}
 
 template <typename Node>
 void flood(Node * start_node)
@@ -76,7 +153,18 @@ int main()
 		using graph = node_centric_graph<std::string, int>;
 		graph g;
 
-		static constexpr int EDGE_DOWN = 1;
+		static constexpr int EDGE_UP = 1;
+		static constexpr int EDGE_DOWN = 2;
+		static constexpr int EDGE_ABOVE = 3;
+		static constexpr int EDGE_BELOW = 4;
+
+		generic::bidirectional_map<int, std::string> edge_type_map(
+		{
+			{ EDGE_UP, "up" },
+			{ EDGE_DOWN, "down" },
+			{ EDGE_ABOVE, "above" },
+			{ EDGE_BELOW, "below" },
+		});
 
 		// add nodes
 		graph::node * struct_1 = g.create_node("struct_1");
@@ -113,6 +201,7 @@ int main()
 
 		g.create_edge(ref_1, struct_3, EDGE_DOWN);
 		g.create_edge(ref_2, struct_2, EDGE_DOWN);
+		g.create_edge(ref_3, struct_3, EDGE_DOWN);
 		g.create_edge(ref_4, struct_4, EDGE_DOWN);
 
 		// find node with property
@@ -146,15 +235,16 @@ int main()
 		}
 
 		// print graph (using flood iterator)
-		if (true)
+		if (false)
 		{
-			iterator<graph::node> it(struct_1);
+			flood_iterator<graph::node> it(struct_1);
 			while (it.end() == false)
 			{
 				graph::node * node_ptr = it.get();
 
 				std::cout << node_ptr->property << std::endl;
 
+				/*
 				for (graph::edge * edge_ptr : node_ptr->incoming)
 				{
 					std::cout << "   <- " << edge_ptr->source->property << std::endl;
@@ -164,12 +254,103 @@ int main()
 				{
 					std::cout << "   -> " << edge_ptr->target->property << std::endl;
 				}
+				*/
 
 				it.next();
 			}
 		}
 
-		std::cout << std::endl;
+		// print graph (using flood iterator with iterator operators)
+		if (false)
+		{
+			std::list<graph::node> stack;
+
+			flood_iterator<graph::node> it(struct_1);
+			flood_iterator<graph::node> it_end;
+
+			// TODO: ideal form is:
+			// for (graph::node * node_ptr : g.flood(struct_1))
+			while (it != it_end)
+			{
+				std::cout << it->property << std::endl;
+
+				for (graph::edge * edge_ptr : it->incoming)
+				{
+					std::cout << "   <- " << edge_ptr->source->property << std::endl;
+				}
+
+				for (graph::edge * edge_ptr : it->outgoing)
+				{
+					std::cout << "   -> " << edge_ptr->target->property << std::endl;
+				}
+
+				++it;
+			}
+		}
+
+		// inline flood scene generation
+		if (true)
+		{
+			struct stack_item
+			{
+				graph::node * curr_model_node;
+				graph::node * prev_scene_node;
+			};
+
+			std::list<stack_item> stack;
+
+			// initilalize with starting nodes
+			stack.push_back({ struct_1, nullptr });
+
+			while (stack.size())
+			{
+				auto * curr_model_node = stack.front().curr_model_node;
+				auto * prev_scene_node = stack.front().prev_scene_node;
+
+				// create current scene node
+				auto * curr_scene_node = g.create_node("scene_" + curr_model_node->property);
+
+				// edge to the model node
+				if (curr_model_node != nullptr)
+				{
+					g.create_edge(curr_scene_node, curr_model_node, EDGE_BELOW);
+				}
+
+				// edge to the previous (parent) scene node
+				if (prev_scene_node != nullptr)
+				{
+					g.create_edge(prev_scene_node, curr_scene_node, EDGE_DOWN);
+				}
+
+				for (auto outgoing_edge : curr_model_node->outgoing)
+				{
+					auto edge_target_node = outgoing_edge->target;
+					auto edge_type = outgoing_edge->property;
+
+					// add stack item for next recursion
+					stack.push_back({ edge_target_node, curr_scene_node });
+				}
+
+				// remove this node from queue
+				stack.pop_front();
+			}
+		}
+
+		// print graph
+		if (true) for (const auto & node_it : g.nodes)
+		{
+			std::cout << node_it->property << std::endl;
+
+			for (const auto & edge_it : node_it->incoming)
+			{
+				std::cout << "   <- " << edge_it->source->property << "(" << edge_type_map[edge_it->property] << ")" << std::endl;
+			}
+
+			for (const auto & edge_it : node_it->outgoing)
+			{
+				std::cout << "   -> " << edge_it->target->property << "(" << edge_type_map[edge_it->property] << ")" << std::endl;
+			}
+		}
 	}
 
 	if (false)
