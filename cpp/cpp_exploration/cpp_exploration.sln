@@ -41,6 +41,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "__asm", "asm\asm.vcxproj", 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pointer", "pointer\pointer.vcxproj", "{E42C0E97-F860-4A89-8655-CB45203FDBEF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "std_allocator", "std_allocator\std_allocator.vcxproj", "{77DA4511-DBB6-40DB-A3ED-F24F094357FC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -201,6 +203,14 @@ Global
 		{E42C0E97-F860-4A89-8655-CB45203FDBEF}.Release|x64.Build.0 = Release|x64
 		{E42C0E97-F860-4A89-8655-CB45203FDBEF}.Release|x86.ActiveCfg = Release|Win32
 		{E42C0E97-F860-4A89-8655-CB45203FDBEF}.Release|x86.Build.0 = Release|Win32
+		{77DA4511-DBB6-40DB-A3ED-F24F094357FC}.Debug|x64.ActiveCfg = Debug|x64
+		{77DA4511-DBB6-40DB-A3ED-F24F094357FC}.Debug|x64.Build.0 = Debug|x64
+		{77DA4511-DBB6-40DB-A3ED-F24F094357FC}.Debug|x86.ActiveCfg = Debug|Win32
+		{77DA4511-DBB6-40DB-A3ED-F24F094357FC}.Debug|x86.Build.0 = Debug|Win32
+		{77DA4511-DBB6-40DB-A3ED-F24F094357FC}.Release|x64.ActiveCfg = Release|x64
+		{77DA4511-DBB6-40DB-A3ED-F24F094357FC}.Release|x64.Build.0 = Release|x64
+		{77DA4511-DBB6-40DB-A3ED-F24F094357FC}.Release|x86.ActiveCfg = Release|Win32
+		{77DA4511-DBB6-40DB-A3ED-F24F094357FC}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

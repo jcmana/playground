@@ -3,6 +3,12 @@
 #include <algorithm>
 #include <string>
 
+#ifdef _DEBUG
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#endif
+
 #include "../../generic/generic/bidirectional_map.h"
 #include "node_centric.hpp"
 
@@ -148,7 +154,7 @@ void flood(Node * start_node)
 
 int main()
 {
-	if (false)
+	if (true)
 	{
 		using graph = node_centric_graph<std::string, int>;
 		graph g;
@@ -207,14 +213,14 @@ int main()
 		// find node with property
 		if (false)
 		{
-			auto & res = std::find_if(g.nodes.begin(), g.nodes.end(), [](const auto & ptr) -> bool
+			auto res = std::find_if(g.nodes.begin(), g.nodes.end(), [](const auto & ptr) -> bool
 			{
 				return (ptr->property == "node a");
 			});
 
 			if (res != g.nodes.end())
 			{
-				std::cout << "found " << res->get()->property << std::endl;
+				std::cout << "found " << (*res)->property << std::endl;
 			}
 		}
 
@@ -353,7 +359,7 @@ int main()
 		}
 	}
 
-	if (false)
+	if (true)
 	{
 		struct element
 		{
@@ -418,23 +424,28 @@ int main()
 		}
 
 		// Find edge with minimal property:
-		auto it_min = std::min_element(g.edges.begin(), g.edges.end(), [](const std::unique_ptr<graph::edge> & a, const std::unique_ptr<graph::edge> & b) -> bool
+		auto it_min = std::min_element(g.edges.begin(), g.edges.end(), [](const graph::edge * a, const graph::edge * b) -> bool
 		{
 			return (a->property > b->property);
 		});
 
 		// Find node with specific property and create edge from it:
-		auto it_find = std::find_if(g.nodes.begin(), g.nodes.end(), [](const auto & node) -> bool
+		auto it_find = std::find_if(g.nodes.begin(), g.nodes.end(), [](const auto * node) -> bool
 		{
 			return ("a" == node->property);
 		});
 
 		if (it_find != g.nodes.end())
 		{
-			g.create_edge(it_find->get(), node_c, 7);
+			g.create_edge(*it_find, node_c, 7);
 		}
-
 	}
 
-	std::getchar(); return 0;
+	//std::getchar(); 
+	
+#ifdef _DEBUG
+	_CrtDumpMemoryLeaks();
+#endif
+
+	return 0;
 }
