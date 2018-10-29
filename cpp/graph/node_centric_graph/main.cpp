@@ -148,7 +148,7 @@ void flood(Node * start_node)
 
 int main()
 {
-	if (true)
+	if (false)
 	{
 		using graph = node_centric_graph<std::string, int>;
 		graph g;
@@ -392,6 +392,48 @@ int main()
 			polygon * p = static_cast<polygon *>(a->property.get());
 			std::cout << "polygon point = " << p->point_a << std::endl;
 		}
+	}
+
+	if (true)
+	{
+		// Create the graph object with required properties (std::string node property, int edge property)
+		using graph = node_centric_graph<std::string, int>;
+		graph g;
+
+		// Create some nodes:
+		graph::node * node_a = g.create_node("a");
+		graph::node * node_b = g.create_node("b");
+		graph::node * node_c = g.create_node("c");
+
+		// Create edges between nodes:
+		graph::edge * edge_ab = g.create_edge(node_a, node_b, 23);
+		graph::edge * edge_bc = g.create_edge(node_b, node_c, 27);
+		graph::edge * edge_cb = g.create_edge(node_c, node_b, 6);
+
+		// Print all nodes:
+		std::cout << "Graph nodes:" << std::endl;
+		for (auto & node : g.nodes)
+		{
+			std::cout << node->property << std::endl;
+		}
+
+		// Find edge with minimal property:
+		auto it_min = std::min_element(g.edges.begin(), g.edges.end(), [](const std::unique_ptr<graph::edge> & a, const std::unique_ptr<graph::edge> & b) -> bool
+		{
+			return (a->property > b->property);
+		});
+
+		// Find node with specific property and create edge from it:
+		auto it_find = std::find_if(g.nodes.begin(), g.nodes.end(), [](const auto & node) -> bool
+		{
+			return ("a" == node->property);
+		});
+
+		if (it_find != g.nodes.end())
+		{
+			g.create_edge(it_find->get(), node_c, 7);
+		}
+
 	}
 
 	std::getchar(); return 0;
