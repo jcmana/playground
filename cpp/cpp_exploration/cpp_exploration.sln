@@ -43,6 +43,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pointer", "pointer\pointer.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "constructor_exception", "constructor_exception\constructor_exception.vcxproj", "{C9E516C7-261D-4F8F-A4E4-23BC61246CF8}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "std_allocator", "std_allocator\std_allocator.vcxproj", "{0B7C1BA5-0BDD-474F-8300-1C8F6EF1FFEA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -211,6 +213,14 @@ Global
 		{C9E516C7-261D-4F8F-A4E4-23BC61246CF8}.Release|x64.Build.0 = Release|x64
 		{C9E516C7-261D-4F8F-A4E4-23BC61246CF8}.Release|x86.ActiveCfg = Release|Win32
 		{C9E516C7-261D-4F8F-A4E4-23BC61246CF8}.Release|x86.Build.0 = Release|Win32
+		{0B7C1BA5-0BDD-474F-8300-1C8F6EF1FFEA}.Debug|x64.ActiveCfg = Debug|x64
+		{0B7C1BA5-0BDD-474F-8300-1C8F6EF1FFEA}.Debug|x64.Build.0 = Debug|x64
+		{0B7C1BA5-0BDD-474F-8300-1C8F6EF1FFEA}.Debug|x86.ActiveCfg = Debug|Win32
+		{0B7C1BA5-0BDD-474F-8300-1C8F6EF1FFEA}.Debug|x86.Build.0 = Debug|Win32
+		{0B7C1BA5-0BDD-474F-8300-1C8F6EF1FFEA}.Release|x64.ActiveCfg = Release|x64
+		{0B7C1BA5-0BDD-474F-8300-1C8F6EF1FFEA}.Release|x64.Build.0 = Release|x64
+		{0B7C1BA5-0BDD-474F-8300-1C8F6EF1FFEA}.Release|x86.ActiveCfg = Release|Win32
+		{0B7C1BA5-0BDD-474F-8300-1C8F6EF1FFEA}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
