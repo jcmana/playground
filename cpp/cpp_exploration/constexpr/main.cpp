@@ -1,4 +1,3 @@
-/*constexpr.c */
 #include<iostream> 
 
 constexpr long int fib(int n)
@@ -9,7 +8,7 @@ constexpr long int fib(int n)
 int main()
 {
 	// value of res is computed at compile time
-	const long int res = fib(30);
+	const long int res = fib(10);
 	std::cout << res;
 	return 0;
 }
