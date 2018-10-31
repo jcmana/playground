@@ -16,6 +16,10 @@
 /// as underlaying structure holding the information about nodes and edges and allows basic iteration
 /// over those.
 ///
+///	Nodes and edges are managed using `node_centric_graph::node` and `node_centric_graph::edge` classes.
+/// These are created exclusivelly by calling `create_node()` or `create_edge()` methods and their lifetime
+/// is managed by `node_centric_graph` class (meaning, it is illegal to delete these pointers manually).
+///
 ///	\par Example:
 /// \code
 /// // Include graph header
@@ -107,16 +111,18 @@ struct node_centric_graph
 	};
 
 	/// \brief		Creates node with property.
-	/// \param[in]	...				Arguments for property constructor.
-	/// \returns	Pointer to the created node holding the property.
+	/// \param[in]	...				Arguments for node property constructor.
+	/// \returns	Pointer to the created node holding the property. Pointed object is managed
+	///				internally and has guaranteed same lifetime as the owning node_centric_graph object.
 	template <typename ... Args>
 	node * create_node(Args && ... node_property_args);
 
 	/// \brief		Creates edge from source to target node with property.
 	/// \param[in]	source_node		Edge source node (returned pointer from create_node(...) call).
 	/// \param[in]	target_node		Edge target node (returned pointer from create_node(...) call).
-	/// \param[in]	...				Arguments for property constructor.
-	/// \returns	Pointer to the created holding holding the property and connected nodes.
+	/// \param[in]	...				Arguments for edge property constructor.
+	/// \returns	Pointer to the created holding holding the property and connected nodes. Pointed object
+	///				is managed internally and has guaranteed same lifetime as the owning `node_centric_graph` object.
 	template <typename ... Args>
 	edge * create_edge(node * source_node, node * target_node, Args && ... edge_property_args);
 
