@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include <set>
 #include <utility>
 
@@ -48,20 +47,20 @@
 /// }
 /// 
 /// // Find edge with minimal property:
-/// auto it_min = std::min_element(g.edges.begin(), g.edges.end(), [](const std::unique_ptr<graph::edge> & a, const std::unique_ptr<graph::edge> & b) -> bool
+/// auto it_min = std::min_element(g.edges.begin(), g.edges.end(), [](const graph::edge * a, const graph::edge * b) -> bool
 /// {
 /// 	return (a->property > b->property);
 /// });
 ///
 ///	// Find node with specific property and create edge from it:
-/// auto it_find = std::find_if(g.nodes.begin(), g.nodes.end(), [](const std::unique_ptr<graph::node> & node) -> bool
+/// auto it_find = std::find_if(g.nodes.begin(), g.nodes.end(), [](const graph::node * node) -> bool
 /// {
 /// 	return ("a" == node->property);
 /// });
 /// 
 /// if (it_find != g.nodes.end())
 /// {
-/// 	g.create_edge(it_find->get(), node_c, 7);
+/// 	g.create_edge(*it_find, node_c, 7);
 /// }
 /// \endcode
 template <typename NodeProperty, typename EdgeProperty>
@@ -126,10 +125,13 @@ struct node_centric_graph
 	template <typename ... Args>
 	edge * create_edge(node * source_node, node * target_node, Args && ... edge_property_args);
 
-	/// \brief		Set of graph nodes stored in std::unique_ptr.
-	std::set<std::unique_ptr<node>> nodes;
-	/// \brief		Set of graph edges stored in std::unique_ptr.
-	std::set<std::unique_ptr<edge>> edges;
+	/// \brief		Deletes all nodes and edges and their properties.
+	~node_centric_graph();
+
+	/// \brief		Set of graph nodes.
+	std::set<node *> nodes;
+	/// \brief		Set of graph edges.
+	std::set<edge *> edges;
 };
 
 template <typename NodeProperty, typename EdgeProperty>
@@ -156,7 +158,7 @@ typename node_centric_graph<NodeProperty, EdgeProperty>::node *
 node_centric_graph<NodeProperty, EdgeProperty>::create_node(Args && ... node_property_args)
 {
 	auto * node_ptr = new node(std::forward<Args>(node_property_args) ...);
-	nodes.insert(std::unique_ptr<node>(node_ptr));
+	nodes.insert(node_ptr);
 	return node_ptr;
 }
 
@@ -166,8 +168,15 @@ typename node_centric_graph<NodeProperty, EdgeProperty>::edge *
 node_centric_graph<NodeProperty, EdgeProperty>::create_edge(node * source_node, node * target_node, Args && ... edge_property_args)
 {
 	auto * edge_ptr = new edge(source_node, target_node, std::forward<Args>(edge_property_args) ...);
-	edges.insert(std::unique_ptr<edge>(edge_ptr));
+	edges.insert(edge_ptr);
 	source_node->outgoing.insert(edge_ptr);
 	target_node->incoming.insert(edge_ptr);
 	return edge_ptr;
+}
+
+template <typename NodeProperty, typename EdgeProperty>
+node_centric_graph<NodeProperty, EdgeProperty>::~node_centric_graph()
+{
+	for (auto & it_node : nodes) delete it_node;
+	for (auto & it_edge : edges) delete it_edge;
 }
