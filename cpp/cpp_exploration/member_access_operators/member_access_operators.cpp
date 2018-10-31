@@ -27,6 +27,16 @@ struct iterator
 	iterator_base itb;
 };
 
+struct leaf_iterator
+{
+	iterator & operator->()
+	{
+		return it;
+	}
+
+	iterator it;
+};
+
 struct pair
 {
 	double * first;
@@ -61,9 +71,11 @@ int main()
 		// for custom types:
 		if (true)
 		{
-			iterator it;
+			leaf_iterator lit;
 
-			std::cout << it->a << std::endl;
+			// leaf_iterator::operator->(), iterator::operator->(), iterator_base::operator->(), iterator_base::a
+
+			std::cout << lit->a << std::endl;
 		}
 	}
 
