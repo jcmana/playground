@@ -1,6 +1,6 @@
 #pragma once
 
-#include <set>
+#include <vector>
 #include <utility>
 
 /// \brief		Directed graph with node and edges properties.
@@ -79,9 +79,9 @@ struct node_centric_graph
 
 	public:
 		/// \brief		Set of outgoing edges.
-		std::set<edge *> outgoing;
+		std::vector<edge *> outgoing;
 		/// \brief		Set of incoming edges.		
-		std::set<edge *> incoming;
+		std::vector<edge *> incoming;
 		/// \brief		Node property.
 		NodeProperty property;
 
@@ -129,9 +129,9 @@ struct node_centric_graph
 	~node_centric_graph();
 
 	/// \brief		Set of graph nodes.
-	std::set<node *> nodes;
+	std::vector<node *> nodes;
 	/// \brief		Set of graph edges.
-	std::set<edge *> edges;
+	std::vector<edge *> edges;
 };
 
 template <typename NodeProperty, typename EdgeProperty>
@@ -158,7 +158,7 @@ typename node_centric_graph<NodeProperty, EdgeProperty>::node *
 node_centric_graph<NodeProperty, EdgeProperty>::create_node(Args && ... node_property_args)
 {
 	auto * node_ptr = new node(std::forward<Args>(node_property_args) ...);
-	nodes.insert(node_ptr);
+	nodes.push_back(node_ptr);
 	return node_ptr;
 }
 
@@ -168,9 +168,9 @@ typename node_centric_graph<NodeProperty, EdgeProperty>::edge *
 node_centric_graph<NodeProperty, EdgeProperty>::create_edge(node * source_node, node * target_node, Args && ... edge_property_args)
 {
 	auto * edge_ptr = new edge(source_node, target_node, std::forward<Args>(edge_property_args) ...);
-	edges.insert(edge_ptr);
-	source_node->outgoing.insert(edge_ptr);
-	target_node->incoming.insert(edge_ptr);
+	edges.push_back(edge_ptr);
+	source_node->outgoing.push_back(edge_ptr);
+	target_node->incoming.push_back(edge_ptr);
 	return edge_ptr;
 }
 
