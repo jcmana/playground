@@ -11,7 +11,10 @@
 
 #include "../../generic/generic/bidirectional_map.h"
 #include "node_centric.hpp"
+#include "node_centric_iterators.hpp"
+#include "node_centric_view.hpp"
 
+/*
 template <typename Node>
 class flood_iterator
 {
@@ -22,40 +25,13 @@ public:
 
 	flood_iterator(Node * start)
 	{
-		stack.push_back(start);
-	}
-
-	void next()
-	{
-		auto current_node = stack.front();
-
-		for (auto outgoing_edge : current_node->outgoing)
-		{
-			auto edge_target_node = outgoing_edge->target;
-			auto edge_type = outgoing_edge->property;
-
-			// add stack record for next recursion
-			stack.push_back(edge_target_node);
-		}
-
-		// remove this node from queue
-		stack.pop_front();
-	}
-
-	Node * get()
-	{
-		return stack.front();
-	}
-
-	bool end()
-	{
-		return (stack.size() == 0);
+		m_stack.push_back(start);
 	}
 
 public:
 	bool operator ==(flood_iterator & other)
 	{
-		return (stack == other.stack);
+		return (m_stack == other.m_stack);
 	}
 
 	bool operator !=(flood_iterator & other)
@@ -65,48 +41,37 @@ public:
 
 	flood_iterator & operator ++()
 	{
-		next();
-		return *this;
+		auto current_node = m_stack.front();
+
+		for (auto outgoing_edge : current_node->outgoing)
+		{
+			auto edge_target_node = outgoing_edge->target;
+			auto edge_type = outgoing_edge->property;
+
+			// add m_stack record for next recursion
+			m_stack.push_back(edge_target_node);
+		}
+
+		// remove this node from queue
+		m_stack.pop_front();
+
+		return (*this);
 	}
 
 	Node * operator ->()
 	{
-		return get();
+		return m_stack.front();
 	}
 
-	Node operator *()
+	Node & operator *()
 	{
-		return get();
+		return m_stack.front();
 	}
 
 private:
-	std::list<Node *> stack;
+	std::list<Node *> m_stack;
 };
-
-template <typename Node>
-class leaf_iterator
-{
-public:
-	leaf_iterator()
-	{
-
-	}
-
-	void next()
-	{
-
-	}
-
-	Node * get()
-	{
-
-	}
-
-	bool end()
-	{
-
-	}
-};
+*/
 
 template <typename Graph>
 void leaves(const Graph & g)
@@ -143,13 +108,20 @@ void flood(Node * start_node)
 			auto edge_target_node = outgoing_edge->target;
 			auto edge_type = outgoing_edge->property;
 
-			// add stack record for next recursion
+			// add m_stack record for next recursion
 			stack.push_back(edge_target_node);
 		}
 
 		// remove this node from queue
 		stack.pop_front();
 	}
+}
+
+inline bool startswith(const std::string & text, const std::string & prefix)
+{
+	if (text.size() < prefix.size()) return false;
+	for (std::size_t n = 0; n < prefix.size(); ++n)	if (text[n] != prefix[n]) return false;
+	return true;
 }
 
 int main()
@@ -240,34 +212,8 @@ int main()
 			}
 		}
 
-		// print graph (using flood iterator)
-		if (false)
-		{
-			flood_iterator<graph::node> it(struct_1);
-			while (it.end() == false)
-			{
-				graph::node * node_ptr = it.get();
-
-				std::cout << node_ptr->property << std::endl;
-
-				/*
-				for (graph::edge * edge_ptr : node_ptr->incoming)
-				{
-					std::cout << "   <- " << edge_ptr->source->property << std::endl;
-				}
-
-				for (graph::edge * edge_ptr : node_ptr->outgoing)
-				{
-					std::cout << "   -> " << edge_ptr->target->property << std::endl;
-				}
-				*/
-
-				it.next();
-			}
-		}
-
 		// print graph (using flood iterator with iterator operators)
-		if (false)
+		if (true)
 		{
 			std::list<graph::node> stack;
 
@@ -275,9 +221,13 @@ int main()
 			flood_iterator<graph::node> it_end;
 
 			// TODO: ideal form is:
-			// for (graph::node * node_ptr : g.flood(struct_1))
-			while (it != it_end)
+			//for (graph::node * node_ptr : g.flood(struct_1))
+			//while (it != it_end)
+			for (; it != it_end; ++it)
 			{
+				// print only leaves
+				//if (startswith(it->property, "el_") == false) continue;
+
 				std::cout << it->property << std::endl;
 
 				for (graph::edge * edge_ptr : it->incoming)
@@ -289,13 +239,11 @@ int main()
 				{
 					std::cout << "   -> " << edge_ptr->target->property << std::endl;
 				}
-
-				++it;
 			}
 		}
 
 		// inline flood scene generation
-		if (true)
+		if (false)
 		{
 			struct stack_item
 			{
@@ -333,7 +281,7 @@ int main()
 					auto edge_target_node = outgoing_edge->target;
 					auto edge_type = outgoing_edge->property;
 
-					// add stack item for next recursion
+					// add m_stack item for next recursion
 					stack.push_back({ edge_target_node, curr_scene_node });
 				}
 
@@ -343,7 +291,7 @@ int main()
 		}
 
 		// print graph
-		if (true) for (const auto & node_it : g.nodes)
+		if (false) for (const auto & node_it : g.nodes)
 		{
 			std::cout << node_it->property << std::endl;
 
@@ -359,7 +307,7 @@ int main()
 		}
 	}
 
-	if (true)
+	if (false)
 	{
 		struct element
 		{
@@ -400,7 +348,7 @@ int main()
 		}
 	}
 
-	if (true)
+	if (false)
 	{
 		// Create the graph object with required properties (std::string node property, int edge property)
 		using graph = node_centric_graph<std::string, int>;
@@ -441,7 +389,12 @@ int main()
 		}
 	}
 
-	//std::getchar(); 
+	if (true)
+	{
+		node_centric_view<std::string, int> g;
+	}
+
+	std::getchar();
 	
 #ifdef _DEBUG
 	_CrtDumpMemoryLeaks();

@@ -64,8 +64,10 @@
 /// }
 /// \endcode
 template <typename NodeProperty, typename EdgeProperty>
-struct node_centric_graph
+class node_centric_graph
 {
+public:
+
 	class node;
 	class edge;
 
