@@ -126,7 +126,7 @@ inline bool startswith(const std::string & text, const std::string & prefix)
 
 int main()
 {
-	if (true)
+	if (false)
 	{
 		using graph = node_centric_graph<std::string, int>;
 		graph g;
@@ -391,10 +391,24 @@ int main()
 
 	if (true)
 	{
-		node_centric_view<std::string, int> g;
+		node_centric_view<std::string, int> gw;
+
+		auto it_a = gw.create_node("a");
+		auto it_b = gw.create_node("b");
+		auto it_c = gw.create_node("c");
+
+		gw.create_edge(it_a, it_b, 4);
+		gw.create_edge(it_a, it_c, 7);
+
+		for (auto it_edge : it_a.outgoing_edges())
+		{
+			std::cout << *it_edge << std::endl;
+		}
+
+		std::cout << std::endl;
 	}
 
-	std::getchar();
+	//std::getchar();
 	
 #ifdef _DEBUG
 	_CrtDumpMemoryLeaks();

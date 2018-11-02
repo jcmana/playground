@@ -1,6 +1,6 @@
 #pragma once
 
-template <typename Container, typename T>
+template <typename Container, typename Value>
 struct proxy_container
 {
 	struct proxy_iterator
@@ -16,9 +16,9 @@ struct proxy_container
 			return (*this);
 		}
 
-		T operator *()
+		Value operator *()
 		{
-			return T(*m_iterator);
+			return Value(*m_iterator);
 		}
 
 		bool operator ==(const proxy_iterator & other)
