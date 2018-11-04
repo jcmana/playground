@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{3F1EA60A-E3FE-49A6-89A8-B240179591EA}</ProjectGuid>
-    <RootNamespace>manualconstruction</RootNamespace>
+    <RootNamespace>operator_new</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

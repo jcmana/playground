@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2046
@@ -47,7 +47,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "std_allocator", "std_alloca
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "member_access_operators", "member_access_operators\member_access_operators.vcxproj", "{A456E7E4-B125-493E-B54E-25424C2FBB9A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "manual_construction", "manual_construction\manual_construction.vcxproj", "{3F1EA60A-E3FE-49A6-89A8-B240179591EA}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "operator_new", "operator_new\operator_new.vcxproj", "{3F1EA60A-E3FE-49A6-89A8-B240179591EA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
