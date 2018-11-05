@@ -1,3 +1,5 @@
+#include <cstdlib>
+
 #include <iostream>
 #include <string>
 #include <memory>
@@ -13,14 +15,14 @@ struct custom_construction
 	// operator new: memory allocation for requested size
 	void * operator new(std::size_t count)
 	{
-		std::cout << "custom_construction::operator new" << std::endl;
+		std::cout << "custom_construction::operator new()" << std::endl;
 		return std::malloc(count);
 	}
 
 	// placement operator new: in-place construction without memory allocation
 	void * operator new(std::size_t count, void * ptr)
 	{
-		std::cout << "custom_construction::operator new (with placement)" << std::endl;
+		std::cout << "custom_construction::operator new() (with placement)" << std::endl;
 		return ptr;
 	}
 
