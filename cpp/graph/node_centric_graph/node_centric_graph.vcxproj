@@ -112,6 +112,7 @@
   <ItemGroup>
     <ClInclude Include="node_centric.hpp" />
     <ClInclude Include="node_centric_iterators.hpp" />
+    <ClInclude Include="node_centric_view.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
