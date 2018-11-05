@@ -4,6 +4,12 @@
 #include <string>
 #include <memory>
 
+#ifdef _DEBUG
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#endif
+
 struct custom_construction
 {
 	custom_construction(const std::string & name) :
@@ -12,6 +18,11 @@ struct custom_construction
 	{
 		std::cout << "custom_construction::custom_construction()" << std::endl;
 	};
+
+	~custom_construction()
+	{
+		std::cout << "custom_construction::~custom_construction()" << std::endl;
+	}
 
 	// operator new: memory allocation for requested size
 	void * operator new(std::size_t count)
@@ -46,5 +57,17 @@ int main()
 
 	std::cout << cc_ptr->m_name << " : " << cc_ptr->m_value << std::endl;
 
-	std::getchar(); return 0;
+	// call the destructor manually
+	cc_ptr->~custom_construction();
+
+	// free manually allocated memory (destructor took care of inner allocations)
+	std::free(cc_ptr);
+
+#ifdef _DEBUG
+	// memory-leak check result
+	_CrtDumpMemoryLeaks();
+#endif
+
+	return 0;
+
 }
