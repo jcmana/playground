@@ -7,9 +7,10 @@
 struct custom_construction
 {
 	custom_construction(const std::string & name) :
-		m_name(name)
+		m_name(name),
+		m_value(16)
 	{
-		m_value = 16;
+		std::cout << "custom_construction::custom_construction()" << std::endl;
 	};
 
 	// operator new: memory allocation for requested size
