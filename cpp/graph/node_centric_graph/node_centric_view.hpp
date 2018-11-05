@@ -12,6 +12,7 @@ public:
 	class node_iterator;
 	class edge_iterator;
 
+	// viewed graph types
 	using graph = node_centric_graph<NodeProperty, EdgeProperty>;
 	using graph_node_type = typename graph::node;
 	using graph_edge_type = typename graph::edge;
@@ -24,6 +25,7 @@ public:
 	class node_iterator
 	{
 	public:
+		// constructor (by default initializes false state)
 		node_iterator(graph_node_type * node_ptr = nullptr);
 
 		node_iterator & follow(const EdgeProperty & edge_property);
@@ -32,6 +34,7 @@ public:
 		NodeProperty & operator *();
 		NodeProperty * operator ->();
 
+		// node edges proxy containers:
 		edge_container_type outgoing_edges();
 		//edge_container_type incoming_edges();
 
