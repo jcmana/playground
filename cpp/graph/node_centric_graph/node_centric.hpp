@@ -67,9 +67,11 @@ template <typename NodeProperty, typename EdgeProperty>
 class node_centric_graph
 {
 public:
-
 	class node;
 	class edge;
+
+	template <typename T>
+	using container_type = std::vector<T>;
 
 	/// \brief		Class holding the edge property and informations about connected nodes.
 	/// \note		Can be constructed only by calling node_centric_graph::create_edge(...) method. 
@@ -81,9 +83,9 @@ public:
 
 	public:
 		/// \brief		Set of outgoing edges.
-		std::vector<edge *> outgoing;
+		container_type<edge *> outgoing;
 		/// \brief		Set of incoming edges.		
-		std::vector<edge *> incoming;
+		container_type<edge *> incoming;
 		/// \brief		Node property.
 		NodeProperty property;
 
@@ -130,10 +132,10 @@ public:
 	/// \brief		Deletes all nodes and edges and their properties.
 	~node_centric_graph();
 
-	/// \brief		Set of graph nodes.
-	std::vector<node *> nodes;
-	/// \brief		Set of graph edges.
-	std::vector<edge *> edges;
+	/// \brief		Collection of graph nodes.
+	container_type<node *> nodes;
+	/// \brief		Collection of graph edges.
+	container_type<edge *> edges;
 };
 
 template <typename NodeProperty, typename EdgeProperty>

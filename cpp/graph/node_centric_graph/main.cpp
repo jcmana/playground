@@ -400,10 +400,14 @@ int main()
 		gw.create_edge(it_a, it_b, 4);
 		gw.create_edge(it_a, it_c, 7);
 
-		for (auto it_edge : it_a.outgoing_edges())
+		for (node_centric_view<std::string, int>::edge_iterator it_edge : it_a.outgoing_edges())
 		{
-			std::cout << *it_edge << std::endl;
+			std::cout << *it_edge.source() << "  - " << *it_edge << " >  " << *it_edge.target() << std::endl;
 		}
+
+		it_a.follow(7);
+
+		std::cout << *it_a << std::endl;
 
 		std::cout << std::endl;
 	}
