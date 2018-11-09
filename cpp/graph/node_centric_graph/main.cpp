@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include <list>
 #include <algorithm>
 #include <string>
@@ -12,7 +13,6 @@
 #include "../../generic/generic/bidirectional_map.h"
 #include "node_centric.hpp"
 #include "node_centric_iterators.hpp"
-#include "node_centric_view.hpp"
 
 /*
 template <typename Node>
@@ -187,26 +187,26 @@ int main()
 		{
 			auto res = std::find_if(g.nodes.begin(), g.nodes.end(), [](const auto & ptr) -> bool
 			{
-				return (ptr->property == "node a");
+				return (ptr.property == "node a");
 			});
 
 			if (res != g.nodes.end())
 			{
-				std::cout << "found " << (*res)->property << std::endl;
+				std::cout << "found " << res->property << std::endl;
 			}
 		}
 
 		// print graph
-		if (false) for (const auto & node_it : g.nodes)
+		if (false) for (const auto & node : g.nodes)
 		{
-			std::cout << node_it->property << std::endl;
+			std::cout << node.property << std::endl;
 
-			for (const auto & edge_it : node_it->incoming)
+			for (const auto & edge_it : node.incoming)
 			{
 				std::cout << "   <- " << edge_it->source->property << "(" << edge_it->property << ")" << std::endl;
 			}
 
-			for (const auto & edge_it : node_it->outgoing)
+			for (const auto & edge_it : node.outgoing)
 			{
 				std::cout << "   -> " << edge_it->target->property << "(" << edge_it->property << ")" << std::endl;
 			}
@@ -291,60 +291,19 @@ int main()
 		}
 
 		// print graph
-		if (false) for (const auto & node_it : g.nodes)
+		if (false) for (const auto & node : g.nodes)
 		{
-			std::cout << node_it->property << std::endl;
+			std::cout << node.property << std::endl;
 
-			for (const auto & edge_it : node_it->incoming)
+			for (const auto & edge_it : node.incoming)
 			{
 				std::cout << "   <- " << edge_it->source->property << "(" << edge_type_map[edge_it->property] << ")" << std::endl;
 			}
 
-			for (const auto & edge_it : node_it->outgoing)
+			for (const auto & edge_it : node.outgoing)
 			{
 				std::cout << "   -> " << edge_it->target->property << "(" << edge_type_map[edge_it->property] << ")" << std::endl;
 			}
-		}
-	}
-
-	if (false)
-	{
-		struct element
-		{
-			explicit element(int t) : type(t) {}
-			int type;
-		};
-
-		struct polygon :
-			element
-		{
-			explicit polygon(double a, double b) : 
-				element(3), 
-				point_a(a),
-				point_b(b)
-			{}
-			double point_a;
-			double point_b;
-		};
-
-		if (true)
-		{
-			using sp_graph = node_centric_graph<std::shared_ptr<element>, int>;
-			sp_graph g;
-
-			auto * a = g.create_node(std::make_shared<polygon>(3.6, 4.4));
-			std::shared_ptr<polygon> p = std::static_pointer_cast<polygon>(a->property);
-			std::cout << "polygon point = " << p->point_a << std::endl;
-		}
-
-		if (true)
-		{
-			using up_graph = node_centric_graph<std::unique_ptr<element>, int>;
-			up_graph g;
-
-			auto * a = g.create_node(new polygon(2.5, 0.5));
-			polygon * p = static_cast<polygon *>(a->property.get());
-			std::cout << "polygon point = " << p->point_a << std::endl;
 		}
 	}
 
@@ -368,33 +327,29 @@ int main()
 		std::cout << "Graph nodes:" << std::endl;
 		for (auto & node : g.nodes)
 		{
-			std::cout << node->property << std::endl;
+			std::cout << node.property << std::endl;
 		}
 
 		// Find edge with minimal property:
-		auto it_min = std::min_element(g.edges.begin(), g.edges.end(), [](const graph::edge * a, const graph::edge * b) -> bool
+		auto it_min = std::min_element(g.edges.begin(), g.edges.end(), [](const graph::edge & a, const graph::edge & b) -> bool
 		{
-			return (a->property > b->property);
+			return (a.property > b.property);
 		});
 
 		// Find node with specific property and create edge from it:
-		auto it_find = std::find_if(g.nodes.begin(), g.nodes.end(), [](const auto * node) -> bool
+		auto it_find = std::find_if(g.nodes.begin(), g.nodes.end(), [](const graph::node & node) -> bool
 		{
-			return ("a" == node->property);
+			return ("a" == node.property);
 		});
 
 		if (it_find != g.nodes.end())
 		{
-			g.create_edge(*it_find, node_c, 7);
+			g.create_edge(&*it_find, node_c, 7);
 		}
 	}
 
-	if (true)
-	{
-		node_centric_view<std::string, int> g;
-	}
-
 	std::getchar();
+
 	
 #ifdef _DEBUG
 	_CrtDumpMemoryLeaks();
