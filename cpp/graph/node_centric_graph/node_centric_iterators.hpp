@@ -56,3 +56,4 @@ public:
 private:
 	std::list<Node *> m_stack;
 };
+
