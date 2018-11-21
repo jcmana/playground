@@ -179,6 +179,6 @@ node_centric_graph<NodeProperty, EdgeProperty>::create_edge(node * source_node, 
 template <typename NodeProperty, typename EdgeProperty>
 node_centric_graph<NodeProperty, EdgeProperty>::~node_centric_graph()
 {
-	for (auto & it_node : nodes) delete it_node;
-	for (auto & it_edge : edges) delete it_edge;
+	for (node * node_ptr : nodes) delete node_ptr;
+	for (edge * edge_ptr : edges) delete edge_ptr;
 }
