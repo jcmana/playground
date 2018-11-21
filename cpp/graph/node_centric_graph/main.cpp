@@ -58,6 +58,27 @@ void flood(Node * start_node)
 	}
 }
 
+template <typename Graph>
+void print(const Graph & g)
+{
+	for (const auto & node_it : g.nodes)
+	{
+		std::cout << node_it->property << std::endl;
+
+		for (const auto & edge_it : node_it->incoming)
+		{
+			std::cout << "   <- " << edge_it->source->property << "(" << edge_it->property << ")" << std::endl;
+		}
+
+		for (const auto & edge_it : node_it->outgoing)
+		{
+			std::cout << "   -> " << edge_it->target->property << "(" << edge_it->property << ")" << std::endl;
+		}
+	}
+
+	std::cout << std::endl;
+}
+
 inline bool startswith(const std::string & text, const std::string & prefix)
 {
 	if (text.size() < prefix.size()) return false;
@@ -67,7 +88,7 @@ inline bool startswith(const std::string & text, const std::string & prefix)
 
 int main()
 {
-	if (true)
+	if (false)
 	{
 		using graph = node_centric_graph<std::string, int>;
 		graph g;
@@ -327,6 +348,37 @@ int main()
 		if (it_find != g.nodes.end())
 		{
 			g.create_edge(*it_find, node_c, 7);
+		}
+	}
+
+	if (true)
+	{
+		// Create the graph object with required properties (std::string node property, int edge property)
+		using graph = node_centric_graph<std::string, int>;
+		graph g;
+
+		// Create some nodes:
+		graph::node * node_a = g.create_node("a");
+		graph::node * node_b = g.create_node("b");
+		graph::node * node_c = g.create_node("c");
+
+		// Create edges between nodes:
+		graph::edge * edge_ab = g.create_edge(node_a, node_b, 23);
+		graph::edge * edge_bc = g.create_edge(node_b, node_c, 27);
+		graph::edge * edge_cb = g.create_edge(node_c, node_b, 6);
+
+		if (false)
+		{
+			print(g);
+			g.remove_edge(edge_ab);
+			print(g);
+		}
+
+		if (true)
+		{
+			print(g);
+			g.remove_node(node_c);
+			print(g);
 		}
 	}
 

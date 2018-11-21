@@ -7,9 +7,9 @@
 ///
 /// \par Properties:
 ///		- directed edges
-///		- fast incoming/outgoing edges access
-///		- custom node property
-///		- custom edge property
+///		- O(1) incoming/outgoing edges access
+///		- O(1) custom node property access
+///		- O(1) custom edge property access
 ///
 /// Graph itself doesn't support any typical traverses or algorithms, therefore serves exclusivelly
 /// as underlaying structure holding the information about nodes and edges and allows basic iteration
@@ -67,18 +67,13 @@ template <typename NodeProperty, typename EdgeProperty>
 class node_centric_graph
 {
 public:
-
 	class node;
 	class edge;
 
-	/// \brief		Class holding the edge property and informations about connected nodes.
-	/// \note		Can be constructed only by calling node_centric_graph::create_edge(...) method. 
+	/// \brief		Class holding the node property and sets of outgoing/incoming edges.
+	/// \note		Can be constructed only by calling node_centric_graph::create_node(...) method. 
 	class node
 	{
-	protected:
-		template <typename ... Args>
-		node(Args && ... node_property_args);
-
 	public:
 		/// \brief		Set of outgoing edges.
 		std::vector<edge *> outgoing;
@@ -87,18 +82,18 @@ public:
 		/// \brief		Node property.
 		NodeProperty property;
 
+	protected:
+		template <typename ... Args>
+		node(Args && ... node_property_args);
+
 	private:
 		friend node_centric_graph;
 	};
 
-	/// \brief		Class holding the edge property.
+	/// \brief		Class holding the edge property and connected nodes.
 	/// \note		Can be constructed only by calling node_centric_graph::create_edge(...) method. 
 	class edge
 	{
-	protected:
-		template <typename ... Args>
-		edge(node * source_node, node * target_node, Args && ... edge_property_args);
-
 	public:
 		/// \brief		Edge source node.
 		node * source;
@@ -106,6 +101,10 @@ public:
 		node * target;
 		/// \brief		Edge property.
 		EdgeProperty property;
+
+	protected:
+		template <typename ... Args>
+		edge(node * source_node, node * target_node, Args && ... edge_property_args);
 
 	private:
 		friend node_centric_graph;
@@ -119,13 +118,18 @@ public:
 	node * create_node(Args && ... node_property_args);
 
 	/// \brief		Creates edge from source to target node with property.
-	/// \param[in]	source_node		Edge source node (returned pointer from create_node(...) call).
-	/// \param[in]	target_node		Edge target node (returned pointer from create_node(...) call).
+	/// \param[in]	source_node		Edge source node (pointer returned from create_node(...) call).
+	/// \param[in]	target_node		Edge target node (pointer returned from create_node(...) call).
 	/// \param[in]	...				Arguments for edge property constructor.
-	/// \returns	Pointer to the created holding holding the property and connected nodes. Pointed object
-	///				is managed internally and has guaranteed same lifetime as the owning `node_centric_graph` object.
+	/// \returns	Pointer to the created edge holding the property and connected nodes. Pointed object is
+	///				managed internally and has guaranteed lifetime same as the owning `node_centric_graph` object.
 	template <typename ... Args>
 	edge * create_edge(node * source_node, node * target_node, Args && ... edge_property_args);
+
+	void remove_node(node * node_to_remove);
+
+	void remove_edge(edge * edge_to_remove);
+
 
 	/// \brief		Deletes all nodes and edges and their properties.
 	~node_centric_graph();
@@ -174,6 +178,62 @@ node_centric_graph<NodeProperty, EdgeProperty>::create_edge(node * source_node, 
 	source_node->outgoing.push_back(edge_ptr);
 	target_node->incoming.push_back(edge_ptr);
 	return edge_ptr;
+}
+
+template <typename NodeProperty, typename EdgeProperty>
+void
+node_centric_graph<NodeProperty, EdgeProperty>::remove_node(node * node_to_remove)
+{
+	// remove all outgoing edges:
+	for (edge * edge_ptr : node_to_remove->outgoing)
+	{
+		// remove edge from vector of incoming edges from target node
+		auto & target_node_incoming = edge_ptr->target->incoming;
+		target_node_incoming.erase(std::remove(target_node_incoming.begin(), target_node_incoming.end(), edge_ptr));
+
+		// remove from vector of edges
+		edges.erase(std::remove(edges.begin(), edges.end(), edge_ptr));
+
+		// delete the edge object
+		delete edge_ptr;
+	}
+
+	// remove all incoming edges:
+	for (edge * edge_ptr : node_to_remove->incoming)
+	{
+		// remove edge from vector of outgoing edges from source node
+		auto & source_node_outgoing = edge_ptr->source->outgoing;
+		source_node_outgoing.erase(std::remove(source_node_outgoing.begin(), source_node_outgoing.end(), edge_ptr));
+
+		// remove from vector of edges
+		edges.erase(std::remove(edges.begin(), edges.end(), edge_ptr));
+
+		// delete the edge object
+		delete edge_ptr;
+	}
+
+	// remove from vector of nodes:
+	nodes.erase(std::remove(nodes.begin(), nodes.end(), node_to_remove));
+
+	// delete the node object:
+	delete node_to_remove;
+}
+
+template <typename NodeProperty, typename EdgeProperty>
+void
+node_centric_graph<NodeProperty, EdgeProperty>::remove_edge(edge * edge_to_remove)
+{
+	// remove edge from source and target nodes:
+	auto & source_outgoing_edges = edge_to_remove->source->outgoing;
+	source_outgoing_edges.erase(std::remove(source_outgoing_edges.begin(), source_outgoing_edges.end(), edge_to_remove));
+	auto & target_incoming_edges = edge_to_remove->target->incoming;
+	target_incoming_edges.erase(std::remove(target_incoming_edges.begin(), target_incoming_edges.end(), edge_to_remove));
+
+	// remove from vector of edges:
+	edges.erase(std::remove(edges.begin(), edges.end(), edge_to_remove));
+
+	// delete the edge object:
+	delete edge_to_remove;
 }
 
 template <typename NodeProperty, typename EdgeProperty>
