@@ -70,15 +70,24 @@ public:
 	class node;
 	class edge;
 
+	/// @{
+	/// \brief		Container types for storing graph elements.
+	template<typename Element>
+	using container = std::vector<Element>;
+	using node_container = container<node *>;
+	using edge_container = container<edge *>;
+	/// @}
+
+public:
 	/// \brief		Class holding the node property and sets of outgoing/incoming edges.
 	/// \note		Can be constructed only by calling node_centric_graph::create_node(...) method. 
 	class node
 	{
 	public:
 		/// \brief		Set of outgoing edges.
-		std::vector<edge *> outgoing;
+		edge_container outgoing;
 		/// \brief		Set of incoming edges.		
-		std::vector<edge *> incoming;
+		edge_container incoming;
 		/// \brief		Node property.
 		NodeProperty property;
 
@@ -126,18 +135,20 @@ public:
 	template <typename ... Args>
 	edge * create_edge(node * source_node, node * target_node, Args && ... edge_property_args);
 
+	/// \brief		Removes node and all its adjacent edges from the graph.
 	void remove_node(node * node_to_remove);
 
+	/// \brief		Removes edge from the graph.
 	void remove_edge(edge * edge_to_remove);
-
 
 	/// \brief		Deletes all nodes and edges and their properties.
 	~node_centric_graph();
 
+public:
 	/// \brief		Set of graph nodes.
-	std::vector<node *> nodes;
+	node_container nodes;
 	/// \brief		Set of graph edges.
-	std::vector<edge *> edges;
+	edge_container edges;
 };
 
 template <typename NodeProperty, typename EdgeProperty>
@@ -164,7 +175,7 @@ typename node_centric_graph<NodeProperty, EdgeProperty>::node *
 node_centric_graph<NodeProperty, EdgeProperty>::create_node(Args && ... node_property_args)
 {
 	auto * node_ptr = new node(std::forward<Args>(node_property_args) ...);
-	nodes.push_back(node_ptr);
+	nodes.insert(nodes.end(), node_ptr);
 	return node_ptr;
 }
 
@@ -174,7 +185,7 @@ typename node_centric_graph<NodeProperty, EdgeProperty>::edge *
 node_centric_graph<NodeProperty, EdgeProperty>::create_edge(node * source_node, node * target_node, Args && ... edge_property_args)
 {
 	auto * edge_ptr = new edge(source_node, target_node, std::forward<Args>(edge_property_args) ...);
-	edges.push_back(edge_ptr);
+	edges.insert(edges.end(), edge_ptr);
 	source_node->outgoing.push_back(edge_ptr);
 	target_node->incoming.push_back(edge_ptr);
 	return edge_ptr;

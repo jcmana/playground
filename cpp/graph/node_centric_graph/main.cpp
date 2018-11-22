@@ -1,7 +1,9 @@
 #include <iostream>
 #include <list>
+#include <vector>
 #include <algorithm>
 #include <string>
+#include <utility>
 
 #ifdef _DEBUG
 #define _CRTDBG_MAP_ALLOC
@@ -55,6 +57,70 @@ void flood(Node * start_node)
 
 		// remove this node from queue
 		stack.pop_front();
+	}
+}
+
+template <typename Node>
+void treerecurse(Node * node_ptr)
+{
+	// visit current node
+	std::cout << node_ptr->property << std::endl;
+
+	for (auto outgoing_edge : node_ptr->outgoing)
+	{
+		treerecurse(outgoing_edge->target);
+	}
+}
+
+template <typename Graph>
+void tree(typename Graph::node * start_node)
+{
+	using graph = Graph;
+
+	using node = typename graph::node;
+	using edge = typename graph::edge;
+
+	using node_iterator = typename std::vector<node *>::iterator;
+	using edge_iterator = typename std::vector<edge *>::iterator;
+
+	using edge_container = std::pair<edge_iterator, edge_iterator>;
+
+	std::list<edge_container> stack;
+
+	stack.emplace_front(start_node->outgoing.begin(), start_node->outgoing.end());
+
+	// visit first
+	std::cout << start_node->property << std::endl;
+
+	while (stack.size() > 0)
+	{
+		auto & it = stack.front().first;
+		auto & it_end = stack.front().second;
+
+		// emerge
+		if (it == it_end)
+		{
+			stack.pop_front();
+			continue;
+		}
+
+		// current edge and node
+		auto * edge_ptr = (*it);
+		auto * node_ptr = edge_ptr->target;
+
+		// TODO: debug check: graph cycles (for each visited node, check if it is already on stack)
+
+		// visit
+		std::cout << node_ptr->property << std::endl;
+
+		// submerge (if not leaf)
+		if (node_ptr->outgoing.size() > 0)
+		{
+			stack.emplace_front(node_ptr->outgoing.begin(), node_ptr->outgoing.end());
+		}
+
+		// increment
+		++it;
 	}
 }
 
@@ -351,7 +417,7 @@ int main()
 		}
 	}
 
-	if (true)
+	if (false)
 	{
 		// Create the graph object with required properties (std::string node property, int edge property)
 		using graph = node_centric_graph<std::string, int>;
@@ -379,6 +445,71 @@ int main()
 			print(g);
 			g.remove_node(node_c);
 			print(g);
+		}
+	}
+
+	if (true)
+	{
+		using graph = node_centric_graph<std::string, int>;
+		graph g;
+
+		static constexpr int EDGE_UP = 1;
+		static constexpr int EDGE_DOWN = 2;
+		static constexpr int EDGE_ABOVE = 3;
+		static constexpr int EDGE_BELOW = 4;
+
+		graph::node * struct_1 = g.create_node("struct_1");
+		graph::node * struct_2 = g.create_node("struct_2");
+		graph::node * struct_3 = g.create_node("struct_3");
+		graph::node * struct_4 = g.create_node("struct_4");
+		graph::node * struct_5 = g.create_node("struct_5");
+
+		graph::node * ref_1 = g.create_node("ref_1");
+		graph::node * ref_2 = g.create_node("ref_2");
+		graph::node * ref_3 = g.create_node("ref_3");
+		graph::node * ref_4 = g.create_node("ref_4");
+
+		graph::node * el_1 = g.create_node("el_1");
+		graph::node * el_2 = g.create_node("el_2");
+		graph::node * el_3 = g.create_node("el_3");
+		graph::node * el_4 = g.create_node("el_4");
+		graph::node * el_5 = g.create_node("el_5");
+		graph::node * el_6 = g.create_node("el_6");
+		graph::node * el_7 = g.create_node("el_7");
+
+		g.create_edge(struct_1, ref_1, EDGE_DOWN);
+		g.create_edge(struct_1, ref_2, EDGE_DOWN);
+		g.create_edge(struct_1, el_1, EDGE_DOWN);
+
+		g.create_edge(struct_2, ref_3, EDGE_DOWN);
+		g.create_edge(struct_2, el_2, EDGE_DOWN);
+		g.create_edge(struct_2, el_3, EDGE_DOWN);
+
+		g.create_edge(struct_3, el_4, EDGE_DOWN);
+		g.create_edge(struct_3, ref_4, EDGE_DOWN);
+
+		g.create_edge(struct_4, el_5, EDGE_DOWN);
+		g.create_edge(struct_4, el_6, EDGE_DOWN);
+
+		g.create_edge(struct_5, el_7, EDGE_DOWN);
+
+		g.create_edge(ref_1, struct_3, EDGE_DOWN);
+		g.create_edge(ref_2, struct_2, EDGE_DOWN);
+		g.create_edge(ref_3, struct_3, EDGE_DOWN);
+		g.create_edge(ref_4, struct_4, EDGE_DOWN);
+
+		//print(g);
+
+		//tree<graph>(struct_1);
+		graph::node * node_ptr = struct_1;
+		if (false) for (sibling_iterator<graph> it(node_ptr, node_ptr->outgoing.begin()); it != sibling_iterator<graph>(node_ptr, node_ptr->outgoing.end()); ++it)
+		{
+			std::cout << it->property << std::endl;
+		}
+
+		if (true) for (preorder_iterator<graph> it(node_ptr); it != preorder_iterator<graph>(); ++it)
+		{
+			std::cout << it->property << std::endl;
 		}
 	}
 
