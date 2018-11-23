@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <list>
 
 template <typename Node>
@@ -142,6 +143,10 @@ public:
 
 	preorder_iterator & operator ++()
 	{
+#ifdef _DEBUG
+		assert(m_stack.size() > 0 && "Iterator is not incrementable");
+#endif
+
 		// emerge
 		while (m_stack.front().first == m_stack.front().second)
 		{

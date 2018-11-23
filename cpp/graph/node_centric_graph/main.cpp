@@ -498,19 +498,19 @@ int main()
 		g.create_edge(ref_3, struct_3, EDGE_DOWN);
 		g.create_edge(ref_4, struct_4, EDGE_DOWN);
 
-		//print(g);
 
-		//tree<graph>(struct_1);
 		graph::node * node_ptr = struct_1;
 		if (false) for (sibling_iterator<graph> it(node_ptr, node_ptr->outgoing.begin()); it != sibling_iterator<graph>(node_ptr, node_ptr->outgoing.end()); ++it)
 		{
 			std::cout << it->property << std::endl;
 		}
 
-		if (true) for (preorder_iterator<graph> it(node_ptr); it != preorder_iterator<graph>(); ++it)
+		preorder_iterator<graph> it(node_ptr);
+		if (true) for (; it != preorder_iterator<graph>(); ++it)
 		{
 			std::cout << it->property << std::endl;
 		}
+		++it;
 	}
 
 	std::getchar();
