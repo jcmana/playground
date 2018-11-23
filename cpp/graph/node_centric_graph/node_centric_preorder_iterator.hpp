@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <list>
+#include <tuple>
 
 template <typename Graph>
 class preorder_iterator
@@ -21,7 +22,7 @@ public:
 	preorder_iterator(node * node_ptr) :
 		m_node_ptr(node_ptr)
 	{
-		m_trail.push_front({ m_node_ptr, node_ptr->outgoing.begin(), node_ptr->outgoing.end() });
+		m_trail.push_front(std::make_tuple(m_node_ptr, node_ptr->outgoing.begin(), node_ptr->outgoing.end()));
 	}
 
 	bool operator ==(preorder_iterator & other)
@@ -41,7 +42,7 @@ public:
 #endif
 
 		// emerge
-		while (m_trail.front().it_current == m_trail.front().it_end)
+		while (std::get<1>(m_trail.front()) == std::get<2>(m_trail.front()))
 		{
 			m_trail.pop_front();
 
@@ -53,7 +54,7 @@ public:
 		}
 
 		// current edge and node
-		auto & it_current = m_trail.front().it_current;
+		auto & it_current = std::get<1>(m_trail.front());
 		auto * edge_ptr = (*it_current);
 		auto * node_ptr = edge_ptr->target;
 		m_node_ptr = node_ptr;
@@ -63,7 +64,7 @@ public:
 		// submerge (if not leaf)
 		if (node_ptr->outgoing.size() > 0)
 		{
-			m_trail.push_front({ m_node_ptr, node_ptr->outgoing.begin(), node_ptr->outgoing.end() });
+			m_trail.push_front(std::make_tuple(m_node_ptr, node_ptr->outgoing.begin(), node_ptr->outgoing.end()));
 		}
 
 		// increment
@@ -85,13 +86,7 @@ public:
 private:
 	using node_iterator = typename graph::node_container::iterator;
 	using edge_iterator = typename graph::edge_container::iterator;
-
-	struct breadcrumb
-	{
-		node * node_ptr;
-		edge_iterator it_current;
-		edge_iterator it_end;
-	};
+	using breadcrumb = std::tuple<node *, edge_iterator, edge_iterator>;
 
 private:
 	node * m_node_ptr;
