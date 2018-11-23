@@ -20,7 +20,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="filter.hpp">
+    <ClInclude Include="filter_if.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

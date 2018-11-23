@@ -3,7 +3,7 @@
 #include <iterator>
 #include <algorithm>
 
-#include "filter.hpp"
+#include "filter_if.hpp"
 
 int main()
 {
@@ -11,12 +11,9 @@ int main()
 	std::vector<int> integers(100'000'000);
 	std::generate(integers.begin(), integers.end(), [n = 0]() mutable { return n++; });
 
-	// setup filter 
-	auto f = make_filter(integers, [](const int & n){ return (n < 4 || n >=6); });
-
-	// make sum of all numbers from filter
+	// make sum of all numbers filtered by predicate
 	long long int sum = 0;
-	for (auto i : f)
+	for (auto i : filter_if(integers, [](const int & n) { return (n < 4 || n >= 6); }))
 	{
 		sum += i;
 	}
