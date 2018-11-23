@@ -70,13 +70,12 @@ public:
 	class node;
 	class edge;
 
-	/// @{
-	/// \brief		Container types for storing graph elements.
+	/// \brief		Base container type for storing graph elements.
 	template<typename Element>
 	using container = std::vector<Element>;
+
 	using node_container = container<node *>;
 	using edge_container = container<edge *>;
-	/// @}
 
 public:
 	/// \brief		Class holding the node property and sets of outgoing/incoming edges.

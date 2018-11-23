@@ -110,8 +110,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="node_centric_flood_iterator.hpp" />
+    <ClInclude Include="node_centric_parent_iterator.hpp" />
     <ClInclude Include="node_centric.hpp" />
     <ClInclude Include="node_centric_iterators.hpp" />
+    <ClInclude Include="node_centric_preorder_iterator.hpp" />
+    <ClInclude Include="node_centric_sibling_iterator.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

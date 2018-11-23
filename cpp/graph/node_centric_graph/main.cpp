@@ -510,7 +510,6 @@ int main()
 		{
 			std::cout << it->property << std::endl;
 		}
-		++it;
 	}
 
 	std::getchar();
