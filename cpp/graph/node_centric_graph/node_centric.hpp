@@ -120,25 +120,35 @@ public:
 	};
 
 	/// \brief		Creates node with property.
-	/// \param[in]	...				Arguments for node property constructor.
+	/// \param[in]	node_property_args	Arguments for node property constructor.
 	/// \returns	Pointer to the created node holding the property. Pointed object is managed
 	///				internally and has guaranteed same lifetime as the owning node_centric_graph object.
 	template <typename ... Args>
 	node * create_node(Args && ... node_property_args);
 
 	/// \brief		Creates edge from source to target node with property.
-	/// \param[in]	source_node		Edge source node (pointer returned from create_node(...) call).
-	/// \param[in]	target_node		Edge target node (pointer returned from create_node(...) call).
-	/// \param[in]	...				Arguments for edge property constructor.
+	/// \param[in]	source_node			Edge source node (pointer returned from create_node(...) call).
+	/// \param[in]	target_node			Edge target node (pointer returned from create_node(...) call).
+	/// \param[in]	edge_property_args	Arguments for edge property constructor.
 	/// \returns	Pointer to the created edge holding the property and connected nodes. Pointed object is
 	///				managed internally and has guaranteed lifetime same as the owning `node_centric_graph` object.
 	template <typename ... Args>
 	edge * create_edge(node * source_node, node * target_node, Args && ... edge_property_args);
 
 	/// \brief		Removes node and all its adjacent edges from the graph.
+	///
+	/// \par Complexity
+	/// *O(e * (o + i) + n)* where *o* - number of outgoing edges, *i* - number of incoming edges, *n* - number of nodes 
+	/// in graph, *e* - number of edges in graph).
 	void remove_node(node * node_to_remove);
 
-	/// \brief		Removes edge from the graph.
+	/// \brief		Removes edge from the graph. 
+	///
+	/// Nodes are never removed during this operation, even if they remain unconnected.
+	///
+	/// \par Complexity
+	/// *O(o + i + e)* where *o* - number of outgoing edges from source node, *i* - number of incoming edges into 
+	/// target node, *e* - number of edges in graph.
 	void remove_edge(edge * edge_to_remove);
 
 	/// \brief		Deletes all nodes and edges and their properties.
