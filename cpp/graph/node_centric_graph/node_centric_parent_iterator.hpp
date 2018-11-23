@@ -14,13 +14,14 @@ public:
 	{
 	}
 
-	parent_iterator(node * node_ptr)
+	parent_iterator(const preorder_iterator & it) :
+		m_it(it)
 	{
 	}
 
 	bool operator ==(preorder_iterator & other)
 	{
-		return (m_node_ptr == other.m_node_ptr && m_stack == other.m_stack);
+		return (m_node_ptr == other.m_node_ptr);
 	}
 
 	bool operator !=(preorder_iterator & other)
@@ -44,5 +45,5 @@ public:
 	}
 
 private:
-
+	const preorder_iterator & m_it;
 };

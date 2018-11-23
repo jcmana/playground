@@ -21,12 +21,12 @@ public:
 	preorder_iterator(node * node_ptr) :
 		m_node_ptr(node_ptr)
 	{
-		m_stack.emplace_front(node_ptr->outgoing.begin(), node_ptr->outgoing.end());
+		m_trail.push_front({ m_node_ptr, node_ptr->outgoing.begin(), node_ptr->outgoing.end() });
 	}
 
 	bool operator ==(preorder_iterator & other)
 	{
-		return (m_node_ptr == other.m_node_ptr && m_stack == other.m_stack);
+		return (m_node_ptr == other.m_node_ptr && m_trail == other.m_trail);
 	}
 
 	bool operator !=(preorder_iterator & other)
@@ -37,15 +37,15 @@ public:
 	preorder_iterator & operator ++()
 	{
 #ifdef _DEBUG
-		assert(m_stack.size() > 0 && "Iterator is not incrementable");
+		assert(m_trail.size() > 0 && "Iterator is not incrementable");
 #endif
 
 		// emerge
-		while (m_stack.front().first == m_stack.front().second)
+		while (m_trail.front().it_current == m_trail.front().it_end)
 		{
-			m_stack.pop_front();
+			m_trail.pop_front();
 
-			if (m_stack.size() == 0)
+			if (m_trail.size() == 0)
 			{
 				m_node_ptr = nullptr;
 				return (*this);
@@ -53,7 +53,7 @@ public:
 		}
 
 		// current edge and node
-		auto & it_current = m_stack.front().first;
+		auto & it_current = m_trail.front().it_current;
 		auto * edge_ptr = (*it_current);
 		auto * node_ptr = edge_ptr->target;
 		m_node_ptr = node_ptr;
@@ -63,7 +63,7 @@ public:
 		// submerge (if not leaf)
 		if (node_ptr->outgoing.size() > 0)
 		{
-			m_stack.emplace_front(node_ptr->outgoing.begin(), node_ptr->outgoing.end());
+			m_trail.push_front({ m_node_ptr, node_ptr->outgoing.begin(), node_ptr->outgoing.end() });
 		}
 
 		// increment
@@ -86,9 +86,14 @@ private:
 	using node_iterator = typename graph::node_container::iterator;
 	using edge_iterator = typename graph::edge_container::iterator;
 
-	using range = std::pair<edge_iterator, edge_iterator>;
+	struct breadcrumb
+	{
+		node * node_ptr;
+		edge_iterator it_current;
+		edge_iterator it_end;
+	};
 
 private:
 	node * m_node_ptr;
-	std::list<range> m_stack;
+	std::list<breadcrumb> m_trail;
 };

@@ -33,7 +33,7 @@ public:
 		{
 			auto * edge_target_node = outgoing_edge->target;
 
-			// add m_stack record for next recursion
+			// add m_trail record for next recursion
 			m_stack.push_back(edge_target_node);
 		}
 

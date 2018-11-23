@@ -51,7 +51,7 @@ void flood(Node * start_node)
 			auto edge_target_node = outgoing_edge->target;
 			auto edge_type = outgoing_edge->property;
 
-			// add m_stack record for next recursion
+			// add m_trail record for next recursion
 			stack.push_back(edge_target_node);
 		}
 
@@ -309,7 +309,7 @@ int main()
 					auto edge_target_node = outgoing_edge->target;
 					auto edge_type = outgoing_edge->property;
 
-					// add m_stack item for next recursion
+					// add m_trail item for next recursion
 					stack.push_back({ edge_target_node, curr_scene_node });
 				}
 
