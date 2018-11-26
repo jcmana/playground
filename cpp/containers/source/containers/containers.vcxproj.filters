@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Graph">
+      <UniqueIdentifier>{c5659b0a-cbc4-44bd-bf4a-5e828b68c237}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graph\Iterators">
+      <UniqueIdentifier>{4fb1a11a-6175-4bb9-a850-98943a500b65}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\containers\filter_if.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\containers\proxy.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\containers\graph\node_centric.hpp">
+      <Filter>Header Files\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\containers\graph\node_centric_iterators.hpp">
+      <Filter>Header Files\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\containers\graph\iterators\node_centric_flood_iterator.hpp">
+      <Filter>Header Files\Graph\Iterators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\containers\graph\iterators\node_centric_parent_iterator.hpp">
+      <Filter>Header Files\Graph\Iterators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\containers\graph\iterators\node_centric_preorder_iterator.hpp">
+      <Filter>Header Files\Graph\Iterators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\containers\graph\iterators\node_centric_sibling_iterator.hpp">
+      <Filter>Header Files\Graph\Iterators</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

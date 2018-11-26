@@ -13,8 +13,8 @@
 
 #include "../../generic/generic/bidirectional_map.h"
 
-#include "node_centric.hpp"
-#include "node_centric_iterators.hpp"
+#include "containers/graph/node_centric.hpp"
+#include "containers/graph/node_centric_iterators.hpp"
 
 template <typename Graph>
 void leaves(const Graph & g)
@@ -152,8 +152,10 @@ inline bool startswith(const std::string & text, const std::string & prefix)
 	return true;
 }
 
-int main()
+void graph_test()
 {
+	std::cout << "graph test:" << std::endl;
+
 	if (false)
 	{
 		using graph = node_centric_graph<std::string, int>;
@@ -525,11 +527,9 @@ int main()
  		std::cout << len << std::endl;
 	}
 
-	std::getchar();
+	std::cout << std::endl;
 	
 #ifdef _DEBUG
 	_CrtDumpMemoryLeaks();
 #endif
-
-	return 0;
 }

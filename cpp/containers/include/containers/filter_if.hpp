@@ -1,5 +1,8 @@
 #pragma once
 
+namespace containers {
+
+
 template <typename Container>
 class container_filter_if
 {
@@ -109,3 +112,4 @@ container_filter_if<Container>::end()
 }
 
 
+} // namespace containers

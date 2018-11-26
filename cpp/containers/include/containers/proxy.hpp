@@ -1,7 +1,10 @@
 #pragma once
 
+namespace containers {
+
+
 template <typename Container, typename T>
-struct proxy_container
+struct proxy
 {
 	struct proxy_iterator
 	{
@@ -34,7 +37,7 @@ struct proxy_container
 		typename Container::iterator m_iterator;
 	};
 
-	proxy_container(Container & container) :
+	proxy(Container & container) :
 		m_container(container)
 	{
 	}
@@ -52,3 +55,6 @@ struct proxy_container
 
 	Container & m_container;
 };
+
+
+} // namespace containers
