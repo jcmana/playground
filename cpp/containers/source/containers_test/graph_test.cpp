@@ -156,6 +156,7 @@ void graph_test()
 {
 	std::cout << "graph test:" << std::endl;
 
+	// basic graph build and iteration test:
 	if (false)
 	{
 		using graph = node_centric_graph<std::string, int>;
@@ -337,6 +338,7 @@ void graph_test()
 		}
 	}
 
+	// graph unique_ptr property test:
 	if (false)
 	{
 		struct element
@@ -378,6 +380,7 @@ void graph_test()
 		}
 	}
 
+	// graph usage example source test:
 	if (false)
 	{
 		// Create the graph object with required properties (std::string node property, int edge property)
@@ -419,6 +422,7 @@ void graph_test()
 		}
 	}
 
+	// graph remove_node() and remove_edge() test:
 	if (false)
 	{
 		// Create the graph object with required properties (std::string node property, int edge property)
@@ -450,7 +454,8 @@ void graph_test()
 		}
 	}
 
-	if (true)
+	// preorder_iterator test:
+	if (false)
 	{
 		using graph = node_centric_graph<std::string, int>;
 		graph g;
@@ -507,7 +512,7 @@ void graph_test()
 			std::cout << it->property << std::endl;
 		}
 
-		int len = 0;
+		unsigned int len = 0;
 
 		if (true) for (int n = 0; n < 1'000'000; ++n)
 		{
@@ -525,6 +530,31 @@ void graph_test()
 		}
 
  		std::cout << len << std::endl;
+	}
+
+	// graph copy/assign/move/swap test:
+	if (true)
+	{
+		using graph = node_centric_graph<std::string, int>;
+		
+		graph g;
+
+		graph::node * a = g.create_node("a");
+		graph::node * b = g.create_node("b");
+		graph::node * c = g.create_node("c");
+		g.create_edge(a, b, 1);
+		g.create_edge(b, c, 2);
+		g.create_edge(c, b, -2);
+
+		graph h;
+		h = g;
+
+		graph::node * d = h.create_node("d");
+		graph::node * e = h.create_node("e");
+		h.create_edge(d, e, 0);
+
+		print(g);
+		print(h);
 	}
 
 	std::cout << std::endl;

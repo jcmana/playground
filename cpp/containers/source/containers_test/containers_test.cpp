@@ -6,8 +6,8 @@
 
 int main()
 {
-	filter_test();
-	proxy_test();
+	//filter_test();
+	//proxy_test();
 	graph_test();
 
 	std::cout << "Press key to exit ..." << std::endl;
