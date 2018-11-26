@@ -505,11 +505,24 @@ int main()
 			std::cout << it->property << std::endl;
 		}
 
-		preorder_iterator<graph> it(node_ptr);
-		if (true) for (; it != preorder_iterator<graph>(); ++it)
+		int len = 0;
+
+		if (true) for (int n = 0; n < 1'000'000; ++n)
 		{
-			std::cout << it->property << std::endl;
+			preorder_iterator<graph> it(node_ptr);
+			for (; it != preorder_iterator<graph>(); ++it)
+			{
+				if (it->property == "el_5")
+				{
+					for (graph::node * node_ptr : it.trail())
+					{
+						len += node_ptr->property.size();
+					}
+				}
+			}
 		}
+
+ 		std::cout << len << std::endl;
 	}
 
 	std::getchar();

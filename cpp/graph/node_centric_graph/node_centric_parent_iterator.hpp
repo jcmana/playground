@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 template <typename Graph>
 class parent_iterator
 {
@@ -45,5 +47,5 @@ public:
 	}
 
 private:
-	const preorder_iterator & m_it;
+	std::vector<node *> m_trail;
 };

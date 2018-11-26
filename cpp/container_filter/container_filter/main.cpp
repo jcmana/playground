@@ -12,7 +12,7 @@ int main()
 	std::generate(integers.begin(), integers.end(), [n = 0]() mutable { return n++; });
 
 	// setup filter 
-	auto f = make_filter(integers, [](const int & n){ return (n < 4 || n >=6); });
+	auto f = make_filter(integers, [](const int & n) { return (n < 4 || n >=6); });
 
 	// make sum of all numbers from filter
 	long long int sum = 0;
