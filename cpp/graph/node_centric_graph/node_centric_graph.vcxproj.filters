@@ -9,9 +9,8 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="Header Files\Iterators">
+      <UniqueIdentifier>{047b7a7a-de62-4135-94f9-f8da71696690}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -20,6 +19,18 @@
     </ClInclude>
     <ClInclude Include="node_centric_iterators.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="node_centric_parent_iterator.hpp">
+      <Filter>Header Files\Iterators</Filter>
+    </ClInclude>
+    <ClInclude Include="node_centric_flood_iterator.hpp">
+      <Filter>Header Files\Iterators</Filter>
+    </ClInclude>
+    <ClInclude Include="node_centric_sibling_iterator.hpp">
+      <Filter>Header Files\Iterators</Filter>
+    </ClInclude>
+    <ClInclude Include="node_centric_preorder_iterator.hpp">
+      <Filter>Header Files\Iterators</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -51,7 +51,7 @@ void flood(Node * start_node)
 			auto edge_target_node = outgoing_edge->target;
 			auto edge_type = outgoing_edge->property;
 
-			// add m_stack record for next recursion
+			// add m_trail record for next recursion
 			stack.push_back(edge_target_node);
 		}
 
@@ -309,7 +309,7 @@ int main()
 					auto edge_target_node = outgoing_edge->target;
 					auto edge_type = outgoing_edge->property;
 
-					// add m_stack item for next recursion
+					// add m_trail item for next recursion
 					stack.push_back({ edge_target_node, curr_scene_node });
 				}
 
@@ -505,12 +505,24 @@ int main()
 			std::cout << it->property << std::endl;
 		}
 
-		preorder_iterator<graph> it(node_ptr);
-		if (true) for (; it != preorder_iterator<graph>(); ++it)
+		int len = 0;
+
+		if (true) for (int n = 0; n < 1'000'000; ++n)
 		{
-			std::cout << it->property << std::endl;
+			preorder_iterator<graph> it(node_ptr);
+			for (; it != preorder_iterator<graph>(); ++it)
+			{
+				if (it->property == "el_5")
+				{
+					for (graph::node * node_ptr : it.trail())
+					{
+						len += node_ptr->property.size();
+					}
+				}
+			}
 		}
-		++it;
+
+ 		std::cout << len << std::endl;
 	}
 
 	std::getchar();
