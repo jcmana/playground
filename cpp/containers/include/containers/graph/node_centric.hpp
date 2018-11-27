@@ -226,11 +226,10 @@ node_centric_graph<NodeProperty, EdgeProperty>::node_centric_graph(const node_ce
 }
 
 template <typename NodeProperty, typename EdgeProperty>
-node_centric_graph<NodeProperty, EdgeProperty>::node_centric_graph(node_centric_graph && other) noexcept :
-	nodes(std::move(other.nodes)),
-	edges(std::move(other.edges))
+node_centric_graph<NodeProperty, EdgeProperty>::node_centric_graph(node_centric_graph && other) noexcept
 {
-	// all node and edge pointers remain unchanged
+	std::swap(nodes, other.nodes);
+	std::swap(edges, other.edges);
 }
 
 template <typename NodeProperty, typename EdgeProperty>
@@ -244,7 +243,9 @@ template <typename NodeProperty, typename EdgeProperty>
 typename node_centric_graph<NodeProperty, EdgeProperty> &
 node_centric_graph<NodeProperty, EdgeProperty>::node_centric_graph::operator =(node_centric_graph && other) noexcept
 {
-	std::swap(*this, other);
+	std::swap(nodes, other.nodes);
+	std::swap(edges, other.edges);
+
 	return (*this);
 }
 
