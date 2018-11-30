@@ -2,6 +2,10 @@
 
 #include <list>
 
+namespace containers {
+namespace graph {
+
+
 template <typename Node>
 class flood_iterator
 {
@@ -15,6 +19,7 @@ public:
 		m_stack.push_back(start);
 	}
 
+/*
 	bool operator ==(flood_iterator & other)
 	{
 		return (m_stack == other.m_stack);
@@ -23,6 +28,12 @@ public:
 	bool operator !=(flood_iterator & other)
 	{
 		return !(operator ==(other));
+	}
+*/
+
+	operator bool()
+	{
+		return (m_stack.size() > 0);
 	}
 
 	flood_iterator & operator ++()
@@ -50,9 +61,18 @@ public:
 
 	Node & operator *()
 	{
+		return (*m_stack.front());
+	}
+
+	Node * get()
+	{
 		return m_stack.front();
 	}
 
 private:
 	std::list<Node *> m_stack;
 };
+
+
+} // namespace graph
+} // namespace containers

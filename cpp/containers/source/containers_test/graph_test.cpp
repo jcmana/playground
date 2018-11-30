@@ -159,7 +159,7 @@ void graph_test()
 	// basic graph build and iteration test:
 	if (false)
 	{
-		using graph = node_centric_graph<std::string, int>;
+		using graph = containers::graph::node_centric<std::string, int>;
 		graph g;
 
 		static constexpr int EDGE_UP = 1;
@@ -248,8 +248,8 @@ void graph_test()
 		{
 			std::list<graph::node> stack;
 
-			flood_iterator<graph::node> it(struct_1);
-			flood_iterator<graph::node> it_end;
+			containers::graph::flood_iterator<graph::node> it(struct_1);
+			containers::graph::flood_iterator<graph::node> it_end;
 
 			// TODO: ideal form is:
 			//for (graph::node * node_ptr : g.flood(struct_1))
@@ -361,7 +361,7 @@ void graph_test()
 
 		if (true)
 		{
-			using sp_graph = node_centric_graph<std::shared_ptr<element>, int>;
+			using sp_graph = containers::graph::node_centric<std::shared_ptr<element>, int>;
 			sp_graph g;
 
 			auto * a = g.create_node(std::make_shared<polygon>(3.6, 4.4));
@@ -371,7 +371,7 @@ void graph_test()
 
 		if (true)
 		{
-			using up_graph = node_centric_graph<std::unique_ptr<element>, int>;
+			using up_graph = containers::graph::node_centric<std::unique_ptr<element>, int>;
 			up_graph g;
 
 			auto * a = g.create_node(new polygon(2.5, 0.5));
@@ -384,7 +384,7 @@ void graph_test()
 	if (false)
 	{
 		// Create the graph object with required properties (std::string node property, int edge property)
-		using graph = node_centric_graph<std::string, int>;
+		using graph = containers::graph::node_centric<std::string, int>;
 		graph g;
 
 		// Create some nodes:
@@ -426,7 +426,7 @@ void graph_test()
 	if (false)
 	{
 		// Create the graph object with required properties (std::string node property, int edge property)
-		using graph = node_centric_graph<std::string, int>;
+		using graph = containers::graph::node_centric<std::string, int>;
 		graph g;
 
 		// Create some nodes:
@@ -457,7 +457,7 @@ void graph_test()
 	// preorder_iterator test:
 	if (false)
 	{
-		using graph = node_centric_graph<std::string, int>;
+		using graph = containers::graph::node_centric<std::string, int>;
 		graph g;
 
 		static constexpr int EDGE_UP = 1;
@@ -514,10 +514,10 @@ void graph_test()
 
 		unsigned int len = 0;
 
-		if (true) for (int n = 0; n < 1'000'000; ++n)
+		if (true) for (int n = 0; n < 10; ++n)
 		{
-			preorder_iterator<graph> it(node_ptr);
-			for (; it != preorder_iterator<graph>(); ++it)
+			containers::graph::preorder_iterator<graph> it(node_ptr);
+			for (; it != containers::graph::preorder_iterator<graph>(); ++it)
 			{
 				if (it->property == "el_5")
 				{
@@ -533,9 +533,9 @@ void graph_test()
 	}
 
 	// graph copy/assign/move/swap test:
-	if (true)
+	if (false)
 	{
-		using graph = node_centric_graph<std::string, int>;
+		using graph = containers::graph::node_centric<std::string, int>;
 		
 		graph g;
 

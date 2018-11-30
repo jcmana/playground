@@ -6,6 +6,10 @@
 #include <vector>
 #include <algorithm>
 
+namespace containers {
+namespace graph {
+
+
 template <typename Graph>
 class preorder_iterator
 {
@@ -27,6 +31,7 @@ public:
 		m_trail.push_back(std::make_tuple(m_node_ptr, node_ptr->outgoing.begin(), node_ptr->outgoing.end()));
 	}
 
+/*
 	bool operator ==(preorder_iterator & other)
 	{
 		return (m_node_ptr == other.m_node_ptr && m_trail == other.m_trail);
@@ -36,12 +41,16 @@ public:
 	{
 		return !(operator ==(other));
 	}
+*/
+	operator bool()
+	{
+		return (m_node_ptr != nullptr && m_trail.size() > 0);
+	}
 
 	preorder_iterator & operator ++()
 	{
-#ifdef _DEBUG
+		assert(m_node_ptr != nullptr);
 		assert(m_trail.size() > 0 && "Iterator is not incrementable");
-#endif
 
 		// emerge
 		while (std::get<1>(m_trail.back()) == std::get<2>(m_trail.back()))
@@ -57,9 +66,16 @@ public:
 
 		// current edge and node
 		auto & it_current = std::get<1>(m_trail.back());
+
+		assert(m_trail.size() != 0);
+		assert(std::get<1>(m_trail.back()) != std::get<2>(m_trail.back()));
+
 		auto * edge_ptr = (*it_current);
 		auto * node_ptr = edge_ptr->target;
 		m_node_ptr = node_ptr;
+
+		// increment
+		++it_current;
 
 		// TODO: debug check: graph cycles (for each visited node check if it is already on stack)
 
@@ -68,9 +84,6 @@ public:
 		{
 			m_trail.push_back(std::make_tuple(m_node_ptr, node_ptr->outgoing.begin(), node_ptr->outgoing.end()));
 		}
-
-		// increment
-		++it_current;
 
 		return (*this);
 	}
@@ -88,15 +101,6 @@ public:
 	std::vector<node *> trail() const
 	{
 		std::vector<node *> iterator_trail(m_trail.size());
-
-/*
-		for (const auto & trail_node_ptr : m_trail)
-		{
-			iterator_trail.push_back(std::get<0>(trail_node_ptr));
-		}
-		return iterator_trail;
-*/
-
 		std::transform(m_trail.begin(), m_trail.end(), iterator_trail.begin(), [](const breadcrumb & i)
 		{
 			return std::get<0>(i);
@@ -113,3 +117,7 @@ private:
 	node * m_node_ptr;
 	std::vector<breadcrumb> m_trail;
 };
+
+
+} // namespace graph
+} // namespace containers

@@ -5,6 +5,10 @@
 #include <map>
 #include <utility>
 
+namespace containers {
+namespace graph {
+
+
 /// \brief		Directed graph with node and edges properties.
 ///
 /// \par Properties:
@@ -66,7 +70,7 @@
 /// }
 /// \endcode
 template <typename NodeProperty, typename EdgeProperty>
-class node_centric_graph
+class node_centric
 {
 public:
 	class node;
@@ -97,7 +101,7 @@ public:
 		node(Args && ... node_property_args);
 
 	private:
-		friend node_centric_graph;
+		friend node_centric;
 	};
 
 	/// \brief		Class holding the edge property and connected nodes.
@@ -117,26 +121,26 @@ public:
 		edge(node * source_node, node * target_node, Args && ... edge_property_args);
 
 	private:
-		friend node_centric_graph;
+		friend node_centric;
 	};
 
 	/// \brief		 Default constructor. Creates empty graph.
-	node_centric_graph();
+	node_centric();
 
 	/// \brief		 Copy constructor.
-	node_centric_graph(const node_centric_graph & other);
+	node_centric(const node_centric & other);
 
 	/// \brief		 Move constructor.
-	node_centric_graph(node_centric_graph && other) noexcept;
+	node_centric(node_centric && other) noexcept;
 
 	/// \brief		 Copy assignment.
-	node_centric_graph & operator =(const node_centric_graph & other);
+	node_centric & operator =(const node_centric & other);
 
 	/// \brief		 Move assignment.
-	node_centric_graph & operator=(node_centric_graph && other) noexcept;
+	node_centric & operator =(node_centric && other) noexcept;
 
 	/// \brief		Deletes all nodes and edges and their properties.
-	~node_centric_graph();
+	~node_centric();
 
 	/// \brief		Creates node with property.
 	/// \param[in]	node_property_args	Arguments for node property constructor.
@@ -179,7 +183,7 @@ public:
 
 template <typename NodeProperty, typename EdgeProperty>
 template <typename ... Args>
-node_centric_graph<NodeProperty, EdgeProperty>::node::node(Args && ... node_property_args) :
+node_centric<NodeProperty, EdgeProperty>::node::node(Args && ... node_property_args) :
 	outgoing(),
 	incoming(),
 	property(std::forward<Args>(node_property_args) ...)
@@ -188,7 +192,7 @@ node_centric_graph<NodeProperty, EdgeProperty>::node::node(Args && ... node_prop
 
 template <typename NodeProperty, typename EdgeProperty>
 template <typename ... Args>
-node_centric_graph<NodeProperty, EdgeProperty>::edge::edge(node * source_node, node * target_node, Args && ... edge_property_args) :
+node_centric<NodeProperty, EdgeProperty>::edge::edge(node * source_node, node * target_node, Args && ... edge_property_args) :
 	source(source_node),
 	target(target_node),
 	property(std::forward<Args>(edge_property_args) ...)
@@ -196,13 +200,13 @@ node_centric_graph<NodeProperty, EdgeProperty>::edge::edge(node * source_node, n
 }
 
 template <typename NodeProperty, typename EdgeProperty>
-node_centric_graph<NodeProperty, EdgeProperty>::node_centric_graph()
+node_centric<NodeProperty, EdgeProperty>::node_centric()
 {
 	// just the default constructors of all members are sufficient for empty graph
 }
 
 template <typename NodeProperty, typename EdgeProperty>
-node_centric_graph<NodeProperty, EdgeProperty>::node_centric_graph(const node_centric_graph & other)
+node_centric<NodeProperty, EdgeProperty>::node_centric(const node_centric & other)
 {
 	// naive approach:
 
@@ -226,22 +230,22 @@ node_centric_graph<NodeProperty, EdgeProperty>::node_centric_graph(const node_ce
 }
 
 template <typename NodeProperty, typename EdgeProperty>
-node_centric_graph<NodeProperty, EdgeProperty>::node_centric_graph(node_centric_graph && other) noexcept
+node_centric<NodeProperty, EdgeProperty>::node_centric(node_centric && other) noexcept
 {
 	std::swap(nodes, other.nodes);
 	std::swap(edges, other.edges);
 }
 
 template <typename NodeProperty, typename EdgeProperty>
-typename node_centric_graph<NodeProperty, EdgeProperty> &
-node_centric_graph<NodeProperty, EdgeProperty>::node_centric_graph::operator =(const node_centric_graph & other)
+typename node_centric<NodeProperty, EdgeProperty> &
+node_centric<NodeProperty, EdgeProperty>::node_centric::operator =(const node_centric & other)
 {
-	return (*this) = node_centric_graph(other);
+	return (*this) = node_centric(other);
 }
 
 template <typename NodeProperty, typename EdgeProperty>
-typename node_centric_graph<NodeProperty, EdgeProperty> &
-node_centric_graph<NodeProperty, EdgeProperty>::node_centric_graph::operator =(node_centric_graph && other) noexcept
+typename node_centric<NodeProperty, EdgeProperty> &
+node_centric<NodeProperty, EdgeProperty>::node_centric::operator =(node_centric && other) noexcept
 {
 	std::swap(nodes, other.nodes);
 	std::swap(edges, other.edges);
@@ -250,7 +254,7 @@ node_centric_graph<NodeProperty, EdgeProperty>::node_centric_graph::operator =(n
 }
 
 template <typename NodeProperty, typename EdgeProperty>
-node_centric_graph<NodeProperty, EdgeProperty>::~node_centric_graph()
+node_centric<NodeProperty, EdgeProperty>::~node_centric()
 {
 	for (node * node_ptr : nodes) delete node_ptr;
 	for (edge * edge_ptr : edges) delete edge_ptr;
@@ -258,8 +262,8 @@ node_centric_graph<NodeProperty, EdgeProperty>::~node_centric_graph()
 
 template <typename NodeProperty, typename EdgeProperty>
 template <typename ... Args>
-typename node_centric_graph<NodeProperty, EdgeProperty>::node *
-node_centric_graph<NodeProperty, EdgeProperty>::create_node(Args && ... node_property_args)
+typename node_centric<NodeProperty, EdgeProperty>::node *
+node_centric<NodeProperty, EdgeProperty>::create_node(Args && ... node_property_args)
 {
 	auto * node_ptr = new node(std::forward<Args>(node_property_args) ...);
 	nodes.insert(nodes.end(), node_ptr);
@@ -268,8 +272,8 @@ node_centric_graph<NodeProperty, EdgeProperty>::create_node(Args && ... node_pro
 
 template <typename NodeProperty, typename EdgeProperty>
 template <typename ... Args>
-typename node_centric_graph<NodeProperty, EdgeProperty>::edge *
-node_centric_graph<NodeProperty, EdgeProperty>::create_edge(node * source_node, node * target_node, Args && ... edge_property_args)
+typename node_centric<NodeProperty, EdgeProperty>::edge *
+node_centric<NodeProperty, EdgeProperty>::create_edge(node * source_node, node * target_node, Args && ... edge_property_args)
 {
 #ifdef _DEBUG
 	auto it_source_node = std::find(nodes.begin(), nodes.end(), source_node);
@@ -288,7 +292,7 @@ node_centric_graph<NodeProperty, EdgeProperty>::create_edge(node * source_node, 
 
 template <typename NodeProperty, typename EdgeProperty>
 void
-node_centric_graph<NodeProperty, EdgeProperty>::remove_node(node * node_to_remove)
+node_centric<NodeProperty, EdgeProperty>::remove_node(node * node_to_remove)
 {
 	// remove all outgoing edges:
 	for (edge * edge_ptr : node_to_remove->outgoing)
@@ -327,7 +331,7 @@ node_centric_graph<NodeProperty, EdgeProperty>::remove_node(node * node_to_remov
 
 template <typename NodeProperty, typename EdgeProperty>
 void
-node_centric_graph<NodeProperty, EdgeProperty>::remove_edge(edge * edge_to_remove)
+node_centric<NodeProperty, EdgeProperty>::remove_edge(edge * edge_to_remove)
 {
 	// remove edge from source and target nodes:
 	auto & source_outgoing_edges = edge_to_remove->source->outgoing;
@@ -341,3 +345,7 @@ node_centric_graph<NodeProperty, EdgeProperty>::remove_edge(edge * edge_to_remov
 	// delete the edge object:
 	delete edge_to_remove;
 }
+
+
+} // namespace graph
+} // namespace containers

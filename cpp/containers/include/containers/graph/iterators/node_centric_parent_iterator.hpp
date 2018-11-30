@@ -2,6 +2,10 @@
 
 #include <vector>
 
+namespace containers {
+namespace graph {
+
+
 template <typename Graph>
 class parent_iterator
 {
@@ -49,3 +53,7 @@ public:
 private:
 	std::vector<node *> m_trail;
 };
+
+
+} // namespace graph
+} // namespace containers
