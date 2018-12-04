@@ -19,6 +19,12 @@ ID2D1Factory *			d2FactoryPtr;
 ID2D1HwndRenderTarget *	d2RenderTargetPtr;
 ID2D1SolidColorBrush *	d2LightSlateGrayBrushPtr;
 ID2D1SolidColorBrush *	d2CornflowerBlueBrushPtr;
+ID2D1SolidColorBrush *	d2BlackBrushPtr;
+
+FLOAT d2SceneDX = 0.0f;
+FLOAT d2SceneDY = 0.0f;
+FLOAT d2SceneSX = 1.0f;
+FLOAT d2SceneSY = 1.0f;
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -172,6 +178,13 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	);
 	if (FAILED(hRes)) return FALSE;
 
+	// Create a blue brush
+	hRes = d2RenderTargetPtr->CreateSolidColorBrush(
+		D2D1::ColorF(D2D1::ColorF::Black),
+		&d2BlackBrushPtr
+	);
+	if (FAILED(hRes)) return FALSE;
+
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
 
@@ -207,6 +220,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				default:
 				return DefWindowProc(hWnd, message, wParam, lParam);
 			}
+		}
+		break;
+
+		case WM_KEYDOWN:
+		{
+			switch (wParam)
+			{
+				case VK_LEFT: d2SceneDX -= 10.0f / d2SceneSX; break;
+				case VK_RIGHT: d2SceneDX += 10.0f / d2SceneSX; break;
+				case VK_UP: d2SceneDY -= 10.0f / d2SceneSY; break;
+				case VK_DOWN: d2SceneDY += 10.0f / d2SceneSY; break;
+				case VK_ADD: d2SceneSX += 0.5f; d2SceneSY += 0.5f; break;
+				case VK_SUBTRACT: d2SceneSX -= 0.5f; d2SceneSY -= 0.5f; break;
+			}
+
+			InvalidateRect(hWnd, NULL, FALSE);
 		}
 		break;
 
@@ -273,22 +302,26 @@ void Render()
 {
 	d2RenderTargetPtr->BeginDraw();
 
-	d2RenderTargetPtr->SetTransform(D2D1::Matrix3x2F::Identity());
-	d2RenderTargetPtr->Clear(D2D1::ColorF(D2D1::ColorF::White));
-
 	D2D1_SIZE_F rtSize = d2RenderTargetPtr->GetSize();
 
-	// Draw a grid background.
 	int width = static_cast<int>(rtSize.width);
 	int height = static_cast<int>(rtSize.height);
 
+	D2D1::Matrix3x2F d2SceneTranslate = D2D1::Matrix3x2F::Translation(d2SceneDX, d2SceneDY);
+	D2D1::Matrix3x2F d2SceneScale = D2D1::Matrix3x2F::Scale(d2SceneSX, d2SceneSY, D2D1::Point2F(width / 2, height / 2));
+
+	d2RenderTargetPtr->SetTransform(d2SceneTranslate * d2SceneScale);
+	d2RenderTargetPtr->Clear(D2D1::ColorF(D2D1::ColorF::White));
+	d2RenderTargetPtr->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
+
+/*
 	for (int x = 0; x < width; x += 10)
 	{
 		d2RenderTargetPtr->DrawLine(
 			D2D1::Point2F(static_cast<FLOAT>(x), 0.0f),
 			D2D1::Point2F(static_cast<FLOAT>(x), rtSize.height),
-			d2LightSlateGrayBrushPtr,
-			0.5f
+			d2BlackBrushPtr,
+			1.0f
 		);
 	}
 
@@ -297,9 +330,10 @@ void Render()
 		d2RenderTargetPtr->DrawLine(
 			D2D1::Point2F(0.0f, static_cast<FLOAT>(y)),
 			D2D1::Point2F(rtSize.width, static_cast<FLOAT>(y)),
-			d2LightSlateGrayBrushPtr,
-			0.5f);
+			d2BlackBrushPtr,
+			1.0f);
 	}
+*/
 
 	// Draw two rectangles.
 	D2D1_RECT_F rectangle1 = D2D1::RectF(
@@ -321,6 +355,13 @@ void Render()
 
 	// Draw the outline of a rectangle.
 	d2RenderTargetPtr->DrawRectangle(&rectangle2, d2CornflowerBlueBrushPtr);
+
+	D2D1_ELLIPSE ellipse = D2D1::Ellipse(
+		D2D1::Point2F(rtSize.width / 2, rtSize.height / 2),
+		30.0f, 30.0f
+	);
+
+	d2RenderTargetPtr->DrawEllipse(&ellipse, d2BlackBrushPtr);
 
 	d2RenderTargetPtr->EndDraw();
 }

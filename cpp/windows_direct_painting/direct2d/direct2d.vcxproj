@@ -146,9 +146,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="direct2d.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
