@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 
+#include <memory>
 #include <d2d1.h>
 #include <d2d1_1.h>
 
@@ -159,7 +160,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 	// Create a Direct2D render target
 	hRes = d2FactoryPtr->CreateHwndRenderTarget(
-		D2D1::RenderTargetProperties(),
+		D2D1::RenderTargetProperties(D2D1_RENDER_TARGET_TYPE_HARDWARE),
 		D2D1::HwndRenderTargetProperties(hWnd, size),
 		&d2RenderTargetPtr
 	);
@@ -375,8 +376,29 @@ void Render()
 	d2SinkPtr->Close();
 	d2SinkPtr->Release();
 
-	d2RenderTargetPtr->DrawGeometry(d2PathGeometryPtr, d2BlackBrushPtr);
-	d2RenderTargetPtr->FillGeometry(d2PathGeometryPtr, d2CornflowerBlueBrushPtr);
+	{
+		D2D1::Matrix3x2F d2LocalTranslate;
+		ID2D1TransformedGeometry * d2TransformedGeometry = nullptr;
+		d2LocalTranslate = D2D1::Matrix3x2F::Translation(10.0f, 0.0f);
+		d2FactoryPtr->CreateTransformedGeometry(d2PathGeometryPtr, d2LocalTranslate, &d2TransformedGeometry);
+
+		d2RenderTargetPtr->DrawGeometry(d2TransformedGeometry, d2BlackBrushPtr);
+		d2RenderTargetPtr->FillGeometry(d2TransformedGeometry, d2CornflowerBlueBrushPtr);
+
+		d2TransformedGeometry->Release();
+	}
+
+	{
+		D2D1::Matrix3x2F d2LocalTranslate;
+		ID2D1TransformedGeometry * d2TransformedGeometry = nullptr;
+		d2LocalTranslate = D2D1::Matrix3x2F::Translation(300.0f, 100.0f);
+		d2FactoryPtr->CreateTransformedGeometry(d2PathGeometryPtr, d2LocalTranslate, &d2TransformedGeometry);
+
+		d2RenderTargetPtr->DrawGeometry(d2TransformedGeometry, d2BlackBrushPtr);
+		d2RenderTargetPtr->FillGeometry(d2TransformedGeometry, d2CornflowerBlueBrushPtr);
+
+		d2TransformedGeometry->Release();
+	}
 
 	d2PathGeometryPtr->Release();
 
