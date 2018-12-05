@@ -60,7 +60,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     MyRegisterClass(hInstance);
 
     // Perform application initialization:
-    if (FAILED(InitInstance (hInstance, nCmdShow)))
+    if (InitInstance (hInstance, nCmdShow) == FALSE)
     {
         return FALSE;
     }
@@ -150,6 +150,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 	HRESULT hRes;
 	hRes = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &d2FactoryPtr);
+	if (FAILED(hRes)) return FALSE;
 
 	RECT rc;
 	GetClientRect(hWnd, &rc);
@@ -178,7 +179,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	);
 	if (FAILED(hRes)) return FALSE;
 
-	// Create a blue brush
+	// Create a black brush
 	hRes = d2RenderTargetPtr->CreateSolidColorBrush(
 		D2D1::ColorF(D2D1::ColorF::Black),
 		&d2BlackBrushPtr
@@ -312,7 +313,11 @@ void Render()
 
 	d2RenderTargetPtr->SetTransform(d2SceneTranslate * d2SceneScale);
 	d2RenderTargetPtr->Clear(D2D1::ColorF(D2D1::ColorF::White));
-	d2RenderTargetPtr->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
+	//d2RenderTargetPtr->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
+
+
+	ID2D1PathGeometry * d2PathGeometryPtr = nullptr;
+	d2FactoryPtr->CreatePathGeometry(&d2PathGeometryPtr);
 
 /*
 	for (int x = 0; x < width; x += 10)
@@ -356,12 +361,24 @@ void Render()
 	// Draw the outline of a rectangle.
 	d2RenderTargetPtr->DrawRectangle(&rectangle2, d2CornflowerBlueBrushPtr);
 
-	D2D1_ELLIPSE ellipse = D2D1::Ellipse(
-		D2D1::Point2F(rtSize.width / 2, rtSize.height / 2),
-		30.0f, 30.0f
-	);
+	D2D1_ELLIPSE ellipse = D2D1::Ellipse(D2D1::Point2F(rtSize.width / 2, rtSize.height / 2), 30.0f, 30.0f);
 
 	d2RenderTargetPtr->DrawEllipse(&ellipse, d2BlackBrushPtr);
+
+	ID2D1GeometrySink * d2SinkPtr = nullptr;
+	d2PathGeometryPtr->Open(&d2SinkPtr);
+	d2SinkPtr->BeginFigure(D2D1::Point2F(20.0f, 20.0f), D2D1_FIGURE_BEGIN_FILLED);
+	d2SinkPtr->AddLine(D2D1::Point2F(200.0f, 20.0f));
+	d2SinkPtr->AddLine(D2D1::Point2F(210.0f, 100.0f));
+	d2SinkPtr->AddLine(D2D1::Point2F(10.0f, 100.0f));
+	d2SinkPtr->EndFigure(D2D1_FIGURE_END_CLOSED);
+	d2SinkPtr->Close();
+	d2SinkPtr->Release();
+
+	d2RenderTargetPtr->DrawGeometry(d2PathGeometryPtr, d2BlackBrushPtr);
+	d2RenderTargetPtr->FillGeometry(d2PathGeometryPtr, d2CornflowerBlueBrushPtr);
+
+	d2PathGeometryPtr->Release();
 
 	d2RenderTargetPtr->EndDraw();
 }
