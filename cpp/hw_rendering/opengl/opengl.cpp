@@ -1,14 +1,25 @@
 #include <iostream>
+#include <fstream>
+#include <streambuf>
+#include <memory>
 #include <string>
 #include <exception>
+
 #include <windows.h>
 #include <gl/glew.h>
 #include <gl/GLU.h>
 #include <gl/GL.h>
 
+#include "Shader.h"
+#include "Program.h"
+
 HDC windowDeviceContext = NULL;
 HGLRC windowContext = NULL;
 GLuint vertexBufferID = 0;
+
+std::unique_ptr<Shader> upVertexShader;
+std::unique_ptr<Shader> upFragmentShader;
+std::unique_ptr<Program> upProgram;
 
 void InitializeRendering(HWND hWnd)
 {
@@ -16,7 +27,7 @@ void InitializeRendering(HWND hWnd)
 	{
 		sizeof(PIXELFORMATDESCRIPTOR),
 		1,
-		PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,    //Flags
+		PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER | PFD_SWAP_EXCHANGE,    //Flags
 		PFD_TYPE_RGBA,        // The kind of framebuffer. RGBA or palette.
 		32,                   // Colordepth of the framebuffer.
 		0, 0, 0, 0, 0, 0,
@@ -27,7 +38,7 @@ void InitializeRendering(HWND hWnd)
 		24,                   // Number of bits for the depthbuffer
 		8,                    // Number of bits for the stencilbuffer
 		0,                    // Number of Aux buffers in the framebuffer.
-		PFD_MAIN_PLANE,
+		0,
 		0,
 		0, 0, 0
 	};
@@ -49,6 +60,7 @@ void InitializeRendering(HWND hWnd)
 
 void DeinitializeRendering()
 {
+	wglMakeCurrent(NULL, NULL);
 	wglDeleteContext(windowContext);
 }
 
@@ -59,7 +71,10 @@ void InitializeGeometry()
 	{
 		-1.0f, -1.0f, 0.0f,
 		1.0f, -1.0f, 0.0f,
+		1.0f, -1.0f, 0.0f,
 		0.0f,  1.0f, 0.0f,
+		0.0f,  1.0f, 0.0f,
+		-1.0f, -1.0f, 0.0f,
 	};
 
 	glGenBuffers(1, &vertexBufferID);
@@ -80,6 +95,26 @@ void InitializeGeometry()
 	);
 }
 
+void InitializeShaders()
+{
+	{
+		auto shaderFile = std::ifstream("C:/dev/git/playground/cpp/hw_rendering/opengl/vertexShader.glsl");
+		auto shaderCode = std::string(std::istreambuf_iterator<char>(shaderFile), std::istreambuf_iterator<char>());
+		upVertexShader = std::make_unique<Shader>(GL_VERTEX_SHADER, shaderCode);
+	}
+
+	{
+		auto shaderFile = std::ifstream("C:/dev/git/playground/cpp/hw_rendering/opengl/fragmentShader.glsl");
+		auto shaderCode = std::string(std::istreambuf_iterator<char>(shaderFile), std::istreambuf_iterator<char>());
+		upFragmentShader = std::make_unique<Shader>(GL_FRAGMENT_SHADER, shaderCode);
+	}
+
+	upProgram = std::make_unique<Program>();
+	upProgram->Attach(*upVertexShader);
+	upProgram->Attach(*upFragmentShader);
+	upProgram->Link();
+}
+
 void DeinitializeGeometry()
 {
 	glDeleteBuffers(1, &vertexBufferID);
@@ -87,16 +122,17 @@ void DeinitializeGeometry()
 
 void WindowRender()
 {
-	glDrawBuffer(GL_FRONT_AND_BACK);
+	glDrawBuffer(GL_BACK);
 
 	// Clear the window
-	//glClear(GL_COLOR_BUFFER_BIT);
-	//glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+
+	glUseProgram(upProgram->Id());
 
 	// Draw the triangle
-	glDrawArrays(GL_TRIANGLES, 0, 3); // Starting from vertex 0; 3 vertices total -> 1 triangle
-	glDisableVertexAttribArray(0);
+	glDrawArrays(GL_LINES, 0, 6);
+	//glDisableVertexAttribArray(0);
 
 	// Swap main plane buffers
 	SwapBuffers(windowDeviceContext);
@@ -115,6 +151,7 @@ LRESULT WindowMessageHandler(
 		{
 			InitializeRendering(hWnd);
 			InitializeGeometry();
+			InitializeShaders();
 		}
 		break;
 
