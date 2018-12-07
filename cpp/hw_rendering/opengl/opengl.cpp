@@ -69,12 +69,10 @@ void InitializeGeometry()
 	// An array of 3 vectors which represents 3 vertices
 	static const GLfloat vertexBufferData[] =
 	{
-		-1.0f, -1.0f, 0.0f,
-		1.0f, -1.0f, 0.0f,
-		1.0f, -1.0f, 0.0f,
-		0.0f,  1.0f, 0.0f,
-		0.0f,  1.0f, 0.0f,
-		-1.0f, -1.0f, 0.0f,
+		-0.8f, -0.8f, 0.0f,		+0.8f, -0.8f, 0.0f,
+		+0.8f, -0.8f, 0.0f,		+0.2f, +0.8f, 0.0f,
+		+0.2f, +0.8f, 0.0f,		-0.6f, +0.6f, 0.0f,
+		-0.6f, +0.6f, 0.0f,		-0.8f, -0.8f, 0.0f,
 	};
 
 	glGenBuffers(1, &vertexBufferID);
@@ -128,11 +126,9 @@ void WindowRender()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
 
+	// Draw the vertex buffer
 	glUseProgram(upProgram->Id());
-
-	// Draw the triangle
-	glDrawArrays(GL_LINES, 0, 6);
-	//glDisableVertexAttribArray(0);
+	glDrawArrays(GL_LINES, 0, 8);
 
 	// Swap main plane buffers
 	SwapBuffers(windowDeviceContext);
