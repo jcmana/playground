@@ -167,11 +167,6 @@
     <Image Include="direct2d.ico" />
     <Image Include="small.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\painter\painter.vcxproj">
-      <Project>{233c1f38-d69d-49a8-9f0a-acff236c9718}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
