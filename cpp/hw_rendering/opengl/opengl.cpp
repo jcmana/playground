@@ -9,7 +9,7 @@
 #include <gl/glew.h>
 #include <gl/GLU.h>
 #include <gl/GL.h>
-
+ 
 #include "Shader.h"
 #include "Program.h"
 
@@ -20,6 +20,8 @@ GLuint vertexBufferID = 0;
 std::unique_ptr<Shader> upVertexShader;
 std::unique_ptr<Shader> upFragmentShader;
 std::unique_ptr<Program> upProgram;
+
+std::vector<GLfloat> verteces;
 
 void InitializeRendering(HWND hWnd)
 {
@@ -66,20 +68,39 @@ void DeinitializeRendering()
 
 void InitializeGeometry()
 {
-	// An array of 3 vectors which represents 3 vertices
-	static const GLfloat vertexBufferData[] =
+	// Generate matrix of verteces
+	/*
+	for (int col = 0; col < 3; ++col)
 	{
-		-0.8f, -0.8f, 0.0f,		+0.8f, -0.8f, 0.0f,
-		+0.8f, -0.8f, 0.0f,		+0.2f, +0.8f, 0.0f,
-		+0.2f, +0.8f, 0.0f,		-0.6f, +0.6f, 0.0f,
-		-0.6f, +0.6f, 0.0f,		-0.8f, -0.8f, 0.0f,
-	};
+		for (int row = 0; row < 3; ++row)
+		{
+			verteces.push_back(col * 0.2f);
+			verteces.push_back(row * 0.2f);
+
+			verteces.push_back((col + 1) * 0.2f);
+			verteces.push_back((row + 1) * 0.2f);
+		}
+	}
+	*/
+	verteces.push_back(0.0f); verteces.push_back(0.0f);
+	verteces.push_back(0.5f); verteces.push_back(0.0f);
+
+	verteces.push_back(0.5f); verteces.push_back(0.0f);
+	verteces.push_back(0.5f); verteces.push_back(0.5f);
+
+	verteces.push_back(0.5f); verteces.push_back(0.5f);
+	verteces.push_back(0.0f); verteces.push_back(0.5f);
+
+	//verteces.push_back(0.0f); verteces.push_back(0.4f);
+	//verteces.push_back(0.0f); verteces.push_back(0.0f);
 
 	glGenBuffers(1, &vertexBufferID);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
 
 	// Give our vertices to OpenGL
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexBufferData), vertexBufferData, GL_STATIC_DRAW);
+	GLsizeiptr vertexDataSize = sizeof(GLfloat) * verteces.size();
+	const void * vertexData = verteces.data();
+	glBufferData(GL_ARRAY_BUFFER, vertexDataSize, vertexData, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
@@ -93,8 +114,27 @@ void InitializeGeometry()
 	);
 }
 
+void GLAPIENTRY MessageCallback(
+	GLenum source,
+	GLenum type,
+	GLuint id,
+	GLenum severity,
+	GLsizei length,
+	const GLchar* message,
+	const void* userParam)
+{
+	fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
+		(type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
+		type, severity, message);
+}
+
 void InitializeShaders()
 {
+	glEnable(GL_DEBUG_OUTPUT);
+	glDebugMessageCallback(MessageCallback, 0);
+
+	glEnable(GL_PROGRAM_POINT_SIZE);
+
 	{
 		auto shaderFile = std::ifstream("C:/dev/git/playground/cpp/hw_rendering/opengl/vertexShader.glsl");
 		auto shaderCode = std::string(std::istreambuf_iterator<char>(shaderFile), std::istreambuf_iterator<char>());
@@ -126,9 +166,20 @@ void WindowRender()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
 
-	// Draw the vertex buffer
 	glUseProgram(upProgram->Id());
-	glDrawArrays(GL_LINES, 0, 8);
+
+	// Global transformation
+	GLfloat transform[9] =
+	{
+		1.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 1.0f,
+	};
+	GLint uniformLocation = glGetUniformLocation(upProgram->Id(), "transform");
+ 	glUniformMatrix3fv(uniformLocation, 1, GL_FALSE, transform);
+
+	// Draw the vertex buffer
+	glDrawArrays(GL_LINES, 0, verteces.size());
 
 	// Swap main plane buffers
 	SwapBuffers(windowDeviceContext);
@@ -153,19 +204,15 @@ LRESULT WindowMessageHandler(
 
 		case WM_SIZE:
 		{
-			InitializeGeometry();
+			RECT windowRect;
+			GetWindowRect(hWnd, &windowRect);
+			//glViewport(0, 0, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top);
 		}
 		break;
 
 		case WM_PAINT:
 		{
 			WindowRender();
-		}
-		break;
-
-		case WM_ERASEBKGND:
-		{
-			return TRUE;
 		}
 		break;
 
