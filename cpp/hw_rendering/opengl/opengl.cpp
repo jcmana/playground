@@ -6,9 +6,14 @@
 #include <exception>
 
 #include <windows.h>
+
 #include <gl/glew.h>
 #include <gl/GLU.h>
 #include <gl/GL.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp> 
  
 #include "Shader.h"
 #include "Program.h"
@@ -23,13 +28,16 @@ std::unique_ptr<Program> upProgram;
 
 std::vector<GLfloat> verteces;
 
+float dx = 0.0f;
+float dy = 0.0f;
+
 void InitializeRendering(HWND hWnd)
 {
 	PIXELFORMATDESCRIPTOR pfd =
 	{
 		sizeof(PIXELFORMATDESCRIPTOR),
 		1,
-		PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER | PFD_SWAP_EXCHANGE,    //Flags
+		PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER | PFD_SWAP_EXCHANGE,
 		PFD_TYPE_RGBA,        // The kind of framebuffer. RGBA or palette.
 		32,                   // Colordepth of the framebuffer.
 		0, 0, 0, 0, 0, 0,
@@ -69,30 +77,14 @@ void DeinitializeRendering()
 void InitializeGeometry()
 {
 	// Generate matrix of verteces
-	/*
-	for (int col = 0; col < 3; ++col)
+	for (float x = -2.0; x <= +2.0f; x += 0.25f)
 	{
-		for (int row = 0; row < 3; ++row)
+		for (float y = -2.0; y <= +2.0f; y += 0.25f)
 		{
-			verteces.push_back(col * 0.2f);
-			verteces.push_back(row * 0.2f);
-
-			verteces.push_back((col + 1) * 0.2f);
-			verteces.push_back((row + 1) * 0.2f);
+			verteces.push_back(x);
+			verteces.push_back(y);
 		}
 	}
-	*/
-	verteces.push_back(0.0f); verteces.push_back(0.0f);
-	verteces.push_back(0.5f); verteces.push_back(0.0f);
-
-	verteces.push_back(0.5f); verteces.push_back(0.0f);
-	verteces.push_back(0.5f); verteces.push_back(0.5f);
-
-	verteces.push_back(0.5f); verteces.push_back(0.5f);
-	verteces.push_back(0.0f); verteces.push_back(0.5f);
-
-	//verteces.push_back(0.0f); verteces.push_back(0.4f);
-	//verteces.push_back(0.0f); verteces.push_back(0.0f);
 
 	glGenBuffers(1, &vertexBufferID);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
@@ -106,7 +98,7 @@ void InitializeGeometry()
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
 	glVertexAttribPointer(
 		0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-		3,                  // size
+		2,                  // size
 		GL_FLOAT,           // type
 		GL_FALSE,           // normalized
 		0,                  // stride
@@ -130,10 +122,13 @@ void GLAPIENTRY MessageCallback(
 
 void InitializeShaders()
 {
-	glEnable(GL_DEBUG_OUTPUT);
-	glDebugMessageCallback(MessageCallback, 0);
 
 	glEnable(GL_PROGRAM_POINT_SIZE);
+	glDisable(GL_CULL_FACE);
+	glDisable(GL_DEPTH_TEST);
+
+	glEnable(GL_DEBUG_OUTPUT);
+	glDebugMessageCallback(MessageCallback, 0);
 
 	{
 		auto shaderFile = std::ifstream("C:/dev/git/playground/cpp/hw_rendering/opengl/vertexShader.glsl");
@@ -169,17 +164,16 @@ void WindowRender()
 	glUseProgram(upProgram->Id());
 
 	// Global transformation
-	GLfloat transform[9] =
-	{
-		1.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 1.0f,
-	};
+	glm::mat4 transform = glm::mat4(1.0f);
+	transform = glm::scale(transform, glm::vec3(0.3f, 0.3f, 1.0f));
+	transform = glm::translate(transform, glm::vec3(1.3f, 0.0f, 0.0f));
+	transform = glm::rotate(transform, glm::radians(-30.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
 	GLint uniformLocation = glGetUniformLocation(upProgram->Id(), "transform");
- 	glUniformMatrix3fv(uniformLocation, 1, GL_FALSE, transform);
+ 	glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(transform));
 
 	// Draw the vertex buffer
-	glDrawArrays(GL_LINES, 0, verteces.size());
+	glDrawArrays(GL_LINE_STRIP, 0, verteces.size() - 1);
 
 	// Swap main plane buffers
 	SwapBuffers(windowDeviceContext);
@@ -205,14 +199,24 @@ LRESULT WindowMessageHandler(
 		case WM_SIZE:
 		{
 			RECT windowRect;
-			GetWindowRect(hWnd, &windowRect);
-			//glViewport(0, 0, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top);
+			GetClientRect(hWnd, &windowRect);
+			glViewport(0, 0, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top);
 		}
 		break;
 
 		case WM_PAINT:
 		{
 			WindowRender();
+		}
+		break;
+
+		case WM_KEYDOWN:
+		{
+			switch (wParam)
+			{
+				case VK_LEFT: dx -= 1.0f; break;
+				case VK_RIGHT: dx += 1.0f; break;
+			}
 		}
 		break;
 
