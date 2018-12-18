@@ -10,6 +10,7 @@
 #include <crtdbg.h>
 #endif
 
+
 struct custom_construction
 {
 	custom_construction(const std::string & name) :
