@@ -15,9 +15,37 @@ void test_math_duplicities()
 	std::cout << c << std::endl;
 }
 
+class virtual_class
+{
+private:
+	void empty_normal()
+	{
+	}
+
+	virtual void empty_virtual()
+	{
+	}
+
+public:
+	void execute()
+	{
+		std::cout << "executing" << std::endl;
+
+		//empty_normal();
+		empty_virtual();
+	}
+};
+
+void test_empty_virtual_method()
+{
+	virtual_class vc;
+	vc.execute();
+}
+
 int main()
 {
-	test_math_duplicities();
+//	test_math_duplicities();
+	test_empty_virtual_method();
 
 	return 0;
 }

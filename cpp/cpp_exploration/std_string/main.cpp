@@ -5,6 +5,7 @@
 int main()
 {
 	// check string for prefix:
+	if (false)
 	{
 		std::string str("scene_ref_1");
 		std::string str_prefix("scene_");
@@ -15,5 +16,18 @@ int main()
 		}
 	}
 
-	return 0;
+	// capacity():
+	if (true)
+	{
+		std::string str;
+		std::cout << str.capacity() << std::endl;
+
+		for (int n = 0; n < 30; ++n)
+		{
+			str.push_back('a');
+			std::cout << str.capacity() << std::endl;
+		}
+	}
+
+	std::getchar(); return 0;
 }

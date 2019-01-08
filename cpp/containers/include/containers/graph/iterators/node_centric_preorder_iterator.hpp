@@ -101,7 +101,7 @@ public:
 	std::vector<node *> trail() const
 	{
 		std::vector<node *> iterator_trail(m_trail.size());
-		std::transform(m_trail.begin(), m_trail.end(), iterator_trail.begin(), [](const breadcrumb & i)
+		std::transform(m_trail.rbegin(), m_trail.rend(), iterator_trail.begin(), [](const breadcrumb & i)
 		{
 			return std::get<0>(i);
 		});
