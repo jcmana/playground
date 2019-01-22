@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{7182DE77-7C33-4034-B741-646BCB77EA56}</ProjectGuid>
-    <RootNamespace>std_atomic</RootNamespace>
+    <ProjectGuid>{8537CEFD-C6AA-4543-A96C-1E995A312518}</ProjectGuid>
+    <RootNamespace>std_condition_variable</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -110,7 +110,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="std_atomic.cpp" />
+    <ClCompile Include="std_condition_variable.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
