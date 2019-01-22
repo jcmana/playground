@@ -23,15 +23,12 @@
     <ClCompile Include="proxy_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="limited_deque_test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="filter_test.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="proxy_test.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="graph_test.h">
+    <ClInclude Include="tests.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -117,12 +117,11 @@
     <ClCompile Include="containers_test.cpp" />
     <ClCompile Include="filter_test.cpp" />
     <ClCompile Include="graph_test.cpp" />
+    <ClCompile Include="limited_deque_test.cpp" />
     <ClCompile Include="proxy_test.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="filter_test.h" />
-    <ClInclude Include="graph_test.h" />
-    <ClInclude Include="proxy_test.h" />
+    <ClInclude Include="tests.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
