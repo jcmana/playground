@@ -11,6 +11,9 @@
     <Filter Include="Header Files\Graph\Iterators">
       <UniqueIdentifier>{4fb1a11a-6175-4bb9-a850-98943a500b65}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Queue">
+      <UniqueIdentifier>{43ab92d0-fb2f-41a4-b99b-1efff051097a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\containers\filter_if.hpp">
@@ -37,8 +40,11 @@
     <ClInclude Include="..\..\include\containers\graph\iterators\node_centric_sibling_iterator.hpp">
       <Filter>Header Files\Graph\Iterators</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\containers\limited_queue.hpp">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\include\containers\queue\limited_queue.hpp">
+      <Filter>Header Files\Queue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\containers\queue\nonuniform_limited_queue.hpp">
+      <Filter>Header Files\Queue</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

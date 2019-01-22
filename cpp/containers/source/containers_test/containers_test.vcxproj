@@ -118,6 +118,7 @@
     <ClCompile Include="filter_test.cpp" />
     <ClCompile Include="graph_test.cpp" />
     <ClCompile Include="limited_deque_test.cpp" />
+    <ClCompile Include="nonuniform_limited_deque_test.cpp" />
     <ClCompile Include="proxy_test.cpp" />
   </ItemGroup>
   <ItemGroup>

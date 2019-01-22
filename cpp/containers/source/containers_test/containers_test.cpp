@@ -8,7 +8,8 @@ int main()
 	//filter_test();
 	//proxy_test();
 	//graph_test();
-	limited_deque_test();
+	//limited_deque_test();
+	nonuniform_limited_queue_test();
 
 	std::cout << "Press key to exit ..." << std::endl;
 	std::getchar();

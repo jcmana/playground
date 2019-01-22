@@ -1,12 +1,12 @@
 #include <iostream>
 
-#include "containers/limited_queue.hpp"
+#include "containers/queue/limited_queue.hpp"
 
 void limited_deque_test()
 {
 	containers::limited_queue<int> lq(5);
 
-	// push limit:
+	// push volume_limit:
 	{
 		int counter = 0;
 		while (lq.push(counter))
@@ -19,7 +19,7 @@ void limited_deque_test()
 	}
 
 
-	// lowering the limit:
+	// lowering the volume_limit:
 	{
 		std::cout << "Changing queue limit to 3\n";
 		lq.limit(3);
