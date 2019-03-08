@@ -124,6 +124,17 @@ public:
 		friend node_centric;
 	};
 
+	class cursor
+	{
+	public:
+		cursor(node * node_ptr);
+		void follow(const EdgeProperty & edge_property);
+		void retrat(const EdgeProperty & edge_property);
+
+	private:
+		node * current_node_ptr;
+	};
+
 	/// \brief		 Default constructor. Creates empty graph.
 	node_centric();
 
