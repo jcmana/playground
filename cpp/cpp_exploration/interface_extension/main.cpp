@@ -5,7 +5,7 @@
 #include "element_impl.h"
 #include "rectangle_impl.h"
 
-#include "composite.h"
+#include "composite_rectangle.h"
 
 int main()
 {
@@ -19,7 +19,7 @@ int main()
 	r->height();
 
 	// composite class
-	auto comp = composite::factory::make_composite(5, 5, 20, 10);
+	auto comp = composite_rectangle::factory::make_composite(5, 5, 20, 10);
 
 	// up-casting
 	auto indexable_comp = std::static_pointer_cast<indexable>(comp);
@@ -35,7 +35,7 @@ int main()
 	}
 
 	// down-casting
-	auto comp_from_element = std::static_pointer_cast<composite>(element_comp);
+	auto comp_from_element = std::static_pointer_cast<composite_rectangle>(element_comp);
 
 	{
 		auto boundary = comp->boundary();
@@ -43,7 +43,7 @@ int main()
 	}
 
 	// illegal side-casting attempt
-	auto illegal_comp = std::dynamic_pointer_cast<composite>(i);
+	auto illegal_comp = std::dynamic_pointer_cast<composite_rectangle>(i);
 
 	// static_cast will succeed (but returns invalid object)
 	// dynamic_cast will return nullptr

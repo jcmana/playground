@@ -35,7 +35,7 @@
     <ClInclude Include="rectangle.h">
       <Filter>Interface Files</Filter>
     </ClInclude>
-    <ClInclude Include="composite.h">
+    <ClInclude Include="composite_rectangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -52,7 +52,7 @@
     <ClCompile Include="rectangle_impl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="composite.cpp">
+    <ClCompile Include="composite_rectangle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

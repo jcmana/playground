@@ -23,6 +23,7 @@
     <ProjectGuid>{CDC0894B-4E1C-49FC-9E58-8B3C7F33FF83}</ProjectGuid>
     <RootNamespace>interfaceextension</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>interface_extension_composite</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -115,7 +116,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="composite.h" />
+    <ClInclude Include="composite_rectangle.h" />
     <ClInclude Include="indexable.h" />
     <ClInclude Include="indexable_impl.h" />
     <ClInclude Include="element.h" />
@@ -124,7 +125,7 @@
     <ClInclude Include="rectangle_impl.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="composite.cpp" />
+    <ClCompile Include="composite_rectangle.cpp" />
     <ClCompile Include="indexable_impl.cpp" />
     <ClCompile Include="element_impl.cpp" />
     <ClCompile Include="main.cpp" />
