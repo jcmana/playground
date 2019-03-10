@@ -124,12 +124,21 @@ public:
 		friend node_centric;
 	};
 
+	/// \brief		Basic class for graph navigation.
 	class cursor
 	{
 	public:
+		/// \brief		Constructs cursor pointing to `node_ptr`.
 		cursor(node * node_ptr);
+
+		/// \brief		Moves cursor onto the node pointed by outgoing edge with `edge_property`.
 		void follow(const EdgeProperty & edge_property);
-		void retrat(const EdgeProperty & edge_property);
+		
+		/// \brief		Moves cursor onto the node pointed by incoming edge with `edge_property`.
+		void retreat(const EdgeProperty & edge_property);
+
+		node * operator *();
+		node * operator ->();
 
 	private:
 		node * current_node_ptr;
@@ -208,6 +217,52 @@ node_centric<NodeProperty, EdgeProperty>::edge::edge(node * source_node, node * 
 	target(target_node),
 	property(std::forward<Args>(edge_property_args) ...)
 {
+}
+
+template <typename NodeProperty, typename EdgeProperty>
+node_centric<NodeProperty, EdgeProperty>::cursor::cursor(node * node_ptr) :
+	current_node_ptr(node_ptr)
+{
+}
+
+template <typename NodeProperty, typename EdgeProperty>
+void 
+node_centric<NodeProperty, EdgeProperty>::cursor::follow(const EdgeProperty & edge_property)
+{
+	for (edge * outgoing_edge_ptr : current_node_ptr->outgoing)
+	{
+		if (outgoing_edge_ptr->property == edge_property)
+		{
+			current_node_ptr = outgoing_edge_ptr->target;
+		}
+	}
+}
+
+template <typename NodeProperty, typename EdgeProperty>
+void
+node_centric<NodeProperty, EdgeProperty>::cursor::retreat(const EdgeProperty & edge_property)
+{
+	for (edge * incoming_edge_ptr : current_node_ptr->incoming)
+	{
+		if (incoming_edge_ptr->property == edge_property)
+		{
+			current_node_ptr = incoming_edge_ptr->target;
+		}
+	}
+}
+
+template <typename NodeProperty, typename EdgeProperty>
+typename node_centric<NodeProperty, EdgeProperty>::node *
+node_centric<NodeProperty, EdgeProperty>::cursor::operator *()
+{
+	return current_node_ptr;
+}
+
+template <typename NodeProperty, typename EdgeProperty>
+typename node_centric<NodeProperty, EdgeProperty>::node *
+node_centric<NodeProperty, EdgeProperty>::cursor::operator ->()
+{
+	return current_node_ptr;
 }
 
 template <typename NodeProperty, typename EdgeProperty>
