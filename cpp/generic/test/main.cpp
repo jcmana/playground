@@ -4,7 +4,7 @@
 #include <string>
 #include <memory>
 
-#include "../generic/scope_guard.hpp"
+#include "../generic/scope_guard.h"
 #include "../generic/bidirectional_map.hpp"
 
 
@@ -23,9 +23,6 @@ int main()
 	auto gb = generic::make_scope_guard(cleanup);
 
 	auto func = std::function<void()>(cleanup);
-
-	auto gc = generic::make_scope_guard(reinterpret_cast<generic::scope_guard::functor &>(func.operator ()));
-
 
 	/* generic::bidirectional_map example */
 

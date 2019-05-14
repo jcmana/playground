@@ -15,11 +15,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="scope_guard.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="bidirectional_map.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="scope_guard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="scrope_guard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
