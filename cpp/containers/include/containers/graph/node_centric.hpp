@@ -100,8 +100,7 @@ public:
 		template <typename ... Args>
 		node(Args && ... node_property_args);
 
-	private:
-		friend node_centric;
+	friend node_centric;
 	};
 
 	/// \brief		Class holding the edge property and connected nodes.
@@ -120,32 +119,40 @@ public:
 		template <typename ... Args>
 		edge(node * source_node, node * target_node, Args && ... edge_property_args);
 
-	private:
-		friend node_centric;
+	friend node_centric;
 	};
 
 	/// \brief		Basic class for graph navigation.
 	class cursor
 	{
 	public:
-		/// \brief		Constructs cursor pointing to `node_ptr`.
-		cursor(node * node_ptr);
+		/// \brief		Creates `cursor` over `container` starting at `it`.
+		cursor(typename edge_container & container, typename edge_container::iterator it);
+		/// \brief		Creates `cursor` over `container` starting at first element.
+		cursor(typename edge_container & container);
 
-		/// \brief		Moves cursor onto the node pointed by outgoing edge with `edge_property`.
-		void follow(const EdgeProperty & edge_property);
-		
-		/// \brief		Moves cursor onto the node pointed by incoming edge with `edge_property`.
-		void retreat(const EdgeProperty & edge_property);
+		/// \brief		Converts to `true` iff the `cursor` points to valid `edge`.
+		operator bool() const;
 
-		node * operator *();
-		node * operator ->();
+		/// \brief		`cursor` pre-increment.
+		cursor & operator ++();
+		/// \brief		`cursor` post-increment.
+		cursor operator ++(int);
+
+		/// \brief		Access member of pointer to `edge` under the `cursor`.
+		edge * operator ->();
+
+		/// \brief		Pointer to `edge` under the `cursor`.
+		edge * get();
 
 	private:
-		node * current_node_ptr;
+		typename edge_container::iterator current_edge_it_begin;
+		typename edge_container::iterator current_edge_it_end;
+		typename edge_container::iterator current_edge_it;
 	};
 
-	/// \brief		 Default constructor. Creates empty graph.
-	node_centric();
+	/// \brief		 Creates empty graph.
+	node_centric() = default;
 
 	/// \brief		 Copy constructor.
 	node_centric(const node_centric & other);
@@ -170,11 +177,11 @@ public:
 	node * create_node(Args && ... node_property_args);
 
 	/// \brief		Creates edge from source to target node with property.
-	/// \param[in]	source_node			Edge source node (pointer returned from create_node(...) call).
-	/// \param[in]	target_node			Edge target node (pointer returned from create_node(...) call).
-	/// \param[in]	edge_property_args	Arguments for edge property constructor.
-	/// \returns	Pointer to the created edge holding the property and connected nodes. Pointed object is
-	///				managed internally and has guaranteed lifetime same as the owning `node_centric_graph` object.
+	/// \param[in]	source_node			Source `node` pointer (returned from `create_node()` call).
+	/// \param[in]	target_node			Target `node` pointer (returned from `create_node()` call).
+	/// \param[in]	edge_property_args	Arguments for `edge` property constructor.
+	/// \returns	Pointer to the created `edge` holding the property and connected `node`s. Pointed object is
+	///				managed internally and has guaranteed lifetime same as the owning `node_centric` object.
 	template <typename ... Args>
 	edge * create_edge(node * source_node, node * target_node, Args && ... edge_property_args);
 
@@ -201,6 +208,8 @@ public:
 	edge_container edges;
 };
 
+// node_centric::node implementation:
+
 template <typename NodeProperty, typename EdgeProperty>
 template <typename ... Args>
 node_centric<NodeProperty, EdgeProperty>::node::node(Args && ... node_property_args) :
@@ -209,6 +218,8 @@ node_centric<NodeProperty, EdgeProperty>::node::node(Args && ... node_property_a
 	property(std::forward<Args>(node_property_args) ...)
 {
 }
+
+// node_centric::edge implementation:
 
 template <typename NodeProperty, typename EdgeProperty>
 template <typename ... Args>
@@ -219,57 +230,60 @@ node_centric<NodeProperty, EdgeProperty>::edge::edge(node * source_node, node * 
 {
 }
 
+// node_centric::cursor implementation:
+
 template <typename NodeProperty, typename EdgeProperty>
-node_centric<NodeProperty, EdgeProperty>::cursor::cursor(node * node_ptr) :
-	current_node_ptr(node_ptr)
+node_centric<NodeProperty, EdgeProperty>::cursor::cursor(typename edge_container & container, typename edge_container::iterator it) :
+	current_edge_it_begin(container.begin()),
+	current_edge_it_end(container.end()),
+	current_edge_it(it)
 {
 }
 
 template <typename NodeProperty, typename EdgeProperty>
-void 
-node_centric<NodeProperty, EdgeProperty>::cursor::follow(const EdgeProperty & edge_property)
+node_centric<NodeProperty, EdgeProperty>::cursor::cursor(typename edge_container & container) :
+	cursor(container, container.begin())
 {
-	for (edge * outgoing_edge_ptr : current_node_ptr->outgoing)
-	{
-		if (outgoing_edge_ptr->property == edge_property)
-		{
-			current_node_ptr = outgoing_edge_ptr->target;
-		}
-	}
 }
 
 template <typename NodeProperty, typename EdgeProperty>
-void
-node_centric<NodeProperty, EdgeProperty>::cursor::retreat(const EdgeProperty & edge_property)
+node_centric<NodeProperty, EdgeProperty>::cursor::operator bool() const
 {
-	for (edge * incoming_edge_ptr : current_node_ptr->incoming)
-	{
-		if (incoming_edge_ptr->property == edge_property)
-		{
-			current_node_ptr = incoming_edge_ptr->target;
-		}
-	}
+	return (current_edge_it != current_edge_it_end);
 }
 
 template <typename NodeProperty, typename EdgeProperty>
-typename node_centric<NodeProperty, EdgeProperty>::node *
-node_centric<NodeProperty, EdgeProperty>::cursor::operator *()
+typename node_centric<NodeProperty, EdgeProperty>::cursor &
+node_centric<NodeProperty, EdgeProperty>::cursor::operator ++()
 {
-	return current_node_ptr;
+	++current_edge_it;
+	return *this;
 }
 
 template <typename NodeProperty, typename EdgeProperty>
-typename node_centric<NodeProperty, EdgeProperty>::node *
+typename node_centric<NodeProperty, EdgeProperty>::cursor
+node_centric<NodeProperty, EdgeProperty>::cursor::operator ++(int)
+{
+	cursor copy(*this);
+	++(*this);
+	return copy;
+}
+
+template <typename NodeProperty, typename EdgeProperty>
+typename node_centric<NodeProperty, EdgeProperty>::edge *
 node_centric<NodeProperty, EdgeProperty>::cursor::operator ->()
 {
-	return current_node_ptr;
+	return get();
 }
 
 template <typename NodeProperty, typename EdgeProperty>
-node_centric<NodeProperty, EdgeProperty>::node_centric()
+typename node_centric<NodeProperty, EdgeProperty>::edge *
+node_centric<NodeProperty, EdgeProperty>::cursor::get()
 {
-	// just the default constructors of all members are sufficient for empty graph
+	return *current_edge_it;
 }
+
+// node_centric implementation:
 
 template <typename NodeProperty, typename EdgeProperty>
 node_centric<NodeProperty, EdgeProperty>::node_centric(const node_centric & other)
