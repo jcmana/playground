@@ -15,6 +15,7 @@
 
 #include "containers/graph/node_centric.hpp"
 #include "containers/graph/node_centric_iterators.hpp"
+#include "containers/graph/iterators/preorder_iterator_cursor.hpp"
 
 template <typename Graph>
 void leaves(const Graph & g)
@@ -569,12 +570,12 @@ void graph_test()
 		static constexpr int EDGE_BELOW = 4;
 
 		generic::bidirectional_map<int, std::string> edge_type_map(
-			{
-				{ EDGE_UP, "up" },
-				{ EDGE_DOWN, "down" },
-				{ EDGE_ABOVE, "above" },
-				{ EDGE_BELOW, "below" },
-			});
+		{
+			{ EDGE_UP, "up" },
+			{ EDGE_DOWN, "down" },
+			{ EDGE_ABOVE, "above" },
+			{ EDGE_BELOW, "below" },
+		});
 
 		// add nodes
 		graph::node * struct_1 = g.create_node("struct_1");
@@ -614,11 +615,13 @@ void graph_test()
 		g.create_edge(ref_3, struct_3, EDGE_DOWN);
 		g.create_edge(ref_4, struct_4, EDGE_DOWN);
 
-		graph::cursor c(struct_1);
+		graph::cursor c(struct_1->outgoing);
 
-		c.follow(EDGE_DOWN);
+		preorder_iterator_c<graph> it(c);
 
-		std::cout << c->property << std::endl;
+		++it;
+
+		//std::cout << it.
 	}
 
 	std::cout << std::endl;

@@ -116,8 +116,10 @@
     <ClInclude Include="..\..\include\containers\graph\iterators\node_centric_parent_iterator.hpp" />
     <ClInclude Include="..\..\include\containers\graph\iterators\node_centric_preorder_iterator.hpp" />
     <ClInclude Include="..\..\include\containers\graph\iterators\node_centric_sibling_iterator.hpp" />
+    <ClInclude Include="..\..\include\containers\graph\iterators\preorder_iterator_cursor.hpp" />
     <ClInclude Include="..\..\include\containers\graph\node_centric.hpp" />
     <ClInclude Include="..\..\include\containers\graph\node_centric_iterators.hpp" />
+    <ClInclude Include="..\..\include\containers\graph\tree.hpp" />
     <ClInclude Include="..\..\include\containers\proxy.hpp" />
     <ClInclude Include="..\..\include\containers\queue\limited_queue.hpp" />
     <ClInclude Include="..\..\include\containers\queue\nonuniform_limited_queue.hpp" />
