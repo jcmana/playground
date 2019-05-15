@@ -66,6 +66,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "iterator_debug_level", "ite
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "operator_overloading", "operator_overloading\operator_overloading.vcxproj", "{485DD0B7-2D2D-4D56-9DC0-8E5D363D2723}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "std_move", "std_move\std_move.vcxproj", "{19DC5D78-5410-4DFA-95AB-A586AC770984}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -330,6 +332,14 @@ Global
 		{485DD0B7-2D2D-4D56-9DC0-8E5D363D2723}.Release|x64.Build.0 = Release|x64
 		{485DD0B7-2D2D-4D56-9DC0-8E5D363D2723}.Release|x86.ActiveCfg = Release|Win32
 		{485DD0B7-2D2D-4D56-9DC0-8E5D363D2723}.Release|x86.Build.0 = Release|Win32
+		{19DC5D78-5410-4DFA-95AB-A586AC770984}.Debug|x64.ActiveCfg = Debug|x64
+		{19DC5D78-5410-4DFA-95AB-A586AC770984}.Debug|x64.Build.0 = Debug|x64
+		{19DC5D78-5410-4DFA-95AB-A586AC770984}.Debug|x86.ActiveCfg = Debug|Win32
+		{19DC5D78-5410-4DFA-95AB-A586AC770984}.Debug|x86.Build.0 = Debug|Win32
+		{19DC5D78-5410-4DFA-95AB-A586AC770984}.Release|x64.ActiveCfg = Release|x64
+		{19DC5D78-5410-4DFA-95AB-A586AC770984}.Release|x64.Build.0 = Release|x64
+		{19DC5D78-5410-4DFA-95AB-A586AC770984}.Release|x86.ActiveCfg = Release|Win32
+		{19DC5D78-5410-4DFA-95AB-A586AC770984}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
