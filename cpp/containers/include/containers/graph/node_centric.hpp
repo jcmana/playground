@@ -84,14 +84,13 @@ public:
 	using edge_container = container<edge *>;
 
 public:
-	/// \brief		Class holding the node property and sets of outgoing/incoming edges.
-	/// \note		Can be constructed only by calling node_centric_graph::create_node(...) method. 
+	/// \brief		Storage for the node property and outgoing/incoming edges.
 	class node
 	{
 	public:
-		/// \brief		Set of outgoing edges.
+		/// \brief		Outgoing `edge`s.
 		edge_container outgoing;
-		/// \brief		Set of incoming edges.		
+		/// \brief		Incoming `edge`s.
 		edge_container incoming;
 		/// \brief		Node property.
 		NodeProperty property;
@@ -103,14 +102,13 @@ public:
 	friend node_centric;
 	};
 
-	/// \brief		Class holding the edge property and connected nodes.
-	/// \note		Can be constructed only by calling node_centric_graph::create_edge(...) method. 
+	/// \brief		Storage for the edge property and connected nodes.
 	class edge
 	{
 	public:
-		/// \brief		Edge source node.
+		/// \brief		Source `node`.
 		node * source;
-		/// \brief		Edge target node.
+		/// \brief		Target `node`.
 		node * target;
 		/// \brief		Edge property.
 		EdgeProperty property;
@@ -127,28 +125,30 @@ public:
 	{
 	public:
 		/// \brief		Creates `cursor` over `container` starting at `it`.
-		cursor(typename edge_container & container, typename edge_container::iterator it);
-		/// \brief		Creates `cursor` over `container` starting at first element.
-		cursor(typename edge_container & container);
+		cursor(typename edge_container::iterator it_begin, typename edge_container::iterator it_end, typename edge_container::iterator it);
 
-		/// \brief		Converts to `true` iff the `cursor` points to valid `edge`.
+		/// \brief		Converts `cursor` to `bool`.
+		/// \returns	`true` iff the `cursor` points to valid `edge`.
 		operator bool() const;
 
 		/// \brief		`cursor` pre-increment.
 		cursor & operator ++();
-		/// \brief		`cursor` post-increment.
-		cursor operator ++(int);
 
 		/// \brief		Access member of pointer to `edge` under the `cursor`.
 		edge * operator ->();
 
 		/// \brief		Pointer to `edge` under the `cursor`.
-		edge * get();
+		edge * operator  *();
 
 	private:
 		typename edge_container::iterator current_edge_it_begin;
 		typename edge_container::iterator current_edge_it_end;
 		typename edge_container::iterator current_edge_it;
+
+	friend node_centric;
+
+	template<typename Graph>
+	friend bool operator ==(typename const Graph::cursor & left, typename const Graph::cursor & right);
 	};
 
 	/// \brief		 Creates empty graph.
@@ -161,10 +161,10 @@ public:
 	node_centric(node_centric && other) noexcept;
 
 	/// \brief		 Copy assignment.
-	node_centric & operator =(const node_centric & other);
+	node_centric & operator  =(const node_centric & other);
 
 	/// \brief		 Move assignment.
-	node_centric & operator =(node_centric && other) noexcept;
+	node_centric & operator  =(node_centric && other) noexcept;
 
 	/// \brief		Deletes all nodes and edges and their properties.
 	~node_centric();
@@ -208,6 +208,15 @@ public:
 	edge_container edges;
 };
 
+/*
+template <typename NodeProperty, typename EdgeProperty>
+bool
+operator !=<NodeProperty, EdgeProperty>(typename const node_centric<NodeProperty, EdgeProperty>::cursor & left, typename const node_centric<NodeProperty, EdgeProperty>::cursor & right)
+{
+	return !(left == right);
+}
+*/
+
 // node_centric::node implementation:
 
 template <typename NodeProperty, typename EdgeProperty>
@@ -233,16 +242,10 @@ node_centric<NodeProperty, EdgeProperty>::edge::edge(node * source_node, node * 
 // node_centric::cursor implementation:
 
 template <typename NodeProperty, typename EdgeProperty>
-node_centric<NodeProperty, EdgeProperty>::cursor::cursor(typename edge_container & container, typename edge_container::iterator it) :
-	current_edge_it_begin(container.begin()),
-	current_edge_it_end(container.end()),
+node_centric<NodeProperty, EdgeProperty>::cursor::cursor(typename edge_container::iterator it_begin, typename edge_container::iterator it_end, typename edge_container::iterator it) :
+	current_edge_it_begin(it_begin),
+	current_edge_it_end(it_end),
 	current_edge_it(it)
-{
-}
-
-template <typename NodeProperty, typename EdgeProperty>
-node_centric<NodeProperty, EdgeProperty>::cursor::cursor(typename edge_container & container) :
-	cursor(container, container.begin())
 {
 }
 
@@ -261,24 +264,15 @@ node_centric<NodeProperty, EdgeProperty>::cursor::operator ++()
 }
 
 template <typename NodeProperty, typename EdgeProperty>
-typename node_centric<NodeProperty, EdgeProperty>::cursor
-node_centric<NodeProperty, EdgeProperty>::cursor::operator ++(int)
-{
-	cursor copy(*this);
-	++(*this);
-	return copy;
-}
-
-template <typename NodeProperty, typename EdgeProperty>
 typename node_centric<NodeProperty, EdgeProperty>::edge *
 node_centric<NodeProperty, EdgeProperty>::cursor::operator ->()
 {
-	return get();
+	return *current_edge_it;
 }
 
 template <typename NodeProperty, typename EdgeProperty>
 typename node_centric<NodeProperty, EdgeProperty>::edge *
-node_centric<NodeProperty, EdgeProperty>::cursor::get()
+node_centric<NodeProperty, EdgeProperty>::cursor::operator  *()
 {
 	return *current_edge_it;
 }
@@ -288,19 +282,19 @@ node_centric<NodeProperty, EdgeProperty>::cursor::get()
 template <typename NodeProperty, typename EdgeProperty>
 node_centric<NodeProperty, EdgeProperty>::node_centric(const node_centric & other)
 {
-	// naive approach:
+	// Naive approach:
 
 	// other -> this node morphism
 	std::map<const node *, node *> morphism;
 
-	// recreate all nodes
+	// Recreate all nodes:
 	for (const node * other_node_ptr : other.nodes)
 	{
 		node * this_node_ptr = create_node(other_node_ptr->property);
 		morphism.insert(std::make_pair(other_node_ptr, this_node_ptr));
 	}
 
-	// recreate all edges
+	// Recreate all edges:
 	for (const edge * other_edge_ptr : other.edges)
 	{
 		node * this_source_node = morphism.at(other_edge_ptr->source);
@@ -429,3 +423,13 @@ node_centric<NodeProperty, EdgeProperty>::remove_edge(edge * edge_to_remove)
 
 } // namespace graph
 } // namespace containers
+
+template <typename Graph> 
+bool operator ==(typename const Graph::cursor & left, typename const Graph::cursor & right)
+{
+	bool it_begin_eq = left.current_edge_it_begin == right.current_edge_it_begin;
+	bool it_end_eq = left.current_edge_it_end == right.current_edge_it_end;
+	bool it_eq = left.current_edge_it == right.current_edge_it;
+
+	return (it_begin_eq && it_end_eq && it_eq);
+}

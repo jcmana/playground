@@ -49,8 +49,5 @@
     <ClInclude Include="..\..\include\containers\graph\iterators\preorder_iterator_cursor.hpp">
       <Filter>Header Files\Graph\Iterators</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\containers\graph\tree.hpp">
-      <Filter>Header Files\Graph</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

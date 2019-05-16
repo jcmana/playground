@@ -562,19 +562,16 @@ void graph_test()
 	if (true)
 	{
 		using graph = containers::graph::node_centric<std::string, int>;
+
 		graph g;
 
-		static constexpr int EDGE_UP = 1;
-		static constexpr int EDGE_DOWN = 2;
-		static constexpr int EDGE_ABOVE = 3;
-		static constexpr int EDGE_BELOW = 4;
+		static constexpr int EDGE_SREF = 1;
+		static constexpr int EDGE_AREF = 2;
 
-		generic::bidirectional_map<int, std::string> edge_type_map(
+		generic::bidirectional_map<int, std::string> emap(
 		{
-			{ EDGE_UP, "up" },
-			{ EDGE_DOWN, "down" },
-			{ EDGE_ABOVE, "above" },
-			{ EDGE_BELOW, "below" },
+			{ EDGE_SREF, "sref" },
+			{ EDGE_AREF, "aref" }
 		});
 
 		// add nodes
@@ -582,46 +579,26 @@ void graph_test()
 		graph::node * struct_2 = g.create_node("struct_2");
 		graph::node * struct_3 = g.create_node("struct_3");
 		graph::node * struct_4 = g.create_node("struct_4");
-
-		graph::node * ref_1 = g.create_node("ref_1");
-		graph::node * ref_2 = g.create_node("ref_2");
-		graph::node * ref_3 = g.create_node("ref_3");
-		graph::node * ref_4 = g.create_node("ref_4");
-
-		graph::node * el_1 = g.create_node("el_1");
-		graph::node * el_2 = g.create_node("el_2");
-		graph::node * el_3 = g.create_node("el_3");
-		graph::node * el_4 = g.create_node("el_4");
-		graph::node * el_5 = g.create_node("el_5");
-		graph::node * el_6 = g.create_node("el_6");
+		graph::node * struct_5 = g.create_node("struct_5");
 
 		// add edges
-		g.create_edge(struct_1, ref_1, EDGE_DOWN);
-		g.create_edge(struct_1, ref_2, EDGE_DOWN);
-		g.create_edge(struct_1, el_1, EDGE_DOWN);
+		g.create_edge(struct_1, struct_3, EDGE_SREF);
+		g.create_edge(struct_1, struct_2, EDGE_SREF);
+		g.create_edge(struct_2, struct_3, EDGE_SREF);
+		g.create_edge(struct_3, struct_4, EDGE_SREF);
+		//g.create_edge(struct_3, struct_1, EDGE_SREF);
 
-		g.create_edge(struct_2, ref_3, EDGE_DOWN);
-		g.create_edge(struct_2, el_2, EDGE_DOWN);
-		g.create_edge(struct_2, el_3, EDGE_DOWN);
-
-		g.create_edge(struct_3, ref_4, EDGE_DOWN);
-		g.create_edge(struct_3, el_4, EDGE_DOWN);
-
-		g.create_edge(struct_4, el_5, EDGE_DOWN);
-		g.create_edge(struct_4, el_6, EDGE_DOWN);
-
-		g.create_edge(ref_1, struct_3, EDGE_DOWN);
-		g.create_edge(ref_2, struct_2, EDGE_DOWN);
-		g.create_edge(ref_3, struct_3, EDGE_DOWN);
-		g.create_edge(ref_4, struct_4, EDGE_DOWN);
-
-		graph::cursor c(struct_1->outgoing);
+		graph::cursor c(struct_1->outgoing.begin(), struct_1->outgoing.end(), struct_1->outgoing.begin());
 
 		preorder_iterator_c<graph> it(c);
+		preorder_iterator_c<graph> it_end;
 
-		++it;
+		while (it != it_end)
+		{
+			std::cout << it->source->property << " -- "<< emap.atob(it->property) << " -> " << it->target->property << std::endl;
 
-		//std::cout << it.
+			++it;
+		}
 	}
 
 	std::cout << std::endl;
