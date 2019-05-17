@@ -1,7 +1,6 @@
 #pragma once
 
-//#include "../iterators/graph_preorder_iterator.hpp"
-#include "../iterators/graph_preorder_iterator_stacked.hpp"
+#include "../iterators/graph_preorder_iterator.hpp"
 
 template<typename Graph>
 class graph_preorder
@@ -11,9 +10,7 @@ public:
 	using graph_node = typename graph::node;
 	using graph_edge = typename graph::edge;
 
-	using cursor = typename graph::cursor;
-	//using iterator = typename graph_preorder_iterator<graph>;
-	using iterator = typename graph_preorder_iterator_stacked<graph>;
+	using iterator = typename graph_preorder_iterator<graph>;
 
 public:
 	graph_preorder(graph * graph_ptr, graph_node * node_ptr) :
@@ -24,7 +21,6 @@ public:
 
 	iterator begin()
 	{
-		//return iterator(cursor(m_graph_node_ptr->outgoing.begin(), m_graph_node_ptr->outgoing.end(), m_graph_node_ptr->outgoing.begin()));
 		return iterator(m_graph_ptr, m_graph_node_ptr);
 	}
 
@@ -34,7 +30,7 @@ public:
 	}
 
 private:
-	graph * m_graph_ptr = nullptr;
+	graph * m_graph_ptr;
 	graph_node * m_graph_node_ptr = nullptr;
 };
 

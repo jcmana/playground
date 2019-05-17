@@ -31,31 +31,16 @@
     <ClInclude Include="..\..\include\containers\graph\node_centric_iterators.hpp">
       <Filter>Header Files\Graph</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\containers\graph\iterators\node_centric_flood_iterator.hpp">
-      <Filter>Header Files\Graph\Iterators</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\containers\graph\iterators\node_centric_parent_iterator.hpp">
-      <Filter>Header Files\Graph\Iterators</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\containers\graph\iterators\node_centric_preorder_iterator.hpp">
-      <Filter>Header Files\Graph\Iterators</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\containers\graph\iterators\node_centric_sibling_iterator.hpp">
-      <Filter>Header Files\Graph\Iterators</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\containers\queue\limited_queue.hpp">
       <Filter>Header Files\Queue</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\containers\queue\nonuniform_limited_queue.hpp">
       <Filter>Header Files\Queue</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\containers\graph\iterators\graph_preorder_iterator.hpp">
-      <Filter>Header Files\Graph\Iterators</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\containers\graph\ordering\graph_preorder.hpp">
       <Filter>Header Files\Graph\Ordering</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\containers\graph\iterators\graph_preorder_iterator_stacked.hpp">
+    <ClInclude Include="..\..\include\containers\graph\iterators\graph_preorder_iterator.hpp">
       <Filter>Header Files\Graph\Iterators</Filter>
     </ClInclude>
   </ItemGroup>

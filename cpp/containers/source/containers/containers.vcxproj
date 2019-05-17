@@ -112,12 +112,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\containers\filter_if.hpp" />
-    <ClInclude Include="..\..\include\containers\graph\iterators\node_centric_flood_iterator.hpp" />
-    <ClInclude Include="..\..\include\containers\graph\iterators\node_centric_parent_iterator.hpp" />
-    <ClInclude Include="..\..\include\containers\graph\iterators\node_centric_preorder_iterator.hpp" />
-    <ClInclude Include="..\..\include\containers\graph\iterators\node_centric_sibling_iterator.hpp" />
     <ClInclude Include="..\..\include\containers\graph\iterators\graph_preorder_iterator.hpp" />
-    <ClInclude Include="..\..\include\containers\graph\iterators\graph_preorder_iterator_stacked.hpp" />
     <ClInclude Include="..\..\include\containers\graph\node_centric.hpp" />
     <ClInclude Include="..\..\include\containers\graph\node_centric_iterators.hpp" />
     <ClInclude Include="..\..\include\containers\graph\ordering\graph_preorder.hpp" />
