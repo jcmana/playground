@@ -14,6 +14,9 @@
     <Filter Include="Header Files\Queue">
       <UniqueIdentifier>{43ab92d0-fb2f-41a4-b99b-1efff051097a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Graph\Ordering">
+      <UniqueIdentifier>{fcd09d8e-8c1b-4b4c-af3b-a318f89959af}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\containers\filter_if.hpp">
@@ -46,8 +49,14 @@
     <ClInclude Include="..\..\include\containers\queue\nonuniform_limited_queue.hpp">
       <Filter>Header Files\Queue</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\containers\graph\iterators\preorder_iterator_cursor.hpp">
+    <ClInclude Include="..\..\include\containers\graph\iterators\preorder_iterator_stacked.hpp">
       <Filter>Header Files\Graph\Iterators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\containers\graph\iterators\graph_preorder_iterator.hpp">
+      <Filter>Header Files\Graph\Iterators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\containers\graph\ordering\graph_preorder.hpp">
+      <Filter>Header Files\Graph\Ordering</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

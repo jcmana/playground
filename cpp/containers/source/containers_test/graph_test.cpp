@@ -15,7 +15,8 @@
 
 #include "containers/graph/node_centric.hpp"
 #include "containers/graph/node_centric_iterators.hpp"
-#include "containers/graph/iterators/preorder_iterator_cursor.hpp"
+
+#include "containers/graph/ordering/graph_preorder.hpp"
 
 template <typename Graph>
 void leaves(const Graph & g)
@@ -588,16 +589,26 @@ void graph_test()
 		g.create_edge(struct_3, struct_4, EDGE_SREF);
 		//g.create_edge(struct_3, struct_1, EDGE_SREF);
 
+		/*
 		graph::cursor c(struct_1->outgoing.begin(), struct_1->outgoing.end(), struct_1->outgoing.begin());
 
 		preorder_iterator_c<graph> it(c);
 		preorder_iterator_c<graph> it_end;
+
+		preorder_iterator_stacked<graph> it(struct_1->outgoing);
+		preorder_iterator_stacked<graph> it_end({});
 
 		while (it != it_end)
 		{
 			std::cout << it->source->property << " -- "<< emap.atob(it->property) << " -> " << it->target->property << std::endl;
 
 			++it;
+		}
+		*/
+
+		for (auto ec : preorder(&g, struct_1))
+		{
+			std::cout << ec->source->property << " -- " << emap.atob(ec->property) << " -> " << ec->target->property << std::endl;
 		}
 	}
 

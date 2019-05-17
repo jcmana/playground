@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "virtual_teamplates", "virtu
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "separated_method_definition", "separated_method_definition\separated_method_definition.vcxproj", "{BC91947C-53F6-4413-8B33-CD7464584B5D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "friends", "friends\friends.vcxproj", "{8AF67EFD-35C4-4914-8CF3-34FE1F12C00F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -41,6 +43,14 @@ Global
 		{BC91947C-53F6-4413-8B33-CD7464584B5D}.Release|x64.Build.0 = Release|x64
 		{BC91947C-53F6-4413-8B33-CD7464584B5D}.Release|x86.ActiveCfg = Release|Win32
 		{BC91947C-53F6-4413-8B33-CD7464584B5D}.Release|x86.Build.0 = Release|Win32
+		{8AF67EFD-35C4-4914-8CF3-34FE1F12C00F}.Debug|x64.ActiveCfg = Debug|x64
+		{8AF67EFD-35C4-4914-8CF3-34FE1F12C00F}.Debug|x64.Build.0 = Debug|x64
+		{8AF67EFD-35C4-4914-8CF3-34FE1F12C00F}.Debug|x86.ActiveCfg = Debug|Win32
+		{8AF67EFD-35C4-4914-8CF3-34FE1F12C00F}.Debug|x86.Build.0 = Debug|Win32
+		{8AF67EFD-35C4-4914-8CF3-34FE1F12C00F}.Release|x64.ActiveCfg = Release|x64
+		{8AF67EFD-35C4-4914-8CF3-34FE1F12C00F}.Release|x64.Build.0 = Release|x64
+		{8AF67EFD-35C4-4914-8CF3-34FE1F12C00F}.Release|x86.ActiveCfg = Release|Win32
+		{8AF67EFD-35C4-4914-8CF3-34FE1F12C00F}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
