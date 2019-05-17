@@ -12,18 +12,15 @@ public:
 	using edge = typename graph::edge;
 
 public:
-	graph_preorder_iterator_stacked()
+	graph_preorder_iterator_stacked(graph * graph_ptr) :
+		m_graph_ptr(graph_ptr)
 	{
 	}
 
-	graph_preorder_iterator_stacked(node * node_ptr)
+	graph_preorder_iterator_stacked(graph * graph_ptr, node * node_ptr) :
+		m_graph_ptr(graph_ptr)
 	{
 		expand(node_ptr);
-	}
-
-	operator bool()
-	{
-		return (m_stack.size() > 0);
 	}
 
 	graph_preorder_iterator_stacked & operator ++()
@@ -60,6 +57,7 @@ private:
 	}
 
 private:
+	graph * m_graph_ptr = nullptr;
 	std::vector<edge *> m_stack;
 
 template<typename Graph>
@@ -73,7 +71,7 @@ template<typename Graph>
 bool 
 operator ==(const graph_preorder_iterator_stacked<Graph> & left, const graph_preorder_iterator_stacked<Graph> & right)
 {
-	return (left.m_stack == right.m_stack);
+	return (left.m_graph_ptr == right.m_graph_ptr && left.m_stack == right.m_stack);
 }
 
 template<typename Graph>

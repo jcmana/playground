@@ -583,13 +583,13 @@ void graph_test()
 		graph::node * struct_3 = g.create_node("struct_3");
 		graph::node * struct_4 = g.create_node("struct_4");
 		graph::node * struct_5 = g.create_node("struct_5");
-
+		
 		// add edges
 		g.create_edge(struct_1, struct_3, EDGE_SREF);
 		g.create_edge(struct_1, struct_2, EDGE_SREF);
 		g.create_edge(struct_2, struct_3, EDGE_SREF);
 		g.create_edge(struct_3, struct_4, EDGE_SREF);
-		//g.create_edge(struct_3, struct_1, EDGE_SREF);
+		g.create_edge(struct_3, struct_1, EDGE_SREF);
 
 		/*
 		graph::cursor c(struct_1->outgoing.begin(), struct_1->outgoing.end(), struct_1->outgoing.begin());
@@ -608,13 +608,12 @@ void graph_test()
 		}
 		*/
 
-		/*
 		for (auto ec : preorder(&g, struct_1))
 		{
 			std::cout << ec->source->property << " -- " << emap.atob(ec->property) << " -> " << ec->target->property << std::endl;
 		}
-		*/
 
+		/*
 		graph_preorder_iterator_stacked<graph> it(struct_1);
 		graph_preorder_iterator_stacked<graph> it_end;
 
@@ -623,6 +622,7 @@ void graph_test()
 			std::cout << it->source->property << " -- " << emap.atob(it->property) << " -> " << it->target->property << std::endl;
 			++it;
 		}
+		*/
 	}
 
 	std::cout << std::endl;
