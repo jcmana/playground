@@ -16,6 +16,8 @@
 #include "containers/graph/node_centric.hpp"
 #include "containers/graph/node_centric_iterators.hpp"
 
+#include "containers/graph/iterators/graph_preorder_iterator_stacked.hpp"
+
 #include "containers/graph/ordering/graph_preorder.hpp"
 
 template <typename Graph>
@@ -606,9 +608,20 @@ void graph_test()
 		}
 		*/
 
+		/*
 		for (auto ec : preorder(&g, struct_1))
 		{
 			std::cout << ec->source->property << " -- " << emap.atob(ec->property) << " -> " << ec->target->property << std::endl;
+		}
+		*/
+
+		graph_preorder_iterator_stacked<graph> it(struct_1);
+		graph_preorder_iterator_stacked<graph> it_end;
+
+		while (it != it_end)
+		{
+			std::cout << it->source->property << " -- " << emap.atob(it->property) << " -> " << it->target->property << std::endl;
+			++it;
 		}
 	}
 
