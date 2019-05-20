@@ -49,10 +49,34 @@ void graph_test()
 		g.create_edge(struct_3, struct_4, EDGE_SREF);
 		//g.create_edge(struct_3, struct_1, EDGE_SREF);
 
-		for (auto ec : preorder(&g, struct_1))
+
+		graph_preorder_iterator<graph> itp;
+
+		// Preorder traversal:
 		{
-			std::cout << ec->source->property << " -- " << emap.atob(ec->property) << " -> " << ec->target->property << std::endl;
+			for (graph::edge * edge_ptr : preorder(&g, struct_1))
+			{
+				std::cout << edge_ptr->source->property << " -- " << emap.atob(edge_ptr->property) << " -> " << edge_ptr->target->property << std::endl;
+			}
 		}
+
+		// Iterator copy/move:
+		{
+			auto g_preorder = preorder(&g, struct_1);
+
+			auto it = g_preorder.begin();
+			++it;
+
+			auto it_copy = it;
+			it_copy++;
+
+			auto it_move = std::move(it);
+
+			//std::cout << "it:      " << it->source->property << " -> " << it->target->property << std::endl;
+			std::cout << "it_copy: " << it_copy->source->property << " -> " << it_copy->target->property << std::endl;
+			std::cout << "it_move: " << it_move->source->property << " -> " << it_move->target->property << std::endl;
+		}
+
 	}
 
 	std::cout << std::endl;
