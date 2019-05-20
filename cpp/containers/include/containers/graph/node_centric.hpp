@@ -8,7 +8,6 @@
 namespace containers {
 namespace graph {
 
-
 /// \brief		Directed graph with node and edges properties.
 ///
 /// \par Properties:

@@ -50,7 +50,7 @@ void graph_test()
 		//g.create_edge(struct_3, struct_1, EDGE_SREF);
 
 
-		graph_preorder_iterator<graph> itp;
+		containers::graph::preorder_iterator<graph> itp;
 
 		// Preorder traversal:
 		{
