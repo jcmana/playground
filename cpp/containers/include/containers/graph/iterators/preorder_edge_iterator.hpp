@@ -49,7 +49,7 @@ private:
 
 private:
 	/// \brief		`graph` container for iteration.
-	typename Graph * m_graph_ptr;
+	Graph * m_graph_ptr;
 
 	/// \brief		Preorder traversal implementation.
 	///

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "../iterators/graph_preorder_iterator.hpp"
+#include "../iterators/preorder_edge_iterator.hpp"
 
 namespace containers {
 namespace graph {
 
-/// \brief		Defines preorder traversal on graph.
+/// \brief		Defines preorder traversal on `Graph` over its `edge`s.
 template<typename Graph>
 class preordered
 {
