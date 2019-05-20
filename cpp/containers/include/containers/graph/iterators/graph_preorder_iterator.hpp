@@ -1,12 +1,13 @@
 #pragma once
 
 #include <vector>
+#include <stack>
 
 /// \brief		Preorder tree-like iterator over outgoing edges.
 template<typename Graph>
 class graph_preorder_iterator
 {
-public:
+private:
 	using graph = Graph;
 
 	using node = typename graph::node;
@@ -39,17 +40,27 @@ public:
 	/// \brief		Referenced `edge` member access.
 	edge * operator ->();
 
-	/// \brief		Referenced `edge` edge.
+	/// \brief		Referenced `edge`.
 	edge * operator  *();
 
 private:
+	/// \brief		Increments this iterator.
 	void increment();
+
+	/// \brief		Expands outgoing `edge`s from `node_ptr` onto the stack.
 	void expand(node * node_ptr);
 
 private:
+	/// \brief		`graph` container for iteration.
 	graph * m_graph_ptr;
-	std::vector<edge *> m_stack;
+
+	/// \brief		Preorder traversal implementation.
+	///
+	/// Contains `edge`s to iterate over, sorted from "visit last" to "visit first".
+	std::stack<edge *, std::vector<edge *>> m_stack;
 };
+
+#pragma region graph_preorder_iterator implementation:
 
 template<typename Graph>
 graph_preorder_iterator<Graph>::graph_preorder_iterator() :
@@ -91,22 +102,22 @@ template<typename Graph>
 typename graph_preorder_iterator<Graph>::edge *
 graph_preorder_iterator<Graph>::operator ->()
 {
-	return m_stack.back();
+	return m_stack.top();
 }
 
 template<typename Graph>
 typename graph_preorder_iterator<Graph>::edge *
 graph_preorder_iterator<Graph>::operator  *()
 {
-	return m_stack.back();
+	return m_stack.top();
 }
 
 template<typename Graph>
 void 
 graph_preorder_iterator<Graph>::increment()
 {
-	edge * edge_ptr = m_stack.back();
-	m_stack.pop_back();
+	edge * edge_ptr = m_stack.top();
+	m_stack.pop();
 
 	expand(edge_ptr->target);
 }
@@ -117,7 +128,7 @@ graph_preorder_iterator<Graph>::expand(node * node_ptr)
 {
 	for (auto edge_it = node_ptr->outgoing.rbegin(); edge_it < node_ptr->outgoing.rend(); ++edge_it)
 	{
-		m_stack.push_back(*edge_it);
+		m_stack.push(*edge_it);
 	}
 }
 
@@ -134,3 +145,5 @@ operator !=(const graph_preorder_iterator<Graph> & left, const graph_preorder_it
 {
 	return !(left == right);
 }
+
+#pragma endregion

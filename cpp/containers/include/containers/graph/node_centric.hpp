@@ -140,8 +140,8 @@ public:
 
 	/// \brief		Creates node with property.
 	/// \param[in]	node_property_args	Arguments for node property constructor.
-	/// \returns	Pointer to the created node holding the property. Pointed object is managed
-	///				internally and has guaranteed same lifetime as the owning node_centric_graph object.
+	/// \returns	Pointer to the created `node` holding the property. Pointed object is managed
+	///				internally and has same lifetime as the owning `node_centric` object.
 	template <typename ... Args>
 	node * create_node(Args && ... node_property_args);
 
@@ -150,7 +150,7 @@ public:
 	/// \param[in]	target_node			Target `node` pointer (returned from `create_node()` call).
 	/// \param[in]	edge_property_args	Arguments for `edge` property constructor.
 	/// \returns	Pointer to the created `edge` holding the property and connected `node`s. Pointed object is
-	///				managed internally and has guaranteed lifetime same as the owning `node_centric` object.
+	///				managed internally and has same lifetime as the owning `node_centric` object.
 	template <typename ... Args>
 	edge * create_edge(node * source_node, node * target_node, Args && ... edge_property_args);
 
@@ -177,16 +177,7 @@ public:
 	edge_container edges;
 };
 
-/*
-template <typename NodeProperty, typename EdgeProperty>
-bool
-operator !=<NodeProperty, EdgeProperty>(typename const node_centric<NodeProperty, EdgeProperty>::cursor & left, typename const node_centric<NodeProperty, EdgeProperty>::cursor & right)
-{
-	return !(left == right);
-}
-*/
-
-// node_centric::node implementation:
+#pragma region node_centric::node implementation:
 
 template <typename NodeProperty, typename EdgeProperty>
 template <typename ... Args>
@@ -197,7 +188,9 @@ node_centric<NodeProperty, EdgeProperty>::node::node(Args && ... node_property_a
 {
 }
 
-// node_centric::edge implementation:
+#pragma endregion
+
+#pragma region node_centric::edge implementation:
 
 template <typename NodeProperty, typename EdgeProperty>
 template <typename ... Args>
@@ -208,7 +201,9 @@ node_centric<NodeProperty, EdgeProperty>::edge::edge(node * source_node, node * 
 {
 }
 
-// node_centric implementation:
+#pragma endregion
+
+#pragma region node_centric implementation:
 
 template <typename NodeProperty, typename EdgeProperty>
 node_centric<NodeProperty, EdgeProperty>::node_centric(const node_centric & other)
@@ -351,6 +346,7 @@ node_centric<NodeProperty, EdgeProperty>::remove_edge(edge * edge_to_remove)
 	delete edge_to_remove;
 }
 
+#pragma endregion
 
 } // namespace graph
 } // namespace containers
