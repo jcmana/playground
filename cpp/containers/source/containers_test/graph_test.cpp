@@ -105,6 +105,11 @@ void graph_test()
 		for (; it != it_end; ++it)
 		{
 			std::cout << it->property << std::endl;
+
+			for (graph::edge * edge_ptr : it.path())
+			{
+				std::cout << "   " << edge_ptr->source->property << " -> " << edge_ptr->target->property << std::endl;
+			}
 		}
 	}
 

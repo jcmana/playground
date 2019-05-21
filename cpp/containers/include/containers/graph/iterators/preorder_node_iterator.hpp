@@ -40,6 +40,8 @@ public:
 	/// \brief		Referenced `edge`.
 	typename Graph::node * operator  *();
 
+	const auto & path() const;
+
 private:
 	struct expansion
 	{
@@ -59,6 +61,9 @@ private:
 
 	/// \brief		Expands outgoing `edge`s from `node_ptr` onto the stack.
 	void expand(const typename expansion & e);
+
+	/// \brief		Updates the `m_path` using the last `expansion` `e`.
+	void update(const typename expansion & e);
 
 private:
 	/// \brief		`graph` container for iteration.
@@ -89,12 +94,12 @@ template<typename Graph>
 preorder_node_iterator<Graph>::preorder_node_iterator(typename Graph * graph_ptr, typename Graph::node * node_ptr) :
 	m_graph_ptr(graph_ptr)
 {
-	expansion e;
-	e.edge_ptr = nullptr;
-	e.node_ptr = node_ptr;
-	e.depth = 0;
+	expansion next;
+	next.edge_ptr = nullptr;
+	next.node_ptr = node_ptr;
+	next.depth = 0;
 
-	m_stack.push_back(e);
+	m_stack.push_back(next);
 }
 
 template<typename Graph>
@@ -129,6 +134,13 @@ preorder_node_iterator<Graph>::operator  *()
 }
 
 template<typename Graph>
+const auto & 
+preorder_node_iterator<Graph>::path() const
+{
+	return m_path;
+}
+
+template<typename Graph>
 void
 preorder_node_iterator<Graph>::increment()
 {
@@ -142,10 +154,8 @@ template<typename Graph>
 void
 preorder_node_iterator<Graph>::expand(const typename expansion & curr)
 {
-	typename Graph::node * node_ptr = curr.node_ptr;
-
-	// Expand the node:
-	for (auto edge_it = node_ptr->outgoing.rbegin(); edge_it < node_ptr->outgoing.rend(); ++edge_it)
+	// Expand for each outgoing edge from current expansion node
+	for (auto edge_it = (curr.node_ptr)->outgoing.rbegin(); edge_it < (curr.node_ptr)->outgoing.rend(); ++edge_it)
 	{
 		expansion next;
 		next.edge_ptr = (*edge_it);
@@ -154,21 +164,22 @@ preorder_node_iterator<Graph>::expand(const typename expansion & curr)
 
 		m_stack.push_back(next);
 	}
+}
 
-	// Update the path:
-	{
-		expansion curr = m_stack.back();
-
-		m_path.resize(curr.depth);
-		m_path[curr.depth - 1] = curr.edge_ptr;
-	}
+template<typename Graph>
+void
+preorder_node_iterator<Graph>::update(const typename expansion & curr)
+{
+	m_path.resize(curr.depth);
+	m_path[curr.depth - 1] = curr.edge_ptr;
 }
 
 template<typename Graph>
 bool
 operator ==(const preorder_node_iterator<Graph> & left, const preorder_node_iterator<Graph> & right)
 {
-	//return (left.m_graph_ptr == right.m_graph_ptr && left.m_stack == right.m_stack);
+	bool graph_eq = (left.m_graph_ptr == right.m_graph_ptr);
+	//return (graph_eq&& left.m_stack == right.m_stack);
 	return false;
 }
 
