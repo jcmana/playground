@@ -10,7 +10,7 @@ template<typename Graph>
 class preordered
 {
 public:
-	using iterator = typename preorder_iterator<Graph>;
+	using iterator = typename preorder_edge_iterator<Graph>;
 
 public:
 	/// \brief		Defines preorder on `graph_ptr` starting at `node_ptr`

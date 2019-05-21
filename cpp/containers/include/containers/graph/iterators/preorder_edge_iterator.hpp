@@ -8,31 +8,31 @@ namespace graph {
 
 /// \brief		Preorder tree-like iterator over outgoing edges.
 template<typename Graph>
-class preorder_iterator
+class preorder_edge_iterator
 {
 public:
 	/// \brief		Empty iterator.
-	preorder_iterator();
+	preorder_edge_iterator();
 
 	/// \brief		Iterator at the end of `graph` `graph_ptr`.
-	preorder_iterator(typename Graph * graph_ptr);
+	preorder_edge_iterator(typename Graph * graph_ptr);
 	
 	/// \brief		Iterator at `node` `node_ptr` of `graph` `graph_ptr`.
-	preorder_iterator(typename Graph * graph_ptr, typename Graph::node * node_ptr);
+	preorder_edge_iterator(typename Graph * graph_ptr, typename Graph::node * node_ptr);
 
 	/// \brief		Compares iterators for equality.
 	template<typename Graph>
-	friend bool operator ==(const preorder_iterator<Graph> & left, const preorder_iterator<Graph> & right);
+	friend bool operator ==(const preorder_edge_iterator<Graph> & left, const preorder_edge_iterator<Graph> & right);
 
 	/// \brief		Compares iterators for in-equality.
 	template<typename Graph>
-	friend bool operator !=(const preorder_iterator<Graph> & left, const preorder_iterator<Graph> & right);
+	friend bool operator !=(const preorder_edge_iterator<Graph> & left, const preorder_edge_iterator<Graph> & right);
 
 	/// \brief		Iterator pre-increment.
-	preorder_iterator & operator ++();
+	preorder_edge_iterator & operator ++();
 	
 	/// \brief		Iterator post-increment.
-	preorder_iterator operator ++(int);
+	preorder_edge_iterator operator ++(int);
 
 	/// \brief		Referenced `edge` member access.
 	typename Graph::edge * operator ->();
@@ -57,38 +57,38 @@ private:
 	std::stack<typename Graph::edge *, std::vector<typename Graph::edge *>> m_stack;
 };
 
-#pragma region graph_preorder_iterator implementation:
+#pragma region graph_preorder_edge_iterator implementation:
 
 template<typename Graph>
-preorder_iterator<Graph>::preorder_iterator() :
+preorder_edge_iterator<Graph>::preorder_edge_iterator() :
 	m_graph_ptr(nullptr)
 {
 }
 
 template<typename Graph>
-preorder_iterator<Graph>::preorder_iterator(typename Graph * graph_ptr) :
+preorder_edge_iterator<Graph>::preorder_edge_iterator(typename Graph * graph_ptr) :
 	m_graph_ptr(graph_ptr)
 {
 }
 
 template<typename Graph>
-preorder_iterator<Graph>::preorder_iterator(typename Graph * graph_ptr, typename Graph::node * node_ptr) :
+preorder_edge_iterator<Graph>::preorder_edge_iterator(typename Graph * graph_ptr, typename Graph::node * node_ptr) :
 	m_graph_ptr(graph_ptr)
 {
 	expand(node_ptr);
 }
 
 template<typename Graph>
-typename preorder_iterator<Graph> &
-preorder_iterator<Graph>::operator ++()
+typename preorder_edge_iterator<Graph> &
+preorder_edge_iterator<Graph>::operator ++()
 {
 	increment();
 	return (*this);
 }
 
 template<typename Graph>
-typename preorder_iterator<Graph>
-preorder_iterator<Graph>::operator ++(int)
+typename preorder_edge_iterator<Graph>
+preorder_edge_iterator<Graph>::operator ++(int)
 {
 	auto copy(*this);
 	increment();
@@ -97,21 +97,21 @@ preorder_iterator<Graph>::operator ++(int)
 
 template<typename Graph>
 typename Graph::edge *
-preorder_iterator<Graph>::operator ->()
+preorder_edge_iterator<Graph>::operator ->()
 {
 	return m_stack.top();
 }
 
 template<typename Graph>
 typename Graph::edge *
-preorder_iterator<Graph>::operator  *()
+preorder_edge_iterator<Graph>::operator  *()
 {
 	return m_stack.top();
 }
 
 template<typename Graph>
 void 
-preorder_iterator<Graph>::increment()
+preorder_edge_iterator<Graph>::increment()
 {
 	typename Graph::edge * edge_ptr = m_stack.top();
 	m_stack.pop();
@@ -121,7 +121,7 @@ preorder_iterator<Graph>::increment()
 
 template<typename Graph>
 void 
-preorder_iterator<Graph>::expand(typename Graph::node * node_ptr)
+preorder_edge_iterator<Graph>::expand(typename Graph::node * node_ptr)
 {
 	for (auto edge_it = node_ptr->outgoing.rbegin(); edge_it < node_ptr->outgoing.rend(); ++edge_it)
 	{
@@ -131,14 +131,14 @@ preorder_iterator<Graph>::expand(typename Graph::node * node_ptr)
 
 template<typename Graph>
 bool 
-operator ==(const preorder_iterator<Graph> & left, const preorder_iterator<Graph> & right)
+operator ==(const preorder_edge_iterator<Graph> & left, const preorder_edge_iterator<Graph> & right)
 {
 	return (left.m_graph_ptr == right.m_graph_ptr && left.m_stack == right.m_stack);
 }
 
 template<typename Graph>
 bool
-operator !=(const preorder_iterator<Graph> & left, const preorder_iterator<Graph> & right)
+operator !=(const preorder_edge_iterator<Graph> & left, const preorder_edge_iterator<Graph> & right)
 {
 	return !(left == right);
 }

@@ -15,6 +15,7 @@
 
 #include "containers/graph/node_centric.hpp"
 #include "containers/graph/iterators/preorder_unique_path_iterator.hpp"
+#include "containers/graph/iterators/preorder_node_iterator.hpp"
 #include "containers/graph/ordering/preordered.hpp"
 
 void graph_test()
@@ -35,25 +36,28 @@ void graph_test()
 	});
 
 	// add nodes
+	graph::node * root = g.create_node("root");
 	graph::node * struct_1 = g.create_node("struct_1");
 	graph::node * struct_2 = g.create_node("struct_2");
 	graph::node * struct_3 = g.create_node("struct_3");
 	graph::node * struct_4 = g.create_node("struct_4");
 	graph::node * struct_5 = g.create_node("struct_5");
+	graph::node * struct_6 = g.create_node("struct_6");
 		
 	// add edges
+	g.create_edge(root, struct_1, EDGE_SREF);
+	g.create_edge(root, struct_2, EDGE_SREF);
+	g.create_edge(struct_1, struct_4, EDGE_SREF);
 	g.create_edge(struct_1, struct_3, EDGE_SREF);
-	g.create_edge(struct_1, struct_2, EDGE_SREF);
-	g.create_edge(struct_2, struct_3, EDGE_SREF);
 	g.create_edge(struct_3, struct_4, EDGE_SREF);
-	//g.create_edge(struct_3, struct_1, EDGE_SREF);
+	g.create_edge(struct_4, struct_5, EDGE_SREF);
+	g.create_edge(struct_5, struct_6, EDGE_SREF);
+	//g.create_edge(struct_5, struct_1, EDGE_SREF);			// cyclic edge
 
 	// Preorder traversal:
 	if (false)
 	{
-		containers::graph::preorder_iterator<graph> itp;
-
-		for (graph::edge * edge_ptr : preorder(&g, struct_1))
+		for (graph::edge * edge_ptr : preorder(&g, root))
 		{
 			std::cout << edge_ptr->source->property << " -- " << emap.atob(edge_ptr->property) << " -> " << edge_ptr->target->property << std::endl;
 		}
@@ -78,9 +82,9 @@ void graph_test()
 	}
 
 	// Unique path iterator:
-	if (true)
+	if (false)
 	{
-		containers::graph::preorder_unique_path_iterator<graph> it(&g, struct_1);
+		containers::graph::preorder_unique_path_iterator<graph> it(&g, root);
 		containers::graph::preorder_unique_path_iterator<graph> it_end(&g);
 		for (; it != it_end; ++it)
 		{
@@ -92,6 +96,18 @@ void graph_test()
 			std::cout << std::endl;
 		}
 	}
+
+	// Node iterator:
+	if (true)
+	{
+		containers::graph::preorder_node_iterator<graph> it(&g, root);
+		containers::graph::preorder_node_iterator<graph> it_end(&g);
+		for (; it != it_end; ++it)
+		{
+			std::cout << it->property << std::endl;
+		}
+	}
+
 
 	std::cout << std::endl;
 	
