@@ -40,9 +40,6 @@
     <ClInclude Include="..\..\include\containers\graph\iterators\preorder_edge_iterator.hpp">
       <Filter>Header Files\Graph\Iterators</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\containers\graph\iterators\preorder_unique_path_iterator.hpp">
-      <Filter>Header Files\Graph\Iterators</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\containers\graph\ordering\preordered.hpp">
       <Filter>Header Files\Graph\Ordering</Filter>
     </ClInclude>

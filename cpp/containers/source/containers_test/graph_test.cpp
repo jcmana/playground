@@ -14,7 +14,6 @@
 #include "../../generic/generic/bidirectional_map.hpp"
 
 #include "containers/graph/node_centric.hpp"
-#include "containers/graph/iterators/preorder_unique_path_iterator.hpp"
 #include "containers/graph/iterators/preorder_node_iterator.hpp"
 #include "containers/graph/ordering/preordered.hpp"
 
@@ -81,27 +80,11 @@ void graph_test()
 		std::cout << "it_move: " << it_move->source->property << " -> " << it_move->target->property << std::endl;
 	}
 
-	// Unique path iterator:
-	if (false)
-	{
-		containers::graph::preorder_unique_path_iterator<graph> it(&g, root);
-		containers::graph::preorder_unique_path_iterator<graph> it_end(&g);
-		for (; it != it_end; ++it)
-		{
-			for (auto path_it = it.path().begin(); path_it != it.path().end(); ++path_it)
-			{
-				std::cout << (*path_it)->source->property << " -> " << (*path_it)->target->property << std::endl;
-			}
-
-			std::cout << std::endl;
-		}
-	}
-
 	// Node iterator:
 	if (true)
 	{
-		containers::graph::preorder_node_iterator<graph> it(&g, root);
-		containers::graph::preorder_node_iterator<graph> it_end(&g);
+		containers::graph::preorder_node_iterator<graph> it(root);
+		containers::graph::preorder_node_iterator<graph> it_end;
 		for (; it != it_end; ++it)
 		{
 			std::cout << it->property << std::endl;

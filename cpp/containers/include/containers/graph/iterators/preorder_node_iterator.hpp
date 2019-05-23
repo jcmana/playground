@@ -11,14 +11,11 @@ template<typename Graph>
 class preorder_node_iterator
 {
 public:
-	/// \brief		Empty iterator.
+	/// \brief		Iterator at the end of `graph` `graph_ptr`.
 	preorder_node_iterator();
 
-	/// \brief		Iterator at the end of `graph` `graph_ptr`.
-	preorder_node_iterator(typename Graph * graph_ptr);
-
 	/// \brief		Iterator at `node` `node_ptr` of `graph` `graph_ptr`.
-	preorder_node_iterator(typename Graph * graph_ptr, typename Graph::node * node_ptr);
+	preorder_node_iterator(typename Graph::node * node_ptr);
 
 	/// \brief		Compares iterators for equality.
 	template<typename Graph>
@@ -60,9 +57,6 @@ private:
 	void increment();
 
 private:
-	/// \brief		`graph` container for iteration.
-	Graph * m_graph_ptr;
-
 	/// \brief		Preorder traversal implementation.
 	std::vector<stack_node> m_stack;
 
@@ -73,21 +67,26 @@ private:
 #pragma region graph_preorder_node_iterator implementation:
 
 template<typename Graph>
-preorder_node_iterator<Graph>::preorder_node_iterator() :
-	m_graph_ptr(nullptr)
+preorder_node_iterator<Graph>::preorder_node_iterator()
 {
+	stack_node exit;
+	exit.node_ptr = nullptr;
+	exit.edge_ptr = nullptr;
+	exit.depth = 0;
+
+	m_stack.push_back(exit);
 }
 
 template<typename Graph>
-preorder_node_iterator<Graph>::preorder_node_iterator(typename Graph * graph_ptr) :
-	m_graph_ptr(graph_ptr)
+preorder_node_iterator<Graph>::preorder_node_iterator(typename Graph::node * node_ptr)
 {
-}
+	stack_node exit;
+	exit.node_ptr = nullptr;
+	exit.edge_ptr = nullptr;
+	exit.depth = 0;
 
-template<typename Graph>
-preorder_node_iterator<Graph>::preorder_node_iterator(typename Graph * graph_ptr, typename Graph::node * node_ptr) :
-	m_graph_ptr(graph_ptr)
-{
+	m_stack.push_back(exit);
+
 	stack_node init;
 	init.node_ptr = node_ptr;
 	init.edge_ptr = nullptr;
@@ -143,36 +142,30 @@ preorder_node_iterator<Graph>::increment()
 	// Make current expansion node visited
 	m_stack.pop_back();
 
+	stack_node next;
+	next.edge_ptr = nullptr;
+	next.node_ptr = nullptr;
+	next.depth = (curr.depth + 1);
+
+	// Resize for potentional depth+1 nodes
+	m_path.resize(next.depth);
+
 	// Expand for each outgoing edge from current expansion node
 	for (auto edge_it = (curr.node_ptr)->outgoing.rbegin(); edge_it < (curr.node_ptr)->outgoing.rend(); ++edge_it)
 	{
-		stack_node next;
 		next.edge_ptr = (*edge_it);
 		next.node_ptr = (*edge_it)->target;
-		next.depth = (curr.depth + 1);
 
+		// Push expanded node onto the stack
 		m_stack.push_back(next);
-	}
 
-	// FOLLOWING CODE IS WHOLE LOT INCORRECT:
-	// - increment() differs for initial node, in-between nodes and last node
-	// - increment() preciselly knows when it is on last node from its implementations
-	// - m_stack and m_path in initial state and finished state are inconsistent
-	//		-- initial: m_stack has 1 element, m_path is empty
-	//		-- finished: m_stack is empty, m_path is empty
-
-	// Check stack underflow 
-	if (m_stack.size() == 0)
-	{
-		m_path.clear();
-		return;
+		// Update path to that node
+		m_path[next.depth - 1] = next.edge_ptr;
 	}
 
 	// Update path for current expansion node
 	curr = m_stack.back();
 	m_path.resize(curr.depth);
-	m_path[curr.depth - 1] = curr.edge_ptr;
-
 }
 
 template<typename Graph>
@@ -187,11 +180,10 @@ operator ==(const preorder_node_iterator<Graph> & left, const preorder_node_iter
 		return (node_eq && edge_eq && depth_eq);
 	};
 
-	bool graph_eq = (left.m_graph_ptr == right.m_graph_ptr);
 	bool stack_eq = std::equal(left.m_stack.begin(), left.m_stack.end(), right.m_stack.begin(), right.m_stack.end(), stack_node_eq_predicate);
 	bool path_eq = (left.m_path == right.m_path);
 
-	return (graph_eq && stack_eq && path_eq);
+	return (stack_eq && path_eq);
 }
 
 template<typename Graph>
