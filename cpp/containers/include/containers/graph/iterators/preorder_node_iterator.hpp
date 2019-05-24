@@ -69,30 +69,39 @@ private:
 template<typename Graph>
 preorder_node_iterator<Graph>::preorder_node_iterator()
 {
-	stack_node exit;
-	exit.node_ptr = nullptr;
-	exit.edge_ptr = nullptr;
-	exit.depth = 0;
+	// Prepare terminating node on the stack
+	{
+		stack_node exit;
+		exit.node_ptr = nullptr;
+		exit.edge_ptr = nullptr;
+		exit.depth = 0;
 
-	m_stack.push_back(exit);
+		m_stack.push_back(exit);
+	}
 }
 
 template<typename Graph>
 preorder_node_iterator<Graph>::preorder_node_iterator(typename Graph::node * node_ptr)
 {
-	stack_node exit;
-	exit.node_ptr = nullptr;
-	exit.edge_ptr = nullptr;
-	exit.depth = 0;
+	// Prepare terminating node on the stack
+	{
+		stack_node exit;
+		exit.node_ptr = nullptr;
+		exit.edge_ptr = nullptr;
+		exit.depth = 0;
 
-	m_stack.push_back(exit);
+		m_stack.push_back(exit);
+	}
 
-	stack_node init;
-	init.node_ptr = node_ptr;
-	init.edge_ptr = nullptr;
-	init.depth = 0;
+	// Prepare initial node on the stack
+	{
+		stack_node init;
+		init.node_ptr = node_ptr;
+		init.edge_ptr = nullptr;
+		init.depth = 0;
 
-	m_stack.push_back(init);
+		m_stack.push_back(init);
+	}
 }
 
 template<typename Graph>
@@ -147,21 +156,16 @@ preorder_node_iterator<Graph>::increment()
 	next.node_ptr = nullptr;
 	next.depth = (curr.depth + 1);
 
-	// Resize for potentional depth+1 nodes
-	m_path.resize(next.depth);
-
 	// Expand for each outgoing edge from current expansion node
 	for (auto edge_it = (curr.node_ptr)->outgoing.rbegin(); edge_it < (curr.node_ptr)->outgoing.rend(); ++edge_it)
 	{
 		next.edge_ptr = (*edge_it);
 		next.node_ptr = (*edge_it)->target;
 
-		// Push expanded node onto the stack
 		m_stack.push_back(next);
-
-		// Update path to that node
-		m_path[next.depth - 1] = next.edge_ptr;
 	}
+
+	// WRONG WRONG WRONG WRONG !!!
 
 	// Update path for current expansion node
 	curr = m_stack.back();
