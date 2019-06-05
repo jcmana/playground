@@ -57,7 +57,7 @@ private:
 	std::stack<typename Graph::edge *, std::vector<typename Graph::edge *>> m_stack;
 };
 
-#pragma region graph_preorder_edge_iterator implementation:
+#pragma region preorder_edge_iterator implementation:
 
 template<typename Graph>
 preorder_edge_iterator<Graph>::preorder_edge_iterator() :

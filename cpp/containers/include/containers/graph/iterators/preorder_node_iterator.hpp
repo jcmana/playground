@@ -37,6 +37,7 @@ public:
 	/// \brief		Referenced `edge`.
 	typename Graph::node * operator  *();
 
+	/// \brief		Graph path of `edge`s leading from initial `node` to the current `node`.
 	const auto & path() const;
 
 private:
@@ -64,7 +65,7 @@ private:
 	std::vector<typename Graph::edge *> m_path;
 };
 
-#pragma region graph_preorder_node_iterator implementation:
+#pragma region preorder_node_iterator implementation:
 
 template<typename Graph>
 preorder_node_iterator<Graph>::preorder_node_iterator()
