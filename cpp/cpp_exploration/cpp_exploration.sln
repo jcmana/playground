@@ -68,6 +68,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "operator_overloading", "ope
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "std_move", "std_move\std_move.vcxproj", "{19DC5D78-5410-4DFA-95AB-A586AC770984}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "interface_extension_core_guidelines", "interface_extension_core_guidelines\interface_extension_core_guidelines.vcxproj", "{B42D668D-4714-43A0-B7EA-B90B49A935B7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -340,6 +342,14 @@ Global
 		{19DC5D78-5410-4DFA-95AB-A586AC770984}.Release|x64.Build.0 = Release|x64
 		{19DC5D78-5410-4DFA-95AB-A586AC770984}.Release|x86.ActiveCfg = Release|Win32
 		{19DC5D78-5410-4DFA-95AB-A586AC770984}.Release|x86.Build.0 = Release|Win32
+		{B42D668D-4714-43A0-B7EA-B90B49A935B7}.Debug|x64.ActiveCfg = Debug|x64
+		{B42D668D-4714-43A0-B7EA-B90B49A935B7}.Debug|x64.Build.0 = Debug|x64
+		{B42D668D-4714-43A0-B7EA-B90B49A935B7}.Debug|x86.ActiveCfg = Debug|Win32
+		{B42D668D-4714-43A0-B7EA-B90B49A935B7}.Debug|x86.Build.0 = Debug|Win32
+		{B42D668D-4714-43A0-B7EA-B90B49A935B7}.Release|x64.ActiveCfg = Release|x64
+		{B42D668D-4714-43A0-B7EA-B90B49A935B7}.Release|x64.Build.0 = Release|x64
+		{B42D668D-4714-43A0-B7EA-B90B49A935B7}.Release|x86.ActiveCfg = Release|Win32
+		{B42D668D-4714-43A0-B7EA-B90B49A935B7}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
