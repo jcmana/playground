@@ -11,8 +11,11 @@ template<typename T>
 class forward_iterator
 {
 public:
+	using facade = forward_iterator_facade<T>;
+
+public:
 	forward_iterator();
-	forward_iterator(std::unique_ptr<forward_iterator_facade<T>> up_iterator);
+	forward_iterator(std::unique_ptr<facade> up_iterator);
 	forward_iterator(const forward_iterator & other);
 
 	template<typename U>
@@ -28,7 +31,7 @@ public:
 	T & operator  *();
 
 private:
-	std::unique_ptr<forward_iterator_facade<T>> m_up_iterator;
+	std::unique_ptr<facade> m_up_iterator;
 };
 
 #pragma region forward_iterator implementation:
@@ -39,7 +42,7 @@ forward_iterator<T>::forward_iterator()
 }
 
 template<typename T>
-forward_iterator<T>::forward_iterator(std::unique_ptr<forward_iterator_facade<T>> up_iterator) :
+forward_iterator<T>::forward_iterator(std::unique_ptr<facade> up_iterator) :
 	m_up_iterator(std::move(up_iterator))
 {
 }
