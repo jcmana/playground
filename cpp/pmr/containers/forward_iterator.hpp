@@ -15,8 +15,8 @@ public:
 	/// \brief		Forward iterator facade class.
 	///
 	/// Forward iterator facade is interface expected to implement actual
-	/// iterator functionality. `forward_iterator` practically servers as
-	/// mapping of `facade` methods onto typical (expected) iterator methods.
+	/// iterator functionality. `forward_iterator` practically serves as
+	/// mapping of `facade` methods onto typical iterator methods.
 	using facade = forward_iterator_facade<T>;
 
 public:
@@ -24,8 +24,11 @@ public:
 	forward_iterator();
 	/// \brief		Constructs `forward_iterator` from `facade`.
 	forward_iterator(std::unique_ptr<facade> up_iterator);
-	/// \brief		Constructs copy of `forward_iterator`.
+	/// \brief		Constructs `forward_iterator` copy.
 	forward_iterator(const forward_iterator & other);
+
+	forward_iterator & operator  =(const forward_iterator & other);
+	forward_iterator & operator  =(forward_iterator && other);
 
 	/// \brief		Comparison for equality.
 	template<typename U>
@@ -46,7 +49,7 @@ public:
 	T & operator  *();
 
 private:
-	/// \brief		Forward iterator facade implementation unique pointer. Empty means invalid.
+	/// \brief		Forward iterator facade implementation. Empty pointer means invalid iterator.
 	std::unique_ptr<facade> m_up_iterator;
 };
 
@@ -67,6 +70,20 @@ template<typename T>
 forward_iterator<T>::forward_iterator(const forward_iterator & other) :
 	m_up_iterator(other.m_up_iterator->copy())
 {
+}
+
+template<typename T>
+forward_iterator<T> & forward_iterator<T>::operator  =(const forward_iterator & other)
+{
+	m_up_iterator = other.m_up_iterator->copy();
+	return (*this);
+}
+
+template<typename T>
+forward_iterator<T> & forward_iterator<T>::operator  =(forward_iterator && other)
+{
+	m_up_iterator = std::move(other.m_up_iterator);
+	return (*this);
 }
 
 template<typename U>

@@ -24,12 +24,27 @@
     <ClCompile Include="range_sreference_iterator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PatternStructureReferenceA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PatternStructureReferenceA_iterator_facade.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="range_sreference.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="range_sreference_iterator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PatternStructureReference_intf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PatternStructureReferenceA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PatternStructureReferenceA_iterator_facade.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
