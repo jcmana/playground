@@ -111,6 +111,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\include\containers\cursor.hpp" />
     <ClInclude Include="..\..\include\containers\filter_if.hpp" />
     <ClInclude Include="..\..\include\containers\graph\iterators\preorder_edge_iterator.hpp" />
     <ClInclude Include="..\..\include\containers\graph\iterators\preorder_node_iterator.hpp" />

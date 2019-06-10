@@ -115,6 +115,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="containers_test.cpp" />
+    <ClCompile Include="cursor_test.cpp" />
     <ClCompile Include="filter_test.cpp" />
     <ClCompile Include="graph_test.cpp" />
     <ClCompile Include="limited_deque_test.cpp" />

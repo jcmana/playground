@@ -5,17 +5,17 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Header Files\Graph">
+    <Filter Include="Header Files\graph">
       <UniqueIdentifier>{c5659b0a-cbc4-44bd-bf4a-5e828b68c237}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Graph\Iterators">
+    <Filter Include="Header Files\graph\Iterators">
       <UniqueIdentifier>{4fb1a11a-6175-4bb9-a850-98943a500b65}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Queue">
-      <UniqueIdentifier>{43ab92d0-fb2f-41a4-b99b-1efff051097a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Graph\Ordering">
+    <Filter Include="Header Files\graph\Ordering">
       <UniqueIdentifier>{fcd09d8e-8c1b-4b4c-af3b-a318f89959af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\queue">
+      <UniqueIdentifier>{43ab92d0-fb2f-41a4-b99b-1efff051097a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -26,25 +26,28 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\containers\graph\node_centric.hpp">
-      <Filter>Header Files\Graph</Filter>
+      <Filter>Header Files\graph</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\containers\graph\node_centric_iterators.hpp">
-      <Filter>Header Files\Graph</Filter>
+      <Filter>Header Files\graph</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\containers\queue\limited_queue.hpp">
-      <Filter>Header Files\Queue</Filter>
+      <Filter>Header Files\queue</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\containers\queue\nonuniform_limited_queue.hpp">
-      <Filter>Header Files\Queue</Filter>
+      <Filter>Header Files\queue</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\containers\graph\iterators\preorder_edge_iterator.hpp">
-      <Filter>Header Files\Graph\Iterators</Filter>
+      <Filter>Header Files\graph\Iterators</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\containers\graph\ordering\preordered.hpp">
-      <Filter>Header Files\Graph\Ordering</Filter>
+      <Filter>Header Files\graph\Ordering</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\containers\graph\iterators\preorder_node_iterator.hpp">
-      <Filter>Header Files\Graph\Iterators</Filter>
+      <Filter>Header Files\graph\Iterators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\containers\cursor.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
