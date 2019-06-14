@@ -64,28 +64,11 @@ private:
 template<typename Graph>
 preorder_path_iterator<Graph>::preorder_path_iterator()
 {
-	// Prepare terminating node on the stack
-	{
-		stack_node exit;
-		exit.node_ptr = nullptr;
-		exit.edge_ptr = nullptr;
-		exit.depth = 0;
-
-		m_stack.push_back(exit);
-	}
 }
 
 template<typename Graph>
 preorder_path_iterator<Graph>::preorder_path_iterator(typename Graph::edge * edge_ptr)
 {
-	// Prepare terminating node on the stack:
-	stack_node exit;
-	exit.node_ptr = nullptr;
-	exit.edge_ptr = nullptr;
-	exit.depth = 0;
-
-	m_stack.push_back(exit);
-
 	// Prepare initial node on the stack:
 	stack_node init;
 	init.node_ptr = edge_ptr->target;
