@@ -6,21 +6,40 @@
 
 void cursor_test()
 {
-	std::vector<int> v = { 1, 2, 4, 8, 16 };
-	containers::cursor<std::vector<int>::iterator> c(v.begin(), v.end(), v.begin());
+	std::vector<int> a = { 1, 2, 3 };
+	std::vector<int> b = { 10 };
+	std::vector<int> c = { 100 };
+	std::vector<int> d = { 1000, 1001 };
 
-	for (; c; ++c)
-	{
-		std::cout << *c << std::endl;
-	}
+	using iterator = std::vector<int>::iterator;
 
-	for (c.restart(); c; ++c)
+	std::vector<containers::cursor<iterator>> stack = 
 	{
-		std::cout << *c << std::endl;
-	}
+		{ a.begin(), a.end(), a.begin() },
+		{ b.begin(), b.end(), b.begin() }
+	};
 
-	for (c.finish(); c; ++c)
+	using stack_iterator = std::vector<containers::cursor<iterator>>::iterator;
+
+	containers::cursor<stack_iterator> stack_c(stack.begin(), stack.end(), stack.begin());
+
+	for (;;)
 	{
-		std::cout << *c << std::endl;
+		if (stack_c == false)
+		{
+			stack_c.restart();
+		}
+
+		auto cursor = (*stack_c);
+
+		++cursor;
+
+		if (cursor == false)
+		{
+			cursor.restart();
+			++stack_c;
+		}
+
+		std::cout << **stack_c << std::endl;
 	}
 }

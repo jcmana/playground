@@ -115,6 +115,7 @@
     <ClInclude Include="..\..\include\containers\filter_if.hpp" />
     <ClInclude Include="..\..\include\containers\graph\iterators\preorder_edge_iterator.hpp" />
     <ClInclude Include="..\..\include\containers\graph\iterators\preorder_node_iterator.hpp" />
+    <ClInclude Include="..\..\include\containers\graph\iterators\preorder_path_iterator.hpp" />
     <ClInclude Include="..\..\include\containers\graph\node_centric.hpp" />
     <ClInclude Include="..\..\include\containers\graph\node_centric_iterators.hpp" />
     <ClInclude Include="..\..\include\containers\graph\ordering\preordered.hpp" />

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <list>
 #include <vector>
+#include <map>
 #include <algorithm>
 #include <string>
 #include <utility>
@@ -14,7 +15,9 @@
 #include "../../generic/generic/bidirectional_map.hpp"
 
 #include "containers/graph/node_centric.hpp"
+#include "containers/graph/iterators/preorder_edge_iterator.hpp"
 #include "containers/graph/iterators/preorder_node_iterator.hpp"
+#include "containers/graph/iterators/preorder_path_iterator.hpp"
 #include "containers/graph/ordering/preordered.hpp"
 
 void graph_test()
@@ -44,8 +47,8 @@ void graph_test()
 	graph::node * struct_6 = g.create_node("struct_6");
 		
 	// add edges
-	g.create_edge(root, struct_1, EDGE_SREF);
-	g.create_edge(root, struct_2, EDGE_SREF);
+	graph::edge * r_s1 = g.create_edge(root, struct_1, EDGE_SREF);
+	graph::edge * r_s2 = g.create_edge(root, struct_2, EDGE_SREF);
 	g.create_edge(struct_1, struct_4, EDGE_SREF);
 	g.create_edge(struct_1, struct_3, EDGE_SREF);
 	g.create_edge(struct_3, struct_4, EDGE_SREF);
@@ -81,7 +84,7 @@ void graph_test()
 	}
 
 	// Node iterator:
-	if (true)
+	if (false)
 	{
 		containers::graph::preorder_node_iterator<graph> it(root);
 		containers::graph::preorder_node_iterator<graph> it_end;
@@ -93,6 +96,26 @@ void graph_test()
 			{
 				std::cout << "   " << edge_ptr->source->property << " -> " << edge_ptr->target->property << std::endl;
 			}
+		}
+	}
+
+	// Path iterator:
+	if (true)
+	{
+		containers::graph::preorder_path_iterator<graph> it(r_s1);
+		containers::graph::preorder_path_iterator<graph> it_end;
+
+		for (; it != it_end; ++it)
+		{
+			auto path = *it;
+
+			std::cout << path.back()->target->property << ": ";
+			for (const graph::edge * edge_ptr : path)
+			{
+				std::cout << edge_ptr->source->property << "->" << edge_ptr->target->property << " ";
+			}
+
+			std::cout << std::endl;
 		}
 	}
 
