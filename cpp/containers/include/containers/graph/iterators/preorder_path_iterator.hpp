@@ -5,16 +5,21 @@
 namespace containers {
 namespace graph {
 
-/// \brief		Preorder tree-like iterator over outgoing edges.
+/// \brief		Preorder iterator over unique paths in graph.
 template<typename Graph>
 class preorder_path_iterator
 {
 public:
+	/// \brief		Unique ordered sequence of `edge`s through the graph.
+	///
+	/// First `edge`  of the path will always be the initial `edge`.
 	using path = std::vector<typename Graph::edge *>;
 
 public:
+	/// \brief		Initializes empty iterator.
 	preorder_path_iterator();
 
+	/// \brief		Initializes iterator with starting `edge`.
 	preorder_path_iterator(typename Graph::edge * edge_ptr);
 
 	/// \brief		Compares iterators for equality.
@@ -31,10 +36,15 @@ public:
 	/// \brief		Iterator post-increment.
 	preorder_path_iterator operator ++(int);
 
-	/// \brief		Unique path in `graph`.
+	/// \brief		Unique `path` through `graph`.
+	///
+	/// Dereference operator is lazy evaluated and threfore returns `path` copy 
+	/// instead of reference to a member. This means that repeated calls to the dereference
+	/// will evaluate `path`
 	path operator  *();
 
 private:
+	/// \brief		Stack entry for algorithm using stack expansion implementing graph preorder.
 	struct stack_node
 	{
 		/// \brief		`edge` expansion leading to the `node`.
@@ -101,6 +111,8 @@ preorder_path_iterator<Graph>::operator  *()
 {
 	stack_node curr = m_stack.back();
 
+	// Ater each increment, path is missing last edge to the current node,
+	// here we take that incomplete path, add one more edge and return complete copy
 	path complete_path = m_path;
 	complete_path.resize(curr.depth);
 	complete_path[curr.depth - 1] = curr.edge_ptr;
@@ -112,7 +124,7 @@ template<typename Graph>
 void
 preorder_path_iterator<Graph>::increment()
 {
-	// Pickup the last visited node
+	// Pop the last visited node
 	stack_node curr = m_stack.back();
 	m_stack.pop_back();
 
@@ -126,7 +138,7 @@ preorder_path_iterator<Graph>::increment()
 	m_path.resize(curr.depth);
 	m_path[curr.depth - 1] = curr.edge_ptr;
 
-	// Expand for each outgoing edge from current expansion node
+	// Expand each outgoing edge from current stack node (in reversed order)
 	for (auto edge_it = (curr.node_ptr)->outgoing.rbegin(); edge_it < (curr.node_ptr)->outgoing.rend(); ++edge_it)
 	{
 		next.edge_ptr = (*edge_it);

@@ -119,7 +119,6 @@ void graph_test()
 		}
 	}
 
-
 	std::cout << std::endl;
 	
 #ifdef _DEBUG
