@@ -6,19 +6,16 @@
 namespace containers {
 namespace graph {
 
-/// \brief		Preorder tree-like iterator over outgoing edges.
+/// \brief		Preorder iterator over outgoing edges.
 template<typename Graph>
 class preorder_edge_iterator
 {
 public:
-	/// \brief		Empty iterator.
+	/// \brief		Initializes empty iterator.
 	preorder_edge_iterator();
-
-	/// \brief		Iterator at the end of `graph` `graph_ptr`.
-	preorder_edge_iterator(typename Graph * graph_ptr);
 	
-	/// \brief		Iterator at `node` `node_ptr` of `graph` `graph_ptr`.
-	preorder_edge_iterator(typename Graph * graph_ptr, typename Graph::node * node_ptr);
+	/// \brief		Initializes iterator from `node_ptr`.
+	preorder_edge_iterator(typename Graph::node * node_ptr);
 
 	/// \brief		Compares iterators for equality.
 	template<typename Graph>
@@ -41,39 +38,28 @@ public:
 	typename Graph::edge * operator  *();
 
 private:
-	/// \brief		Increments this iterator.
+	/// \brief		Increments the iterator.
 	void increment();
 
-	/// \brief		Expands outgoing `edge`s from `node_ptr` onto the stack.
+	/// \brief		Expands the `node` onto the stack.
 	void expand(typename Graph::node * node_ptr);
 
 private:
-	/// \brief		`graph` container for iteration.
-	Graph * m_graph_ptr;
-
 	/// \brief		Preorder traversal implementation.
 	///
 	/// Contains `edge`s to iterate over, sorted from "visit last" to "visit first".
-	std::stack<typename Graph::edge *, std::vector<typename Graph::edge *>> m_stack;
+	std::vector<typename Graph::edge *> m_stack;
 };
 
 #pragma region preorder_edge_iterator implementation:
 
 template<typename Graph>
-preorder_edge_iterator<Graph>::preorder_edge_iterator() :
-	m_graph_ptr(nullptr)
+preorder_edge_iterator<Graph>::preorder_edge_iterator()
 {
 }
 
 template<typename Graph>
-preorder_edge_iterator<Graph>::preorder_edge_iterator(typename Graph * graph_ptr) :
-	m_graph_ptr(graph_ptr)
-{
-}
-
-template<typename Graph>
-preorder_edge_iterator<Graph>::preorder_edge_iterator(typename Graph * graph_ptr, typename Graph::node * node_ptr) :
-	m_graph_ptr(graph_ptr)
+preorder_edge_iterator<Graph>::preorder_edge_iterator(typename Graph::node * node_ptr)
 {
 	expand(node_ptr);
 }
@@ -99,22 +85,22 @@ template<typename Graph>
 typename Graph::edge *
 preorder_edge_iterator<Graph>::operator ->()
 {
-	return m_stack.top();
+	return m_stack.back();
 }
 
 template<typename Graph>
 typename Graph::edge *
 preorder_edge_iterator<Graph>::operator  *()
 {
-	return m_stack.top();
+	return m_stack.back();
 }
 
 template<typename Graph>
 void 
 preorder_edge_iterator<Graph>::increment()
 {
-	typename Graph::edge * edge_ptr = m_stack.top();
-	m_stack.pop();
+	typename Graph::edge * edge_ptr = m_stack.back();
+	m_stack.pop_back();
 
 	expand(edge_ptr->target);
 }
@@ -125,7 +111,7 @@ preorder_edge_iterator<Graph>::expand(typename Graph::node * node_ptr)
 {
 	for (auto edge_it = node_ptr->outgoing.rbegin(); edge_it < node_ptr->outgoing.rend(); ++edge_it)
 	{
-		m_stack.push(*edge_it);
+		m_stack.push_back(*edge_it);
 	}
 }
 
@@ -133,7 +119,7 @@ template<typename Graph>
 bool 
 operator ==(const preorder_edge_iterator<Graph> & left, const preorder_edge_iterator<Graph> & right)
 {
-	return (left.m_graph_ptr == right.m_graph_ptr && left.m_stack == right.m_stack);
+	return (left.m_stack == right.m_stack);
 }
 
 template<typename Graph>

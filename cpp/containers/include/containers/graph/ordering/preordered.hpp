@@ -14,7 +14,7 @@ public:
 
 public:
 	/// \brief		Defines preorder on `graph_ptr` starting at `node_ptr`
-	preordered(typename Graph * graph_ptr, typename Graph::node * node_ptr);
+	preordered(typename Graph::node * node_ptr);
 
 	/// \brief		Iterator to the beggining of preodered `graph.
 	iterator begin();
@@ -23,7 +23,6 @@ public:
 	iterator end();
 
 private:
-	typename Graph * m_graph_ptr = nullptr;
 	typename Graph::node * m_node_ptr = nullptr;
 };
 
@@ -50,8 +49,7 @@ preorder(typename Graph * graph_ptr, typename Graph::node * node_ptr);
 #pragma region graph_preorder implementation:
 
 template<typename Graph>
-preordered<Graph>::preordered(typename Graph * graph_ptr, typename Graph::node * node_ptr) :
-	m_graph_ptr(graph_ptr),
+preordered<Graph>::preordered(typename Graph::node * node_ptr) :
 	m_node_ptr(node_ptr)
 {
 }
@@ -60,14 +58,14 @@ template<typename Graph>
 typename preordered<Graph>::iterator
 preordered<Graph>::begin()
 {
-	return iterator(m_graph_ptr, m_node_ptr);
+	return iterator(m_node_ptr);
 }
 
 template<typename Graph>
 typename preordered<Graph>::iterator
 preordered<Graph>::end()
 {
-	return iterator(m_graph_ptr);
+	return iterator();
 }
 
 #pragma endregion
@@ -78,7 +76,7 @@ template<typename Graph>
 typename preordered<Graph>
 preorder(typename Graph * graph_ptr, typename Graph::node * node_ptr)
 {
-	return preordered<Graph>(graph_ptr, node_ptr);
+	return preordered<Graph>(node_ptr);
 }
 
 #pragma endregion

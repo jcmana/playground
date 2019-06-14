@@ -66,7 +66,7 @@ void graph_test()
 	}
 
 	// Iterator copy/move:
-	if (false)
+	if (true)
 	{
 		auto g_preorder = preorder(&g, struct_1);
 
@@ -84,23 +84,18 @@ void graph_test()
 	}
 
 	// Node iterator:
-	if (false)
+	if (true)
 	{
 		containers::graph::preorder_node_iterator<graph> it(root);
 		containers::graph::preorder_node_iterator<graph> it_end;
 		for (; it != it_end; ++it)
 		{
 			std::cout << it->property << std::endl;
-
-			for (graph::edge * edge_ptr : it.path())
-			{
-				std::cout << "   " << edge_ptr->source->property << " -> " << edge_ptr->target->property << std::endl;
-			}
 		}
 	}
 
 	// Path iterator:
-	if (true)
+	if (false)
 	{
 		containers::graph::preorder_path_iterator<graph> it(r_s1);
 		containers::graph::preorder_path_iterator<graph> it_end;

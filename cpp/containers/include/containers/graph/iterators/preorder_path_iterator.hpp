@@ -58,14 +58,14 @@ private:
 	};
 
 private:
-	/// \brief		Increments this iterator.
+	/// \brief		Increments the iterator.
 	void increment();
 
 private:
 	/// \brief		Preorder traversal implementation.
 	std::vector<stack_node> m_stack;
 
-	/// \brief		Graph path leading from initial `node` to the current `node`.
+	/// \brief		Graph path leading from initial `node` to the last expanded `node`.
 	path m_path;
 };
 
