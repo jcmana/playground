@@ -59,7 +59,7 @@ void graph_test()
 	// Preorder traversal:
 	if (false)
 	{
-		for (graph::edge * edge_ptr : preorder(&g, root))
+		for (graph::edge * edge_ptr : containers::graph::preorder<graph>(root))
 		{
 			std::cout << edge_ptr->source->property << " -- " << emap.atob(edge_ptr->property) << " -> " << edge_ptr->target->property << std::endl;
 		}
@@ -68,7 +68,7 @@ void graph_test()
 	// Iterator copy/move:
 	if (true)
 	{
-		auto g_preorder = preorder(&g, struct_1);
+		auto g_preorder = containers::graph::preorder<graph>(struct_1);
 
 		auto it = g_preorder.begin();
 		++it;
@@ -95,7 +95,7 @@ void graph_test()
 	}
 
 	// Path iterator:
-	if (false)
+	if (true)
 	{
 		containers::graph::preorder_path_iterator<graph> it(r_s1);
 		containers::graph::preorder_path_iterator<graph> it_end;

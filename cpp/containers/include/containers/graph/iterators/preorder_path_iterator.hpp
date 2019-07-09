@@ -38,9 +38,9 @@ public:
 
 	/// \brief		Unique `path` through `graph`.
 	///
-	/// Dereference operator is lazy evaluated and threfore returns `path` copy 
-	/// instead of reference to a member. This means that repeated calls to the dereference
-	/// will evaluate `path`
+	/// Dereference operator is lazy evaluated and threfore returns `path` copy instead of 
+	/// reference to a member. This means that repeated calls to the dereference will evaluate
+	/// `path` every time.
 	path operator  *();
 
 private:

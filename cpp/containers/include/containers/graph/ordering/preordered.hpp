@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../iterators/preorder_edge_iterator.hpp"
+#include "../iterators/preorder_path_iterator.hpp"
 
 namespace containers {
 namespace graph {
@@ -10,7 +10,7 @@ template<typename Graph>
 class preordered
 {
 public:
-	using iterator = typename preorder_edge_iterator<Graph>;
+	using iterator = typename preorder_path_iterator<Graph>;
 
 public:
 	/// \brief		Defines preorder on `graph_ptr` starting at `node_ptr`
@@ -37,14 +37,14 @@ private:
 /// graph g = ...;							// build the graph's nodes and edges
 /// graph::node * initial_node_ptr = ...;	// select initial node
 /// 
-/// for (graph::edge * edge_ptr : preorder(&g, initial_node_ptr))
+/// for (graph::edge * edge_ptr : preorder(initial_node_ptr))
 /// {
 ///		// handle current edge * edge_ptr
 /// }
 /// \endcode
 template<typename Graph>
 typename preordered<Graph>
-preorder(typename Graph * graph_ptr, typename Graph::node * node_ptr);
+preorder(typename Graph::node * node_ptr);
 
 #pragma region graph_preorder implementation:
 
@@ -74,7 +74,7 @@ preordered<Graph>::end()
 
 template<typename Graph>
 typename preordered<Graph>
-preorder(typename Graph * graph_ptr, typename Graph::node * node_ptr)
+preorder(typename Graph::node * node_ptr)
 {
 	return preordered<Graph>(node_ptr);
 }
