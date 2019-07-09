@@ -52,5 +52,9 @@ int main()
 		illegal_comp->width();
 	}
 
+	// RESULTS:
+	// - completelly eliminating virtual table
+	// - unclear which interface to keep
+
 	return 0;
 }

@@ -1,9 +1,23 @@
-#include<iostream> 
+#include <iostream> 
 
 constexpr long int fib(int n)
 {
 	return (n <= 1) ? n : fib(n - 1) + fib(n - 2);
 }
+
+struct constant;
+
+struct constant
+{
+	constexpr constant(int v) :
+		value(v)
+	{
+	}
+
+	int value;
+};
+
+static constexpr constant c = 6;
 
 int main()
 {
