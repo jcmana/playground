@@ -26,5 +26,10 @@ int main()
 		std::cout << transformation.val << std::endl;
 	}
 
+	{
+		pmr::containers::forward_iterator<int> a;
+		pmr::containers::forward_iterator<int> b = std::move(a);
+	}
+
 	std::getchar(); return 0;
 }
