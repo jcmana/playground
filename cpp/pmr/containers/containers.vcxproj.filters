@@ -11,9 +11,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="forward_iterator_intf.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="range.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>

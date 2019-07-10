@@ -4,8 +4,8 @@
 #include "../containers/forward_iterator.hpp"
 
 using range_sreference_value = int;
-using range_sreference_iterator_facade = pmr::containers::forward_iterator_facade<range_sreference_value>;
 using range_sreference_iterator = pmr::containers::forward_iterator<range_sreference_value>;
+using range_sreference_iterator_facade = pmr::containers::forward_iterator<range_sreference_value>::facade;
 using range_sreference_intf = pmr::containers::range<range_sreference_value, range_sreference_iterator>;
 
 class range_sreference :

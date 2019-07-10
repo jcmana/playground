@@ -2,7 +2,6 @@
 #include <memory>
 #include <vector>
 
-//#include "range_sreference.h"
 #include "PatternStructureReferenceA.h"
 
 int main()

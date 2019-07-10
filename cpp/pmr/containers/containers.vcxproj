@@ -113,7 +113,6 @@
   <ItemGroup>
     <ClInclude Include="range.hpp" />
     <ClInclude Include="forward_iterator.hpp" />
-    <ClInclude Include="forward_iterator_facade.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
