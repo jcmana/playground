@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D1E6867A-D234-45DA-AE9C-E661FBF95DD9}</ProjectGuid>
-    <RootNamespace>callback_register_on_stack</RootNamespace>
+    <RootNamespace>one_to_many</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
