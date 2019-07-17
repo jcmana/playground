@@ -44,5 +44,5 @@ int main()
 		callback_holder c(std::move(a));
 	}
 
-	std::getchar(); return 0;
+	return 0;
 }
