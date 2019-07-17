@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "functor_one_to_many", "functor_one_to_many\functor_one_to_many.vcxproj", "{D1E6867A-D234-45DA-AE9C-E661FBF95DD9}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "interface_one_to_one", "interface_one_to_one\interface_one_to_one.vcxproj", "{0E0FA58E-D208-44F0-90D7-16A4D44C4445}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{D1E6867A-D234-45DA-AE9C-E661FBF95DD9}.Release|x64.Build.0 = Release|x64
 		{D1E6867A-D234-45DA-AE9C-E661FBF95DD9}.Release|x86.ActiveCfg = Release|Win32
 		{D1E6867A-D234-45DA-AE9C-E661FBF95DD9}.Release|x86.Build.0 = Release|Win32
+		{0E0FA58E-D208-44F0-90D7-16A4D44C4445}.Debug|x64.ActiveCfg = Debug|x64
+		{0E0FA58E-D208-44F0-90D7-16A4D44C4445}.Debug|x64.Build.0 = Debug|x64
+		{0E0FA58E-D208-44F0-90D7-16A4D44C4445}.Debug|x86.ActiveCfg = Debug|Win32
+		{0E0FA58E-D208-44F0-90D7-16A4D44C4445}.Debug|x86.Build.0 = Debug|Win32
+		{0E0FA58E-D208-44F0-90D7-16A4D44C4445}.Release|x64.ActiveCfg = Release|x64
+		{0E0FA58E-D208-44F0-90D7-16A4D44C4445}.Release|x64.Build.0 = Release|x64
+		{0E0FA58E-D208-44F0-90D7-16A4D44C4445}.Release|x86.ActiveCfg = Release|Win32
+		{0E0FA58E-D208-44F0-90D7-16A4D44C4445}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
