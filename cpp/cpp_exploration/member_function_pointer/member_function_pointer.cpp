@@ -35,7 +35,8 @@ int main()
 	{
 		simple a;
 
-		auto ptr = &simple::method;
+		//auto ptr = &simple::method;
+		void(simple:: * ptr)() const = &simple::method;
 		(a.*ptr)();
 	}
 
@@ -44,7 +45,7 @@ int main()
 		intf * ia_ptr = new impl_a;
 		intf * ib_ptr = new impl_b;
 
-		auto ptr = &intf::method;
+		void(intf:: * ptr)() const = &intf::method;
 		(ia_ptr->*ptr)();
 		(ib_ptr->*ptr)();
 
