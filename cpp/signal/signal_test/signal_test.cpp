@@ -6,10 +6,10 @@ int main()
 {
 	binary_signal a(4.0, 6.0);
 	binary_signal b(1.0, 15.0);
-	binary_signal c;;
+	binary_signal c;
 
 	auto not_a = ~a;
-	auto merge = a & b;
+	auto merge = a & not_a;
 
 	for (const auto & edge : merge.m_edges)
 	{

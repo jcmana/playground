@@ -1,3 +1,4 @@
+#include <iostream>
 #include <algorithm>
 #include <limits>
 
@@ -14,7 +15,7 @@ binary_signal operator  ~(const binary_signal & other)
 	binary_signal result;
 
 	// Rising edge in negative infinity
-	result.m_edges.emplace(std::numeric_limits<T>::min(), binary_signal::rise);
+	result.m_edges.emplace(std::numeric_limits<T>::lowest(), binary_signal::rise);
 
 	for (const auto & edge : other.m_edges)
 	{
@@ -49,36 +50,62 @@ binary_signal operator  &(const binary_signal & lhs, const binary_signal & rhs)
 	auto it_lhs = lhs.m_edges.begin();
 	auto it_rhs = rhs.m_edges.begin();
 
-	// Copy edges from both 'lhs' and 'rhs' while keeping the ordering:
+	auto level_lhs = false;
+	auto level_rhs = false;
+	auto level = level_lhs && level_rhs;
+
+	auto value = std::numeric_limits<T>::lowest();
+
+	// Visit edges from both 'lhs' and 'rhs' while keeping the ordering:
 
 	while (it_lhs != lhs.m_edges.end() && it_rhs != rhs.m_edges.end())
 	{
+		if (level_lhs && level_rhs != level)
+		{
+			level = !level;
+
+			if (level)
+			{
+				result.m_edges.emplace(value, binary_signal::rise);
+			}
+			else
+			{
+				result.m_edges.emplace(value, binary_signal::fall);
+			}
+		}
+
 		if (it_lhs->first <= it_rhs->first)
 		{
-			result.m_edges.insert(*it_lhs);
+			level_lhs = !level_lhs;
+			value = it_lhs->first;
 			++it_lhs;
 		}
 		else
 		{
-			result.m_edges.insert(*it_rhs);
+			level_rhs = !level_rhs;
+			value = it_rhs->first;
 			++it_rhs;
 		}
 	}
 
-	// Copy the remaining edges from either 'lhs' or 'lhs':
+	result.m_edges.emplace(value, binary_signal::fall);
+
+	/*
+	// Visit the remaining edges from either 'lhs' or 'lhs':
 	// (only one of the following loops will actually be entered)
 
 	while (it_lhs != lhs.m_edges.end())
 	{
-		result.m_edges.insert(*it_lhs);
+		level_lhs = !level_lhs;
 		++it_lhs;
 	}
 
 	while (it_rhs != rhs.m_edges.end())
 	{
-		result.m_edges.insert(*it_rhs);
+		level_rhs = !level_rhs;
 		++it_rhs;
 	}
+	*/
 
 	return result;
 }
