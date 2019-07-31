@@ -31,5 +31,15 @@ int main()
 		std::cout << "negative_zero is signed" << std::endl;
 	}
 
+	if (std::signbit((positive_zero - positive_zero)))
+	{
+		std::cout << "(positive_zero - positive_zero) is signed" << std::endl;
+	}
+
+	if (std::signbit((positive_zero * (- 1.0))))
+	{
+		std::cout << "(positive_zero * (- 1.0)) is signed" << std::endl;
+	}
+
 	return 0;
 }
