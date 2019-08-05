@@ -23,6 +23,9 @@ public:
 		T fall;
 	};
 
+	/// \brief		Edge type.
+	using edge = std::pair<T, short int>;
+
 public:
 	/// \brief		Constructs signal with `false` everywhere.
 	binary_signal() = default;
@@ -38,6 +41,25 @@ public:
 	/// \brief		Binary OR.
 	friend binary_signal operator  |(const binary_signal & lhs, const binary_signal & rhs);
 
+private:
+	/// \brief		Three-way comparison relation of `lhs` operand to `rhs`.
+	enum comparison
+	{
+		LT = -1,	// `lhs` operand is less-than `rhs`
+		EQ =  0,	// `lhs` operand is equal `rhs`
+		GT = +1		// `lhs` operand is greater-than `rhs`
+	};
+
+	/// \brief		Comparator functor 
+	struct less
+	{
+		bool operator ()(const edge & lhs, const edge & rhs);
+	};
+
+private:
+	/// \brief		Compares two `edge`s.
+	static comparison compare(const edge & lhs, const edge & rhs);
+
 public:
-	std::multiset<std::pair<T, short int>> m_edges;
+	std::set<edge, less> m_edges;
 };

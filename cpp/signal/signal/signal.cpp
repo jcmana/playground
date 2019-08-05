@@ -57,7 +57,6 @@ binary_signal operator  &(const binary_signal & lhs, const binary_signal & rhs)
 	auto value = std::numeric_limits<T>::lowest();
 
 	// Visit edges from both 'lhs' and 'rhs' while keeping the ordering:
-
 	while (it_lhs != lhs.m_edges.end() && it_rhs != rhs.m_edges.end())
 	{
 		if (level_lhs && level_rhs != level)
@@ -66,7 +65,7 @@ binary_signal operator  &(const binary_signal & lhs, const binary_signal & rhs)
 
 			if (level)
 			{
-				result.m_edges.emplace(value, binary_signal::rise);
+				result.m_edges.emplace(value, binary_signal::rise); 
 			}
 			else
 			{
@@ -74,26 +73,47 @@ binary_signal operator  &(const binary_signal & lhs, const binary_signal & rhs)
 			}
 		}
 
-		if (it_lhs->first <= it_rhs->first)
+		switch (binary_signal::compare(*it_lhs, *it_rhs))
 		{
-			level_lhs = !level_lhs;
-			value = it_lhs->first;
-			++it_lhs;
-		}
-		else
-		{
-			level_rhs = !level_rhs;
-			value = it_rhs->first;
-			++it_rhs;
+			case binary_signal::LT:
+			{
+				level_lhs = !level_lhs;
+				value = it_lhs->first;
+				++it_lhs;
+
+				break;
+			}
+
+			case binary_signal::EQ:
+			{
+				level_lhs = !level_lhs;
+				value = it_lhs->first;
+				++it_lhs;
+
+				level_rhs = !level_rhs;
+				value = it_rhs->first;
+				++it_rhs;
+
+				break;
+			}
+
+			case binary_signal::GT: 
+			{
+				level_rhs = !level_rhs;
+				value = it_rhs->first;
+				++it_rhs;
+
+				break;
+			}
 		}
 	}
 
 	result.m_edges.emplace(value, binary_signal::fall);
 
-	/*
 	// Visit the remaining edges from either 'lhs' or 'lhs':
 	// (only one of the following loops will actually be entered)
 
+	/*
 	while (it_lhs != lhs.m_edges.end())
 	{
 		level_lhs = !level_lhs;
@@ -108,4 +128,40 @@ binary_signal operator  &(const binary_signal & lhs, const binary_signal & rhs)
 	*/
 
 	return result;
+}
+
+bool binary_signal::less::operator ()(const edge & lhs, const edge & rhs)
+{
+	return (compare(lhs, rhs) == binary_signal::LT);
+}
+
+binary_signal::comparison binary_signal::compare(const edge & lhs, const edge & rhs)
+{
+	if (lhs.first < rhs.first)
+	{
+		return binary_signal::LT;
+	}
+
+	if (lhs.first > rhs.first)
+	{
+		return binary_signal::GT;
+	}
+
+	if (lhs.first == rhs.first)
+	{
+		if (lhs.second == rhs.second)
+		{
+			return binary_signal::EQ;
+		}
+
+		if (lhs.second == binary_signal::fall)
+		{
+			return binary_signal::LT;
+		}
+
+		if (rhs.second == binary_signal::fall)
+		{
+			return binary_signal::GT;
+		}
+	}
 }
