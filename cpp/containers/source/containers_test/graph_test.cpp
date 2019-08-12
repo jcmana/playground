@@ -18,6 +18,7 @@
 #include "containers/graph/iterators/preorder_edge_iterator.hpp"
 #include "containers/graph/iterators/preorder_node_iterator.hpp"
 #include "containers/graph/iterators/preorder_path_iterator.hpp"
+#include "containers/graph/search/dijkstra.hpp"
 #include "containers/graph/ordering/preordered.hpp"
 
 void graph_test()
@@ -56,35 +57,8 @@ void graph_test()
 	g.create_edge(struct_5, struct_6, EDGE_SREF);
 	//g.create_edge(struct_5, struct_1, EDGE_SREF);			// cyclic edge
 
-	// Preorder traversal:
-	if (false)
-	{
-		for (graph::edge * edge_ptr : containers::graph::preorder<graph>(root))
-		{
-			std::cout << edge_ptr->source->property << " -- " << emap.atob(edge_ptr->property) << " -> " << edge_ptr->target->property << std::endl;
-		}
-	}
-
-	// Iterator copy/move:
-	if (true)
-	{
-		auto g_preorder = containers::graph::preorder<graph>(struct_1);
-
-		auto it = g_preorder.begin();
-		++it;
-
-		auto it_copy = it;
-		it_copy++;
-
-		auto it_move = std::move(it);
-
-		//std::cout << "it:      " << it->source->property << " -> " << it->target->property << std::endl;
-		std::cout << "it_copy: " << it_copy->source->property << " -> " << it_copy->target->property << std::endl;
-		std::cout << "it_move: " << it_move->source->property << " -> " << it_move->target->property << std::endl;
-	}
-
 	// Node iterator:
-	if (true)
+	if (false)
 	{
 		containers::graph::preorder_node_iterator<graph> it(root);
 		containers::graph::preorder_node_iterator<graph> it_end;
@@ -95,7 +69,7 @@ void graph_test()
 	}
 
 	// Path iterator:
-	if (true)
+	if (false)
 	{
 		containers::graph::preorder_path_iterator<graph> it(r_s1);
 		containers::graph::preorder_path_iterator<graph> it_end;
@@ -112,6 +86,12 @@ void graph_test()
 
 			std::cout << std::endl;
 		}
+	}
+
+	// Dijkstra search:
+	if (true)
+	{
+		containers::graph::dijkstra<graph>(g, root, struct_5);
 	}
 
 	std::cout << std::endl;

@@ -119,6 +119,7 @@
     <ClInclude Include="..\..\include\containers\graph\node_centric.hpp" />
     <ClInclude Include="..\..\include\containers\graph\node_centric_iterators.hpp" />
     <ClInclude Include="..\..\include\containers\graph\ordering\preordered.hpp" />
+    <ClInclude Include="..\..\include\containers\graph\search\dijkstra.hpp" />
     <ClInclude Include="..\..\include\containers\proxy.hpp" />
     <ClInclude Include="..\..\include\containers\queue\limited_queue.hpp" />
     <ClInclude Include="..\..\include\containers\queue\nonuniform_limited_queue.hpp" />
