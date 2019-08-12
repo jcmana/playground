@@ -20,11 +20,12 @@ namespace graph {
 /// as underlaying structure holding the information about nodes and edges and allows basic iteration
 /// over those.
 ///
-///	Nodes and edges are managed using `node_centric_graph::node` and `node_centric_graph::edge` classes.
+/// Nodes and edges are managed using `node_centric_graph::node` and `node_centric_graph::edge` classes.
 /// These are created exclusivelly by calling `create_node()` or `create_edge()` methods and their lifetime
-/// is managed by `node_centric_graph` class (meaning, it is illegal to delete these pointers manually).
+/// is managed by `node_centric_graph` class (meaning, it is illegal to delete these pointers manually and
+/// will lead to heap corruption).
 ///
-///	\par Example:
+/// \par Example:
 /// \code
 /// // Include graph header
 ///	#include <node_centric_graph.hpp>
