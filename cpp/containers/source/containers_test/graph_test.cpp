@@ -91,7 +91,12 @@ void graph_test()
 	// Dijkstra search:
 	if (true)
 	{
-		containers::graph::dijkstra<graph>(g, root, struct_5);
+		auto path = containers::graph::dijkstra<graph>(g, root, struct_5);
+
+		for (const graph::node * node_ptr : path)
+		{
+			std::cout << node_ptr->property << "\n";
+		}
 	}
 
 	std::cout << std::endl;
