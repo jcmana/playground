@@ -47,6 +47,7 @@ binary_signal operator  &(const binary_signal & lhs, const binary_signal & rhs)
 		return result;
 	}
 
+	// Initialize the iteration:
 	auto it_lhs = lhs.m_edges.begin();
 	auto it_rhs = rhs.m_edges.begin();
 
@@ -154,12 +155,12 @@ binary_signal::comparison binary_signal::compare(const edge & lhs, const edge & 
 			return binary_signal::EQ;
 		}
 
-		if (lhs.second == binary_signal::fall)
+		if (lhs.second == binary_signal::rise)
 		{
 			return binary_signal::LT;
 		}
 
-		if (rhs.second == binary_signal::fall)
+		if (rhs.second == binary_signal::rise)
 		{
 			return binary_signal::GT;
 		}
