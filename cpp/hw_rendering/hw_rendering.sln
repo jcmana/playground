@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "direct2d", "direct2d\direct
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "opengl", "opengl\opengl.vcxproj", "{8ED835AE-45BA-4F5F-9EC9-B0B2434A54CE}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vulkan", "vulkan\vulkan.vcxproj", "{C8030625-7556-4422-815E-A9711B2C7439}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -41,6 +43,14 @@ Global
 		{8ED835AE-45BA-4F5F-9EC9-B0B2434A54CE}.Release|x64.Build.0 = Release|x64
 		{8ED835AE-45BA-4F5F-9EC9-B0B2434A54CE}.Release|x86.ActiveCfg = Release|Win32
 		{8ED835AE-45BA-4F5F-9EC9-B0B2434A54CE}.Release|x86.Build.0 = Release|Win32
+		{C8030625-7556-4422-815E-A9711B2C7439}.Debug|x64.ActiveCfg = Debug|x64
+		{C8030625-7556-4422-815E-A9711B2C7439}.Debug|x64.Build.0 = Debug|x64
+		{C8030625-7556-4422-815E-A9711B2C7439}.Debug|x86.ActiveCfg = Debug|Win32
+		{C8030625-7556-4422-815E-A9711B2C7439}.Debug|x86.Build.0 = Debug|Win32
+		{C8030625-7556-4422-815E-A9711B2C7439}.Release|x64.ActiveCfg = Release|x64
+		{C8030625-7556-4422-815E-A9711B2C7439}.Release|x64.Build.0 = Release|x64
+		{C8030625-7556-4422-815E-A9711B2C7439}.Release|x86.ActiveCfg = Release|Win32
+		{C8030625-7556-4422-815E-A9711B2C7439}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
