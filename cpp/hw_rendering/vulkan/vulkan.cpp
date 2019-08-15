@@ -1,4 +1,3 @@
-#include <cstdlib>
 #include <exception>
 
 #include "Application.h"

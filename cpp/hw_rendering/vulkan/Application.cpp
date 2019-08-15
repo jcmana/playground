@@ -1,4 +1,5 @@
 #include <cmath>
+#include <fstream>
 #include <vector>
 #include <limits>
 #include <algorithm>
@@ -9,6 +10,9 @@ static constexpr char	MAINWINDOW_TITLE[] = "Vulkan Tutorial - Hello triangle!";
 
 static constexpr int	MAINWINDOW_SIZE_W = 800;
 static constexpr int	MAINWINDOW_SIZE_H = 600;
+
+static constexpr char	SHADER_FILE_VERTEX[] = "Shader.vert.spv";
+static constexpr char	SHADER_FILE_FRAGMENT[] = "Shader.frag.spv";
 
 Application::Application()
 {
@@ -266,10 +270,59 @@ void Application::initialize()
 			throw std::exception("vkCreateImageView() failed.");
 		}
 	}
+
+	// Load compiled vertex shader:
+	auto vertexShaderBytecode = readFile(SHADER_FILE_VERTEX);
+
+	VkShaderModuleCreateInfo vertexShaderCreateInfo = {};
+	vertexShaderCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+	vertexShaderCreateInfo.codeSize = vertexShaderBytecode.size();
+	vertexShaderCreateInfo.pCode = vertexShaderBytecode.data();
+
+	if (vkCreateShaderModule(m_device, &vertexShaderCreateInfo, nullptr, &m_vertexShader) != VK_SUCCESS)
+	{
+		throw std::exception("vkCreateShaderModule() failed for vertex shader moddule.");
+	}
+
+	// Load compiled fragment shader:
+	auto fragmentShaderBytecode = readFile(SHADER_FILE_FRAGMENT);
+
+	VkShaderModuleCreateInfo fragmentShaderCreateInfo = {};
+	fragmentShaderCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+	fragmentShaderCreateInfo.codeSize = vertexShaderBytecode.size();
+	fragmentShaderCreateInfo.pCode = vertexShaderBytecode.data();
+
+	if (vkCreateShaderModule(m_device, &fragmentShaderCreateInfo, nullptr, &m_fragmentShader) != VK_SUCCESS)
+	{
+		throw std::exception("vkCreateShaderModule() failed for fragment shader moddule.");
+	}
+
+	// Vertex shader stage:
+	VkPipelineShaderStageCreateInfo vertexShaderStageInfo = {};
+	vertexShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	vertexShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
+	vertexShaderStageInfo.module = m_vertexShader;
+	vertexShaderStageInfo.pName = "main";
+
+	// Fragment shader stage:
+	VkPipelineShaderStageCreateInfo fragmentShaderStageInfo = {};
+	fragmentShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	fragmentShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+	fragmentShaderStageInfo.module = m_fragmentShader;
+	fragmentShaderStageInfo.pName = "main";
+
+	VkPipelineShaderStageCreateInfo shaderStages[] = 
+	{
+		vertexShaderStageInfo,
+		fragmentShaderStageInfo
+	};
 }
 
 void Application::deinitialize()
 {
+	vkDestroyShaderModule(m_device, m_fragmentShader, nullptr);
+	vkDestroyShaderModule(m_device, m_vertexShader, nullptr);
+
 	for (auto imageView : m_swapchainImagesViews)
 	{
 		vkDestroyImageView(m_device, imageView, nullptr);
@@ -286,4 +339,30 @@ void Application::deinitialize()
 	}
 	
 	glfwTerminate();
+}
+
+std::vector<std::uint32_t> Application::readFile(const std::string & filename) const
+{
+	std::ifstream file(filename, std::ios::ate | std::ios::binary);
+
+	if (file.is_open() == false)
+	{
+		throw std::exception("std::ifstream() failed (couldn't open the file).");
+	}
+
+	std::size_t size = std::size_t(file.tellg());
+
+	std::vector<std::uint32_t> bytecode(size);
+	file.seekg(0);
+
+	for (std::size_t n = 0; n < size; ++n)
+	{
+		char streamchar;
+		file.get(streamchar);
+		bytecode[n] = std::uint32_t(streamchar);
+	}
+
+	file.close();
+
+	return bytecode;
 }

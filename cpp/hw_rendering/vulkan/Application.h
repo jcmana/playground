@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <exception>
 #include <vector>
 
@@ -17,6 +18,8 @@ public:
 private:
 	void initialize();
 	void deinitialize();
+
+	std::vector<std::uint32_t> readFile(const std::string & filename) const;
 
 private:
 	/// \brief		Main application window.
@@ -37,4 +40,7 @@ private:
 
 	std::vector<VkImage> m_swapchainImages;
 	std::vector<VkImageView> m_swapchainImagesViews;
+
+	VkShaderModule m_vertexShader;
+	VkShaderModule m_fragmentShader;
 };
