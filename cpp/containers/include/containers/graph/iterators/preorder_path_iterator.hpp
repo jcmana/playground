@@ -24,11 +24,11 @@ public:
 
 	/// \brief		Compares iterators for equality.
 	template<typename Graph>
-	friend bool operator ==(const preorder_path_iterator<Graph> & left, const preorder_path_iterator<Graph> & right);
+	friend bool operator ==(const preorder_path_iterator<Graph> & lhs, const preorder_path_iterator<Graph> & rhs);
 
 	/// \brief		Compares iterators for in-equality.
 	template<typename Graph>
-	friend bool operator !=(const preorder_path_iterator<Graph> & left, const preorder_path_iterator<Graph> & right);
+	friend bool operator !=(const preorder_path_iterator<Graph> & lhs, const preorder_path_iterator<Graph> & rhs);
 
 	/// \brief		Iterator pre-increment.
 	preorder_path_iterator & operator ++();
@@ -38,7 +38,7 @@ public:
 
 	/// \brief		Unique `path` through `graph`.
 	///
-	/// Dereference operator is lazy evaluated and threfore returns `path` copy instead of 
+	/// Dereference operator is lazy evaluated and threfore returns copy of `path` instead of 
 	/// reference to a member. This means that repeated calls to the dereference will evaluate
 	/// `path` every time.
 	path operator  *();
@@ -55,14 +55,26 @@ private:
 
 		/// \brief		Depth (or distance) of the `node_ptr` below initial node.
 		unsigned int depth;
+
+		/// \brief		Compares two stack nodes for equality.
+		static bool compare(const typename preorder_path_iterator<Graph>::stack_node & lhs, const typename preorder_path_iterator<Graph>::stack_node & rhs);
 	};
 
 private:
+	/// \brief		Pushes node on top of the stack.
+	void push(const stack_node & node);
+
+	/// \brief		Removes node from top of the stack and returns it.
+	stack_node pop();
+
+	/// \brief		Node on the of the stack.
+	stack_node & top();
+
 	/// \brief		Increments the iterator.
 	void increment();
 
 private:
-	/// \brief		Preorder traversal implementation.
+	/// \brief		Preorder traversal implementation stack.
 	std::vector<stack_node> m_stack;
 
 	/// \brief		Graph path leading from initial `node` to the last expanded `node`.
@@ -85,7 +97,21 @@ preorder_path_iterator<Graph>::preorder_path_iterator(typename Graph::edge * edg
 	init.edge_ptr = edge_ptr;
 	init.depth = 1;
 
-	m_stack.push_back(init);
+	push(init);
+}
+
+template<typename Graph>
+bool
+operator ==(const preorder_path_iterator<Graph> & lhs, const preorder_path_iterator<Graph> & rhs)
+{
+	return std::equal(lhs.m_stack.begin(), lhs.m_stack.end(), rhs.m_stack.begin(), rhs.m_stack.end(), preorder_path_iterator<Graph>::stack_node::compare);
+}
+
+template<typename Graph>
+bool
+operator !=(const preorder_path_iterator<Graph> & lhs, const preorder_path_iterator<Graph> & rhs)
+{
+	return !(lhs == rhs);
 }
 
 template<typename Graph>
@@ -109,7 +135,7 @@ template<typename Graph>
 typename preorder_path_iterator<Graph>::path
 preorder_path_iterator<Graph>::operator  *()
 {
-	stack_node curr = m_stack.back();
+	stack_node curr = top();
 
 	// Ater each increment, path is missing last edge to the current node,
 	// here we take that incomplete path, add one more edge and return complete copy
@@ -121,12 +147,34 @@ preorder_path_iterator<Graph>::operator  *()
 }
 
 template<typename Graph>
+void 
+preorder_path_iterator<Graph>::push(const stack_node & node)
+{
+	m_stack.push_back(node);
+}
+
+template<typename Graph>
+typename preorder_path_iterator<Graph>::stack_node
+preorder_path_iterator<Graph>::pop()
+{
+	stack_node curr = top();
+	m_stack.pop_back();
+	return curr;
+}
+
+template<typename Graph>
+typename preorder_path_iterator<Graph>::stack_node &
+preorder_path_iterator<Graph>::top()
+{
+	return m_stack.back();
+}
+
+template<typename Graph>
 void
 preorder_path_iterator<Graph>::increment()
 {
 	// Pop the last visited node
-	stack_node curr = m_stack.back();
-	m_stack.pop_back();
+	stack_node curr = pop();
 
 	// Node expansion template
 	stack_node next;
@@ -145,30 +193,36 @@ preorder_path_iterator<Graph>::increment()
 		next.node_ptr = (*edge_it)->target;
 
 		// Push expanded node onto the stack
-		m_stack.push_back(next);
+		push(next);
+
+#ifndef NDEBUG
+		// Verify node won't create graph cycle:
+
+		/* doesn't work
+		for (auto it = m_stack.crbegin(); it != m_stack.crend(); ++it)
+		{
+			//if (stack_node::operator ==((*it), node))
+			if (stack_node::compare((*it), node))
+			{
+				assert(true && "This node creates cyclic path");
+			}
+		}
+		*/
+#endif
 	}
 }
 
 template<typename Graph>
-bool
-operator ==(const preorder_path_iterator<Graph> & left, const preorder_path_iterator<Graph> & right)
+bool 
+preorder_path_iterator<Graph>::stack_node::compare(
+	const typename preorder_path_iterator<Graph>::stack_node & lhs, 
+	const typename preorder_path_iterator<Graph>::stack_node & rhs)
 {
-	auto stack_node_eq_predicate = [](typename const preorder_path_iterator<Graph>::stack_node & left, typename const preorder_path_iterator<Graph>::stack_node & right)
-	{
-		bool node_eq = (left.node_ptr == right.node_ptr);
-		bool edge_eq = (left.edge_ptr == right.edge_ptr);
-		bool depth_eq = (left.depth == right.depth);
-		return (node_eq && edge_eq && depth_eq);
-	};
-
-	return std::equal(left.m_stack.begin(), left.m_stack.end(), right.m_stack.begin(), right.m_stack.end(), stack_node_eq_predicate);
-}
-
-template<typename Graph>
-bool
-operator !=(const preorder_path_iterator<Graph> & left, const preorder_path_iterator<Graph> & right)
-{
-	return !(left == right);
+	bool node_eq = (lhs.node_ptr == rhs.node_ptr);
+	bool edge_eq = (lhs.edge_ptr == rhs.edge_ptr);
+	bool depth_eq = (lhs.depth == rhs.depth);
+	
+	return (node_eq && edge_eq && depth_eq);
 }
 
 #pragma endregion

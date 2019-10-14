@@ -8,7 +8,7 @@ namespace generic {
 namespace detail {
 
 /// \brief		Base bidirectional map.
-/// \note		Use specializations `bidirectional_map`.
+/// \note		Use specializations `bidirectional_map`, not directly this class.
 template<typename A, typename B>
 class bidirectional_map_base
 {
@@ -19,7 +19,12 @@ public:
 public:
 	explicit bidirectional_map_base(container && definition);
 	
+	/// \brief		Mapped value for `a`.
+	/// \throws		`std::out_of_range` if the mapping doesn't exist.
 	const B & atob(const A & a) const;
+	
+	/// \brief		Mapped value for `b`.
+	/// \throws		`std::out_of_range` if the mapping doesn't exist.
 	const A & btoa(const B & b) const;
 
 	typename container::const_iterator begin() const;

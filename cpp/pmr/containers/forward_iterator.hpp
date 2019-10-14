@@ -56,12 +56,12 @@ public:
 	forward_iterator & operator  =(forward_iterator && other);
 
 	/// \brief		Comparison for equality.
-	template<typename U>
-	friend bool operator ==(const forward_iterator<U> & lhs, const forward_iterator<U> & rhs);
+	template<typename T>
+	friend bool operator ==(const forward_iterator<T> & lhs, const forward_iterator<T> & rhs);
 	
 	/// \brief		Comparison for in-equality.
-	template<typename U>
-	friend bool operator !=(const forward_iterator<U> & lhs, const forward_iterator<U> & rhs);
+	template<typename T>
+	friend bool operator !=(const forward_iterator<T> & lhs, const forward_iterator<T> & rhs);
 
 	/// \brief		Increments the `forward_iterator`.
 	forward_iterator & operator ++();
@@ -108,16 +108,16 @@ forward_iterator<T>::operator  =(forward_iterator && other)
 	return (*this);
 }
 
-template<typename U>
+template<typename T>
 bool
-operator ==(const forward_iterator<U> & lhs, const forward_iterator<U> & rhs)
+operator ==(const forward_iterator<T> & lhs, const forward_iterator<T> & rhs)
 {
 	return (*lhs.m_up_facade).equal(*rhs.m_up_facade);
 }
 
-template<typename U>
+template<typename T>
 bool
-operator !=(const forward_iterator<U> & lhs, const forward_iterator<U> & rhs)
+operator !=(const forward_iterator<T> & lhs, const forward_iterator<T> & rhs)
 {
 	return !(lhs == rhs);
 }
