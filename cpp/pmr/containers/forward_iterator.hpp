@@ -3,8 +3,6 @@
 #include <memory>
 #include <iterator>
 
-//#include "forward_iterator_facade.h"
-
 namespace pmr {
 namespace containers {
 
@@ -20,7 +18,7 @@ public:
 	/// \brief		Forward iterator facade class.
 	///
 	/// Forward iterator facade is interface expected to implement actual
-	/// iterator functionality.
+	/// iterator functionality, including necessary state.
 	class facade
 	{
 	public:
@@ -32,7 +30,7 @@ public:
 		virtual T & read() = 0;
 		/// \brief		Compares for equality.
 		virtual bool equal(const facade & other) const = 0;
-		/// \brief		Obtains iterator copy.
+		/// \brief		Obtains iterator's copy.
 		virtual std::unique_ptr<facade> copy() const = 0;
 	};
 
