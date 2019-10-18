@@ -64,10 +64,10 @@ private:
 	/// \brief		Pushes node on top of the stack.
 	void push(const stack_node & node);
 
-	/// \brief		Removes node from top of the stack and returns it.
+	/// \brief		Removes node from the top of the stack and returns it.
 	stack_node pop();
 
-	/// \brief		Node on the of the stack.
+	/// \brief		Node on the top of the stack.
 	stack_node & top();
 
 	/// \brief		Increments the iterator.
@@ -137,8 +137,8 @@ preorder_path_iterator<Graph>::operator  *()
 {
 	stack_node curr = top();
 
-	// Ater each increment, path is missing last edge to the current node,
-	// here we take that incomplete path, add one more edge and return complete copy
+	// Ater each increment, path is missing last edge to the current node, here
+	// we take that incomplete path, add current edge and return complete copy
 	path complete_path = m_path;
 	complete_path.resize(curr.depth);
 	complete_path[curr.depth - 1] = curr.edge_ptr;
@@ -194,21 +194,6 @@ preorder_path_iterator<Graph>::increment()
 
 		// Push expanded node onto the stack
 		push(next);
-
-#ifndef NDEBUG
-		// Verify node won't create graph cycle:
-
-		/* doesn't work
-		for (auto it = m_stack.crbegin(); it != m_stack.crend(); ++it)
-		{
-			//if (stack_node::operator ==((*it), node))
-			if (stack_node::compare((*it), node))
-			{
-				assert(true && "This node creates cyclic path");
-			}
-		}
-		*/
-#endif
 	}
 }
 
