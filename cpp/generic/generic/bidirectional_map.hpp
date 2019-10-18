@@ -1,91 +1,51 @@
 #pragma once
 
-#include <vector>
-#include <utility>
-#include <memory>
+#include <type_traits>
 
-namespace {
-
-
-template<typename A, typename B>
-class bidirectional_map_base
-{
-public:
-	explicit bidirectional_map_base(std::vector<std::pair<A, B>> && definition)
-	{
-		m_definition = std::move(definition);
-	}
-
-	B atob(const A & a)
-	{
-		for (const auto & pair : m_definition)
-		{
-			if (pair.first == a)
-			{
-				return pair.second;
-			}
-		}
-
-		throw std::invalid_argument("Value mapping doesn't exist");
-	}
-
-	A btoa(const B & b)
-	{
-		for (const auto & pair : m_definition)
-		{
-			if (pair.second == b)
-			{
-				return pair.first;
-			}
-		}
-
-		throw std::invalid_argument("Value mapping doesn't exist");
-	}
-
-private:
-	std::vector<std::pair<A, B>> m_definition;
-};
-
-
-} // namespace
-
+#include "bidirectional_map_base.hpp"
 
 namespace generic {
 
-
-/// <summary>bidirectional_map specialization for conversion between two different types.</summary>
+/// \brief		Bidirectional map of values of different types.
 template<typename A, typename B, typename Different = void>
 class bidirectional_map :
-	public bidirectional_map_base<A, B>
+	public detail::bidirectional_map_base<A, B>
 {
 public:
-	explicit bidirectional_map(std::vector<std::pair<A, B>> && definition):
-		bidirectional_map_base<A, B>(std::forward<std::vector<std::pair<A, B>>>(definition))
-	{
-	}
+	using detail::bidirectional_map_base<A, B>::bidirectional_map_base;
 
-	B operator[](const A & a)
-	{
-		return atob(a);
-	}
+	/// \brief		Mapped value for `a`.
+	const B & operator [](const A & a) const;
 
-	A operator[](const B & b)
-	{
-		return btoa(b);
-	}
+	/// \brief		Mapped value for `b`.
+	const A & operator [](const B & b) const;
 };
 
-/// <summary>bidirectional_map specialization for conversion between two identical types.</summary>
+/// \brief		Bidirectional map of values of the same type.
 template<typename A, typename B>
-class bidirectional_map<A, B, typename std::enable_if<std::is_same<A, B>::value>::type>:
-	public bidirectional_map_base<A, B>
+class bidirectional_map<A, B, typename std::enable_if<std::is_same<A, B>::value>::type> :
+	public detail::bidirectional_map_base<A, B>
 {
 public:
-	explicit bidirectional_map(std::vector<std::pair<A, B>> && definition):
-		bidirectional_map_base<A, B>(std::forward<std::vector<std::pair<A, B>>>(definition))
-	{
-	}
+	using detail::bidirectional_map_base<A, B>::bidirectional_map_base;
 };
 
+#pragma region bidirectional_map implementation:
+
+template<typename A, typename B, typename Different = void>
+const B &
+bidirectional_map<A, B, Different>::operator [](const A & a) const
+{
+	return atob(a);
+}
+
+template<typename A, typename B, typename Different = void>
+const A & 
+bidirectional_map<A, B, Different>::operator [](const B & b) const
+{
+	return btoa(b);
+}
+
+#pragma endregion
 
 } // namepsace generic

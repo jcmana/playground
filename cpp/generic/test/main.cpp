@@ -38,6 +38,14 @@ int main()
 
 	//std::cout << m[13] << std::endl;					// read-access violation due to invalid index
 
+	for (const auto & pair : m)
+	{
+		std::cout << pair.first << " <=> " << pair.second << std::endl;
+	}
+
+
+	std::cout << std::endl;
+
 	generic::bidirectional_map<std::string, std::string> n(
 	{
 		{ "hello", "ahoj" },
@@ -45,6 +53,13 @@ int main()
 	});
 
 	//std::cout << n["hello"] << std::endl;				// generic::bidirectional_map<std::string, std::string> does not define operator[]
+
+	for (const auto & pair : n)
+	{
+		std::cout << pair.first << " <=> " << pair.second << std::endl;
+	}
+
+	std::cout << std::endl;
 
 	std::cout << n.atob("hello") << std::endl;
 	std::cout << n.btoa("nashledanou") << std::endl;

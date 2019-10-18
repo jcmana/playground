@@ -6,12 +6,6 @@
 #include <string>
 #include <utility>
 
-#ifdef _DEBUG
-#define _CRTDBG_MAP_ALLOC
-#include <stdlib.h>
-#include <crtdbg.h>
-#endif
-
 #include "../../generic/generic/bidirectional_map.hpp"
 
 #include "containers/graph/node_centric.hpp"
@@ -69,7 +63,7 @@ void graph_test()
 	}
 
 	// Path iterator:
-	if (false)
+	if (true)
 	{
 		containers::graph::preorder_path_iterator<graph> it(r_s1);
 		containers::graph::preorder_path_iterator<graph> it_end;
@@ -89,7 +83,7 @@ void graph_test()
 	}
 
 	// Dijkstra search:
-	if (true)
+	if (false)
 	{
 		auto path = containers::graph::dijkstra<graph>(g, root, struct_5);
 
@@ -100,8 +94,4 @@ void graph_test()
 	}
 
 	std::cout << std::endl;
-	
-#ifdef _DEBUG
-	_CrtDumpMemoryLeaks();
-#endif
 }

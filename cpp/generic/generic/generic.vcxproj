@@ -143,6 +143,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="bidirectional_map.hpp" />
+    <ClInclude Include="bidirectional_map_base.hpp" />
     <ClInclude Include="scope_guard.h" />
   </ItemGroup>
   <ItemGroup>

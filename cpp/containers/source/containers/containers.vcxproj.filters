@@ -58,5 +58,8 @@
     <ClInclude Include="..\..\include\containers\graph\search\dijkstra.hpp">
       <Filter>Header Files\search</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\containers\graph\search\astar.hpp">
+      <Filter>Header Files\search</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
