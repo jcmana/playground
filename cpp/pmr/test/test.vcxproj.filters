@@ -15,13 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="range_sreference.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="range_sreference_iterator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PatternStructureReferenceA.cpp">
@@ -32,12 +26,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="range_sreference.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="range_sreference_iterator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PatternStructureReference_intf.h">
       <Filter>Header Files</Filter>
     </ClInclude>

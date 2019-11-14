@@ -112,16 +112,12 @@
   <ItemGroup>
     <ClCompile Include="PatternStructureReferenceA.cpp" />
     <ClCompile Include="PatternStructureReferenceA_iterator_facade.cpp" />
-    <ClCompile Include="range_sreference.cpp" />
-    <ClCompile Include="range_sreference_iterator.cpp" />
     <ClCompile Include="test.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PatternStructureReferenceA.h" />
     <ClInclude Include="PatternStructureReference_intf.h" />
     <ClInclude Include="PatternStructureReferenceA_iterator_facade.h" />
-    <ClInclude Include="range_sreference.h" />
-    <ClInclude Include="range_sreference_iterator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
