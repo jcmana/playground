@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <utility>
 
+/// \brief		Thread-safe callback register for 1:N relation.
 template<typename T>
 class callback_register
 {
@@ -35,21 +36,14 @@ public:
 	void notify(F method_ptr, Args ... args) const;
 
 private:
-	void insert(callback_holder<T> * holder_ptr)
-	{
-		m_holder_store.insert(m_holder_store.end(), holder_ptr);
-	}
+	/// \brief		Inserts `holder_ptr` into notification sequence as last.
+	void insert(callback_holder<T> * holder_ptr);
 
-	void remove(callback_holder<T> * holder_ptr)
-	{
-		m_holder_store.erase(std::find(m_holder_store.begin(), m_holder_store.end(), holder_ptr));
-	}
+	/// \brief		Removes `holder_ptr` from notification sequence.
+	void remove(callback_holder<T> * holder_ptr);
 
-	void replace(callback_holder<T> * old_holder_ptr, callback_holder<T> * new_holder_ptr)
-	{
-		m_holder_store.erase(std::find(m_holder_store.begin(), m_holder_store.end(), old_holder_ptr));
-		insert(new_holder_ptr);
-	}
+	/// \brief		Replaces `old_holder_ptr` with `new_holder_ptr`.
+	void replace(callback_holder<T> * old_holder_ptr, callback_holder<T> * new_holder_ptr);
 
 private:
 	std::vector<callback_holder<T> *> m_holder_store;
@@ -112,4 +106,26 @@ callback_register<T>::notify(F method_ptr, Args ... args) const
 	{
 		(holder_ptr->m_callback_ptr->*method_ptr)(std::forward<Args>(args) ...);
 	}
+}
+
+template<typename T>
+void 
+callback_register<T>::insert(callback_holder<T> * holder_ptr)
+{
+	m_holder_store.insert(m_holder_store.end(), holder_ptr);
+}
+
+template<typename T>
+void 
+callback_register<T>::remove(callback_holder<T> * holder_ptr)
+{
+	m_holder_store.erase(std::find(m_holder_store.begin(), m_holder_store.end(), holder_ptr));
+}
+
+template<typename T>
+void 
+callback_register<T>::replace(callback_holder<T> * old_holder_ptr, callback_holder<T> * new_holder_ptr)
+{
+	m_holder_store.erase(std::find(m_holder_store.begin(), m_holder_store.end(), old_holder_ptr));
+	insert(new_holder_ptr);
 }
