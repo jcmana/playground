@@ -13,9 +13,6 @@ public:
 	/// \brief		Default constructor, creates empty callback holder.
 	callback_holder();
 
-	/// \brief		Constructor, creates active callback holder.
-	callback_holder(callback_register<T> * register_ptr, T * callback_ptr);
-
 	/// \brief		Move constructor, copies `other` callback holder and deactivates it.
 	callback_holder(callback_holder && other) noexcept;
 
@@ -26,6 +23,9 @@ public:
 	callback_holder & operator  =(callback_holder && other) noexcept;
 
 private:
+	/// \brief		Constructor, creates active callback holder.
+	callback_holder(callback_register<T> * register_ptr, T * callback_ptr);
+
 	/// \brief		Deactivates this callback holder.
 	void dismiss();
 
@@ -38,13 +38,6 @@ template<typename T>
 callback_holder<T>::callback_holder() :
 	m_register_ptr(nullptr),
 	m_callback_ptr(nullptr)
-{
-}
-
-template<typename T>
-callback_holder<T>::callback_holder(callback_register<T> * register_ptr, T * callback_ptr) :
-	m_register_ptr(register_ptr),
-	m_callback_ptr(callback_ptr)
 {
 }
 
@@ -93,6 +86,13 @@ callback_holder<T>::operator  =(callback_holder && other) noexcept
 	m_register_ptr->replace(&other, this);
 
 	return (*this);
+}
+
+template<typename T>
+callback_holder<T>::callback_holder(callback_register<T> * register_ptr, T * callback_ptr) :
+	m_register_ptr(register_ptr),
+	m_callback_ptr(callback_ptr)
+{
 }
 
 template<typename T>
