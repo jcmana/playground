@@ -1,5 +1,6 @@
 #pragma once
 
+#include <mutex>
 #include <vector>
 #include <algorithm>
 #include <utility>
@@ -46,12 +47,17 @@ private:
 	void replace(callback_holder<T> * old_holder_ptr, callback_holder<T> * new_holder_ptr);
 
 private:
+	mutable std::mutex m_mutex;
+
 	std::vector<callback_holder<T> *> m_holder_store;
 };
 
 template<typename T>
 callback_register<T>::callback_register(callback_register && other) noexcept
 {
+	// Critical section:
+	std::lock_guard<std::mutex> lock(m_mutex);
+
 	m_holder_store = std::move(other.m_holder_store);
 
 	for (auto * holder_ptr : m_holder_store)
@@ -63,6 +69,9 @@ callback_register<T>::callback_register(callback_register && other) noexcept
 template<typename T>
 callback_register<T>::~callback_register()
 {
+	// Critical section:
+	std::lock_guard<std::mutex> lock(m_mutex);
+
 	for (auto * holder_ptr : m_holder_store)
 	{
 		holder_ptr->dismiss();
@@ -73,6 +82,9 @@ template<typename T>
 callback_register<T> & 
 callback_register<T>::operator  =(callback_register && other) noexcept
 {
+	// Critical section:
+	std::lock_guard<std::mutex> lock(m_mutex);
+
 	for (auto * holder_ptr : m_holder_store)
 	{
 		holder_ptr->dismiss();
@@ -102,9 +114,12 @@ template<typename F, typename ... Args>
 void 
 callback_register<T>::notify(F method_ptr, Args ... args) const
 {
+	// Critical section:
+	std::lock_guard<std::mutex> lock(m_mutex);
+
 	for (auto * holder_ptr : m_holder_store)
 	{
-		std::invoke(method_ptr, holder_ptr->m_callback_ptr, std::forward<Args>(args) ...);
+		holder_ptr->invoke(method_ptr, std::forward<Args>(args) ...);
 	}
 }
 
@@ -112,6 +127,9 @@ template<typename T>
 void 
 callback_register<T>::insert(callback_holder<T> * holder_ptr)
 {
+	// Critical section:
+	std::lock_guard<std::mutex> lock(m_mutex);
+	
 	m_holder_store.insert(m_holder_store.end(), holder_ptr);
 }
 
@@ -119,13 +137,19 @@ template<typename T>
 void 
 callback_register<T>::remove(callback_holder<T> * holder_ptr)
 {
+	// Critical section:
+	std::lock_guard<std::mutex> lock(m_mutex);
+
 	m_holder_store.erase(std::find(m_holder_store.begin(), m_holder_store.end(), holder_ptr));
 }
 
 template<typename T>
 void 
 callback_register<T>::replace(callback_holder<T> * old_holder_ptr, callback_holder<T> * new_holder_ptr)
-{
+{	
+	// Critical section:
+	std::lock_guard<std::mutex> lock(m_mutex);
+
 	m_holder_store.erase(std::find(m_holder_store.begin(), m_holder_store.end(), old_holder_ptr));
-	insert(new_holder_ptr);
+	m_holder_store.insert(m_holder_store.end(), new_holder_ptr);
 }

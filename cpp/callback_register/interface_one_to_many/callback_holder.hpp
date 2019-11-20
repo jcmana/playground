@@ -1,5 +1,6 @@
 #pragma once
 
+#include <mutex>
 #include <algorithm>
 
 /// \brief		Thread-safe callback registration holder, deactivates it on destruction.
@@ -26,10 +27,16 @@ private:
 	/// \brief		Constructor, creates active callback holder.
 	callback_holder(callback_register<T> * register_ptr, T * callback_ptr);
 
+	/// \brief		Invokes a method from callback interface with given `args`,
+	template<typename F, typename ... Args>
+	void invoke(F method_ptr, Args ... args);
+
 	/// \brief		Deactivates this callback holder.
 	void dismiss();
 
 private:
+	mutable std::mutex m_mutex;
+
 	callback_register<T> * m_register_ptr;
 	T * m_callback_ptr;
 };
@@ -44,6 +51,9 @@ callback_holder<T>::callback_holder() :
 template<typename T>
 callback_holder<T>::callback_holder(callback_holder && other) noexcept
 {
+	// Critical section:
+	std::lock_guard<std::mutex> lock(m_mutex);
+
 	m_register_ptr = other.m_register_ptr;
 	m_callback_ptr = other.m_callback_ptr;
 
@@ -60,6 +70,9 @@ callback_holder<T>::callback_holder(callback_holder && other) noexcept
 template<typename T>
 callback_holder<T>::~callback_holder()
 {
+	// Critical section:
+	std::lock_guard<std::mutex> lock(m_mutex);
+
 	if (m_register_ptr == nullptr)
 	{
 		return;
@@ -73,6 +86,9 @@ template<typename T>
 callback_holder<T> &
 callback_holder<T>::operator  =(callback_holder && other) noexcept
 {
+	// Critical section:
+	std::lock_guard<std::mutex> lock(m_mutex);
+
 	m_register_ptr = other.m_register_ptr;
 	m_callback_ptr = other.m_callback_ptr;
 
@@ -93,6 +109,17 @@ callback_holder<T>::callback_holder(callback_register<T> * register_ptr, T * cal
 	m_register_ptr(register_ptr),
 	m_callback_ptr(callback_ptr)
 {
+}
+
+template<typename T>
+template<typename F, typename ... Args>
+void 
+callback_holder<T>::invoke(F method_ptr, Args ... args)
+{
+	// Critical section:
+	std::lock_guard<std::mutex> lock(m_mutex);
+
+	std::invoke(method_ptr, m_callback_ptr, std::forward<Args>(args) ...);
 }
 
 template<typename T>
