@@ -38,11 +38,14 @@ callback_holder::~callback_holder()
 		return;
 	}
 
+	// Find this holder in register
+	auto it = std::find(register_ptr->holder_store.begin(), register_ptr->holder_store.end(), this);
+
 	// Remove this holder from register 
-	register_ptr->holder_store.erase(std::find(register_ptr->holder_store.begin(), register_ptr->holder_store.end(), this));
+	register_ptr->holder_store.erase(it);
 }
 
-callback_holder & callback_holder::operator =(callback_holder && other) noexcept
+callback_holder & callback_holder::operator  =(callback_holder && other) noexcept
 {
 	std::swap(register_ptr, other.register_ptr);
 	std::swap(callback_f, other.callback_f);
