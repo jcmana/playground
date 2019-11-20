@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-/// \brief		Holds the registered callback and deactivates it on destruction.
+/// \brief		Thread-safe callback registration holder, deactivates it on destruction.
 template<typename T>
 class callback_holder
 {

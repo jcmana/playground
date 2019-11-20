@@ -104,7 +104,7 @@ callback_register<T>::notify(F method_ptr, Args ... args) const
 {
 	for (auto * holder_ptr : m_holder_store)
 	{
-		(holder_ptr->m_callback_ptr->*method_ptr)(std::forward<Args>(args) ...);
+		std::invoke(method_ptr, holder_ptr->m_callback_ptr, std::forward<Args>(args) ...);
 	}
 }
 
