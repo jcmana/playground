@@ -118,8 +118,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="callback_holder.hpp" />
-    <ClInclude Include="callback_register.hpp" />
+    <ClInclude Include="atomic_callback_guard.hpp" />
+    <ClInclude Include="atomic_callback_store.hpp" />
+    <ClInclude Include="callback_guard.hpp" />
+    <ClInclude Include="callback_store.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="interface_one_to_many.cpp" />

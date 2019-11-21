@@ -4,8 +4,8 @@
 #include <string>
 #include <chrono>
 
-#include "callback_holder.hpp"
-#include "callback_register.hpp"
+#include "callback_store.hpp"
+#include "atomic_callback_store.hpp"
 
 struct intf
 {
@@ -24,8 +24,9 @@ struct intf_slow
 {
 	void method()
 	{
+		__nop();
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
-		std::cout << "intf::method()" << std::endl;
+		__nop();
 	}
 };
 
@@ -34,7 +35,7 @@ int main()
 	// Single-thread sanity test:
 	if (false)
 	{
-		callback_register<intf> cr;
+		callback_store<intf> cr;
 
 		intf a;
 		intf b;
@@ -42,7 +43,7 @@ int main()
 		auto ch_a = cr.subscribe(&a);
 
 		{
-			callback_holder<intf> ch_assigned;
+			callback_guard<intf> ch_assigned;
 
 			{
 				auto ch_b = cr.subscribe(&b);
@@ -66,26 +67,49 @@ int main()
 		cr.notify(&intf::method);
 	}
 
-	// Multi-thread sync test:
 	if (true)
 	{
-		callback_register<intf_slow> cr;
+		atomic_callback_store<intf> cr;
+
+		intf a;
+		auto h = cr.subscribe(&a);
+
+		atomic_callback_store<intf> cr_moved = std::move(cr);
+		cr_moved.notify(&intf::method);
+	}
+
+	// Multi-thread sync test:
+	if (false)
+	{
+		callback_store<intf_slow> cr;
+
+		callback_guard<intf_slow> ch_a;
+		callback_guard<intf_slow> ch_c;
 
 		std::thread a([&]
 		{
-			cr.notify(&intf_slow::method);
-
+			intf_slow cb;
+			auto h = cr.subscribe(&cb);
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			ch_a = std::move(h);
 		});
 
 		std::thread b([&]
 		{
+			cr.notify(&intf_slow::method);
+		});
 
+		std::thread c([&]
+		{
 			intf_slow cb;
 			auto h = cr.subscribe(&cb);
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			ch_c = std::move(h);
 		});
 
 		a.join();
 		b.join();
+		c.join();
 	}
 
 	return 0;

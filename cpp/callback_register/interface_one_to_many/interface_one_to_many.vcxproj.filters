@@ -15,10 +15,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="callback_register.hpp">
+    <ClInclude Include="callback_guard.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="callback_holder.hpp">
+    <ClInclude Include="callback_store.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="atomic_callback_guard.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="atomic_callback_store.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
