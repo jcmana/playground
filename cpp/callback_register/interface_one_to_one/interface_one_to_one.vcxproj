@@ -121,8 +121,8 @@
     <ClCompile Include="interface_one_to_one.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="callback_holder.hpp" />
-    <ClInclude Include="callback_register.hpp" />
+    <ClInclude Include="callback_guard.hpp" />
+    <ClInclude Include="callback.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

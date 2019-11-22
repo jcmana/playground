@@ -1,33 +1,17 @@
 #include <iostream>
 #include <string>
+#include <utility>
 
-#include "callback_register.hpp"
-#include "callback_holder.hpp"
+#include "callback.hpp"
 
-class callback_intf
+struct cb
 {
-public:
-	virtual ~callback_intf() = default;
-
-	virtual void action() const
-	{
-	}
-
-	virtual void print(const std::string & text) const
-	{
-	}
-};
-
-class cb :
-	public callback_intf
-{
-public:
-	virtual void action() const override
+	void action() const
 	{
 		std::cout << "cb::action()" << std::endl;
 	}
 
-	virtual void print(const std::string & text) const
+	void print(const std::string & text) const
 	{
 		std::cout << "cb::print() = " << text << std::endl;
 	}
@@ -35,21 +19,67 @@ public:
 
 int main()
 {
-	cb c;
-
-	callback_register<callback_intf> r;
+	// Construction/destruction order test:
+	if (false)
 	{
-		callback_holder<callback_intf> h;
-		h = r.subscribe(&c);
+		cb i;
 
-		r.notify(&callback_intf::action);
+		{
+			callback_guard<cb> cg;
+			callback<cb> c(&i, &cg);
+		}
+
+		{
+			callback<cb> c(&i);
+			callback_guard<cb> cg(&c);
+		}
 	}
 
+	// Move test:
+	if (false)
 	{
-		callback_holder<callback_intf> h;
-		h = r.subscribe(&c);
+		cb i;
+		callback_guard<cb> cg;
+		callback<cb> c(&i, &cg);
 
-		r.notify(&callback_intf::action);
+		auto c_moved = std::move(c);
+		auto cg_moved = std::move(cg);
+	}
+
+	// Notify test:
+	if (false)
+	{
+		cb i;
+		callback_guard<cb> cg;
+		callback<cb> c(&i, &cg);
+
+		c.invoke(&cb::print, "test");
+	}
+
+	// callback_guard dtor test:
+	if (false)
+	{
+		cb i;
+		callback<cb> c(&i);
+
+		{
+			callback_guard<cb> cg(&c);
+			c.invoke(&cb::print, "test 1");
+		}
+
+		c.invoke(&cb::print, "test 2");
+	}
+
+	// callback dtor test:
+	if (true)
+	{
+		cb i;
+		callback_guard<cb> cg;
+
+		{
+			callback<cb> c(&i, &cg);
+			c.invoke(&cb::print, "test 1");
+		}
 	}
 
 	return 0;
