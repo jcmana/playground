@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include <string>
 #include <utility>
 
@@ -71,7 +72,7 @@ int main()
 	}
 
 	// callback dtor test:
-	if (true)
+	if (false)
 	{
 		cb i;
 		callback_guard<cb> cg;
@@ -80,6 +81,19 @@ int main()
 			callback<cb> c(&i, &cg);
 			c.invoke(&cb::print, "test 1");
 		}
+	}
+
+	// std::vector test:
+	if (true)
+	{
+		cb i;
+		std::vector<callback<cb>> vc;
+		vc.emplace_back(&i);
+		callback_guard<cb> cg(&vc[0]);
+		vc.reserve(300);
+		vc[0].invoke(&cb::action);
+		vc.shrink_to_fit();
+		vc[0].invoke(&cb::action);
 	}
 
 	return 0;
