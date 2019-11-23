@@ -2,16 +2,16 @@
 
 #include <utility>
 
-/// \brief			Pair of linked elements, broken on destruction of either.
-class pair_element
+/// \brief			Element of linked pair, broken on destruction of either.
+class link_element
 {
 public:
-	pair_element() :
+	link_element() :
 		m_element_ptr(nullptr)
 	{
 	}
 
-	pair_element(pair_element * element_ptr) :
+	link_element(link_element * element_ptr) :
 		m_element_ptr(element_ptr)
 	{
 		if (m_element_ptr)
@@ -20,9 +20,9 @@ public:
 		}
 	}
 
-	pair_element(const pair_element & other) = delete;
+	link_element(const link_element & other) = delete;
 
-	pair_element(pair_element && other) noexcept
+	link_element(link_element && other) noexcept
 	{
 		m_element_ptr = other.m_element_ptr;
 		other.m_element_ptr = nullptr;
@@ -33,7 +33,7 @@ public:
 		}
 	}
 
-	~pair_element()
+	~link_element()
 	{
 		if (m_element_ptr)
 		{
@@ -42,9 +42,9 @@ public:
 		}
 	}
 
-	pair_element & operator  =(const pair_element & other) = delete;
+	link_element & operator  =(const link_element & other) = delete;
 
-	pair_element & operator  =(pair_element && other) noexcept
+	link_element & operator  =(link_element && other) noexcept
 	{
 		m_element_ptr = other.m_element_ptr;
 		other.m_element_ptr = nullptr;
@@ -65,5 +65,5 @@ public:
 	}
 
 private:
-	pair_element * m_element_ptr;
+	link_element * m_element_ptr;
 };
