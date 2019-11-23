@@ -51,9 +51,9 @@ public:
 		}
 	}
 
-	callback & operator =(const callback & other) = delete;
+	callback & operator  =(const callback & other) = delete;
 
-	callback & operator =(callback && other) noexcept
+	callback & operator  =(callback && other) noexcept
 	{
 		m_interface_ptr = other.m_interface_ptr;
 

@@ -44,9 +44,9 @@ public:
 		}
 	}
 
-	callback_guard & operator =(const callback_guard & other) = delete;
+	callback_guard & operator  =(const callback_guard & other) = delete;
 
-	callback_guard & operator =(callback_guard && other) noexcept
+	callback_guard & operator  =(callback_guard && other) noexcept
 	{
 		m_callback_ptr = other.m_callback_ptr;
 		other.m_callback_ptr = nullptr;
