@@ -58,8 +58,8 @@ public:
 	}
 
 	/// \brief			Elements' link.
-	/// \returns		`true` if both elements are alive; `false` otherwise.
-	bool linked()
+	/// \returns		`true` if both elements are linked together; `false` otherwise.
+	bool is_linked()
 	{
 		return m_element_ptr;
 	}
