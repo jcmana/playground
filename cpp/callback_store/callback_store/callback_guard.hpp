@@ -13,18 +13,13 @@ public:
 	friend class callback;
 
 public:
-	callback_guard() :
-		m_callback_ptr(nullptr)
+	callback_guard()
 	{
 	}
 
-private:
+public:
 	callback_guard(callback<T> * callback_ptr) :
-		link_element(callback_ptr),
-		m_callback_ptr(callback_ptr)
+		link_element(callback_ptr)
 	{
 	}
-
-private:
-	callback<T> * m_callback_ptr;
 };
