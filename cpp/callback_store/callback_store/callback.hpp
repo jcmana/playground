@@ -8,14 +8,14 @@ template<typename T>
 class callback : private link_element
 {
 public:
-	template<typename T>
+	template<typename TT>
 	friend class callback_store;
 
-	template<typename T>
+	template<typename TT>
 	friend class callback_guard;
 
 public:
-	callback(T * inteface_ptr) :
+	explicit callback(T * inteface_ptr) :
 		m_interface_ptr(inteface_ptr)
 	{
 	}

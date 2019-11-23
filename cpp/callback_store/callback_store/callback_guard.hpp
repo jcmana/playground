@@ -6,20 +6,20 @@ template<typename T>
 class callback_guard : private link_element
 {
 public:
-	template<typename T>
+	template<typename TT>
 	friend class callback_store;
 
-	template<typename T>
+	template<typename TT>
 	friend class callback;
 
 public:
-	callback_guard()
-	{
-	}
+	callback_guard() = default;
 
 public:
-	callback_guard(callback<T> * callback_ptr) :
+	explicit callback_guard(callback<T> * callback_ptr) :
 		link_element(callback_ptr)
 	{
 	}
 };
+
+#include "callback.hpp"
