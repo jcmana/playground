@@ -7,6 +7,7 @@
 template<typename T>
 class callback_guard;
 
+/// \brief		Guarded interface callback.
 template<typename T>
 class callback : private link_element
 {
@@ -14,20 +15,30 @@ public:
 	friend class callback_guard<T>;
 
 public:
-	explicit callback(T * inteface_ptr) :
-		m_interface_ptr(inteface_ptr)
-	{
-	}
+	/// \brief		Constructor, creates inactive callback from `interface_ptr`.
+	explicit callback(T * inteface_ptr);
 
+	/// \brief		Invokes method from `T`, if the callback is still active.
 	template<typename F, typename ... Args >
-	void invoke(F method_ptr, Args && ... args)
-	{
-		if (link_element::is_linked())
-		{
-			(m_interface_ptr->*method_ptr)(std::forward<Args>(args) ...);
-		}
-	}
+	void invoke(F method_ptr, Args && ... args);
 
 private:
 	T * m_interface_ptr;
 };
+
+template<typename T>
+callback<T>::callback(T * inteface_ptr) :
+	m_interface_ptr(inteface_ptr)
+{
+}
+
+template<typename T>
+template<typename F, typename ... Args >
+void 
+callback<T>::invoke(F method_ptr, Args && ... args)
+{
+	if (link_element::is_linked())
+	{
+		(m_interface_ptr->*method_ptr)(std::forward<Args>(args) ...);
+	}
+}

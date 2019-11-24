@@ -15,21 +15,21 @@ int main()
 	callback_intf ci;
 
 	callback_store<callback_intf> cs;
-	cs.notify(&callback_intf::method);
+	cs.invoke(&callback_intf::method);
 
 	{
 		auto cg = cs.subscribe(&ci);
-		cs.notify(&callback_intf::method);
+		cs.invoke(&callback_intf::method);
 
 		auto cg_move = std::move(cg);
-		cs.notify(&callback_intf::method);
+		cs.invoke(&callback_intf::method);
 	}
 
-	cs.notify(&callback_intf::method);
+	cs.invoke(&callback_intf::method);
 
 	auto cs_move = std::move(cs);
-	cs.notify(&callback_intf::method);
-	cs_move.notify(&callback_intf::method);
+	cs.invoke(&callback_intf::method);
+	cs_move.invoke(&callback_intf::method);
 	
 	return 0;
 }
