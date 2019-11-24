@@ -9,9 +9,6 @@ class callback : private link_element
 {
 public:
 	template<typename TT>
-	friend class callback_store;
-
-	template<typename TT>
 	friend class callback_guard;
 
 public:
