@@ -3,11 +3,13 @@
 #include "../../link/link/link_element.hpp"
 
 template<typename T>
+class callback;
+
+template<typename T>
 class callback_guard : private link_element
 {
 public:
-	template<typename TT>
-	friend class callback;
+	friend class callback<T>;
 
 public:
 	callback_guard() = default;
@@ -17,5 +19,3 @@ public:
 	{
 	}
 };
-
-#include "callback.hpp"

@@ -5,11 +5,13 @@
 #include "../../link/link/link_element.hpp"
 
 template<typename T>
+class callback_guard;
+
+template<typename T>
 class callback : private link_element
 {
 public:
-	template<typename TT>
-	friend class callback_guard;
+	friend class callback_guard<T>;
 
 public:
 	explicit callback(T * inteface_ptr) :
