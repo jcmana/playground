@@ -29,5 +29,14 @@
     <ClInclude Include="callback_store.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="atomic_callback.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="atomic_callback_guard.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="atomic_callback_store.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

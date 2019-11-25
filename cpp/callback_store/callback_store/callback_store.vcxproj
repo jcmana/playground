@@ -126,6 +126,9 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="atomic_callback.hpp" />
+    <ClInclude Include="atomic_callback_guard.hpp" />
+    <ClInclude Include="atomic_callback_store.hpp" />
     <ClInclude Include="callback.hpp" />
     <ClInclude Include="callback_guard.hpp" />
     <ClInclude Include="callback_store.hpp" />
