@@ -20,12 +20,44 @@ public:
 	{
 	}
 
+	atomic_callback(atomic_callback && other) :
+		m_lock(other.m_mutex),
+		link_element(std::move(other)),
+		m_interface_ptr(other.m_interface_ptr)
+	{
+		m_lock = std::unique_lock<std::mutex>(m_mutex, std::defer_lock);
+	}
+
+	atomic_callback & operator  =(atomic_callback && other)
+	{
+		m_lock = std::unique_lock<std::mutex>(other.m_mutex);
+
+		link_element::operator  =(std::move(other));
+		m_interface_ptr = other.m_interface_ptr;
+
+		m_lock = std::unique_lock<std::mutex>(m_mutex, std::defer_lock);
+
+		return (*this);
+	}
+
+	~atomic_callback()
+	{
+		m_lock.lock();
+
+		// JMTODO: link_element dtor is not locked
+	}
+
 	template<typename F, typename ... Args >
 	void invoke(F method_ptr, Args && ... args)
 	{
 		std::lock_guard<std::unique_lock<std::mutex>> lock(m_lock);
-		(m_interface_ptr->*method_ptr)(std::forward<Args>(args) ...);
+
+		if (link_element::is_linked())
+		{
+			(m_interface_ptr->*method_ptr)(std::forward<Args>(args) ...);
+		}
 	}
+
 
 private:
 	T * m_interface_ptr;
