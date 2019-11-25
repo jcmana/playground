@@ -26,7 +26,8 @@ public:
 	{
 		m_lock.lock();
 
-		// JMTODO: link_element dtor is not locked
+		// Break the link to callback_guard
+		link_element::operator  =(link_element());
 	}
 
 private:
