@@ -42,9 +42,9 @@ public:
 
 	~atomic_callback()
 	{
-		m_lock.lock();
+		std::lock_guard<std::unique_lock<std::mutex>> lock(m_lock);
 
-		// Break the link to callback_guard
+		// Break the link to callback_guard (disabling the callback)
 		link_element::operator  =(link_element());
 	}
 
