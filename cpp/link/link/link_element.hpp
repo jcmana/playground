@@ -111,5 +111,5 @@ link_element & link_element::operator  =(link_element && other) noexcept
 
 bool link_element::is_linked() const noexcept
 {
-	return m_element_ptr;
+	return m_element_ptr != nullptr;
 }
