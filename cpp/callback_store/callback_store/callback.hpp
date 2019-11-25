@@ -8,6 +8,10 @@ template<typename T>
 class callback_guard;
 
 /// \brief		Guarded interface callback.
+///
+/// Callback is always mapped to a interface pointer and allows invoking methods
+/// from it. Callback requires `callback_guard` to be alive, otherwise it can't
+/// be invoked.
 template<typename T>
 class callback : private link_element
 {
