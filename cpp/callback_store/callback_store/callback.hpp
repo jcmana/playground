@@ -26,6 +26,8 @@ private:
 	T * m_interface_ptr;
 };
 
+#pragma region callback implementation:
+
 template<typename T>
 callback<T>::callback(T * inteface_ptr) :
 	m_interface_ptr(inteface_ptr)
@@ -42,3 +44,5 @@ callback<T>::invoke(F method_ptr, Args && ... args)
 		(m_interface_ptr->*method_ptr)(std::forward<Args>(args) ...);
 	}
 }
+
+#pragma endregion

@@ -12,20 +12,26 @@ struct callback_intf
 
 int main()
 {
-	callback_intf ci;
+	callback_intf cia;
+	callback_intf cib;
 
 	callback_store<callback_intf> cs;
 	cs.invoke(&callback_intf::method);
 
 	{
-		auto cg = cs.subscribe(&ci);
+		auto cg = cs.subscribe(&cia);
 		cs.invoke(&callback_intf::method);
 
 		auto cg_move = std::move(cg);
 		cs.invoke(&callback_intf::method);
-	}
 
-	cs.invoke(&callback_intf::method);
+		{
+			auto cg = cs.subscribe(&cib);
+			cs.invoke(&callback_intf::method);
+		}
+
+		cs.invoke(&callback_intf::method);
+	}
 
 	auto cs_move = std::move(cs);
 	cs.invoke(&callback_intf::method);

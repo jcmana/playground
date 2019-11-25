@@ -20,8 +20,12 @@ public:
 	explicit callback_guard(callback<T> * callback_ptr);
 };
 
+#pragma region callback_guard implementation:
+
 template<typename T>
 callback_guard<T>::callback_guard(callback<T> * callback_ptr) :
 	link_element(callback_ptr)
 {
 }
+
+#pragma endregion

@@ -16,13 +16,15 @@ public:
 	/// \brief			Subscribes `interface_ptr` for notifications.
 	callback_guard<T> subscribe(T * interface_ptr);
 
-	/// \brief			Invokes a method from `T` on subscribed callbacks.
+	/// \brief			Invokes a method from `T` on each subscribed callback.
 	template<typename F, typename ... Args >
 	void invoke(F method_ptr, Args && ... args);
 
 private:
 	std::vector<callback<T>> m_callback_store;
 };
+
+#pragma region callback_store implementation:
 
 template<typename T>
 callback_guard<T> 
@@ -42,3 +44,5 @@ callback_store<T>::invoke(F method_ptr, Args && ... args)
 		callback.invoke(method_ptr, std::forward<Args>(args) ...);
 	}
 }
+
+#pragma endregion
