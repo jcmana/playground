@@ -48,6 +48,9 @@ public:
 	/// \returns		`true` if both elements are linked together; `false` otherwise.
 	inline bool is_linked() const noexcept;
 
+	/// \brief			Breaks the link, if there is such.
+	inline void release() noexcept;
+
 private:
 	link_element * m_element_ptr;
 };
@@ -112,4 +115,13 @@ link_element & link_element::operator  =(link_element && other) noexcept
 bool link_element::is_linked() const noexcept
 {
 	return m_element_ptr != nullptr;
+}
+
+void link_element::release() noexcept
+{
+	if (m_element_ptr)
+	{
+		m_element_ptr->m_element_ptr = nullptr;
+		m_element_ptr = nullptr;
+	}
 }

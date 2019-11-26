@@ -23,7 +23,7 @@ struct callback_intf
 int main()
 {
 	// Simple callback_store test:
-	if (false)
+	if (true)
 	{
 		callback_intf cia;
 		callback_intf cib;
@@ -40,6 +40,9 @@ int main()
 
 			{
 				auto cg = cs.subscribe(&cib);
+				cs.invoke(&callback_intf::method);
+
+				cg.release();
 				cs.invoke(&callback_intf::method);
 			}
 
@@ -78,7 +81,7 @@ int main()
 	}
 
 	// Multi-thread atomic_callback_store test:
-	if (true)
+	if (false)
 	{
 		callback_intf ci;
 
@@ -92,6 +95,8 @@ int main()
 
 		std::thread tb([&]
 		{ 
+			ac.invoke(&callback_intf::method_slow);
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
 			ac.invoke(&callback_intf::method_slow);
 		});
 
