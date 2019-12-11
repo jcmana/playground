@@ -32,20 +32,23 @@ int main()
 		cs.invoke(&callback_intf::method);
 
 		{
-			auto cg = cs.subscribe(&cia);
+			auto cg = cs.subscribe(cia);
 			cs.invoke(&callback_intf::method);
 
 			auto cg_move = std::move(cg);
 			cs.invoke(&callback_intf::method);
 
 			{
-				auto cg = cs.subscribe(&cib);
+				auto cg = cs.subscribe(cib);
 				cs.invoke(&callback_intf::method);
 
 				cg.release();
 				cs.invoke(&callback_intf::method);
 			}
 
+			cs.invoke(&callback_intf::method);
+
+			const auto & cs_const_ref = cs;
 			cs.invoke(&callback_intf::method);
 		}
 
@@ -65,7 +68,7 @@ int main()
 		for (std::size_t n = 0; n < count; ++n)
 		{
 			auto it = ci.emplace(ci.end());
-			cs.subscribe(&*it);
+			cs.subscribe(*it);
 		}
 	}
 

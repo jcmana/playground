@@ -19,33 +19,33 @@ public:
 	friend class callback_guard<T>;
 
 public:
-	/// \brief		Constructor, creates inactive callback from `interface_ptr`.
-	explicit callback(T * inteface_ptr);
+	/// \brief		Constructor, creates inactive callback from `T`.
+	explicit callback(T & inteface_ref);
 
 	/// \brief		Invokes method from `T`, if the callback is still active.
 	template<typename F, typename ... Args >
-	void invoke(F method_ptr, Args && ... args);
+	void invoke(F method_ptr, Args && ... args) const;
 
 private:
-	T * m_interface_ptr;
+	T & m_interface_ref;
 };
 
 #pragma region callback implementation:
 
 template<typename T>
-callback<T>::callback(T * inteface_ptr) :
-	m_interface_ptr(inteface_ptr)
+callback<T>::callback(T & inteface_ref) :
+	m_interface_ref(inteface_ref)
 {
 }
 
 template<typename T>
 template<typename F, typename ... Args >
 void 
-callback<T>::invoke(F method_ptr, Args && ... args)
+callback<T>::invoke(F method_ptr, Args && ... args) const
 {
 	if (link_element::is_linked())
 	{
-		(m_interface_ptr->*method_ptr)(std::forward<Args>(args) ...);
+		(m_interface_ref.*method_ptr)(std::forward<Args>(args) ...);
 	}
 }
 
