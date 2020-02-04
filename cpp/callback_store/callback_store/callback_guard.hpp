@@ -17,7 +17,7 @@ public:
 	callback_guard() = default;
 
 	/// \brief			Constructor, creates guard for `callback_ptr`.
-	explicit callback_guard(callback<T> * callback_ptr);
+	explicit callback_guard(callback<T> & callback_ref);
 
 	/// \brief		Deactivates the linked callback.
 	void release();
@@ -26,8 +26,8 @@ public:
 #pragma region callback_guard implementation:
 
 template<typename T>
-callback_guard<T>::callback_guard(callback<T> * callback_ptr) :
-	link_element(callback_ptr)
+callback_guard<T>::callback_guard(callback<T> & callback_ref) :
+	link_element(&callback_ref)
 {
 }
 

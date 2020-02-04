@@ -10,7 +10,7 @@ struct callback_intf
 {
 	void method()
 	{
-		std::cout << "callback_intf::method()" << std::endl;
+		std::cout << "callback_intf::method(): " << std::endl;
 	}
 
 	void method_slow()
@@ -20,10 +20,21 @@ struct callback_intf
 	}
 };
 
+void function()
+{
+    std::cout << "function(): " << std::endl;
+}
+
+void function_slow()
+{
+    std::cout << "function_slow()" << std::endl;
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+}
+
 int main()
 {
 	// Simple callback_store test:
-	if (true)
+	if (false)
 	{
 		callback_intf cia;
 		callback_intf cib;
@@ -57,7 +68,7 @@ int main()
 		cs_move.invoke(&callback_intf::method);
 	}
 
-	// Vector re-alloccation test:
+	// Callback vector re-alloccation test:
 	if (false)
 	{
 		std::size_t count = 100;
@@ -109,6 +120,24 @@ int main()
 		ta.join();
 		tb.join();
 	}
-	
+    
+    // Function callback test:
+    if (false)
+    {
+        callback<void()> c(function);
+        callback_guard<void()> g(c);
+        c.invoke();
+    }
+
+    // Function callback_store test:
+    if (true)
+    {
+        callback_store<void()> s;
+        auto g = s.subscribe(function);
+        auto g_slow = s.subscribe(function_slow);
+
+        s.invoke();
+    }
+
 	return 0;
 }
