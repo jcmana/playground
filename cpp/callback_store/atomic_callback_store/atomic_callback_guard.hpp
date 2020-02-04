@@ -14,20 +14,31 @@ public:
 	friend class atomic_callback<T>;
 
 public:
-	atomic_callback_guard() = default;
+	atomic_callback_guard()
+    {
+    }
 
-	explicit atomic_callback_guard(atomic_callback<T> * callback_ptr) :
-		link_element(callback_ptr),
-		m_lock(callback_ptr->m_mutex, std::defer_lock)
+	explicit atomic_callback_guard(atomic_callback<T> & callback_ref) :
+		m_lock(callback_ref.m_mutex, std::defer_lock),
+		link_element(&callback_ref)
 	{
 	}
 
+    atomic_callback_guard(atomic_callback_guard && other) :
+        m_lock(std::move(other.m_lock)),
+        link_element(std::move(other))
+    {
+    }
+
 	~atomic_callback_guard()
 	{
-		std::lock_guard<std::unique_lock<std::mutex>> lock(m_lock);
+        if (link_element::is_linked())
+        {
+            // JMTODO: fix the race condition here
 
-		// Break the link to atomic_callback (disabling the callback)
-		link_element::operator  =(link_element());
+		    std::unique_lock<std::unique_lock<std::mutex>> lock(m_lock);
+            link_element::release();
+        }
 	}
 
 private:

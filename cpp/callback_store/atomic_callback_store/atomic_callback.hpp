@@ -15,15 +15,16 @@ public:
 	friend class atomic_callback_guard<T>;
 
 public:
-	explicit atomic_callback(T * interface_ptr) :
-		m_lock(m_mutex, std::defer_lock)
+	explicit atomic_callback(T & interface_ref) :
+		m_lock(m_mutex, std::defer_lock),
+        m_interface_ref(interface_ref)
 	{
 	}
 
 	atomic_callback(atomic_callback && other) :
 		m_lock(other.m_mutex),
 		link_element(std::move(other)),
-		m_interface_ptr(other.m_interface_ptr)
+        m_interface_ref(other.m_interface_ref)
 	{
 		m_lock = std::unique_lock<std::mutex>(m_mutex, std::defer_lock);
 	}
@@ -33,7 +34,7 @@ public:
 		m_lock = std::unique_lock<std::mutex>(other.m_mutex);
 
 		link_element::operator  =(std::move(other));
-		m_interface_ptr = other.m_interface_ptr;
+		m_interface_ref = other.m_interface_ref;
 
 		m_lock = std::unique_lock<std::mutex>(m_mutex, std::defer_lock);
 
@@ -42,27 +43,24 @@ public:
 
 	~atomic_callback()
 	{
-		std::lock_guard<std::unique_lock<std::mutex>> lock(m_lock);
-
-		// Break the link to callback_guard (disabling the callback)
-		link_element::operator  =(link_element());
+		std::unique_lock<std::unique_lock<std::mutex>> lock(m_lock);
+        link_element::release();
 	}
 
 	template<typename F, typename ... Args >
 	void invoke(F method_ptr, Args && ... args)
 	{
-		std::lock_guard<std::unique_lock<std::mutex>> lock(m_lock);
+		std::unique_lock<std::unique_lock<std::mutex>> lock(m_lock);
 
 		if (link_element::is_linked())
 		{
-			(m_interface_ptr->*method_ptr)(std::forward<Args>(args) ...);
+			(m_interface_ref.*method_ptr)(std::forward<Args>(args) ...);
 		}
 	}
 
-
 private:
-	T * m_interface_ptr;
-
 	mutable std::mutex m_mutex;
 	mutable std::unique_lock<std::mutex> m_lock;
+
+	T & m_interface_ref;
 };
