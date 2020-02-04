@@ -3,6 +3,7 @@
 #include <thread>
 #include <chrono>
 
+#include "atomic_callback.hpp"
 #include "atomic_callback_store.hpp"
 
 struct callback_intf
@@ -35,38 +36,37 @@ void main()
     // Simple atomic_callback_store test:
     if (false)
     {
-        callback_intf ci;
+        callback_intf i;
 
-        atomic_callback<callback_intf> ac(&ci);
-        atomic_callback_guard<callback_intf> acg(&ac);
+        atomic_callback<callback_intf> c(i);
+        atomic_callback_guard<callback_intf> g(c);
 
-        ac.invoke(&callback_intf::method);
+        c.invoke(&callback_intf::method);
     }
 
     // Multi-thread atomic_callback_store test:
-    if (false)
+    if (true)
     {
-        callback_intf ci;
+        callback_intf i;
 
-        atomic_callback<callback_intf> ac(&ci);
+        atomic_callback<callback_intf> c(i);
 
-        std::thread ta([&]
+        std::thread t([&]
         {
-            atomic_callback_guard<callback_intf> acg(&ac);
+            atomic_callback_guard<callback_intf> g(c);
+            c.invoke(&callback_intf::method_slow);
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            c.invoke(&callback_intf::method_slow);
+
+            auto g_move = std::move(g);
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            c.invoke(&callback_intf::method_slow);
         });
 
-        std::thread tb([&]
-        {
-            ac.invoke(&callback_intf::method_slow);
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            ac.invoke(&callback_intf::method_slow);
-        });
+        auto c_move = std::move(c);
+        c = std::move(c_move);
 
-        auto ac_move = std::move(ac);
-        ac = std::move(ac_move);
-
-        ta.join();
-        tb.join();
+        t.join();
     }
 }
