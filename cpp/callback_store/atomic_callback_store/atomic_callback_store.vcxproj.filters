@@ -7,23 +7,23 @@
     </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="atomic_callback.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="atomic_callback_guard.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="atomic_callback_store.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="callback.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="callback_guard.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="callback_store.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

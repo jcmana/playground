@@ -19,7 +19,7 @@ public:
 	/// \brief			Constructor, creates guard for `callback_ptr`.
 	explicit callback_guard(callback<T> & callback_ref);
 
-	/// \brief		Deactivates the linked callback.
+	/// \brief		Deactivates the `callback`.
 	void release();
 };
 

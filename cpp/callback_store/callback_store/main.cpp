@@ -4,7 +4,6 @@
 #include <chrono>
 
 #include "callback_store.hpp"
-#include "atomic_callback_store.hpp"
 
 struct callback_intf
 {
@@ -81,44 +80,6 @@ int main()
 			auto it = ci.emplace(ci.end());
 			cs.subscribe(*it);
 		}
-	}
-
-	// Simple atomic_callback_store test:
-	if (false)
-	{
-		callback_intf ci;
-
-		atomic_callback<callback_intf> ac(&ci);
-		atomic_callback_guard<callback_intf> acg(&ac);
-
-		ac.invoke(&callback_intf::method);
-	}
-
-	// Multi-thread atomic_callback_store test:
-	if (false)
-	{
-		callback_intf ci;
-
-		atomic_callback<callback_intf> ac(&ci);
-
-		std::thread ta([&]
-		{
-			atomic_callback_guard<callback_intf> acg(&ac);
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
-		});
-
-		std::thread tb([&]
-		{ 
-			ac.invoke(&callback_intf::method_slow);
-			std::this_thread::sleep_for(std::chrono::milliseconds(100));
-			ac.invoke(&callback_intf::method_slow);
-		});
-
-		auto ac_move = std::move(ac);
-		ac = std::move(ac_move);
-
-		ta.join();
-		tb.join();
 	}
     
     // Function callback test:
