@@ -124,6 +124,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="barrier.hpp" />
+    <ClInclude Include="condition.hpp" />
     <ClInclude Include="conversation.hpp" />
     <ClInclude Include="latch.hpp" />
   </ItemGroup>

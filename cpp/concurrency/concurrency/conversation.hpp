@@ -2,14 +2,15 @@
 
 #include <thread>
 #include <memory>
-#include <map>
+#include <list>
+#include <algorithm>
 #include <functional>
 
 class conversation
 {
 public:
-    using table = std::map<std::thread::id, std::function<void(int)>>;
-
+    using table = std::list<std::function<void(int)>>;
+    /*
     struct seat
     {
         seat(std::shared_ptr<table> sp_table) :
@@ -34,6 +35,7 @@ public:
 
         std::shared_ptr<table> m_sp_table;
     };
+    */
 
 public:
     conversation()
@@ -48,15 +50,24 @@ public:
     
     void enter(std::function<void(int)> functor)
     {
-        auto pair = std::make_pair(std::this_thread::get_id(), functor);
-        m_sp_table->insert(pair);
+        m_functor = functor;
+        //m_sp_table->insert(m_sp_table->end(), m_functor);
     }
 
     void leave()
     {
-        m_sp_table->erase(std::this_thread::get_id());
+        //m_sp_table->erase(std::find(m_sp_table->begin(), m_sp_table->end(), m_functor));
+    }
+
+    void request(int d)
+    {
+    }
+
+    void respond(int d)
+    {
     }
 
 private:
+    std::function<void(int)> m_functor;
     std::shared_ptr<table> m_sp_table;
 };

@@ -16,5 +16,8 @@
     <ClInclude Include="conversation.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="condition.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

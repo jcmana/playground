@@ -1,13 +1,22 @@
 #pragma once
 
 #include <mutex>
+#include <atomic>
 #include <condition_variable>
 
 class barrier
 {
 public:
     /// \brief      Default constructor.
-    barrier() = default;
+    barrier() :
+        m_active(true)
+    {
+    };
+
+    barrier(const barrier & other) noexcept
+    {
+
+    }
 
     ~barrier()
     {
@@ -16,25 +25,25 @@ public:
 
     void arrive_and_wait()
     {
-        std::unique_lock<std::mutex> lock(m_mutex);
+        std::unique_lock<std::mutex> lock(m_write);
 
         while (m_active)
         {
-            m_cv.wait(lock);
+            m_value_cv.wait(lock);
         }
     }
 
     void arrive_and_drop()
     {
-        std::unique_lock<std::mutex> lock(m_mutex);
+        std::unique_lock<std::mutex> lock(m_write);
 
         m_active = false;
-        m_cv.notify_all();
+        m_value_cv.notify_all();
     }
 
 private:
-    std::mutex m_mutex;
-    std::condition_variable m_cv;
+    std::mutex m_write;
+    std::condition_variable m_value_cv;
 
-    bool m_active = true;
+    bool m_active;
 };
