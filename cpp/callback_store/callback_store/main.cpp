@@ -53,7 +53,7 @@ int main()
 				cs.invoke(&callback_intf::method);
 
 				cg.release();
-				cs.invoke(&callback_intf::method);
+				cs.invoke(&callback_intf::method_slow);
 			}
 
 			cs.invoke(&callback_intf::method);
@@ -91,7 +91,7 @@ int main()
     }
 
     // Function callback_store test:
-    if (true)
+    if (false)
     {
         callback_store<void()> s;
         auto g = s.subscribe(function);

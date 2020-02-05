@@ -27,12 +27,14 @@ public:
 	explicit callback(T & inteface_ref);
 
 	/// \brief		Invokes method from `T`, if the callback is still active.
-	template<typename = std::enable_if_t<std::is_class<T>::value>, typename F, typename ... Args>
-	void invoke(F method_ptr, Args && ... args) const;
+	template<typename F, typename ... Args>
+    typename std::enable_if_t<std::is_class<T>::value == true>
+    invoke(F method_ptr, Args && ... args) const;
 
     /// \brief		Invokes function `T`, if the callback is still active.
-    template<typename = std::enable_if_t<std::is_function<T>::value>, typename ... Args>
-    void invoke(Args && ... args) const;
+    template<typename ... Args>
+    typename std::enable_if_t<std::is_class<T>::value != true>
+    invoke(Args && ... args) const;
 
 private:
 	T & m_interface_ref;
@@ -47,8 +49,8 @@ callback<T>::callback(T & inteface_ref) :
 }
 
 template<typename T>
-template<typename, typename F, typename ... Args>
-void 
+template<typename F, typename ... Args>
+typename std::enable_if_t<std::is_class<T>::value == true> 
 callback<T>::invoke(F method_ptr, Args && ... args) const
 {
 	if (link_element::is_linked())
@@ -58,8 +60,8 @@ callback<T>::invoke(F method_ptr, Args && ... args) const
 }
 
 template<typename T>
-template<typename, typename ... Args>
-void 
+template<typename ... Args>
+typename std::enable_if_t<std::is_class<T>::value != true> 
 callback<T>::invoke(Args && ... args) const
 {
     if (link_element::is_linked())
