@@ -12,6 +12,7 @@ public:
 
     ~model_modifier()
     {
+        m_model_ref.m_mutex.unlock();
         m_model_ref.trigger();
     }
 
@@ -21,15 +22,13 @@ public:
     }
 
 private:
-    model_modifier(model<T> & model_ref) :
-        m_lock(model_ref.m_mutex),
+    explicit model_modifier(model<T> & model_ref) :
         m_model_ref(model_ref)
     {
+        // m_model_ref.m_lock needs to be locked here by model<T>
     }
 
 private:
-    mutable std::unique_lock<std::mutex> m_lock;
-
     /// \brief      Modified model reference.
     model<T> & m_model_ref;
 };

@@ -118,10 +118,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="model.h" />
+    <ClInclude Include="model.hpp" />
     <ClInclude Include="model_accessor.hpp" />
     <ClInclude Include="model_modifier.hpp" />
     <ClInclude Include="model_observable.hpp" />
+    <ClInclude Include="model_observer_intf.h" />
     <ClInclude Include="model_waitable.hpp" />
   </ItemGroup>
   <ItemGroup>

@@ -6,20 +6,22 @@
 #include <string>
 #include <functional>
 
-#include "model.h"
+#include "model_waitable.hpp"
+#include "model_observable.hpp"
+#include "model.hpp"
 
-class Observer :
-    public IObserver
+class observer :
+    public model_observer_intf
 {
 public:
-    Observer(const std::string & name = "value") :
+    observer(const std::string & name = "value") :
         m_name(name)
     {
     }
 
 public:
     // IObserver implementation:
-    virtual void OnModification() override
+    virtual void on_modification() override
     {
         std::cout << m_name << " modified" << std::endl;
     }
@@ -49,76 +51,82 @@ struct Markers
 
 void main()
 {
-    // model_waitable test:
+    // modifier/accessor synchronization test:
     if (false)
     {
-        std::thread t;
-        model_waitable w;
+        model<int> m;
 
-        const auto t_procedure  = [&]
+        const auto t_proc = [&]
         {
-            std::cout << "t: work started" << std::endl;
+            auto mm = m.modifier();
+
+            std::cout << "t: modifying" << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(1));
-            w.trigger();
-            std::cout << "t: work done" << std::endl;
+            std::cout << "t: modifying done" << std::endl;
         };
-
-        std::cout << "main: work started" << std::endl;
-
-        t = std::thread(t_procedure);
-        w.wait();
-        std::cout << "main: work done" << std::endl;
-        t.join();
-
-        t = std::thread(t_procedure);
-        w.wait();
-        std::cout << "main: work done" << std::endl;
-        t.join();
-    }
-
-    // model_observable test:
-    if (false)
-    {
-        model_observable o;
-        
-        Observer r;
-        Observer s;
-        const auto g = o.observe(r);
-        const auto h = o.observe(s);
-
-        const auto t_procedure = [&]
-        {
-            std::cout << "t: work started" << std::endl;
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            o.trigger();
-            std::cout << "t: work done" << std::endl;
-        };
-
-        std::thread t(t_procedure);
-        t.join();
-    }
-
-    // model_waitable lifetime test:
-    if (false)
-    {
         std::thread t;
-        {
-            model_waitable mw;
 
-            const auto t_proc = [&]
-            {
-                mw.wait();
-            };
+        {
+            auto ma = m.accessor();
+
             t = std::thread(t_proc);
+
+            std::cout << "m: reading" << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::cout << "m: reading done" << std::endl;
+        }
+
+        {
+            auto ma = m.accessor();
+
+            std::cout << "m: reading" << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::cout << "m: reading done" << std::endl;
         }
 
         t.join();
     }
 
-    // Markers test:
+    // wait test:
     if (true)
     {
-        Markers markersModel;
+        model<int> m;
+
+        std::thread ta;
+        std::thread tb;
+
+        const auto t_proc = [&]
+        {
+            std::cout << "t: accessing" << std::endl;
+            auto mm = m.modifier();
+
+            std::cout << "t: writing" << std::endl;
+            mm.value() = 7;
+            std::cout << "t: writing done" << std::endl;
+        };
+
+        ta = std::thread(t_proc);
+
+        {
+            std::cout << "m: accessing" << std::endl;
+            auto ma = m.wait();
+
+            tb = std::thread(t_proc);
+
+            std:: cout << "m: reading" << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::cout << "m: value = " << m.value() << std::endl;
+            std::cout << "m: reading done" << std::endl;
+        }
+
+        ta.join();
+        tb.join();
+    }
+
+    // Markers test:
+    if (false)
+    {
+        model<std::vector<Marker>> markers;
 
         {
             Marker m;
@@ -126,27 +134,27 @@ void main()
             m.y.modifier().value() = 7;
             m.resolved.modifier().value() = false;
 
-            markersModel.markers.modifier().value().push_back(m);
+            markers.modifier().value().push_back(m);
         }
 
-        std::unique_ptr<IObserver> upObserverMarkersX = std::make_unique<Observer>("x");
-        std::unique_ptr<IObserver> upObserverMarkersY = std::make_unique<Observer>("y");
-        const auto guardX = markersModel.markers.accessor().value().back().x.observe(*upObserverMarkersX);
-        const auto guardY = markersModel.markers.accessor().value().back().y.observe(*upObserverMarkersY);
+        std::unique_ptr<model_observer_intf> upObserverMarkersX = std::make_unique<observer>("x");
+        std::unique_ptr<model_observer_intf> upObserverMarkersY = std::make_unique<observer>("y");
+        const auto guard_x = markers.accessor().value().back().x.observe(*upObserverMarkersX);
+        const auto guard_y = markers.accessor().value().back().y.observe(*upObserverMarkersY);
 
         const auto t_proc = [&]
         {
             std::cout << "t: waiting for modification" << std::endl;
-            markersModel.markers.wait();
+            markers.wait();
             std::cout << "t: modified" << std::endl;
         };
         std::thread t(t_proc);
 
         std::this_thread::sleep_for(std::chrono::seconds(1));
 
-        markersModel.markers.modifier().value().back().x.modifier().value() = 7;
-        markersModel.markers.modifier().value().back().y.modifier().value() = 2;
-        markersModel.markers.modifier().value().back().x.modifier().value() = 12;
+        markers.modifier().value().back().x.modifier().value() = 7;
+        markers.modifier().value().back().y.modifier().value() = 2;
+        markers.modifier().value().back().x.modifier().value() = 12;
 
         t.join();
     }
