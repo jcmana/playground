@@ -23,6 +23,7 @@ public:
 public:
     /// \brief      Default constructor.
     model() :
+        m_lock(m_mutex, std::defer_lock),
         m_value(T())
     {
     }
@@ -54,11 +55,6 @@ public:
         return (*this);
     }
 
-    const T & value() const
-    {
-        return m_value;
-    }
-
     model_accessor<T> accessor()
     {
         // Lock the mutex, model_accessor extends the lock ownership
@@ -81,20 +77,23 @@ public:
     {
         std::unique_lock<std::mutex> lock(m_mutex);
 
+        // To cover spurious wakeup, trigger counter is user here to exactly match
+        // single trigger() to a single notification of each waiting thread
         const auto initial_trigger = m_trigger;
+
         while (m_trigger == initial_trigger)
         {
             m_cv.wait(lock);
         }
 
-        // Leave the mutex locked,  model_accessor extends the lock ownership
+        // Leave the mutex locked, `model_accessor` extends the lock ownership
         lock.release();
 
         return model_accessor<T>(*this);
     }
 
     /// \brief      Observer modifications of this object.
-    callback_guard<model_observer_intf> observe(model_observer_intf & observer) const
+    callback_guard<model_observer_intf<T>> observe(model_observer_intf<T> & observer) const
     {
         return m_callback_store.subscribe(observer);
     }
@@ -102,11 +101,16 @@ public:
 private:
     /// \brief      Trigger the modification notification.
     ///
-    /// Waiting threads are woken up, observers are notified.
+    /// First, all observers are notified. Second, waiting threads are woken up.
     void trigger()
     {
+        m_mutex.lock();
+
+        // Prepare accessor (therefore extending the locked mutex)
+        auto accessor = model_accessor<T>(*this);
+
         // Notify observing threads
-        m_callback_store.invoke(&model_observer_intf::on_modification);
+        m_callback_store.invoke(&model_observer_intf<T>::on_modification, accessor);
 
         // Notify waiting threads
         m_trigger++;
@@ -114,15 +118,16 @@ private:
     }
 
 private:
+    mutable std::unique_lock<std::mutex> m_lock;
     mutable std::mutex m_mutex;
     mutable std::condition_variable m_cv;
 
     /// \brief      Represents the 'modification' condition.
     mutable std::size_t m_trigger;
     /// \brief      Registered observers.
-    mutable callback_store<model_observer_intf> m_callback_store;
+    mutable callback_store<model_observer_intf<T>> m_callback_store;
 
-    /// \brief      Modelled value.
+    /// \brief      Modeled value.
     T m_value;
 };
 

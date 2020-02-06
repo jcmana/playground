@@ -11,7 +11,7 @@
 #include "model.hpp"
 
 class observer :
-    public model_observer_intf
+    public model_observer_intf<int>
 {
 public:
     observer(const std::string & name = "value") :
@@ -21,7 +21,7 @@ public:
 
 public:
     // IObserver implementation:
-    virtual void on_modification() override
+    virtual void on_modification(model_accessor<int>) override
     {
         std::cout << m_name << " modified" << std::endl;
     }
@@ -115,7 +115,7 @@ void main()
 
             std:: cout << "m: reading" << std::endl;
             std::this_thread::sleep_for(std::chrono::seconds(1));
-            std::cout << "m: value = " << m.value() << std::endl;
+            std::cout << "m: value = " << ma.value() << std::endl;
             std::cout << "m: reading done" << std::endl;
         }
 
@@ -137,8 +137,8 @@ void main()
             markers.modifier().value().push_back(m);
         }
 
-        std::unique_ptr<model_observer_intf> upObserverMarkersX = std::make_unique<observer>("x");
-        std::unique_ptr<model_observer_intf> upObserverMarkersY = std::make_unique<observer>("y");
+        std::unique_ptr<model_observer_intf<int>> upObserverMarkersX = std::make_unique<observer>("x");
+        std::unique_ptr<model_observer_intf<int>> upObserverMarkersY = std::make_unique<observer>("y");
         const auto guard_x = markers.accessor().value().back().x.observe(*upObserverMarkersX);
         const auto guard_y = markers.accessor().value().back().y.observe(*upObserverMarkersY);
 

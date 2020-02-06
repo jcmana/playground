@@ -1,5 +1,6 @@
 #pragma once
 
+/// \brief      Ensures thread-safe unique access of `model`.
 template<typename T>
 class model_accessor
 {
@@ -8,14 +9,22 @@ public:
     friend class model;
 
 public:
-    model_accessor(model_accessor && other) = default;
+    model_accessor(const model_accessor & other) :
+        m_model_ref(other.m_model_ref)
+    {
+    }
+
+    model_accessor(model_accessor && other) :
+        m_model_ref(other.m_model_ref)
+    {
+    }
 
     ~model_accessor()
     {
         m_model_ref.m_mutex.unlock();
     }
 
-    /// \brief      Access the modelled value.
+    /// \brief      Readable model value.
     const T & value() const
     {
         return m_model_ref.m_value;
@@ -26,7 +35,7 @@ private:
     explicit model_accessor(const model<T> & model_ref) :
         m_model_ref(model_ref)
     {
-        // m_model_ref.m_lock needs to be locked here by model<T>
+        // m_model_ref.m_lock needs to be already locked here by model<T>
     }
 
 private:
