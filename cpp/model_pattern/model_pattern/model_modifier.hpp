@@ -1,6 +1,9 @@
 #pragma once
 
 /// \brief      Ensures thread-safe unique modification of `model`.
+///
+/// Modifier has to be held through the whole process of model value modification. After
+/// releasing the modifier, changes are announec to waiting and observing threads. 
 template<typename T>
 class model_modifier
 {
@@ -9,6 +12,7 @@ public:
     friend class model;
 
 public:
+    model_modifier(const model_modifier & other) = delete;
     model_modifier(model_modifier && other) = default;
 
     ~model_modifier()

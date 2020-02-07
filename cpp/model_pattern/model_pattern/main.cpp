@@ -1,52 +1,147 @@
 #include <iostream>
+
+#include <cassert>
+
 #include <thread>
 #include <chrono>
 #include <memory>
 #include <vector>
 #include <string>
 #include <functional>
+#include <random>
 
 #include "model_waitable.hpp"
 #include "model_observable.hpp"
 #include "model.hpp"
 
-class observer :
-    public model_observer_intf<int>
+struct Marker
+{
+    int image;
+    int x;
+    int y;
+    int state;
+    // 0 = nothing
+    // 1 = pending
+    // 2 = resolved
+};
+
+class Markers
 {
 public:
-    observer(const std::string & name = "value") :
-        m_name(name)
+    void Clear()
     {
+        m_markers.clear();
     }
 
-public:
-    // IObserver implementation:
-    virtual void on_modification(model_accessor<int>) override
+    void Add(const Marker & marker)
     {
-        std::cout << m_name << " modified" << std::endl;
+        m_markers.emplace_back(model<Marker>(marker));
+    }
+
+    bool IsAnyPending() const
+    {
+        for (const auto & marker : m_markers)
+        {
+            if (marker.accessor().value().state == 1)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool IsEachPending() const
+    {
+        for (const auto & marker : m_markers)
+        {
+            if (marker.accessor().value().state != 1)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    bool IsAnyResolved() const
+    {
+        for (const auto & marker : m_markers)
+        {
+            if (marker.accessor().value().state == 2)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    bool IsEachResolved() const
+    {
+        for (const auto & marker : m_markers)
+        {
+            if (marker.accessor().value().state != 2)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    auto Count() const
+    {
+        return m_markers.size();
+    }
+
+    auto begin()
+    {
+        return m_markers.begin();
+    }
+
+    auto end()
+    {
+        return m_markers.end();
+    }
+
+    auto begin() const
+    {
+        return m_markers.begin();
+    }
+
+    auto end() const
+    {
+        return m_markers.end();
     }
 
 private:
-    std::string m_name;
+    std::vector<model<Marker>> m_markers;
 };
 
-enum class Resolution
+/*
+class MarkerObserver :
+    public model_observer_intf<Marker>
 {
-    IDLE,
-    PENDING,
-    RESOLVED
+public:
+    // IObserver implementation:
+    virtual void on_modification(const Marker & marker) override
+    {
+        std::cout << "emit markerModelChanged(const Marker & marker)" << std::endl;
+    }
 };
+*/
 
-struct Marker
+class MarkersObserver :
+    public model_observer_intf<Markers>
 {
-    model<int> x;
-    model<int> y;
-    model<bool> resolved;
-};
-
-struct Markers
-{
-    model<std::vector<Marker>> markers;
+public:
+    // IObserver implementation:
+    virtual void on_modification(const Markers & markers) override
+    {
+        
+    }
 };
 
 void main()
@@ -58,6 +153,7 @@ void main()
 
         const auto t_proc = [&]
         {
+            std::cout << "t: accessing" << std::endl;
             auto mm = m.modifier();
 
             std::cout << "t: modifying" << std::endl;
@@ -67,6 +163,7 @@ void main()
         std::thread t;
 
         {
+            std::cout << "m: accessing" << std::endl;
             auto ma = m.accessor();
 
             t = std::thread(t_proc);
@@ -76,7 +173,10 @@ void main()
             std::cout << "m: reading done" << std::endl;
         }
 
+        std::this_thread::yield();
+
         {
+            std::cout << "m: accessing" << std::endl;
             auto ma = m.accessor();
 
             std::cout << "m: reading" << std::endl;
@@ -88,7 +188,7 @@ void main()
     }
 
     // wait test:
-    if (true)
+    if (false)
     {
         model<int> m;
 
@@ -97,12 +197,14 @@ void main()
 
         const auto t_proc = [&]
         {
-            std::cout << "t: accessing" << std::endl;
-            auto mm = m.modifier();
+            {
+                std::cout << "t: accessing" << std::endl;
+                auto mm = m.modifier();
 
-            std::cout << "t: writing" << std::endl;
-            mm.value() = 7;
-            std::cout << "t: writing done" << std::endl;
+                std::cout << "t: writing" << std::endl;
+                mm.value() = 7;
+                std::cout << "t: writing done" << std::endl;
+            }
         };
 
         ta = std::thread(t_proc);
@@ -123,43 +225,63 @@ void main()
         tb.join();
     }
 
-    // Markers test:
-    if (false)
+    // marker test:
+    if (true)
     {
-        model<std::vector<Marker>> markers;
+        model<Markers> markers;
 
+        MarkersObserver mc;
+        const auto guard = markers.observe(mc);
+
+        const auto t_proc = [&markers]
         {
-            Marker m;
-            m.x.modifier().value() = 7;
-            m.y.modifier().value() = 7;
-            m.resolved.modifier().value() = false;
+            std::cout << "t: acquiring markers" << std::endl;
+            {
+                auto mm = markers.modifier();
+                mm.value().Add(Marker{17, 0, 0, 1});
+                mm.value().Add(Marker{18, 0, 0, 1});
+                mm.value().Add(Marker{19, 0, 0, 1});
 
-            markers.modifier().value().push_back(m);
-        }
+                //std::this_thread::sleep_for(std::chrono::seconds(1));
+            }
+            std::cout << "t: acquiring markers done" << std::endl;
 
-        std::unique_ptr<model_observer_intf<int>> upObserverMarkersX = std::make_unique<observer>("x");
-        std::unique_ptr<model_observer_intf<int>> upObserverMarkersY = std::make_unique<observer>("y");
-        const auto guard_x = markers.accessor().value().back().x.observe(*upObserverMarkersX);
-        const auto guard_y = markers.accessor().value().back().y.observe(*upObserverMarkersY);
-
-        const auto t_proc = [&]
-        {
-            std::cout << "t: waiting for modification" << std::endl;
-            markers.wait();
-            std::cout << "t: modified" << std::endl;
+            std::cout << "t: requesting markers resolution" << std::endl;
+            while (markers.accessor().value().IsEachResolved() == false)
+            {
+                markers.wait();
+            }
+            std::cout << "t: markers resolution done" << std::endl;
         };
         std::thread t(t_proc);
 
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        {
+            while (markers.accessor().value().IsEachPending() == false)
+            {
+                markers.wait();
+            }
 
-        markers.modifier().value().back().x.modifier().value() = 7;
-        markers.modifier().value().back().y.modifier().value() = 2;
-        markers.modifier().value().back().x.modifier().value() = 12;
+            std::cout << "m: markers resolution start" << std::endl;
+
+            auto mm = markers.modifier();
+
+            for (auto & marker : mm.value())
+            {
+                auto mm = marker.modifier();
+                mm.value().x = std::uniform_int_distribution<>(-100, +100)(std::default_random_engine());
+                mm.value().y = std::uniform_int_distribution<>(-100, +100)(std::default_random_engine());
+                mm.value().state = 2;
+            }
+
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+
+            std::cout << "m: markers resolution done" << std::endl;
+        }
 
         t.join();
     }
 
-    // move, copy test:
+    // waitable, observale, model move and copy test:
     if (false)
     {
         model_waitable mw;
@@ -173,5 +295,8 @@ void main()
         model<int> m;
         auto m_copy = m;
         auto m_move = std::move(m);
+
+        m_copy = m;
+        m_move = std::move(m);
     }
 }

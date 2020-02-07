@@ -10,6 +10,7 @@
 #include "model_accessor.hpp"
 #include "model_modifier.hpp"
 
+/// \brief          Synchronization primitive, allowing to observe or wait for value modifications.
 template<typename T>
 class model
 {
@@ -22,15 +23,26 @@ public:
 
 public:
     /// \brief      Default constructor.
-    model() :
-        m_lock(m_mutex, std::defer_lock),
+    explicit model() :
         m_value(T())
     {
     }
 
-    /// \brief      Copy constructor.
+    /// \brief      Constructor, creates model value by copying.
+    explicit model(const T & other) :
+        m_value(other)
+    {
+    }
+
+    /// \brief      Constructor, creates model value by moving.
+    explicit model(T && other) :
+        m_value(std::move(other))
+    {
+    }
+
+    /// \brief      Copy constructor, copies model value only.
     model(const model & other) :
-        m_value(other.m_value)
+        m_value(other.accessor().value())
     {
     }
 
@@ -43,19 +55,26 @@ public:
     /// \brief      Copy assignment.
     model & operator  =(const model & other)
     {
-        m_value = other.m_value;
+        modifier().value() = other.accessor().value();
         return (*this);
     }
 
     /// \brief      Move assignment.
     model & operator  =(model && other) noexcept
     {
+        // Reset current model value and notify
+        modifier().value() = T();
+
+        std::unique_lock<std::mutex> lock_other(other.m_mutex);
+        std::unique_lock<std::mutex> lock(m_mutex);
+
         m_value = std::move(other.m_value);
-        trigger();
+        m_callback_store = std::move(other.m_callback_store);
+
         return (*this);
     }
 
-    model_accessor<T> accessor()
+    model_accessor<T> accessor() const
     {
         // Lock the mutex, model_accessor extends the lock ownership
         m_mutex.lock();
@@ -66,7 +85,7 @@ public:
     /// \brief      Model modification interface.
     model_modifier<T> modifier()
     {
-        // Lock the mutex, model_accessor extends the lock ownership
+        // Lock the mutex, model_modifier extends the lock ownership
         m_mutex.lock();
 
         return model_modifier<T>(*this);
@@ -84,9 +103,10 @@ public:
         while (m_trigger == initial_trigger)
         {
             m_cv.wait(lock);
+            __nop();
         }
 
-        // Leave the mutex locked, `model_accessor` extends the lock ownership
+        // Leave the mutex locked, model_accessor<T> extends the lock ownership
         lock.release();
 
         return model_accessor<T>(*this);
@@ -104,21 +124,25 @@ private:
     /// First, all observers are notified. Second, waiting threads are woken up.
     void trigger()
     {
-        m_mutex.lock();
+        // Notify observing threads:
+        //
+        // Observer callback is synchronized by default, because each is executed in modifying thread, meaning
+        // using model_modifier<T> which is a critical section by itself
+        {
+            m_callback_store.invoke(&model_observer_intf<T>::on_modification, m_value);
+        }
 
-        // Prepare accessor (therefore extending the locked mutex)
-        auto accessor = model_accessor<T>(*this);
-
-        // Notify observing threads
-        m_callback_store.invoke(&model_observer_intf<T>::on_modification, accessor);
-
-        // Notify waiting threads
-        m_trigger++;
-        m_cv.notify_all();
+        // Notify waiting threads:
+        //
+        // Waiting threads are synchronized by extending critical section using model_accessor<T>, which is 
+        // locked on the condition_variable::wait(), extended and then disposed in model_accessor<T>::dtor().
+        {
+            m_trigger++;
+            m_cv.notify_all();
+        }
     }
 
 private:
-    mutable std::unique_lock<std::mutex> m_lock;
     mutable std::mutex m_mutex;
     mutable std::condition_variable m_cv;
 
