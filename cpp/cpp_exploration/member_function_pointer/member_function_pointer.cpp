@@ -1,4 +1,5 @@
 #include <iostream>
+#include <functional>
 
 struct simple
 {
@@ -10,24 +11,58 @@ struct simple
 
 struct intf
 {
-	virtual void method() const = 0;
+    virtual void method() = 0;
+	virtual void method_const() const = 0;
+    virtual void method_parameteric(int n) = 0;
 };
 
 struct impl_a : intf
 {
-	virtual void method() const override
+	virtual void method() override
 	{
 		std::cout << "impl_a::method()" << std::endl;
 	}
+
+    virtual void method_const() const override
+    {
+        std::cout << "impl_a::method_const()" << std::endl;
+    }
+
+    virtual void method_parameteric(int n) override
+    {
+        std::cout << "impl_a::method_parameteric()" << std::endl;
+    }
 };
 
 struct impl_b : intf
 {
-	virtual void method() const override
+	virtual void method() override
 	{
 		std::cout << "impl_b::method()" << std::endl;
 	}
+
+    virtual void method_const() const override
+    {
+        std::cout << "impl_b::method_const()" << std::endl;
+    }
+
+    virtual void method_parameteric(int n) override
+    {
+        std::cout << "impl_b::method_parameteric()" << std::endl;
+    }
 };
+
+template<typename F>
+constexpr auto pointer_to_member_id(F pointer_to_member)
+{
+    // Chosen type to represent pointer to member
+    using ptr_id_t = std::ptrdiff_t;
+
+    // Pointer-to-member type and ptr_id_t has to match, otherwise we have undefined behaviour
+    static_assert(sizeof(ptr_id_t) == sizeof(F), "Type size mismatch.");
+
+    return static_cast<ptr_id_t>(*reinterpret_cast<const ptr_id_t *>(&pointer_to_member));
+}
 
 int main()
 {
@@ -45,13 +80,23 @@ int main()
 		intf * ia_ptr = new impl_a;
 		intf * ib_ptr = new impl_b;
 
-		void(intf:: * ptr)() const = &intf::method;
-		(ia_ptr->*ptr)();
-		(ib_ptr->*ptr)();
+        void(intf:: * ptr_method)() = &intf::method;
+		void(intf:: * ptr_method_const)() const = &intf::method_const;
+        void(intf:: * ptr_method_parameteric)(int) = &intf::method_parameteric;
+
+		(ia_ptr->*ptr_method_const)();
+		(ib_ptr->*ptr_method_const)();
 
 		delete ia_ptr;
 		delete ib_ptr;
 	}
+
+    // member function identification:
+    {
+        std::cout << std::hex << "0x" << pointer_to_member_id(&intf::method) << std::endl;
+        std::cout << std::hex << "0x" << pointer_to_member_id(&intf::method_const) << std::endl;
+        std::cout << std::hex << "0x" << pointer_to_member_id(&intf::method_parameteric) << std::endl;
+    }
 
 	// WHAT IN THE ACTUAL FUCK?!
 
