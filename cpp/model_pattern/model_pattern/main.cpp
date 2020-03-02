@@ -10,8 +10,6 @@
 #include <functional>
 #include <random>
 
-#include "model_waitable.hpp"
-#include "model_observable.hpp"
 #include "model.hpp"
 
 struct Marker
@@ -279,24 +277,5 @@ void main()
         }
 
         t.join();
-    }
-
-    // waitable, observale, model move and copy test:
-    if (false)
-    {
-        model_waitable mw;
-        //auto mw_copy = mw;                // not copyable
-        //auto mw_move = std::move(mw);     // not movable
-
-        model_observable mo;
-        //auto mo_copy = mo;                // not copyable
-        auto mo_move = std::move(mo);       // movable
-
-        model<int> m;
-        auto m_copy = m;
-        auto m_move = std::move(m);
-
-        m_copy = m;
-        m_move = std::move(m);
     }
 }
