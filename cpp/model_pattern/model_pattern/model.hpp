@@ -9,7 +9,6 @@
 #include "model_observer_intf.h"
 #include "model_accessor.hpp"
 #include "model_modifier.hpp"
-#include "model_guard.hpp"
 
 /// \brief          Synchronization primitive, allowing to observe or wait for value modifications.
 template<typename T>
@@ -21,12 +20,6 @@ public:
 
     template<typename TT>
     friend class model_modifier;
-
-    template<typename MM, typename TT>
-    friend class model_guard;
-
-    /// \brief      Modelled type.
-    using Type = T;
 
 public:
     /// \brief      Default constructor.
@@ -56,22 +49,6 @@ public:
     /// \brief      Returns model modification interface.
     model_modifier<T> modifier();
 
-    model_guard<model<T>, T> modifier_guard()
-    {
-        // Lock the mutex, model_accessor extends the lock ownership
-        m_mutex.lock();
-
-        return model_guard<model<T>, T>(*this);
-    }
-
-    model_guard<const model<T>, T> accessor_guard() const
-    {
-        // Lock the mutex, model_accessor extends the lock ownership
-        m_mutex.lock();
-
-        return model_guard<const model<T>, T>(*this);
-    }
-
     /// \brief      Blocks until this object's modification.
     model_accessor<T> wait() const;
 
@@ -93,7 +70,7 @@ private:
     /// \brief      Registered observers.
     mutable callback_store<model_observer_intf<T>> m_callback_store;
 
-    /// \brief      Modelled value.
+    /// \brief      Modeled value.
     T m_value;
 };
 
