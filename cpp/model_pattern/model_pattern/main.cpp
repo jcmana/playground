@@ -185,6 +185,24 @@ void main()
         t.join();
     }
 
+    // model_guard test:
+    if (false)
+    {
+        int n = 6;
+        model<int> m(n);
+
+        {
+            auto mm = m.modifier_guard();
+            mm.value() = 7;
+            std::cout << mm.value() << std::endl; 
+        }
+
+        {
+            auto ma = m.accessor_guard();
+            std::cout << ma.value() << std::endl;
+        }
+    }
+
     // wait test:
     if (false)
     {
@@ -224,7 +242,7 @@ void main()
     }
 
     // marker test:
-    if (true)
+    if (false)
     {
         model<Markers> markers;
 
@@ -277,5 +295,12 @@ void main()
         }
 
         t.join();
+    }
+
+    // reference model:
+    if (true)
+    {
+        //Marker marker;
+        //model<Marker &> m(marker);
     }
 }
