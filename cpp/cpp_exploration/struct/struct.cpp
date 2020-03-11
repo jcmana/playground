@@ -1,4 +1,6 @@
 #include <iostream>
+#include <memory>
+#include <list>
 #include <string>
 
 struct aggregate
@@ -24,8 +26,11 @@ int main()
 	// aggregate initializtion:
 	if (false)
 	{
-		aggregate x = { 3, "abcd" };
+		aggregate x = {3, "abcd"};
 		x.print();
+
+        x = {7, "defg"};
+        x.print();
 	}
 
 	// struct comparison:
