@@ -111,6 +111,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="iterator.hpp" />
+    <ClInclude Include="random_access_iterator.hpp" />
     <ClInclude Include="range.hpp" />
     <ClInclude Include="forward_iterator.hpp" />
   </ItemGroup>
