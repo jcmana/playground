@@ -27,14 +27,14 @@ void CPatternStructureReferenceA::iterator_facade::next()
 	}
 }
 
-transformation & CPatternStructureReferenceA::iterator_facade::read()
+transformation & CPatternStructureReferenceA::iterator_facade::value()
 {
 	m_value = { m_curr_width + m_curr_height * m_height };
 
 	return m_value;
 }
 
-bool CPatternStructureReferenceA::iterator_facade::equal(const iterator::facade & other) const
+bool CPatternStructureReferenceA::iterator_facade::equal(const pmr::iterator<transformation>::facade & other) const
 {
 	const iterator_facade & other_this = static_cast<const iterator_facade &>(other);
 
@@ -45,7 +45,7 @@ bool CPatternStructureReferenceA::iterator_facade::equal(const iterator::facade 
 		m_curr_height == other_this.m_curr_height;
 }
 
-std::unique_ptr<CPatternStructureReferenceA::iterator::facade> CPatternStructureReferenceA::iterator_facade::copy() const
+std::unique_ptr<pmr::iterator<transformation>::facade> CPatternStructureReferenceA::iterator_facade::copy() const
 {
 	return std::make_unique<iterator_facade>(m_width, m_height, m_curr_width, m_curr_height);
 }

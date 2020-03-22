@@ -6,7 +6,7 @@
 #include "../containers/forward_iterator.hpp"
 #include "../containers/random_access_iterator.hpp"
 
-using namespace pmr::containers;
+using namespace pmr;
 
 TEST(iterator, api)
 {

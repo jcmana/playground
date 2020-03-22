@@ -4,7 +4,6 @@
 #include <utility>
 
 namespace pmr {
-namespace containers {
 
 template<typename T>
 class iterator
@@ -19,6 +18,11 @@ public:
 		virtual bool equal(const facade & other) const = 0;
 		virtual std::unique_ptr<facade> copy() const = 0;
 	};
+
+	// Standard library compliance aliases:
+	using value_type = T;
+	using pointer = T *;
+	using reference = T &;
 
 public:
 	iterator() = default;
@@ -46,15 +50,16 @@ public:
 
 	T * operator ->()
 	{
+		return &(m_up_facade->value());
 	}
 
 	T & operator  *()
 	{
+		return (m_up_facade->value());
 	}
 
 protected:
 	std::unique_ptr<facade> m_up_facade;
 };
 
-} // namespace containers
 } // namepsace pmr

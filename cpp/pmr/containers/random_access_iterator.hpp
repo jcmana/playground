@@ -3,7 +3,6 @@
 #include "iterator.hpp"
 
 namespace pmr {
-namespace containers {
 
 template<typename T>
 class random_access_iterator :
@@ -43,5 +42,4 @@ public:
 	}
 };
 
-} // namespace containers
 } // namepsace pmr

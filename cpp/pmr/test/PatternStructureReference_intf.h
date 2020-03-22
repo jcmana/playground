@@ -10,7 +10,7 @@ struct transformation
 class IPatternStructureReference
 {
 public:
-	using iterator = pmr::containers::forward_iterator<transformation>;
+	using iterator = pmr::forward_iterator<transformation>;
 
 public:
 	virtual ~IPatternStructureReference() = default;

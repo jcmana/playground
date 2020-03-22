@@ -3,7 +3,7 @@
 #include "PatternStructureReferenceA.h"
 
 class CPatternStructureReferenceA::iterator_facade :
-	public iterator::facade
+	public pmr::forward_iterator<transformation>::facade
 {
 public:
 	iterator_facade(int width, int height);
@@ -11,9 +11,9 @@ public:
 
 public:
 	virtual void next() override;
-	virtual transformation & read() override;
-	virtual bool equal(const iterator::facade & other) const override;
-	virtual std::unique_ptr<iterator::facade> copy() const override;
+	virtual iterator::value_type & value() override;
+	virtual bool equal(const pmr::iterator<transformation>::facade & other) const override;
+	virtual std::unique_ptr<pmr::iterator<transformation>::facade> copy() const override;
 
 private:
 	const int m_width;
