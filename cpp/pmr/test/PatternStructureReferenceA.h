@@ -10,8 +10,8 @@ public:
 
 public:
 	// IPatternStructureReference implementation:
-	virtual iterator begin() override;
-	virtual iterator end() override;
+	virtual iterator begin() const override;
+	virtual iterator end() const override;
 
 private:
 	class iterator_facade;

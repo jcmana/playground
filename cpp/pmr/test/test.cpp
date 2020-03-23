@@ -2,6 +2,7 @@
 #include <memory>
 #include <vector>
 
+#include "../containers/forward_iterator.hpp"
 #include "PatternStructureReferenceA.h"
 
 int main()

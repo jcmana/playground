@@ -38,15 +38,10 @@ public:
 	iterator(iterator && other) = default;
 
 	template<typename TT>
-	friend bool operator ==(const iterator<T>& lhs, const iterator<T> & rhs)
-	{
-		return (*lhs.m_up_facade).equal(*rhs.m_up_facade);
-	}
+	friend bool operator ==(const iterator<TT> & lhs, const iterator<TT> & rhs);
 
 	template<typename TT>
-	friend bool operator !=(const iterator<T> & lhs, const iterator<T> & rhs)
-	{
-	}
+	friend bool operator !=(const iterator<TT> & lhs, const iterator<TT> & rhs);
 
 	T * operator ->()
 	{
@@ -61,5 +56,17 @@ public:
 protected:
 	std::unique_ptr<facade> m_up_facade;
 };
+
+template<typename TT>
+bool operator ==(const iterator<TT> & lhs, const iterator<TT> & rhs)
+{
+	return (*lhs.m_up_facade).equal(*rhs.m_up_facade);
+}
+
+template<typename TT>
+bool operator !=(const iterator<TT> & lhs, const iterator<TT> & rhs)
+{
+	return !(lhs == rhs);
+}
 
 } // namepsace pmr

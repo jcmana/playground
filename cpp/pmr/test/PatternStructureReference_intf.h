@@ -15,6 +15,6 @@ public:
 public:
 	virtual ~IPatternStructureReference() = default;
 
-	virtual iterator begin() = 0;
-	virtual iterator end() = 0;
+	virtual iterator begin() const = 0;
+	virtual iterator end() const = 0;
 };

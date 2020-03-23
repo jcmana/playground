@@ -42,29 +42,47 @@ public:
 	/// \brief		Constructs `forward_iterator` from `facade`.
 	forward_iterator(std::unique_ptr<facade> up_iterator);
 
+	template<typename TT>
+	friend bool operator ==(const forward_iterator<T> & lhs, const forward_iterator<T> & rhs);
+
+	template<typename TT>
+	friend bool operator !=(const forward_iterator<T> & lhs, const forward_iterator<T> & rhs)
+	{
+		return !(lhs == rhs);
+	}
+
 	/// \brief		Increments the `forward_iterator`.
 	forward_iterator & operator ++();
 	/// \brief		Preincrements the `forward_iterator`.
 	forward_iterator operator ++(int);
-
-private:
-	/// \brief		Forward iterator `facade`. Empty pointer means invalid iterator.
-	std::unique_ptr<facade> m_up_facade;
 };
 
 #pragma region forward_iterator implementation:
 
 template<typename T>
 forward_iterator<T>::forward_iterator(std::unique_ptr<facade> up_iterator) :
-	m_up_facade(std::move(up_iterator))
+	iterator<T>(std::move(up_iterator))
 {
+}
+
+template<typename TT>
+bool operator ==(const forward_iterator<TT> & lhs, const forward_iterator<TT> & rhs)
+{
+	return (static_cast<const iterator<TT> &>(lhs) == static_cast<const iterator<TT> &>(rhs));
+}
+
+template<typename TT>
+bool operator !=(const forward_iterator<TT> & lhs, const forward_iterator<TT> & rhs)
+{
+	return (static_cast<const iterator<TT> &>(lhs) != static_cast<const iterator<TT> &>(rhs));
 }
 
 template<typename T>
 forward_iterator<T> &
 forward_iterator<T>::operator ++()
 {
-	m_up_facade->next();
+	auto & f = static_cast<facade &>(*m_up_facade);
+	f.next();
 	return (*this);
 }
 
@@ -73,7 +91,7 @@ forward_iterator<T>
 forward_iterator<T>::operator ++(int)
 {
 	auto that = (*this);
-	m_up_facade->next();
+	operator ++();
 	return that;
 }
 
