@@ -1,5 +1,3 @@
-#include "pch.h"
-
 #include "gtest/gtest.h"
 
 #include "../containers/iterator.hpp"
