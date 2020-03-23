@@ -11,16 +11,21 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="range.hpp">
+    <ClCompile Include="PatternStructureReferenceA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PatternStructureReferenceA_iterator_facade.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="PatternStructureReference_intf.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="forward_iterator.hpp">
+    <ClInclude Include="PatternStructureReferenceA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="iterator.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="random_access_iterator.hpp">
+    <ClInclude Include="PatternStructureReferenceA_iterator_facade.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

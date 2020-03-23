@@ -11,24 +11,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="test.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PatternStructureReferenceA.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PatternStructureReferenceA_iterator_facade.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="PatternStructureReference_intf.h">
+    <ClInclude Include="forward_iterator.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PatternStructureReferenceA.h">
+    <ClInclude Include="iterator.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PatternStructureReferenceA_iterator_facade.h">
+    <ClInclude Include="random_access_iterator.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

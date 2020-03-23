@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
 
-#include "../containers/iterator.hpp"
-#include "../containers/forward_iterator.hpp"
-#include "../containers/random_access_iterator.hpp"
+#include "../iterator/iterator.hpp"
+#include "../iterator/forward_iterator.hpp"
+#include "../iterator/random_access_iterator.hpp"
 
 using namespace pmr;
 

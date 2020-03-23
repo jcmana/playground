@@ -60,7 +60,10 @@ protected:
 template<typename TT>
 bool operator ==(const iterator<TT> & lhs, const iterator<TT> & rhs)
 {
-	return (*lhs.m_up_facade).equal(*rhs.m_up_facade);
+	const auto & lhs_facade = (*lhs.m_up_facade);
+	const auto & rhs_facade = (*rhs.m_up_facade);
+
+	return lhs_facade.equal(rhs_facade);
 }
 
 template<typename TT>

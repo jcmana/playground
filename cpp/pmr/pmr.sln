@@ -1,11 +1,11 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29911.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "containers", "containers\containers.vcxproj", "{8B085315-4413-4078-BD70-0D2BAA6FFC21}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "iterator", "iterator\iterator.vcxproj", "{8B085315-4413-4078-BD70-0D2BAA6FFC21}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test\test.vcxproj", "{BD5AC0A7-EC1A-48C6-AA14-77BBC76FEE22}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "example", "example\example.vcxproj", "{BD5AC0A7-EC1A-48C6-AA14-77BBC76FEE22}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ut", "ut\ut.vcxproj", "{4BE06F6D-C072-43DC-BAF9-1D91822F0E0B}"
 EndProject

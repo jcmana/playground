@@ -22,7 +22,7 @@
     <ProjectGuid>{8B085315-4413-4078-BD70-0D2BAA6FFC21}</ProjectGuid>
     <RootNamespace>containers</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
-    <ProjectName>containers</ProjectName>
+    <ProjectName>iterator</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -113,7 +113,6 @@
   <ItemGroup>
     <ClInclude Include="iterator.hpp" />
     <ClInclude Include="random_access_iterator.hpp" />
-    <ClInclude Include="range.hpp" />
     <ClInclude Include="forward_iterator.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
