@@ -1,0 +1,5 @@
+LIBRARY Math
+EXPORTS Test
+EXPORTS Print
+EXPORTS ??0Functions@Math@@QAE@N@Z
+EXPORTS ?Process@Functions@Math@@QAENNN@Z
