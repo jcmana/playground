@@ -1,11 +1,8 @@
-#include <iostream>
-
 #include "Math/Functions.h"
 
 void main()
 {
-    Math::Test();
-    Math::Print(4.2);
+    Math::Print(7.2);
 
     Math::Functions f(18.2);
     f.Process(4.2, 6.8);

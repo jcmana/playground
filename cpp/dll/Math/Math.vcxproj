@@ -95,7 +95,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ModuleDefinitionFile>Math.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>Math.x86.def</ModuleDefinitionFile>
       <AdditionalDependencies>
       </AdditionalDependencies>
     </Link>
@@ -115,7 +115,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
-      <ModuleDefinitionFile>Math.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>Math.x64.def</ModuleDefinitionFile>
       <AdditionalDependencies>
       </AdditionalDependencies>
     </Link>
@@ -136,7 +136,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ModuleDefinitionFile>Math.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>Math.x86.def</ModuleDefinitionFile>
       <AdditionalDependencies>
       </AdditionalDependencies>
     </Link>
@@ -157,17 +157,19 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ModuleDefinitionFile>Math.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>Math.x64.def</ModuleDefinitionFile>
       <AdditionalDependencies>
       </AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Functions.h" />
-    <ClInclude Include="Exports.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Functions.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Math.x86.def" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\libMath\libMath.vcxproj">
@@ -175,7 +177,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Math.def" />
+    <Text Include="Math.x64.def" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

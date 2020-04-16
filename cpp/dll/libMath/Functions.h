@@ -6,6 +6,7 @@ class Functions
 {
 public:
     Functions(double a);
+    ~Functions();
 
     double Process(double a, double b);
 
