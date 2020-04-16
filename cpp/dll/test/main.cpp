@@ -1,4 +1,4 @@
-#include "Math/Functions.h"
+#include "Math/Math.h"
 
 void main()
 {

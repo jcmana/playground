@@ -15,4 +15,4 @@ double Functions::Process(double a, double b)
     return a + b + m_a;
 }
 
-}
+} // namespace Math
