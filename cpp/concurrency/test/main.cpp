@@ -5,7 +5,6 @@
 
 #include "../concurrency/barrier.hpp"
 #include "../concurrency/latch.hpp"
-#include "../concurrency/conversation.hpp"
 #include "../concurrency/condition.hpp"
 
 #include "../concurrency/executor_immediate.hpp"
@@ -32,24 +31,6 @@ void thread(const std::string & text)
     barr_b.arrive_and_drop();
 }
 
-void conversionalist(int n)
-{
-    std::cout << "conversionalist(): '" << n << std::endl;
-}
-
-void conversionalist_b(int n)
-{
-    std::cout << "conversionalist_b(): " << n << std::endl;
-}
-
-void thread_conversationalist(const conversation & c)
-{
-    conversation local_c = c;
-    local_c.enter(&conversionalist);
-
-
-}
-
 int main()
 {
     if (false)
@@ -62,22 +43,6 @@ int main()
 
         barr_b.arrive_and_wait();
         std::cout << "threads stopped" << "\n";
-
-        a.join();
-        b.join();
-    }
-
-    if (false)
-    {
-        // JMTODO: basic test
-    }
-
-    if (false)
-    {
-        conversation c;
-
-        std::thread a(thread_conversationalist, c);
-        std::thread b(thread_conversationalist, c);
 
         a.join();
         b.join();
@@ -122,7 +87,7 @@ int main()
         std::cout << "done" << std::endl;
     }
 
-    if (false)
+    if (true)
     {
         executor_ordered<void> eo;
 
@@ -172,7 +137,7 @@ int main()
         ei.post(task);
     }
 
-    if (true)
+    if (false)
     {
         executor_ordered_pool<void> e;
         
