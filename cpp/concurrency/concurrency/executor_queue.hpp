@@ -18,10 +18,30 @@ public:
         m_queue = other.m_queue;
     }
 
-    executor_queue(executor_queue && other) noexcept
+    executor_queue(executor_queue && other) noexcept :
+        executor_queue()
     {
         std::unique_lock<std::mutex> lock(other.m_mutex);
-        m_queue = std::move(other.m_queue);
+        using std::swap;
+        swap(*this, other);
+    }
+
+    executor_queue & operator  =(const executor_queue & other)
+    {
+        std::unique_lock<std::mutex> lock(other.m_mutex);
+        m_queue = other.m_queue;
+
+        return (*this);
+    }
+
+    executor_queue & operator  =(executor_queue && other) noexcept
+    {
+        std::unique_lock<std::mutex> lock(other.m_mutex);
+        using std::swap;
+        swap(*this, executor_queue());
+        swap(*this, other);
+
+        return (*this);
     }
 
     void push(const T & element)

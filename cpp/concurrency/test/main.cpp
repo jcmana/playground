@@ -139,7 +139,7 @@ int main()
 
     if (false)
     {
-        executor_ordered_pool<void> e;
+        executor_ordered_pool<void> e(2);
         
         auto task = []
         {
