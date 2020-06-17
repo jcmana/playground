@@ -128,7 +128,6 @@
     <ClInclude Include="condition.hpp" />
     <ClInclude Include="executor_immediate.hpp" />
     <ClInclude Include="executor_ordered.hpp" />
-    <ClInclude Include="executor_ordered_base.hpp" />
     <ClInclude Include="executor_ordered_pool.hpp" />
     <ClInclude Include="latch.hpp" />
     <ClInclude Include="utility.hpp" />

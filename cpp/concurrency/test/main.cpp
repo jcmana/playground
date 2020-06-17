@@ -87,7 +87,7 @@ int main()
         std::cout << "done" << std::endl;
     }
 
-    if (true)
+    if (false)
     {
         executor_ordered<void> eo;
 
@@ -111,17 +111,33 @@ int main()
             wait_all(future1, future2, std::future<int>());
         }
 
-        {
-            executor_ordered<void> eo_other;
-            swap(eo, eo_other);
-        }
-
-        {
-            executor_ordered<void> eo_move;
-            eo_move = std::move(eo);
-        }
-
         std::cout << "fuck" << std::endl;
+    }
+
+    if (true)
+    {
+        {
+            executor_ordered<void> eo;
+            auto eo_move = std::move(eo);
+        }
+
+        {
+            auto task = []
+            {
+                std::cout << "thread id = " << std::this_thread::get_id() << "\n";
+            };
+
+            executor_ordered<void> eo;
+            executor_ordered<void> eo_move;
+
+            eo.post(task);
+            eo_move.post(task);
+
+            eo_move = std::move(eo);
+
+            eo.post(task);
+            eo_move.post(task);
+        }
     }
 
     if (false)
@@ -137,7 +153,7 @@ int main()
         ei.post(task);
     }
 
-    if (false)
+    if (true)
     {
         executor_ordered_pool<void> e(2);
         

@@ -8,6 +8,8 @@
 #include <queue>
 #include <functional>
 
+#include "executor_queue.hpp"
+
 template<typename T>
 class executor_ordered_pool
 {
@@ -26,12 +28,30 @@ public:
         }
     };
 
+    executor_ordered_pool(const executor_ordered_pool & other) = delete;
+
+    executor_ordered_pool(executor_ordered_pool && other) noexcept :
+        executor_ordered_pool()
+    {
+        swap(*this, other);
+    }
+
+    executor_ordered_pool & operator  =(const executor_ordered_pool & other) = delete;
+
+    executor_ordered_pool & operator  =(executor_ordered_pool && other) noexcept
+    {
+        swap(*this, executor_ordered_pool());
+        swap(*this, other);
+
+        return (*this);
+    }
+
     ~executor_ordered_pool()
     {
         for (auto & thread : m_pool)
         {
             std::packaged_task<T()> task;
-            push(std::move(task));
+            m_queue.push(std::move(task));
         }
 
         for (auto & thread : m_pool)
@@ -45,44 +65,38 @@ public:
     {
         std::packaged_task<T()> task(f);
         auto future = task.get_future();
-        push(std::move(task));
+        m_queue.push(std::move(task));
 
         return future;
     }
 
+    void resize(unsigned int size)
+    {
+        const auto diff = int(size) - int(m_pool.size());
+
+        // JMTODO: resizing logic
+        // - how to stop some threads?
+        // - how to join() those threads?
+    }
+
+    friend void swap(executor_ordered_pool & lhs, executor_ordered_pool & rhs)
+    {
+        using std::swap;
+        swap(lhs.m_queue, rhs.m_queue);
+
+        const auto size_lhs = lhs.size();
+        const auto size_rhs = rhs.size();
+
+        lhs.resize(size_rhs);
+        rhs.resize(size_lhs);
+    }
+
 private:
-    void push(std::packaged_task<T()> task)
-    {
-        std::unique_lock<std::mutex> lock(m_mutex);
-
-        // Push the new task to the queue
-        m_queue.emplace(std::move(task));
-
-        // Notify worker thread new task is available
-        m_cv.notify_one();
-    }
-
-    std::packaged_task<T()> pop()
-    {
-        std::unique_lock<std::mutex> lock(m_mutex);
-
-        while (m_queue.empty())
-        {
-            m_cv.wait(lock);
-        }
-
-        std::packaged_task<T()> task;
-        task = std::move(m_queue.front());
-        m_queue.pop();
-
-        return task;
-    }
-
     void thread_procedure()
     {
         while (true)
         {
-            std::packaged_task<T()> task = pop();
+            std::packaged_task<T()> task = m_queue.pop();
 
             if (task.valid() == false)
             {
@@ -101,9 +115,5 @@ private:
 
 private:
     std::vector<std::thread> m_pool;
-
-    mutable std::mutex m_mutex;
-    mutable std::condition_variable m_cv;
-
-    std::queue<std::packaged_task<T()>> m_queue;
+    executor_queue<std::packaged_task<T()>> m_queue;
 };

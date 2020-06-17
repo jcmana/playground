@@ -28,9 +28,6 @@
     <ClInclude Include="executor_ordered_pool.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="executor_ordered_base.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="executor_queue.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>

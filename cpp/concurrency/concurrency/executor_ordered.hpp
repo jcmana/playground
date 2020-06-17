@@ -7,7 +7,6 @@
 #include <queue>
 
 #include "executor_queue.hpp"
-#include "executor_ordered_base.hpp"
 
 /// \brief      Executes posted tasks asynchronously in order.
 template<typename T>
