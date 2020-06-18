@@ -41,10 +41,11 @@ public:
     {
         std::unique_lock<std::recursive_mutex> lock(m_mutex);
 
-        // We now have explicit unique access to guarded memory regarding others threads. This
-        // thread should be implicitly locked by the limitations of both memory and memory_guard API,
-        // which hopefully makes it impossible to achieve situations where lock passes and somebody
-        // still could access the value.
+        // We now have explicit unique access to guarded memory regarding others threads.
+        
+        // This thread should be implicitly locked by the limitations of both memory and 
+        // memory_guard API, which hopefully makes it impossible to achieve situations where
+        // lock passes and somebody still could access the value.
     }
 
     memory & operator  =(memory && other) noexcept

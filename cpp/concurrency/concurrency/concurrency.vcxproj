@@ -129,7 +129,10 @@
     <ClInclude Include="executor_immediate.hpp" />
     <ClInclude Include="executor_ordered.hpp" />
     <ClInclude Include="executor_ordered_pool.hpp" />
+    <ClInclude Include="executor_thread.hpp" />
     <ClInclude Include="latch.hpp" />
+    <ClInclude Include="memory.hpp" />
+    <ClInclude Include="memory_guard.hpp" />
     <ClInclude Include="utility.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

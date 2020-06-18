@@ -8,6 +8,7 @@
 #include <queue>
 #include <functional>
 
+#include "executor_thread.hpp"
 #include "executor_queue.hpp"
 
 template<typename T>
@@ -19,12 +20,17 @@ public:
     {
     }
 
-    explicit executor_ordered_pool(unsigned int size) :
-        m_pool(size)
+    explicit executor_ordered_pool(unsigned int size)
     {
+        /*
         for (auto & thread : m_pool)
         {
-            thread = std::thread(&executor_ordered_pool::thread_procedure, this);
+            thread = executor_thread<T>(&executor_ordered_pool::thread_procedure, this);
+        }
+        */
+        for (unsigned int n = 0; n < size; ++n)
+        {
+            //m_pool.emplace_back(executor_thread<T>(m_queue));
         }
     };
 
@@ -53,11 +59,6 @@ public:
             std::packaged_task<T()> task;
             m_queue.push(std::move(task));
         }
-
-        for (auto & thread : m_pool)
-        {
-            thread.join();
-        }
     }
 
     template<typename F>
@@ -77,6 +78,27 @@ public:
         // JMTODO: resizing logic
         // - how to stop some threads?
         // - how to join() those threads?
+
+        if (diff < 0)
+        {
+            for (unsigned int n = 0; n > diff; --n)
+            {
+                std::packaged_task<T()> task;
+                m_queue.push(std::move(task));
+            }
+
+            auto predicate = [](const auto & thread)
+            {
+                return thread.state == thread.state::finished;
+            };
+
+            m_pool.erase(std::remove(m_pool.begin(), m_pool.end(), predicate));
+        }
+
+        if (diff > 0)
+        {
+
+        }
     }
 
     friend void swap(executor_ordered_pool & lhs, executor_ordered_pool & rhs)
@@ -114,6 +136,6 @@ private:
     }
 
 private:
-    std::vector<std::thread> m_pool;
+    std::vector<executor_thread<T>> m_pool;
     executor_queue<std::packaged_task<T()>> m_queue;
 };

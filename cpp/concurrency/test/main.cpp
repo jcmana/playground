@@ -10,6 +10,11 @@
 #include "../concurrency/executor_immediate.hpp"
 #include "../concurrency/executor_ordered.hpp"
 #include "../concurrency/executor_ordered_pool.hpp"
+#include "../concurrency/executor_thread.hpp"
+
+#include "../concurrency/memory.hpp"
+#include "../concurrency/memory_guard.hpp"
+
 #include "../concurrency/utility.hpp"
 
 barrier barr_a;
@@ -114,7 +119,7 @@ int main()
         std::cout << "fuck" << std::endl;
     }
 
-    if (true)
+    if (false)
     {
         {
             executor_ordered<void> eo;
@@ -153,7 +158,7 @@ int main()
         ei.post(task);
     }
 
-    if (true)
+    if (false)
     {
         executor_ordered_pool<void> e(2);
         
@@ -171,5 +176,62 @@ int main()
         futures.emplace_back(e.post(task));
         futures.emplace_back(e.post(task));
         futures.emplace_back(e.post(task));
+    }
+
+    if (false)
+    {
+        executor_queue<std::packaged_task<void()>> q;
+        executor_thread<void> t(q);
+    }
+
+    if (true)
+    {
+        class threadsafe_provider
+        {
+        public:
+            auto size()
+            {
+                return m_value.get();
+            }
+
+            void increment()
+            {
+                m_value.get() = m_value.get() + 1;
+            }
+
+            void reset()
+            {
+                m_value.get() = 0;
+            }
+
+        private:
+            memory<int> m_value;
+        };
+
+        threadsafe_provider a;
+        a.reset();
+        std::cout << a.size() << std::endl;
+
+        auto thread_procedure = [&a]
+        {
+            for (unsigned int n = 0; n < 10; ++n)
+            {
+                a.increment();
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
+        };
+
+        std::thread thread(thread_procedure);
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
+        std::cout << a.size() << std::endl;
+
+        thread.join();
+
+        auto mga = a.size();
+        auto mgb = a.size();
+
+        threadsafe_provider a_moved;
+        a_moved = std::move(a);
     }
 }
