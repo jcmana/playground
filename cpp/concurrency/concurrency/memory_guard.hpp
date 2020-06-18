@@ -10,15 +10,30 @@ public:
     friend class memory;
 
 public:
-    memory_guard(memory<T> & memory) :
+    explicit memory_guard(memory<T> & memory) :
         m_memory(memory)
     {
         m_memory.m_mutex.lock();
     }
 
+    memory_guard(const memory_guard & other) = delete;
+
+    memory_guard(memory_guard && other) noexcept :
+        memory_guard(other.m_memory)
+    {
+    }
+
     ~memory_guard()
     {
         m_memory.m_mutex.unlock();
+    }
+
+    memory_guard & operator  =(const memory_guard & other) = delete;
+
+    memory_guard & operator  =(memory_guard && other) noexcept
+    {
+        m_memory = other.m_memory;
+        m_memory.m_mutex.lock();
     }
 
     // JMTODO: enable if T is copy constructible

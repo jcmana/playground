@@ -59,7 +59,7 @@ public:
 
     memory_guard<T> get()
     {
-        return {*this};
+        return memory_guard<T>(*this);
     }
 
     friend void swap(memory & lhs, memory & rhs)
