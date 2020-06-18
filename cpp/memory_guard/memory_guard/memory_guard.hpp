@@ -21,11 +21,18 @@ public:
         m_memory.m_mutex.unlock();
     }
 
-    T & operator  =(T && value) noexcept
+    // JMTODO: enable if T is copy constructible
+    memory_guard & operator  =(const T & value) noexcept
     {
         m_memory.m_value = std::move(value);
+        return (*this);
+    }
 
-        return m_memory.m_value;
+    // JMTODO: enable if T is move constructible
+    memory_guard & operator  =(T && value) noexcept
+    {
+        m_memory.m_value = std::move(value);
+        return (*this);
     }
 
     operator T()

@@ -18,13 +18,19 @@ public:
         m_value.get() = m_value.get() + 1;
     }
 
+    void reset()
+    {
+        m_value.get() = 0;
+    }
+
 private:
-    memory<int> m_value = 7;
+    memory<int> m_value;
 };
 
 void main()
 {
     threadsafe_provider a;
+    a.reset();
     std::cout << a.size() << std::endl;
 
     auto thread_procedure = [&a]
@@ -42,4 +48,10 @@ void main()
     std::cout << a.size() << std::endl;
 
     thread.join();
+
+    auto mga = a.size();
+    auto mgb = a.size();
+
+    threadsafe_provider a_moved;
+    a_moved = std::move(a);
 }
