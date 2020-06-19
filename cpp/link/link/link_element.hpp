@@ -90,6 +90,11 @@ std::tuple<link_element, link_element> make_link()
 
 void swap(link_element & lhs, link_element & rhs) noexcept
 {
+    if (lhs.m_element_ptr == &rhs && rhs.m_element_ptr == &lhs)
+    {
+        return;
+    }
+
     using std::swap;
     
     swap(lhs.m_element_ptr, rhs.m_element_ptr);

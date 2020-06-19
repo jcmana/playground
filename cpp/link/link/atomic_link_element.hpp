@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../../concurrency/concurrency/memory.hpp"
+#include <mutex>
+#include <tuple>
 
 class atomic_link_element
 {
@@ -10,33 +11,34 @@ public:
     {
     }
 
-    atomic_link_element(atomic_link_element * element_ptr) noexcept :
-        m_element_ptr(element_ptr)
+    atomic_link_element(atomic_link_element && other) noexcept :
+        atomic_link_element()
     {
-        if (m_element_ptr)
-        {
-            std::unique_lock<std::mutex> that_lock(m_element_ptr->m_mutex);
-
-            if (m_element_ptr->m_element_ptr == nullptr)
-            {
-                m_element_ptr->m_element_ptr = this;
-            }
-        }
+        swap(*this, other);
     }
 
     ~atomic_link_element()
     {
-        release();
+        if (m_element_ptr)
+        {
+            // JMTODO: fix datarace (shit can happen between ptr check and lock)
+
+            std::lock(m_mutex, m_element_ptr->m_mutex);
+
+            std::unique_lock<std::mutex> this_lock(m_mutex, std::adopt_lock);
+            std::unique_lock<std::mutex> that_lock(m_element_ptr->m_mutex, std::adopt_lock);
+
+            m_element_ptr->m_element_ptr = nullptr;
+            m_element_ptr = nullptr;
+        }
     }
 
-    void lock() const
+    atomic_link_element & operator  =(atomic_link_element && other) noexcept
     {
-        m_mutex.lock();
-    }
+        swap(*this, atomic_link_element());
+        swap(*this, other);
 
-    void unlock() const
-    {
-        m_mutex.unlock();
+        return (*this);
     }
 
     bool is_linked() const noexcept
@@ -44,20 +46,54 @@ public:
         return m_element_ptr != nullptr;
     }
 
-    void release() noexcept
+    std::unique_lock<std::mutex> lock() const
     {
-        std::unique_lock<std::mutex> this_lock(m_mutex);
-
-        if (m_element_ptr)
-        {
-            std::unique_lock<std::mutex> that_lock(m_element_ptr->m_mutex);
-
-            m_element_ptr->m_element_ptr = nullptr;
-            m_element_ptr = nullptr;
-        }
+        return std::unique_lock<std::mutex>(m_mutex);
     }
+
+    friend std::tuple<atomic_link_element, atomic_link_element> make_atomic_link();
+
+    friend void swap(atomic_link_element & lhs, atomic_link_element & rhs);
 
 private:
     mutable std::mutex m_mutex;
     atomic_link_element * m_element_ptr;
 };
+
+std::tuple<atomic_link_element, atomic_link_element> make_atomic_link()
+{
+    atomic_link_element a;
+    atomic_link_element b;
+
+    a.m_element_ptr = &b;
+    b.m_element_ptr = &a;
+
+    return std::make_tuple(std::move(a), std::move(b));
+}
+
+void swap(atomic_link_element & lhs, atomic_link_element & rhs)
+{
+    std::lock(lhs.m_mutex, rhs.m_mutex);
+
+    std::unique_lock<std::mutex> lhs_lock(lhs.m_mutex, std::adopt_lock);
+    std::unique_lock<std::mutex> rhs_lock(rhs.m_mutex, std::adopt_lock);
+
+    if (lhs.m_element_ptr == &rhs && rhs.m_element_ptr == &lhs)
+    {
+        return;
+    }
+
+    using std::swap;
+
+    swap(lhs.m_element_ptr, rhs.m_element_ptr);
+
+    if (lhs.is_linked())
+    {
+        lhs.m_element_ptr->m_element_ptr = &lhs;
+    }
+
+    if (rhs.is_linked())
+    {
+        rhs.m_element_ptr->m_element_ptr = &rhs;
+    }
+}
