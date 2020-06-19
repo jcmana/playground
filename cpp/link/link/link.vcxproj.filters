@@ -11,10 +11,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="link_element.hpp">
+    <ClInclude Include="atomic_link_element.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="link.hpp">
+    <ClInclude Include="link_element.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
