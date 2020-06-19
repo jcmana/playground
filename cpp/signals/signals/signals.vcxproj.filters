@@ -7,14 +7,17 @@
     </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="atomic_link_element.hpp">
+    <ClInclude Include="signal.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="link_element.hpp">
+    <ClInclude Include="slot.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="connection.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

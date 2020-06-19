@@ -15,12 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="math_dll.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="math_dll.cpp">
+    <ClCompile Include="std_bind.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

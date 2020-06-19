@@ -13,10 +13,31 @@
     <ClInclude Include="latch.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="conversation.hpp">
+    <ClInclude Include="condition.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="condition.hpp">
+    <ClInclude Include="utility.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="executor_ordered.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="executor_immediate.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="executor_ordered_pool.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="executor_queue.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="executor_thread.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="memory.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="memory_guard.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

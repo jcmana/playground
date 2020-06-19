@@ -5,8 +5,17 @@
 
 #include "../concurrency/barrier.hpp"
 #include "../concurrency/latch.hpp"
-#include "../concurrency/conversation.hpp"
 #include "../concurrency/condition.hpp"
+
+#include "../concurrency/executor_immediate.hpp"
+#include "../concurrency/executor_ordered.hpp"
+#include "../concurrency/executor_ordered_pool.hpp"
+#include "../concurrency/executor_thread.hpp"
+
+#include "../concurrency/memory.hpp"
+#include "../concurrency/memory_guard.hpp"
+
+#include "../concurrency/utility.hpp"
 
 barrier barr_a;
 barrier barr_b;
@@ -27,24 +36,6 @@ void thread(const std::string & text)
     barr_b.arrive_and_drop();
 }
 
-void conversionalist(int n)
-{
-    std::cout << "conversionalist(): '" << n << std::endl;
-}
-
-void conversionalist_b(int n)
-{
-    std::cout << "conversionalist_b(): " << n << std::endl;
-}
-
-void thread_conversationalist(const conversation & c)
-{
-    conversation local_c = c;
-    local_c.enter(&conversionalist);
-
-
-}
-
 int main()
 {
     if (false)
@@ -63,22 +54,6 @@ int main()
     }
 
     if (false)
-    {
-        // JMTODO: basic test
-    }
-
-    if (false)
-    {
-        conversation c;
-
-        std::thread a(thread_conversationalist, c);
-        std::thread b(thread_conversationalist, c);
-
-        a.join();
-        b.join();
-    }
-
-    if (true)
     {
         condition<int> ca;
 
@@ -115,5 +90,148 @@ int main()
         tb.join();
         tc.join();
         std::cout << "done" << std::endl;
+    }
+
+    if (false)
+    {
+        executor_ordered<void> eo;
+
+        auto task = []
+        {
+            std::cout << "task" << std::endl;
+        };
+
+        std::vector<std::future<void>> futures;
+
+        futures.emplace_back(eo.post(task));
+        futures.emplace_back(eo.post(task));
+        futures.emplace_back(eo.post(task));
+
+        wait_all(futures);
+
+        {
+            auto future1 = eo.post(task);
+            auto future2 = eo.post(task);
+
+            wait_all(future1, future2, std::future<int>());
+        }
+
+        std::cout << "fuck" << std::endl;
+    }
+
+    if (false)
+    {
+        {
+            executor_ordered<void> eo;
+            auto eo_move = std::move(eo);
+        }
+
+        {
+            auto task = []
+            {
+                std::cout << "thread id = " << std::this_thread::get_id() << "\n";
+            };
+
+            executor_ordered<void> eo;
+            executor_ordered<void> eo_move;
+
+            eo.post(task);
+            eo_move.post(task);
+
+            eo_move = std::move(eo);
+
+            eo.post(task);
+            eo_move.post(task);
+        }
+    }
+
+    if (false)
+    {
+        executor_immediate<int> ei;
+
+        auto task = []
+        {
+            std::cout << "task" << std::endl;
+            return 0;
+        };
+
+        ei.post(task);
+    }
+
+    if (false)
+    {
+        executor_ordered_pool<void> e(2);
+        
+        auto task = []
+        {
+            std::cout << "task in " << std::this_thread::get_id() << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+        };
+
+        std::vector<std::future<void>> futures;
+
+        futures.emplace_back(e.post(task));
+        futures.emplace_back(e.post(task));
+        futures.emplace_back(e.post(task));
+        futures.emplace_back(e.post(task));
+        futures.emplace_back(e.post(task));
+        futures.emplace_back(e.post(task));
+    }
+
+    if (false)
+    {
+        executor_queue<std::packaged_task<void()>> q;
+        executor_thread<void> t(q);
+    }
+
+    if (true)
+    {
+        class threadsafe_provider
+        {
+        public:
+            auto size()
+            {
+                return m_value.lock();
+            }
+
+            void increment()
+            {
+                m_value.lock() = m_value.lock() + 1;
+            }
+
+            void reset()
+            {
+                m_value.lock() = 0;
+            }
+
+        private:
+            memory<int> m_value;
+        };
+
+        threadsafe_provider a;
+        a.reset();
+        std::cout << a.size() << std::endl;
+
+        auto thread_procedure = [&a]
+        {
+            for (unsigned int n = 0; n < 10; ++n)
+            {
+                a.increment();
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
+        };
+
+        std::thread thread(thread_procedure);
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
+        std::cout << a.size() << std::endl;
+
+        thread.join();
+
+        auto mga = a.size();
+        auto mgb = a.size();
+
+        threadsafe_provider a_moved;
+        a_moved = std::move(a);
     }
 }
