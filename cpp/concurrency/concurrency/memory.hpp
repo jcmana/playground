@@ -5,6 +5,7 @@
 
 #include "memory_guard.hpp"
 
+/// \brief      Cross-thread synchronized memory.
 template<typename T>
 class memory
 {
@@ -57,7 +58,8 @@ public:
         return {*this};
     }
 
-    memory_guard<T> get()
+    /// \brief      Cross-thread unique guard.
+    memory_guard<T> lock()
     {
         return memory_guard<T>(*this);
     }

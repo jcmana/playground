@@ -191,17 +191,17 @@ int main()
         public:
             auto size()
             {
-                return m_value.get();
+                return m_value.lock();
             }
 
             void increment()
             {
-                m_value.get() = m_value.get() + 1;
+                m_value.lock() = m_value.lock() + 1;
             }
 
             void reset()
             {
-                m_value.get() = 0;
+                m_value.lock() = 0;
             }
 
         private:

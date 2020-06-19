@@ -2,6 +2,7 @@
 
 #include <utility>
 
+/// \brief          During its lifetime holds cross-thread-unique access to memory.
 template<typename T>
 class memory_guard
 {
@@ -50,7 +51,12 @@ public:
         return (*this);
     }
 
-    operator T()
+    operator T() const
+    {
+        return m_memory.m_value;
+    }
+
+    T get() const
     {
         return m_memory.m_value;
     }
