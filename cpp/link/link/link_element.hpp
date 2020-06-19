@@ -11,26 +11,26 @@ class link_element
 {
 public:
 	/// \brief			Default constructor, creates unlinked element.
-	inline link_element() noexcept;
+	link_element() noexcept;
 
 	/// \brief			Move constructor, overtakes the link from `other`.
 	/// 
 	/// Overtakes the link from `other` element, if there was such.
-	inline link_element(link_element && other) noexcept;
+	link_element(link_element && other) noexcept;
 
 	/// \brief			Destructor, destroys the link between elements, if any.
 	///
 	/// Destroys `this` element and unlinks the linked element, if there was such.
-	inline ~link_element();
+	~link_element();
 
 	/// \brief			Move assignment, overtakes the link from `other`.
 	///
 	/// Overtakes the link from `other` element, if there was such.
-	inline link_element & operator  =(link_element && other) noexcept;
+	link_element & operator  =(link_element && other) noexcept;
 
 	/// \brief			Checks if element is linked.
 	/// \returns		`true` if both elements are linked together; `false` otherwise.
-	inline bool is_linked() const noexcept;
+	bool is_linked() const noexcept;
 
     /// \brief          Creates pair of linked elements.
     friend std::tuple<link_element, link_element> make_link();
