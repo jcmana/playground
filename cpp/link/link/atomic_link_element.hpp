@@ -19,14 +19,13 @@ public:
 
     ~atomic_link_element()
     {
+        std::unique_lock<std::mutex> this_lock(m_mutex);
+
         if (m_element_ptr)
         {
-            // JMTODO: fix datarace (shit can happen between ptr check and lock)
+            std::unique_lock<std::mutex> that_lock(m_element_ptr->m_mutex);
 
-            std::lock(m_mutex, m_element_ptr->m_mutex);
-
-            std::unique_lock<std::mutex> this_lock(m_mutex, std::adopt_lock);
-            std::unique_lock<std::mutex> that_lock(m_element_ptr->m_mutex, std::adopt_lock);
+            // JMTODO: this is a potential deadlock (race on the mutexes)
 
             m_element_ptr->m_element_ptr = nullptr;
             m_element_ptr = nullptr;
@@ -35,7 +34,9 @@ public:
 
     atomic_link_element & operator  =(atomic_link_element && other) noexcept
     {
-        swap(*this, atomic_link_element());
+        auto empty = atomic_link_element();
+
+        swap(*this, empty);
         swap(*this, other);
 
         return (*this);

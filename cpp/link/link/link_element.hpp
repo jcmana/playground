@@ -66,7 +66,9 @@ link_element::~link_element()
 
 link_element & link_element::operator  =(link_element && other) noexcept
 {
-    swap(*this, link_element());
+    auto empty = link_element();
+
+    swap(*this, empty);
     swap(*this, other);
 
 	return (*this);
