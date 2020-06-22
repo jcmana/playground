@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cassert>
 #include <mutex>
 #include <tuple>
 
@@ -19,16 +20,25 @@ public:
 
     ~atomic_link_element()
     {
-        std::unique_lock<std::mutex> this_lock(m_mutex);
+        atomic_link_element * element_ptr = nullptr;
 
-        if (m_element_ptr)
+        // Unlink this element
         {
-            std::unique_lock<std::mutex> that_lock(m_element_ptr->m_mutex);
-
-            // JMTODO: this is a potential deadlock (race on the mutexes)
-
-            m_element_ptr->m_element_ptr = nullptr;
+            std::unique_lock<std::mutex> lock(m_mutex);
+            element_ptr = m_element_ptr;
             m_element_ptr = nullptr;
+        }
+
+        // Unlink linked element, if there is such
+        if (element_ptr)
+        {
+            std::unique_lock<std::mutex> lock(element_ptr->m_mutex);
+            element_ptr->m_element_ptr = nullptr;
+        }
+
+        // Synchronize this element, to avoid destruction while linked element is unlinking
+        {
+            std::unique_lock<std::mutex> lock(m_mutex);
         }
     }
 
@@ -42,7 +52,7 @@ public:
         return (*this);
     }
 
-    bool is_linked() const noexcept
+    bool linked() const noexcept
     {
         return m_element_ptr != nullptr;
     }
@@ -88,12 +98,12 @@ void swap(atomic_link_element & lhs, atomic_link_element & rhs)
 
     swap(lhs.m_element_ptr, rhs.m_element_ptr);
 
-    if (lhs.is_linked())
+    if (lhs.linked())
     {
         lhs.m_element_ptr->m_element_ptr = &lhs;
     }
 
-    if (rhs.is_linked())
+    if (rhs.linked())
     {
         rhs.m_element_ptr->m_element_ptr = &rhs;
     }

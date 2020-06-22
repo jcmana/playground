@@ -30,7 +30,7 @@ public:
 
 	/// \brief			Checks if element is linked.
 	/// \returns		`true` if both elements are linked together; `false` otherwise.
-	bool is_linked() const noexcept;
+	bool linked() const noexcept;
 
     /// \brief          Creates pair of linked elements.
     friend std::tuple<link_element, link_element> make_link();
@@ -74,7 +74,7 @@ link_element & link_element::operator  =(link_element && other) noexcept
 	return (*this);
 }
 
-bool link_element::is_linked() const noexcept
+bool link_element::linked() const noexcept
 {
 	return m_element_ptr != nullptr;
 }
@@ -101,12 +101,12 @@ void swap(link_element & lhs, link_element & rhs) noexcept
     
     swap(lhs.m_element_ptr, rhs.m_element_ptr);
 
-    if (lhs.is_linked())
+    if (lhs.linked())
     {
         lhs.m_element_ptr->m_element_ptr = &lhs;
     }
 
-    if (rhs.is_linked())
+    if (rhs.linked())
     {
         rhs.m_element_ptr->m_element_ptr = &rhs;
     }
