@@ -79,6 +79,8 @@ void swap(atomic_link_element & lhs, atomic_link_element & rhs)
 
     if (lhs.m_sp_mutex == rhs.m_sp_mutex)
     {
+        // JMTODO: condition race here
+
         return;
     }
 
