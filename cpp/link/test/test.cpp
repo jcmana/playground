@@ -103,6 +103,13 @@ int main()
         std::cout << "b.is_linked() = " << b.is_linked() << std::endl;
         std::cout << "c.is_linked() = " << c.is_linked() << std::endl;
         std::cout << std::endl;
+
+        swap(b, a);
+
+        std::cout << "a.is_linked() = " << a.is_linked() << std::endl;
+        std::cout << "b.is_linked() = " << b.is_linked() << std::endl;
+        std::cout << "c.is_linked() = " << c.is_linked() << std::endl;
+        std::cout << std::endl;
     }
 
 	return 0;
