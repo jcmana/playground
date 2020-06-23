@@ -16,9 +16,9 @@ int main()
         std::tie(a, b) = make_link();
         std::tie(c, b) = make_link();
 
-        std::cout << "a.is_linked() = " << a.is_linked() << std::endl;
-        std::cout << "b.is_linked() = " << b.is_linked() << std::endl;
-        std::cout << "c.is_linked() = " << c.is_linked() << std::endl;
+        std::cout << "a.linked() = " << a.linked() << std::endl;
+        std::cout << "b.linked() = " << b.linked() << std::endl;
+        std::cout << "c.linked() = " << c.linked() << std::endl;
         std::cout << std::endl;
     }
 
@@ -34,8 +34,8 @@ int main()
 
         swap(a, b);
 
-        std::cout << "a.is_linked() = " << a.is_linked() << std::endl;
-        std::cout << "b.is_linked() = " << b.is_linked() << std::endl;
+        std::cout << "a.linked() = " << a.linked() << std::endl;
+        std::cout << "b.linked() = " << b.linked() << std::endl;
         std::cout << std::endl;
     }
 
@@ -47,8 +47,8 @@ int main()
 
         swap(a, b);
 
-        std::cout << "a.is_linked() = " << a.is_linked() << std::endl;
-        std::cout << "b.is_linked() = " << b.is_linked() << std::endl;
+        std::cout << "a.linked() = " << a.linked() << std::endl;
+        std::cout << "b.linked() = " << b.linked() << std::endl;
         std::cout << std::endl;
     }
 
@@ -62,8 +62,8 @@ int main()
 
         swap(a, b);
 
-        std::cout << "a.is_linked() = " << a.is_linked() << std::endl;
-        std::cout << "b.is_linked() = " << b.is_linked() << std::endl;
+        std::cout << "a.linked() = " << a.linked() << std::endl;
+        std::cout << "b.linked() = " << b.linked() << std::endl;
         std::cout << std::endl;
     }
 
@@ -74,8 +74,8 @@ int main()
 
         swap(a, b);
 
-        std::cout << "a.is_linked() = " << a.is_linked() << std::endl;
-        std::cout << "b.is_linked() = " << b.is_linked() << std::endl;
+        std::cout << "a.linked() = " << a.linked() << std::endl;
+        std::cout << "b.linked() = " << b.linked() << std::endl;
         std::cout << std::endl;
     }
 
@@ -166,7 +166,7 @@ int main()
         atomic_link_element a;
         auto l = a.lock();
 
-        auto a_moved = std::move(a);
+        //auto a_moved = std::move(a);        // deadlock = acquiring already locked mutex
     }
 
 	return 0;

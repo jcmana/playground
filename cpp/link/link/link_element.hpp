@@ -11,32 +11,32 @@ class link_element
 {
 public:
 	/// \brief			Default constructor, creates unlinked element.
-	link_element() noexcept;
+	inline link_element() noexcept;
 
 	/// \brief			Move constructor, overtakes the link from `other`.
 	/// 
 	/// Overtakes the link from `other` element, if there was such.
-	link_element(link_element && other) noexcept;
+    inline link_element(link_element && other) noexcept;
 
 	/// \brief			Destructor, destroys the link between elements, if any.
 	///
 	/// Destroys `this` element and unlinks the linked element, if there was such.
-	~link_element();
+    inline ~link_element();
 
 	/// \brief			Move assignment, overtakes the link from `other`.
 	///
 	/// Overtakes the link from `other` element, if there was such.
-	link_element & operator  =(link_element && other) noexcept;
+    inline link_element & operator  =(link_element && other) noexcept;
 
 	/// \brief			Checks if element is linked.
 	/// \returns		`true` if both elements are linked together; `false` otherwise.
-	bool is_linked() const noexcept;
+    inline bool linked() const noexcept;
 
     /// \brief          Creates pair of linked elements.
-    friend std::tuple<link_element, link_element> make_link();
+    friend inline std::tuple<link_element, link_element> make_link();
 
     /// \brief          Swaps the linked elements between `lhs` and `rhs`.
-    friend void swap(link_element & lhs, link_element & rhs) noexcept;
+    friend inline void swap(link_element & lhs, link_element & rhs) noexcept;
 
 private:
 	link_element * m_element_ptr;
@@ -74,7 +74,7 @@ link_element & link_element::operator  =(link_element && other) noexcept
 	return (*this);
 }
 
-bool link_element::is_linked() const noexcept
+bool link_element::linked() const noexcept
 {
 	return m_element_ptr != nullptr;
 }
@@ -97,16 +97,14 @@ void swap(link_element & lhs, link_element & rhs) noexcept
         return;
     }
 
-    using std::swap;
-    
-    swap(lhs.m_element_ptr, rhs.m_element_ptr);
+    std::swap(lhs.m_element_ptr, rhs.m_element_ptr);
 
-    if (lhs.is_linked())
+    if (lhs.linked())
     {
         lhs.m_element_ptr->m_element_ptr = &lhs;
     }
 
-    if (rhs.is_linked())
+    if (rhs.linked())
     {
         rhs.m_element_ptr->m_element_ptr = &rhs;
     }
