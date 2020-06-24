@@ -22,6 +22,13 @@ public:
     inline bool linked() const noexcept;
 
     /// \brief      Locks the link for the lifetime of returned `std::unique_lock`.
+    ///
+    /// Locking is done implicitly for each operation and isn't required for for any link 
+    /// manipulation. This function is meant to enable user to control the link state for
+    /// larger scope where is immutability required.
+    ///
+    /// Example usage is `atomic_callback` and `atomic_callback_guard`, where locking is
+    /// required to complete callback execution withouht breaking the link.
     inline std::unique_lock<std::mutex> lock();
 
     friend inline std::tuple<atomic_link_element, atomic_link_element> make_atomic_link();
