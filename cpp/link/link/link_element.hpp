@@ -3,7 +3,7 @@
 #include <tuple>
 #include <utility>
 
-/// \brief			Element of linked pair, broken on destruction of either one.
+/// \brief			Element of linked pair, unlinked on destruction of either one.
 ///
 /// Creates unique link between pair of elements, which is kept through moves and
 /// broken when either of them is destroyed. 

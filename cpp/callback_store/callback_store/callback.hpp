@@ -53,7 +53,7 @@ template<typename F, typename ... Args>
 typename std::enable_if_t<std::is_class<T>::value == true> 
 callback<T>::invoke(F method_ptr, Args && ... args) const
 {
-	if (link_element::is_linked())
+	if (link_element::linked())
 	{
 		(m_interface_ref.*method_ptr)(std::forward<Args>(args) ...);
 	}
@@ -64,7 +64,7 @@ template<typename ... Args>
 typename std::enable_if_t<std::is_class<T>::value != true> 
 callback<T>::invoke(Args && ... args) const
 {
-    if (link_element::is_linked())
+    if (link_element::linked())
     {
         m_interface_ref(std::forward<Args>(args) ...);
     }
