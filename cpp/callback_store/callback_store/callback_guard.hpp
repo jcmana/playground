@@ -5,7 +5,7 @@
 template<typename T>
 class callback;
 
-/// \brief			RAII `callback` guard, limiting its activity to a scope.
+/// \brief          Scope-guard for `callback`, limiting its activity.
 template<typename T>
 class callback_guard : private link_element
 {
@@ -13,29 +13,19 @@ public:
 	friend class callback<T>;
 
 public:
-	/// \brief			Default constructor, creates empty guard.
+	/// \brief          Default constructor, creates empty guard.
 	callback_guard() = default;
 
-	/// \brief			Constructor, creates guard for `callback_ptr`.
-	explicit callback_guard(callback<T> & callback_ref);
-
-	/// \brief		Deactivates the `callback`.
-	void release();
+	/// \brief          Constructor, creates `callback` guard, linked by `link_element`.
+	callback_guard(link_element && link_element_rref);
 };
 
 #pragma region callback_guard implementation:
 
 template<typename T>
-callback_guard<T>::callback_guard(callback<T> & callback_ref) :
-	link_element(&callback_ref)
+callback_guard<T>::callback_guard(link_element && link_element_rref) :
+	link_element(std::move(link_element_rref))
 {
-}
-
-template<typename T>
-void
-callback_guard<T>::release()
-{
-	link_element::release();
 }
 
 #pragma endregion
