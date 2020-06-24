@@ -29,7 +29,7 @@ public:
     ///
     /// Example usage is `atomic_callback` and `atomic_callback_guard`, where locking is
     /// required to complete callback execution withouht breaking the link.
-    inline std::unique_lock<std::mutex> lock();
+    inline std::unique_lock<std::mutex> lock() const;
 
     friend inline std::tuple<atomic_link_element, atomic_link_element> make_atomic_link();
 
@@ -78,7 +78,7 @@ bool atomic_link_element::linked() const noexcept
     return m_sp_mutex.use_count() == 2;
 }
 
-std::unique_lock<std::mutex> atomic_link_element::lock()
+std::unique_lock<std::mutex> atomic_link_element::lock() const
 {
     return std::unique_lock<std::mutex>(*m_sp_mutex);
 }
