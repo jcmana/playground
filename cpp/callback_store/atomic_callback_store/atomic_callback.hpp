@@ -1,66 +1,57 @@
 #pragma once
 
-#include <mutex>
+#include <tuple>
 #include <utility>
 
-#include "../../link/link/link_element.hpp"
+#include "../../link/link/atomic_link_element.hpp"
 
 template<typename T>
 class atomic_callback_guard;
 
 template<typename T>
-class atomic_callback : private link_element
+class atomic_callback : private atomic_link_element
 {
 public:
-	friend class atomic_callback_guard<T>;
+    friend class atomic_callback_guard<T>;
 
 public:
-	explicit atomic_callback(T & interface_ref) :
-		m_lock(m_mutex, std::defer_lock),
-        m_interface_ref(interface_ref)
-	{
-	}
+    atomic_callback() :
+        atomic_link_element(),
+        m_interface_ptr(nullptr)
+    {
+    }
 
-	atomic_callback(atomic_callback && other) :
-		m_lock(other.m_mutex),
-		link_element(std::move(other)),
-        m_interface_ref(other.m_interface_ref)
-	{
-		m_lock = std::unique_lock<std::mutex>(m_mutex, std::defer_lock);
-	}
+    atomic_callback(T & interface_ref, atomic_link_element && link_element) :
+        atomic_link_element(std::move(link_element)),
+        m_interface_ptr(&interface_ref)
+    {
+    }
 
-	atomic_callback & operator  =(atomic_callback && other)
-	{
-		m_lock = std::unique_lock<std::mutex>(other.m_mutex);
+    template<typename F, typename ... Args>
+    void invoke(F method_ptr, Args && ... args) const
+    {
+        auto lock = atomic_link_element::lock();
 
-		link_element::operator  =(std::move(other));
-		m_interface_ref = other.m_interface_ref;
+        if (atomic_link_element::linked())
+        {
+            (m_interface_ptr->*method_ptr)(std::forward<Args>(args) ...);
+        }
+    }
 
-		m_lock = std::unique_lock<std::mutex>(m_mutex, std::defer_lock);
-
-		return (*this);
-	}
-
-	~atomic_callback()
-	{
-		std::unique_lock<std::unique_lock<std::mutex>> lock(m_lock);
-        link_element::release();
-	}
-
-	template<typename F, typename ... Args >
-	void invoke(F method_ptr, Args && ... args)
-	{
-		std::unique_lock<std::unique_lock<std::mutex>> lock(m_lock);
-
-		if (link_element::is_linked())
-		{
-			(m_interface_ref.*method_ptr)(std::forward<Args>(args) ...);
-		}
-	}
+    template<typename T>
+    friend std::tuple<atomic_callback<T>, atomic_callback_guard<T>> make_atomic_callback(T & interface_ref);
 
 private:
-	mutable std::mutex m_mutex;
-	mutable std::unique_lock<std::mutex> m_lock;
-
-	T & m_interface_ref;
+    T * m_interface_ptr;
 };
+
+template<typename T>
+std::tuple<atomic_callback<T>, atomic_callback_guard<T>> make_atomic_callback(T & interface_ref)
+{
+    auto link = make_atomic_link();
+
+    atomic_callback<T> callback(interface_ref, std::move(std::get<0>(link)));
+    atomic_callback_guard<T> callback_guard(std::move(std::get<1>(link)));
+
+    return std::make_tuple(std::move(callback), std::move(callback_guard));
+}
