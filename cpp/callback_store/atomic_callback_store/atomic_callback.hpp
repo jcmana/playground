@@ -19,10 +19,10 @@ public:
     /// \copydoc        callback<T>::callback()
     atomic_callback();
 
-    /// \copydoc        callback<T>::callback(T & interface_ref, link_element && link_element_rref)
+    /// \copydoc        callback<T>::callback(T &, link_element &&)
     atomic_callback(T & interface_ref, atomic_link_element && link_element_rref);
 
-    /// \copydoc        callback<T>::invoke(F method_ptr, A && ... args)
+    /// \copydoc        callback<T>::invoke(F, A && ...)
     template<typename F, typename ... A>
     void invoke(F method_ptr, A && ... args) const;
 
@@ -56,7 +56,7 @@ template<typename F, typename ... A>
 void 
 atomic_callback<T>::invoke(F method_ptr, A && ... args) const
 {
-    auto lock = atomic_link_element::lock();
+    std::unique_lock<const atomic_link_element> lock(*this);
 
     if (atomic_link_element::linked())
     {

@@ -18,7 +18,7 @@ public:
     /// \copydoc        callback_guard<T>::callback_guard()
     atomic_callback_guard();
 
-    /// \copydoc        callback_guard<T>::callback_guard(atomic_link_element && link_element)
+    /// \copydoc        callback_guard<T>::callback_guard(atomic_link_element &&)
     atomic_callback_guard(atomic_link_element && link_element_rref);
 };
 

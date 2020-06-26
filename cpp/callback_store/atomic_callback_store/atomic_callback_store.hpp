@@ -9,7 +9,7 @@ template<typename T>
 class atomic_callback_store
 {
 public:
-    /// \copydoc        callback::subscribe(T & interface_ref)
+    /// \copydoc        callback::subscribe(T &)
     atomic_callback_guard<T> subscribe(T & interface_ref);
 
     /// \brief          Invokes a method from `T` on each subscribed callback.
