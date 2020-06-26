@@ -9,16 +9,18 @@ template<typename T>
 class atomic_callback_store
 {
 public:
-    /// \brief          Subscribes `interface_ref` for notifications.
+    /// \copydoc        callback::subscribe(T & interface_ref)
     atomic_callback_guard<T> subscribe(T & interface_ref);
 
     /// \brief          Invokes a method from `T` on each subscribed callback.
-    template<typename = std::enable_if_t<std::is_class<T>::value>, typename F, typename ... Args >
-    void invoke(F method_ptr, Args && ... args) const;
+    template<typename = std::enable_if_t<std::is_class<T>::value>, typename F, typename ... A>
+    void invoke(F method_ptr, A && ... args) const;
 
 private:
     std::vector<atomic_callback<T>> m_callback_store;
 };
+
+#pragma region atomic_callback_store implementation:
 
 template<typename T>
 atomic_callback_guard<T>
@@ -34,12 +36,14 @@ atomic_callback_store<T>::subscribe(T & interface_ref)
 }
 
 template<typename T>
-template<typename, typename F, typename ... Args>
+template<typename, typename F, typename ... A>
 void
-atomic_callback_store<T>::invoke(F method_ptr, Args && ... args) const
+atomic_callback_store<T>::invoke(F method_ptr, A && ... args) const
 {
     for (auto & callback : m_callback_store)
     {
-        callback.invoke(method_ptr, std::forward<Args>(args) ...);
+        callback.invoke(method_ptr, std::forward<A>(args) ...);
     }
 }
+
+#pragma endregion

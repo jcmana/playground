@@ -11,19 +11,20 @@ template<typename T>
 class callback_store
 {
 public:
-    /// \brief          Default constructor, creates store with no subscriptions.
-    callback_store() = default;
-
     /// \brief          Subscribes `interface_ref` for notifications.
+    /// \param          interface_ref   Refernce to interface (function or class) receiving notifications.
     callback_guard<T> subscribe(T & interface_ref);
 
     /// \brief          Invokes a method from `T` on each subscribed callback.
-    template<typename = std::enable_if_t<std::is_class<T>::value>, typename F, typename ... Args >
-    void invoke(F method_ptr, Args && ... args) const;
+    /// \param          method_ptr      Function-pointer from `T`.
+    /// \param          args            `method_ptr` arguments.
+    template<typename = std::enable_if_t<std::is_class<T>::value>, typename F, typename ... A>
+    void invoke(F method_ptr, A && ... args) const;
 
     /// \brief          Invokes a method from `T` on each subscribed callback.
-    template<typename = std::enable_if_t<std::is_function<T>::value>, typename ... Args >
-    void invoke(Args && ... args) const;
+    /// \param          args            Subrscribed functions arguments.
+    template<typename = std::enable_if_t<std::is_function<T>::value>, typename ... A>
+    void invoke(A && ... args) const;
 
 private:
 	std::vector<callback<T>> m_callback_store;
@@ -45,24 +46,24 @@ callback_store<T>::subscribe(T & interface_ref)
 }
 
 template<typename T>
-template<typename, typename F, typename ... Args>
+template<typename, typename F, typename ... A>
 void
-callback_store<T>::invoke(F method_ptr, Args && ... args) const
+callback_store<T>::invoke(F method_ptr, A && ... args) const
 {
     for (auto & callback : m_callback_store)
     {
-        callback.invoke(method_ptr, std::forward<Args>(args) ...);
+        callback.invoke(method_ptr, std::forward<A>(args) ...);
     }
 }
 
 template<typename T>
-template<typename, typename ... Args>
+template<typename, typename ... A>
 void
-callback_store<T>::invoke(Args && ... args) const
+callback_store<T>::invoke(A && ... args) const
 {
     for (auto & callback : m_callback_store)
     {
-        callback.invoke(std::forward<Args>(args) ...);
+        callback.invoke(std::forward<A>(args) ...);
     }
 }
 

@@ -33,7 +33,7 @@ void function_slow()
 int main()
 {
     // Simple callback_store test:
-    if (false)
+    if (true)
     {
         callback_intf cia;
         callback_intf cib;

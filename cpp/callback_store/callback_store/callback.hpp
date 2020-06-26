@@ -14,8 +14,7 @@ class callback_guard;
 /// from it. Callback requires `callback_guard` to be alive, otherwise it can't
 /// be invoked.
 ///
-/// Implementation refuses lambdas or binders, because in this context they are 
-/// typical source of issues.
+/// Implementation doesn't support lambdas or binders.
 template<typename T>
 class callback : private link_element
 {
@@ -27,17 +26,17 @@ public:
     callback();
 
     /// \brief      Constructor, creates active callback.
-    explicit callback(T & inteface_ref, link_element && link_element_rref);
+    callback(T & inteface_ref, link_element && link_element_rref);
 
     /// \brief      Invokes method from `T`, if the callback is still active.
-    template<typename F, typename ... Args>
+    template<typename F, typename ... A>
     typename std::enable_if_t<std::is_class<T>::value == true>
-    invoke(F method_ptr, Args && ... args) const;
+    invoke(F method_ptr, A && ... args) const;
 
     /// \brief      Invokes function `T`, if the callback is still active.
-    template<typename ... Args>
+    template<typename ... A>
     typename std::enable_if_t<std::is_class<T>::value != true>
-    invoke(Args && ... args) const;
+    invoke(A && ... args) const;
 
     /// \brief      Creates active `callback` and appropriate `callback_guard`.
     template<typename T>
@@ -64,24 +63,24 @@ callback<T>::callback(T & inteface_ref, link_element && link_element_rref) :
 }
 
 template<typename T>
-template<typename F, typename ... Args>
+template<typename F, typename ... A>
 typename std::enable_if_t<std::is_class<T>::value == true>
-callback<T>::invoke(F method_ptr, Args && ... args) const
+callback<T>::invoke(F method_ptr, A && ... args) const
 {
     if (link_element::linked())
     {
-        (m_interface_ptr->*method_ptr)(std::forward<Args>(args) ...);
+        (m_interface_ptr->*method_ptr)(std::forward<A>(args) ...);
     }
 }
 
 template<typename T>
-template<typename ... Args>
+template<typename ... A>
 typename std::enable_if_t<std::is_class<T>::value != true> 
-callback<T>::invoke(Args && ... args) const
+callback<T>::invoke(A && ... args) const
 {
     if (link_element::linked())
     {
-        m_interface_ptr(std::forward<Args>(args) ...);
+        m_interface_ptr(std::forward<A>(args) ...);
     }
 }
 
