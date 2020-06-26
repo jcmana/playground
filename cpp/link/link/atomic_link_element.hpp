@@ -18,21 +18,23 @@ public:
 
     inline atomic_link_element & operator  =(atomic_link_element && other) noexcept;
 
-    /// \brief      Unsychronized check if element is linked with another.s
+    /// \copydoc    link_element::linked()
     inline bool linked() const noexcept;
 
-    /// \brief      Locks the link for the lifetime of returned `std::unique_lock`.
-    ///
-    /// Locking is done implicitly for each operation and isn't required for for any link 
-    /// manipulation. This function is meant to enable user to control the link state for
-    /// larger scope where is immutability required.
-    ///
-    /// Example usage is `atomic_callback` and `atomic_callback_guard`, where locking is
-    /// required to complete callback execution withouht breaking the link.
-    inline std::unique_lock<std::mutex> lock() const;
+public:
+    // BasicLockable concept implementation:
 
+    /// \brief      Locks the mutex, blocks if the mutex is not available.
+    inline void lock() const;
+
+    /// \brief      Unlocks the mutex.
+    inline void unlock() const;
+
+public:
+    /// \copydoc    make_link()
     friend inline std::tuple<atomic_link_element, atomic_link_element> make_atomic_link();
 
+    /// \copydoc    swap(link_element &, link_element &)
     friend inline void swap(atomic_link_element & lhs, atomic_link_element & rhs);
 
 private:
@@ -60,9 +62,9 @@ atomic_link_element::~atomic_link_element()
 
 atomic_link_element & atomic_link_element::operator  =(atomic_link_element && other) noexcept
 {
-    // Swap this for a default element, which means:
-    // 1. calling a destructor, unlinking other potentionally linked element
-    // 2. making this element unlinked
+    // Swap other for a default element, which means:
+    // 1. calling a destructor, unlinking potentionally linked element
+    // 2. making this element default unlinked
     auto empty = atomic_link_element();
     swap(*this, empty);
 
@@ -78,9 +80,14 @@ bool atomic_link_element::linked() const noexcept
     return m_sp_mutex.use_count() == 2;
 }
 
-std::unique_lock<std::mutex> atomic_link_element::lock() const
+void atomic_link_element::lock() const
 {
-    return std::unique_lock<std::mutex>(*m_sp_mutex);
+    m_sp_mutex->lock();
+}
+
+void atomic_link_element::unlock() const
+{
+    m_sp_mutex->unlock();
 }
 
 std::tuple<atomic_link_element, atomic_link_element> make_atomic_link()

@@ -135,7 +135,7 @@ int main()
         }
     }
 
-    if (false)
+    if (true)
     {
         std::future<void> f;
 
@@ -146,7 +146,7 @@ int main()
 
             auto thread_proc = [](atomic_link_element l)
             {
-                auto lock = l.lock();
+                std::unique_lock<atomic_link_element> lock(l);
                 std::cout << "l.linked() = " << l.linked() << std::endl;
                 std::this_thread::sleep_for(std::chrono::seconds(1));
                 std::cout << "l.linked() = " << l.linked() << std::endl;
@@ -164,8 +164,7 @@ int main()
     if (true)
     {
         atomic_link_element a;
-        auto l = a.lock();
-
+        std::unique_lock<atomic_link_element> lock(a);
         //auto a_moved = std::move(a);        // deadlock = acquiring already locked mutex
     }
 
