@@ -94,7 +94,7 @@ int main()
     }
 
     // Function callback_store test:
-    if (false)
+    if (true)
     {
         callback_store<void()> s;
         auto g = s.subscribe(function);

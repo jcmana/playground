@@ -39,6 +39,7 @@ public:
     invoke(A && ... args) const;
 
     /// \brief      Creates active `callback` and appropriate `callback_guard`.
+    /// \relates    callback<T>
     template<typename T>
     friend std::tuple<callback<T>, callback_guard<T>> make_callback(T & interface_ref);
 

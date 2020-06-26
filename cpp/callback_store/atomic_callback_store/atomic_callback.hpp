@@ -8,6 +8,7 @@
 template<typename T>
 class atomic_callback_guard;
 
+/// \brief      Thread-safe scope-guarded callback.
 template<typename T>
 class atomic_callback : private atomic_link_element
 {
@@ -26,7 +27,7 @@ public:
     void invoke(F method_ptr, A && ... args) const;
 
     /// \brief      Creates active `atomic_callback` and appropriate `atomic_callback_guard`.
-    /// \relates    atomic_callback
+    /// \relates    atomic_callback<T>
     template<typename T>
     friend std::tuple<atomic_callback<T>, atomic_callback_guard<T>> make_atomic_callback(T & interface_ref);
 

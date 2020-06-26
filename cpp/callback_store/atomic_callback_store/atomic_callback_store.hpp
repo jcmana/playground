@@ -32,6 +32,8 @@ atomic_callback_store<T>::subscribe(T & interface_ref)
 
     m_callback_store.emplace_back(std::move(c));
 
+    // JMTODO: don't emplace back, instead reuse inactive callbacks
+
     return g;
 }
 

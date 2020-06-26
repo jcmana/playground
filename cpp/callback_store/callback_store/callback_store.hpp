@@ -18,13 +18,15 @@ public:
     /// \brief          Invokes a method from `T` on each subscribed callback.
     /// \param          method_ptr      Function-pointer from `T`.
     /// \param          args            `method_ptr` arguments.
-    template<typename = std::enable_if_t<std::is_class<T>::value>, typename F, typename ... A>
-    void invoke(F method_ptr, A && ... args) const;
+    template<typename F, typename ... A>
+    typename std::enable_if_t<std::is_class<T>::value == true>
+    invoke(F method_ptr, A && ... args) const;
 
     /// \brief          Invokes a method from `T` on each subscribed callback.
     /// \param          args            Subrscribed functions arguments.
-    template<typename = std::enable_if_t<std::is_function<T>::value>, typename ... A>
-    void invoke(A && ... args) const;
+    template<typename ... A>
+    typename std::enable_if_t<std::is_class<T>::value != true>
+    invoke(A && ... args) const;
 
 private:
 	std::vector<callback<T>> m_callback_store;
@@ -42,12 +44,14 @@ callback_store<T>::subscribe(T & interface_ref)
 
     m_callback_store.emplace_back(std::move(c));
 
+    // JMTODO: don't emplace back, instead reuse inactive callbacks
+
     return g;
 }
 
 template<typename T>
-template<typename, typename F, typename ... A>
-void
+template<typename F, typename ... A>
+typename std::enable_if_t<std::is_class<T>::value == true>
 callback_store<T>::invoke(F method_ptr, A && ... args) const
 {
     for (auto & callback : m_callback_store)
@@ -57,8 +61,8 @@ callback_store<T>::invoke(F method_ptr, A && ... args) const
 }
 
 template<typename T>
-template<typename, typename ... A>
-void
+template<typename ... A>
+typename std::enable_if_t<std::is_class<T>::value != true>
 callback_store<T>::invoke(A && ... args) const
 {
     for (auto & callback : m_callback_store)

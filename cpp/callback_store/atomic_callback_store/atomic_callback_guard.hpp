@@ -25,7 +25,8 @@ public:
 #pragma region atomic_callback_guard implementation:
 
 template<typename T>
-atomic_callback_guard<T>::atomic_callback_guard()
+atomic_callback_guard<T>::atomic_callback_guard() :
+    atomic_link_element()
 {
 }
 
