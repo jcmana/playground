@@ -9,6 +9,7 @@
 #include "../../generic/generic/bidirectional_map.hpp"
 
 #include "containers/graph/node_centric.hpp"
+#include "containers/graph/cursors/edge_cursor.hpp"
 #include "containers/graph/iterators/preorder_edge_iterator.hpp"
 #include "containers/graph/iterators/preorder_node_iterator.hpp"
 #include "containers/graph/iterators/preorder_path_iterator.hpp"
@@ -44,12 +45,47 @@ void graph_test()
 	// add edges
 	graph::edge * r_s1 = g.create_edge(root, struct_1, EDGE_SREF);
 	graph::edge * r_s2 = g.create_edge(root, struct_2, EDGE_SREF);
-	g.create_edge(struct_1, struct_4, EDGE_SREF);
 	g.create_edge(struct_1, struct_3, EDGE_SREF);
+	g.create_edge(struct_1, struct_4, EDGE_SREF);
 	g.create_edge(struct_3, struct_4, EDGE_SREF);
 	g.create_edge(struct_4, struct_5, EDGE_SREF);
 	g.create_edge(struct_5, struct_6, EDGE_SREF);
 	//g.create_edge(struct_5, struct_1, EDGE_SREF);			// cyclic edge
+
+    // Cursor:
+    if (true)
+    {
+        using namespace containers::graph;
+
+        // Preorder:
+        if (false)
+        {
+            edge_cursor<graph> c(root);
+            edge_cursor<graph> c_end;
+
+            while (c != c_end)
+            {
+                std::cout << c->source->property << "->" << c->target->property << "\n";
+                c.consume_and_expand();
+            }
+        }
+
+        // Postorder:
+        {
+            edge_cursor<graph> c(root);
+            edge_cursor<graph> c_end;
+
+            while (c != c_end)
+            {
+                while (c.expand());
+                std::cout << c->source->property << "->" << c->target->property << "\n";
+                c.consume();
+                while (c.expand());
+                std::cout << c->source->property << "->" << c->target->property << "\n";
+                c.consume();
+            }
+        }
+    }
 
 	// Node iterator:
 	if (false)
@@ -63,7 +99,7 @@ void graph_test()
 	}
 
 	// Path iterator:
-	if (true)
+	if (false)
 	{
 		containers::graph::preorder_path_iterator<graph> it(r_s1);
 		containers::graph::preorder_path_iterator<graph> it_end;

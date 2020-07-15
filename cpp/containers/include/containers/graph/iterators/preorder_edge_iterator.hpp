@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include <stack>
 
 namespace containers {
 namespace graph {

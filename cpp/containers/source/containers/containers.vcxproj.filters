@@ -20,6 +20,9 @@
     <Filter Include="Header Files\search">
       <UniqueIdentifier>{4bfa8bc6-6b55-42d8-8e2c-a2b0476f7893}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\graph\cursors">
+      <UniqueIdentifier>{7e53d968-dc39-42c1-9c25-4a61d0fbab14}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\containers\filter_if.hpp">
@@ -60,6 +63,9 @@
     </ClInclude>
     <ClInclude Include="..\..\include\containers\graph\search\astar.hpp">
       <Filter>Header Files\search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\containers\graph\cursors\edge_cursor.hpp">
+      <Filter>Header Files\graph\cursors</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
