@@ -176,15 +176,29 @@ int main()
         futures.emplace_back(e.post(task));
         futures.emplace_back(e.post(task));
         futures.emplace_back(e.post(task));
-    }
 
-    if (false)
-    {
-        executor_queue<std::packaged_task<void()>> q;
-        executor_thread<void> t(q);
+        wait_all(futures);
     }
 
     if (true)
+    {
+        executor_queue<std::packaged_task<void()>> q;
+        executor_thread<void> t(q);
+
+        auto task = []
+        {
+            std::cout << "task in " << std::this_thread::get_id() << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+        };
+
+        q.push(std::packaged_task<void()>(task));
+        q.push(std::packaged_task<void()>(task));
+        q.push(std::packaged_task<void()>(task));
+        q.push(std::packaged_task<void()>(task));
+        q.push(std::packaged_task<void()>(task));
+    }
+
+    if (false)
     {
         class threadsafe_provider
         {

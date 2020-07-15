@@ -76,8 +76,10 @@ public:
         const auto diff = int(size) - int(m_pool.size());
 
         // JMTODO: resizing logic
-        // - how to stop some threads?
-        // - how to join() those threads?
+        // - how to stop some threads? just issue n number of stop tasks
+        // - how to join() those threads? wait unit n number of threads is stopped
+
+        // JMTODO: threads need to be stateful to check if it still runs
 
         if (diff < 0)
         {

@@ -22,7 +22,7 @@ public:
         executor_queue()
     {
         std::unique_lock<std::mutex> lock(other.m_mutex);
-        using std::swap;
+
         swap(*this, other);
     }
 
@@ -37,8 +37,10 @@ public:
     executor_queue & operator  =(executor_queue && other) noexcept
     {
         std::unique_lock<std::mutex> lock(other.m_mutex);
-        using std::swap;
-        swap(*this, executor_queue());
+        
+        auto empty = executor_queue();
+
+        swap(*this, empty);
         swap(*this, other);
 
         return (*this);
