@@ -21,7 +21,7 @@ public:
 
     typename G::edge * consume()
     {
-        const auto * edge_ptr = m_stack.back();
+        auto * edge_ptr = m_stack.back();
         m_stack.pop_back();
         return edge_ptr;
     }
@@ -54,11 +54,57 @@ public:
         return m_stack.back();
     }
 
+    /*
+    edge_cursor()
+    {
+    }
+
+    edge_cursor(typename G::node * node_ptr)
+    {
+        stack_node entry;
+        entry.node_ptr = node_ptr;
+        entry.edge_it = node_ptr->outgoing.begin();
+
+        m_stack.push_back(entry);
+    }
+
+    void consume()
+    {
+        m_stack.pop_back();
+    }
+
+    void expand()
+    {
+        auto * node_ptr = m_stack.back().node_ptr;
+        auto * edge_ptr = (*m_stack.back().edge_it);
+
+        stack_node entry;
+        entry.node_ptr = edge_ptr->target;
+        entry.edge_it = edge_ptr->target->outgoing.begin();
+        
+        m_stack.push_back(entry);
+    }
+
+    const typename G::edge * operator ->() const
+    {
+        return (*m_stack.back().edge_it);
+    }
+    */
+
     template<typename Graph>
     friend bool operator ==(const edge_cursor<Graph> & lhs, const edge_cursor<Graph> & rhs);
 
     template<typename Graph>
     friend bool operator !=(const edge_cursor<Graph> & lhs, const edge_cursor<Graph> & rhs);
+
+private:
+    /*
+    struct stack_node
+    {
+        typename G::node * node_ptr;
+        typename G::edge_container::iterator edge_it;
+    };
+    */
 
 private:
     std::size_t expand_internal(const typename G::node * node_ptr)
@@ -73,6 +119,9 @@ private:
 
 private:
     std::vector<typename G::edge *> m_stack;
+    /*
+    std::vector<stack_node> m_stack;
+    */
 };
 
 template<typename Graph>
@@ -86,6 +135,7 @@ bool operator !=(const edge_cursor<Graph> & lhs, const edge_cursor<Graph> & rhs)
 {
     return lhs.m_stack != rhs.m_stack;
 }
+
 
 } // namespace containers
 } // namespace graph

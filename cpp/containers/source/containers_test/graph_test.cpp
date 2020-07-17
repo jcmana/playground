@@ -57,6 +57,7 @@ void graph_test()
     {
         using namespace containers::graph;
 
+        /*
         // Preorder:
         if (true)
         {
@@ -81,6 +82,16 @@ void graph_test()
             while (c.expand());
             std::cout << c->source->property << "->" << c->target->property << "\n";
             c.consume();
+        }
+        */
+
+        if (true)
+        {
+            edge_cursor<graph> c(root);
+
+            std::cout << c->source->property << "->" << c->target->property << "\n";
+
+            std::cout << c->source->property << "->" << c->target->property << "\n";
         }
     }
 
