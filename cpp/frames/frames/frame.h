@@ -1,5 +1,6 @@
 #pragma once
 
+template<typename F>
 struct frame
 {
     struct basis
@@ -8,8 +9,29 @@ struct frame
         double y;
     };
 
-    constexpr frame();
-    constexpr frame(basis base_x, basis base_y, basis origin);
+    constexpr frame() :
+        base_x{1.0, 0.0},
+        base_y{0.0, 1.0},
+        origin{0.0, 0.0}
+    {
+    }
+
+    constexpr frame(basis base_x, basis base_y, basis origin) :
+        base_x(base_x),
+        base_y(base_y),
+        origin(origin)
+    {
+    }
+
+    double x_axis(double value) const
+    {
+        return base_x.x * value + base_y.x * value;
+    }
+
+    double x_base(double value) const
+    {
+        return 0.0;
+    }
 
     /// \brief      Basis vector defining X-axis.
     const basis base_x;
