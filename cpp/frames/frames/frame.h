@@ -23,14 +23,14 @@ struct frame
     {
     }
 
-    double x_axis(double value) const
+    basis operator ()(xy value) const
     {
-        return base_x.x * value + base_y.x * value;
+        // JMTODO: impl.
     }
 
-    double x_base(double value) const
+    xy operator ()(basis value) const
     {
-        return 0.0;
+        // JMTODO: impl.
     }
 
     /// \brief      Basis vector defining X-axis.
