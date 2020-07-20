@@ -1,6 +1,12 @@
 #pragma once
 
-template<typename F>
+#include "xy.hpp"
+
+struct frame_default
+{
+};
+
+template<typename F = frame_default>
 struct frame
 {
     struct basis
@@ -23,14 +29,11 @@ struct frame
     {
     }
 
-    basis operator ()(xy value) const
+    xy<F> operator ()(double local_x, double local_y)
     {
-        // JMTODO: impl.
-    }
+        //const auto x_base_value = base_x.x * local_x;
 
-    xy operator ()(basis value) const
-    {
-        // JMTODO: impl.
+        return {0.0, 0.0};
     }
 
     /// \brief      Basis vector defining X-axis.

@@ -11,7 +11,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="frame.h">
+    <ClInclude Include="xy.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="frame.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
