@@ -9,7 +9,7 @@
 #include "../../generic/generic/bidirectional_map.hpp"
 
 #include "containers/graph/node_centric.hpp"
-#include "containers/graph/cursors/edge_cursor.hpp"
+#include "containers/graph/cursors/postorder_edge_cursor.hpp"
 #include "containers/graph/iterators/preorder_edge_iterator.hpp"
 #include "containers/graph/iterators/preorder_node_iterator.hpp"
 #include "containers/graph/iterators/preorder_path_iterator.hpp"
@@ -87,11 +87,16 @@ void graph_test()
 
         if (true)
         {
-            edge_cursor<graph> c(root);
+            typename graph::edge * edge_ptr = nullptr;
+
+            postorder_edge_cursor<graph> c;
+
+            c.expand(r_s2);
+            c.expand(r_s1);
 
             std::cout << c->source->property << "->" << c->target->property << "\n";
 
-            std::cout << c->source->property << "->" << c->target->property << "\n";
+            
         }
     }
 

@@ -7,51 +7,65 @@ namespace graph {
 
 /// \brief      `node_centric` iterator basis.
 template<typename G>
-class edge_cursor
+class postorder_edge_cursor
 {
 public:
-    edge_cursor()
+    postorder_edge_cursor()
     {
     }
 
-    edge_cursor(typename G::node * node_ptr)
+    postorder_edge_cursor(typename G::node * node_ptr)
     {
-        expand_internal(node_ptr);
+        //expand(node_ptr);
+        //m_stack_up.push_back(nullptr);
     }
+
+    /*
+    typename G::edge * consume()
+    {
+        auto * edge_ptr = m_stack_down.back();
+        m_stack_down.pop_back();
+        return edge_ptr;
+    }
+    */
 
     typename G::edge * consume()
     {
-        auto * edge_ptr = m_stack.back();
-        m_stack.pop_back();
+        auto * edge_ptr = m_stack_up.back();
+        m_stack_up.pop_back();
         return edge_ptr;
     }
 
-    std::size_t expand()
+    /*
+    void defer(typename G::edge * edge_ptr)
     {
-        const auto * edge_ptr = m_stack.back();
-        const auto * node_ptr = edge_ptr->target;
-
-        return expand_internal(node_ptr);
+        m_stack_up.push_back(edge_ptr);
     }
+    */
 
-    std::size_t consume_and_expand()
+    std::size_t expand(typename G::edge * edge_ptr)
     {
-        const auto * edge_ptr = m_stack.back();
-        const auto * node_ptr = edge_ptr->target;
+        auto * node_ptr = edge_ptr->target;
 
-        m_stack.pop_back();
+        for (auto edge_it = node_ptr->outgoing.rbegin(); edge_it < node_ptr->outgoing.rend(); ++edge_it)
+        {
+            m_stack_down.push_back(*edge_it);
+        }
 
-        return expand_internal(node_ptr);
+        m_stack_up.push_back(edge_ptr);
+
+        return node_ptr->outgoing.size();
     }
 
     const typename G::edge * operator  *() const
     {
-        return m_stack.back();
+        //return m_stack_down.back();
     }
 
     const typename G::edge * operator ->() const
     {
-        return m_stack.back();
+        //return m_stack_down.back();
+        return m_stack_up.back();
     }
 
     /*
@@ -92,12 +106,11 @@ public:
     */
 
     template<typename Graph>
-    friend bool operator ==(const edge_cursor<Graph> & lhs, const edge_cursor<Graph> & rhs);
+    friend bool operator ==(const postorder_edge_cursor<Graph> & lhs, const postorder_edge_cursor<Graph> & rhs);
 
     template<typename Graph>
-    friend bool operator !=(const edge_cursor<Graph> & lhs, const edge_cursor<Graph> & rhs);
+    friend bool operator !=(const postorder_edge_cursor<Graph> & lhs, const postorder_edge_cursor<Graph> & rhs);
 
-private:
     /*
     struct stack_node
     {
@@ -107,31 +120,21 @@ private:
     */
 
 private:
-    std::size_t expand_internal(const typename G::node * node_ptr)
-    {
-        for (auto edge_it = node_ptr->outgoing.rbegin(); edge_it < node_ptr->outgoing.rend(); ++edge_it)
-        {
-            m_stack.push_back(*edge_it);
-        }
-
-        return node_ptr->outgoing.size();
-    }
-
-private:
-    std::vector<typename G::edge *> m_stack;
+    std::vector<typename G::edge *> m_stack_up;
+    std::vector<typename G::edge *> m_stack_down;
     /*
     std::vector<stack_node> m_stack;
     */
 };
 
 template<typename Graph>
-bool operator ==(const edge_cursor<Graph> & lhs, const edge_cursor<Graph> & rhs)
+bool operator ==(const postorder_edge_cursor<Graph> & lhs, const postorder_edge_cursor<Graph> & rhs)
 {
     return lhs.m_stack == rhs.m_stack;
 }
 
 template<typename Graph>
-bool operator !=(const edge_cursor<Graph> & lhs, const edge_cursor<Graph> & rhs)
+bool operator !=(const postorder_edge_cursor<Graph> & lhs, const postorder_edge_cursor<Graph> & rhs)
 {
     return lhs.m_stack != rhs.m_stack;
 }
