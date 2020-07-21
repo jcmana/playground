@@ -48,8 +48,8 @@ void graph_test()
 	g.create_edge(struct_1, struct_3, EDGE_SREF);
 	g.create_edge(struct_1, struct_4, EDGE_SREF);
 	g.create_edge(struct_3, struct_4, EDGE_SREF);
-	g.create_edge(struct_4, struct_5, EDGE_SREF);
-	g.create_edge(struct_5, struct_6, EDGE_SREF);
+	//g.create_edge(struct_4, struct_5, EDGE_SREF);
+	//g.create_edge(struct_5, struct_6, EDGE_SREF);
 	//g.create_edge(struct_5, struct_1, EDGE_SREF);			// cyclic edge
 
     // Cursor:
@@ -89,14 +89,20 @@ void graph_test()
         {
             typename graph::edge * edge_ptr = nullptr;
 
-            postorder_edge_cursor<graph> c;
+            postorder_edge_cursor<graph> c(root);
 
-            c.expand(r_s2);
-            c.expand(r_s1);
-
-            std::cout << c->source->property << "->" << c->target->property << "\n";
-
-            
+            while (c.empty() == false)
+            {
+                if (c.valid())
+                {
+                    std::cout << c->source->property << "->" << c->target->property << "\n";
+                    c.consume();
+                }
+                else
+                {
+                    c.expand();
+                }
+            }
         }
     }
 
