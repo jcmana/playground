@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../cursors/postorder_edge_cursor.hpp"
+#include "../cursors/postorder_path_cursor.hpp"
 
 namespace containers {
 namespace graph {
@@ -14,19 +14,22 @@ public:
     {
     }
 
-    postorder_edge_iterator(typename G::node * node_ptr) :
-        m_cursor(node_ptr)
+    postorder_edge_iterator(typename G::edge * edge_ptr) :
+        m_cursor(edge_ptr)
     {
         while (m_cursor.valid() == false)
         {
             m_cursor.expand();
         }
+
+        //m_cursor.consume();
+
+        m_edge_ptr = *m_cursor;
+
     }
 
     postorder_edge_iterator & operator ++()
     {
-        m_cursor.consume();
-
         while (true)
         {
             if (m_cursor.valid())
@@ -34,25 +37,32 @@ public:
                 break;
             }
             
-            m_cursor.expand();
+             m_cursor.expand();
         }
+
+        m_cursor.consume();
+
+        m_edge_ptr = *m_cursor;
+
 
         return (*this);
     }
 
     typename G::edge * operator ->() const
     {
-        return *m_cursor;
+        return m_edge_ptr;
     }
 
-    template<typename GG>
-    friend bool operator ==(const postorder_edge_iterator<GG> & lhs, const postorder_edge_iterator<GG> & rhs);
+    template<typename G>
+    friend bool operator ==(const postorder_edge_iterator<G> & lhs, const postorder_edge_iterator<G> & rhs);
 
-    template<typename GG>
-    friend bool operator !=(const postorder_edge_iterator<GG> & lhs, const postorder_edge_iterator<GG> & rhs);
+    template<typename G>
+    friend bool operator !=(const postorder_edge_iterator<G> & lhs, const postorder_edge_iterator<G> & rhs);
 
 private:
-    postorder_edge_cursor<G> m_cursor;
+    typename G::edge * m_edge_ptr;
+
+    postorder_path_cursor<G> m_cursor;
 };
 
 template<typename G>

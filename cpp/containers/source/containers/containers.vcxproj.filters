@@ -34,9 +34,6 @@
     <ClInclude Include="..\..\include\containers\graph\node_centric.hpp">
       <Filter>Header Files\graph</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\containers\graph\node_centric_iterators.hpp">
-      <Filter>Header Files\graph</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\containers\queue\limited_queue.hpp">
       <Filter>Header Files\queue</Filter>
     </ClInclude>
@@ -64,11 +61,11 @@
     <ClInclude Include="..\..\include\containers\graph\search\astar.hpp">
       <Filter>Header Files\search</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\containers\graph\cursors\postorder_edge_cursor.hpp">
-      <Filter>Header Files\graph\cursors</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\containers\graph\iterators\postorder_edge_iterator.hpp">
       <Filter>Header Files\graph\iterators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\containers\graph\cursors\postorder_path_cursor.hpp">
+      <Filter>Header Files\graph\cursors</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -9,7 +9,7 @@
 #include "../../generic/generic/bidirectional_map.hpp"
 
 #include "containers/graph/node_centric.hpp"
-#include "containers/graph/cursors/postorder_edge_cursor.hpp"
+#include "containers/graph/cursors/postorder_path_cursor.hpp"
 #include "containers/graph/iterators/preorder_edge_iterator.hpp"
 #include "containers/graph/iterators/preorder_node_iterator.hpp"
 #include "containers/graph/iterators/preorder_path_iterator.hpp"
@@ -42,7 +42,7 @@ void graph_test()
 	graph::node * struct_4 = g.create_node("struct_4");
 	graph::node * struct_5 = g.create_node("struct_5");
 	graph::node * struct_6 = g.create_node("struct_6");
-		
+	
 	// add edges
 	graph::edge * r_s1 = g.create_edge(root, struct_1, EDGE_SREF);
 	graph::edge * r_s2 = g.create_edge(root, struct_2, EDGE_SREF);
@@ -59,23 +59,20 @@ void graph_test()
     {
         using namespace containers::graph;
 
-        if (true)
+        graph::edge * edge_ptr = nullptr;
+
+        postorder_path_cursor<graph> c(r_s1);
+
+        while (c.empty() == false)
         {
-            typename graph::edge * edge_ptr = nullptr;
-
-            postorder_edge_cursor<graph> c(root);
-
-            while (c.empty() == false)
+            if (c.valid())
             {
-                if (c.valid())
-                {
-                    std::cout << c->source->property << "->" << c->target->property << "\n";
-                    c.consume();
-                }
-                else
-                {
-                    c.expand();
-                }
+                std::cout << c->source->property << "->" << c->target->property << "\n";
+                c.consume();
+            }
+            else
+            {
+                c.expand();
             }
         }
     }
@@ -85,7 +82,7 @@ void graph_test()
     {
         using namespace containers::graph;
 
-        postorder_edge_iterator<graph> it(root);
+        postorder_edge_iterator<graph> it(r_s1);
         postorder_edge_iterator<graph> it_end;
 
         for (; it != it_end; ++it)
