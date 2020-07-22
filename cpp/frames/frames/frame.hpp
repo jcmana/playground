@@ -40,6 +40,16 @@ struct frame
 template<typename F>
 xy<F> make_xy(double local_x, double local_y, const frame<F> & local_frame)
 {
+    // Matrix inversion:
+    //
+    //       1
+    // A = ----- adjugate(A)
+    //     | A |
+    //
+    //         ( a  b )   ( +d -b )
+    // adjugate(      ) = (       )
+    //         ( c  d )   ( -c +d )
+
     const auto base_determinant = local_frame.base_x.x * local_frame.base_y.y - local_frame.base_x.y * local_frame.base_y.x;
 
     const auto base_x_adjugate = frame<F>::basis{+local_frame.base_y.y, -local_frame.base_x.y};
@@ -51,7 +61,7 @@ xy<F> make_xy(double local_x, double local_y, const frame<F> & local_frame)
     const auto coordinate_x = (base_x_adjugate.x * local_x + base_y_adjugate.x * local_y) + local_frame.origin.x;
     const auto coordinate_y = (base_x_adjugate.y * local_x + base_y_adjugate.y * local_y) + local_frame.origin.y;
 
-    return{coordinate_x, coordinate_y};
+    return {coordinate_x, coordinate_y};
 }
 
 /// \brief      Computes `frame` local `x` coordinate from `xy`.
