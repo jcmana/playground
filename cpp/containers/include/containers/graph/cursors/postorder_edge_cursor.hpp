@@ -85,13 +85,13 @@ private:
 template<typename Graph>
 bool operator ==(const postorder_edge_cursor<Graph> & lhs, const postorder_edge_cursor<Graph> & rhs)
 {
-    return lhs.m_stack == rhs.m_stack;
+    return lhs.m_stack_up == rhs.m_stack_up && lhs.m_stack_down == lhs.m_stack_down;
 }
 
 template<typename Graph>
 bool operator !=(const postorder_edge_cursor<Graph> & lhs, const postorder_edge_cursor<Graph> & rhs)
 {
-    return lhs.m_stack != rhs.m_stack;
+    return !(lhs == rhs);
 }
 
 

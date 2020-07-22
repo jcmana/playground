@@ -13,6 +13,7 @@
 #include "containers/graph/iterators/preorder_edge_iterator.hpp"
 #include "containers/graph/iterators/preorder_node_iterator.hpp"
 #include "containers/graph/iterators/preorder_path_iterator.hpp"
+#include "containers/graph/iterators/postorder_edge_iterator.hpp"
 #include "containers/graph/search/dijkstra.hpp"
 #include "containers/graph/ordering/preordered.hpp"
 
@@ -51,39 +52,12 @@ void graph_test()
 	//g.create_edge(struct_4, struct_5, EDGE_SREF);
 	//g.create_edge(struct_5, struct_6, EDGE_SREF);
 	//g.create_edge(struct_5, struct_1, EDGE_SREF);			// cyclic edge
+    g.create_edge(struct_2, struct_5, EDGE_SREF);
 
     // Cursor:
-    if (true)
+    if (false)
     {
         using namespace containers::graph;
-
-        /*
-        // Preorder:
-        if (true)
-        {
-            edge_cursor<graph> c(root);
-            edge_cursor<graph> c_end;
-
-            while (c != c_end)
-            {
-                std::cout << c->source->property << "->" << c->target->property << "\n";
-                c.consume_and_expand();
-            }
-        }
-
-        // Postorder:
-        {
-            edge_cursor<graph> c(root);
-            edge_cursor<graph> c_end;
-
-            while (c.expand());
-            std::cout << c->source->property << "->" << c->target->property << "\n";
-            c.consume();
-            while (c.expand());
-            std::cout << c->source->property << "->" << c->target->property << "\n";
-            c.consume();
-        }
-        */
 
         if (true)
         {
@@ -103,6 +77,20 @@ void graph_test()
                     c.expand();
                 }
             }
+        }
+    }
+
+    // Postorder edge iterator:
+    if (true)
+    {
+        using namespace containers::graph;
+
+        postorder_edge_iterator<graph> it(root);
+        postorder_edge_iterator<graph> it_end;
+
+        for (; it != it_end; ++it)
+        {
+            std::cout << it->source->property << "->" << it->target->property << "\n";
         }
     }
 

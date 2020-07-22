@@ -67,5 +67,8 @@
     <ClInclude Include="..\..\include\containers\graph\cursors\postorder_edge_cursor.hpp">
       <Filter>Header Files\graph\cursors</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\containers\graph\iterators\postorder_edge_iterator.hpp">
+      <Filter>Header Files\graph\iterators</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
