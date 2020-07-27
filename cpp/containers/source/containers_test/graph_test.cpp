@@ -1,9 +1,10 @@
 #include <iostream>
-#include <list>
 #include <vector>
+#include <list>
 #include <map>
-#include <algorithm>
 #include <string>
+#include <tuple>
+#include <algorithm>
 #include <utility>
 
 #include "../../generic/generic/bidirectional_map.hpp"
@@ -49,9 +50,6 @@ void graph_test()
 	//g.create_edge(struct_5, struct_6, EDGE_SREF);
 	//g.create_edge(struct_5, struct_1, EDGE_SREF);			// cyclic edge
 	g.create_edge(struct_2, struct_5, EDGE_SREF);
-
-	std::cout << g[g[r_s1].source].property << " -> " << g[g[r_s1].target].property << std::endl;
-
 
 	/*
     // Cursor:
@@ -142,4 +140,71 @@ void graph_test()
 
 	std::cout << std::endl;
 	*/
+
+	if (false)
+	{
+		using namespace std;
+
+		enum 
+		{
+			No,
+			Lo,
+		};
+
+		using stack_node = graph::edge;
+		using stack = vector<stack_node>;
+
+		stack s;
+
+		s.emplace_back(r_s2);
+		s.emplace_back(r_s1);
+
+		while (s.empty() == false)
+		{
+			auto c = s.back();
+			s.pop_back();
+
+			cout << g[g[c].source].property << " -> " << g[g[c].target].property << endl;
+
+			for (auto o : g[g[c].target].outgoing)
+			{
+				s.emplace_back(o);
+			}
+		}
+	}
+
+	if (true)
+	{
+		using namespace std;
+
+		enum
+		{
+			No,
+			Lo,
+		};
+
+		using stack_node = graph::edge;
+		using stack = vector<stack_node>;
+
+		stack e;
+		stack d;
+
+		e.emplace_back(r_s2);
+		e.emplace_back(r_s1);
+
+		do
+		{
+			auto c = e.back();
+
+			for (auto o : g[g[c].target].outgoing)
+			{
+				e.emplace_back(o);
+			}
+
+			d.emplace_back(c);
+		}
+		while (e.back().offset != d.back().offset);
+
+		cout << g[g[d.back()].source].property << " -> " << g[g[d.back()].target].property << endl;
+	}
 }

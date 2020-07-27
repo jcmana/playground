@@ -15,11 +15,13 @@ public:
 	using container = std::vector<I>;
 
 public:
+	/// \brief		Node identification.
 	struct node
 	{
 		std::size_t offset;
 	};
 
+	/// \brief		Edge identification.
 	struct edge
 	{
 		std::size_t offset;
@@ -43,6 +45,7 @@ public:
 		E property;
 	};
 
+	/// \brief		Create a node with property.
 	template <typename ... A>
 	node create_node(A && ... node_property_args)
 	{
@@ -53,6 +56,7 @@ public:
 		return n;
 	}
 
+	/// \brief		Create an edge with property between nodes.
 	template <typename ... A>
 	edge create_edge(node source_node, node target_node, A && ... edge_property_args)
 	{
@@ -61,19 +65,31 @@ public:
 		edge e = {m_edges.size() - 1};
 
 		m_nodes[source_node.offset].outgoing.push_back({e.offset});
-		m_nodes[target_node.offset].outgoing.push_back({e.offset});
+		m_nodes[target_node.offset].incoming.push_back({e.offset});
 
 		return e;
 	}
 
+	/// \brief		Access node's data.
 	const node_storage & operator [](node n) const
 	{
 		return m_nodes[n.offset];
 	}
 
+	/// \brief		Access edge's data.
 	const edge_storage & operator [](edge e) const
 	{
 		return m_edges[e.offset];
+	}
+
+	const auto & nodes() const
+	{
+		return m_nodes;
+	}
+
+	const auto & edges() const
+	{
+		return m_edges;
 	}
 
 private:
