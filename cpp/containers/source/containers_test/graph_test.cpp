@@ -9,6 +9,7 @@
 #include "../../generic/generic/bidirectional_map.hpp"
 
 #include "containers/graph/node_centric.hpp"
+#include "containers/graph/cursors/preorder_path_cursor.hpp"
 #include "containers/graph/cursors/postorder_path_cursor.hpp"
 #include "containers/graph/iterators/preorder_edge_iterator.hpp"
 #include "containers/graph/iterators/preorder_node_iterator.hpp"
@@ -89,6 +90,13 @@ void graph_test()
         {
             std::cout << it->source->property << "->" << it->target->property << "\n";
         }
+    }
+
+    if (false)
+    {
+        using namespace containers::graph;
+
+        preorder_path_cursor<graph> c;
     }
 
 	// Node iterator:

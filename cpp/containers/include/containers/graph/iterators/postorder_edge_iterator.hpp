@@ -21,15 +21,12 @@ public:
         {
             m_cursor.expand();
         }
-
-        //m_cursor.consume();
-
-        m_edge_ptr = *m_cursor;
-
     }
 
     postorder_edge_iterator & operator ++()
     {
+        m_cursor.consume();
+
         while (true)
         {
             if (m_cursor.valid())
@@ -40,17 +37,12 @@ public:
              m_cursor.expand();
         }
 
-        m_cursor.consume();
-
-        m_edge_ptr = *m_cursor;
-
-
         return (*this);
     }
 
     typename G::edge * operator ->() const
     {
-        return m_edge_ptr;
+        return (*m_cursor);
     }
 
     template<typename G>
@@ -60,8 +52,6 @@ public:
     friend bool operator !=(const postorder_edge_iterator<G> & lhs, const postorder_edge_iterator<G> & rhs);
 
 private:
-    typename G::edge * m_edge_ptr;
-
     postorder_path_cursor<G> m_cursor;
 };
 
