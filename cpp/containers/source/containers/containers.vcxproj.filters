@@ -67,7 +67,7 @@
     <ClInclude Include="..\..\include\containers\graph\cursors\postorder_path_cursor.hpp">
       <Filter>Header Files\graph\cursors</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\containers\graph\cursors\preoder_path_cursor.hpp">
+    <ClInclude Include="..\..\include\containers\graph\cursors\preorder_path_cursor.hpp">
       <Filter>Header Files\graph\cursors</Filter>
     </ClInclude>
   </ItemGroup>

@@ -24,37 +24,36 @@ void graph_test()
 
 	using graph = containers::graph::node_centric<std::string, int>;
 
+	// Graph container
 	graph g;
 
 	static constexpr int EDGE_SREF = 1;
 	static constexpr int EDGE_AREF = 2;
 
-	generic::bidirectional_map<int, std::string> emap(
-	{
-		{ EDGE_SREF, "sref" },
-		{ EDGE_AREF, "aref" }
-	});
-
 	// add nodes
-	graph::node * root = g.create_node("root");
-	graph::node * struct_1 = g.create_node("struct_1");
-	graph::node * struct_2 = g.create_node("struct_2");
-	graph::node * struct_3 = g.create_node("struct_3");
-	graph::node * struct_4 = g.create_node("struct_4");
-	graph::node * struct_5 = g.create_node("struct_5");
-	graph::node * struct_6 = g.create_node("struct_6");
+	auto struct_r = g.create_node("struct_root");
+	auto struct_1 = g.create_node("struct_1");
+	auto struct_2 = g.create_node("struct_2");
+	auto struct_3 = g.create_node("struct_3");
+	auto struct_4 = g.create_node("struct_4");
+	auto struct_5 = g.create_node("struct_5");
+	auto struct_6 = g.create_node("struct_6");
 	
 	// add edges
-	graph::edge * r_s1 = g.create_edge(root, struct_1, EDGE_SREF);
-	graph::edge * r_s2 = g.create_edge(root, struct_2, EDGE_SREF);
+	auto r_s1 = g.create_edge(struct_r, struct_1, EDGE_SREF);
+	auto r_s2 = g.create_edge(struct_r, struct_2, EDGE_SREF);
 	g.create_edge(struct_1, struct_3, EDGE_SREF);
 	g.create_edge(struct_1, struct_4, EDGE_SREF);
 	g.create_edge(struct_3, struct_4, EDGE_SREF);
 	//g.create_edge(struct_4, struct_5, EDGE_SREF);
 	//g.create_edge(struct_5, struct_6, EDGE_SREF);
 	//g.create_edge(struct_5, struct_1, EDGE_SREF);			// cyclic edge
-    g.create_edge(struct_2, struct_5, EDGE_SREF);
+	g.create_edge(struct_2, struct_5, EDGE_SREF);
 
+	std::cout << g[g[r_s1].source].property << " -> " << g[g[r_s1].target].property << std::endl;
+
+
+	/*
     // Cursor:
     if (false)
     {
@@ -142,4 +141,5 @@ void graph_test()
 	}
 
 	std::cout << std::endl;
+	*/
 }
