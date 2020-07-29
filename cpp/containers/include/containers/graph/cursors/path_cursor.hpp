@@ -7,15 +7,15 @@ namespace containers {
 namespace graph {
 
 template<typename G>
-class preorder_path_cursor
+class path_cursor
 {
 public:
-	preorder_path_cursor(G & graph) :
+	path_cursor(G & graph) :
 		m_graph(graph)
 	{
 	}
 
-	preorder_path_cursor(G & graph, typename G::node node) :
+	path_cursor(G & graph, typename G::node node) :
 		m_graph(graph)
 	{
 		if (m_graph[node].outgoing.empty())
@@ -31,11 +31,18 @@ public:
 		expand();
 	}
 
-	preorder_path_cursor(G & graph, typename G::edge edge) :
+	path_cursor(G & graph, typename G::edge edge) :
 		m_graph(graph)
 	{
 		m_stack_down.push_back(edge);
 
+		expand();
+	}
+
+	path_cursor(G & graph, std::vector<typename G::edge> edges) :
+		m_graph(graph),
+		m_stack_down(edges)
+	{
 		expand();
 	}
 
@@ -79,7 +86,7 @@ public:
 		m_stack_path.push_back(e);
 	}
 
-	bool operator ==(const preorder_path_cursor & other) const
+	bool operator ==(const path_cursor & other) const
 	{
 		if (&m_graph != &other.m_graph)
 		{
@@ -137,7 +144,7 @@ public:
 		return true;
 	}
 
-	bool operator !=(const preorder_path_cursor & other) const
+	bool operator !=(const path_cursor & other) const
 	{
 		return !((*this) == other);
 	}
@@ -155,7 +162,7 @@ public:
 	/// \brief			Stack expansion is empty.
 	bool empty() const
 	{
-		return m_stack_down.empty() && m_stack_path.empty();
+		return m_stack_down.empty();
 	}
 
 	/// \brief			Stack expansion is at bottom.

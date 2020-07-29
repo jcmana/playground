@@ -1,15 +1,14 @@
 #pragma once
 
-//#include <vector>
-#include "../cursors/preorder_path_cursor.hpp"
+#include "../cursors/path_cursor.hpp"
 
 namespace containers {
 namespace graph {
 
 template<typename G>
-struct preorder_path_iterator : preorder_path_cursor<G>
+struct preorder_path_iterator : path_cursor<G>
 {
-	using preorder_path_cursor<G>::preorder_path_cursor;
+	using path_cursor<G>::path_cursor;
 
 	/// \brief		Finds next path in postorder traversal.
 	preorder_path_iterator & operator ++()
@@ -36,7 +35,7 @@ struct preorder_path_iterator : preorder_path_cursor<G>
 
 		for (std::size_t n = 0; n < cursor_depth && !match(); ++n)
 		{
-			preorder_path_cursor<G>::skip();
+			path_cursor<G>::skip();
 		}
 	}
 };

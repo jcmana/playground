@@ -10,12 +10,12 @@
 #include "../../generic/generic/bidirectional_map.hpp"
 
 #include "containers/graph/node_centric.hpp"
-#include "containers/graph/cursors/preorder_path_cursor.hpp"
-#include "containers/graph/cursors/postorder_path_cursor.hpp"
+#include "containers/graph/cursors/path_cursor.hpp"
 #include "containers/graph/iterators/preorder_edge_iterator.hpp"
 #include "containers/graph/iterators/preorder_node_iterator.hpp"
 #include "containers/graph/iterators/preorder_path_iterator.hpp"
 #include "containers/graph/iterators/postorder_edge_iterator.hpp"
+#include "containers/graph/iterators/postorder_path_iterator.hpp"
 #include "containers/graph/search/dijkstra.hpp"
 #include "containers/graph/ordering/preordered.hpp"
 
@@ -215,7 +215,7 @@ void graph_test()
 	{
 		using namespace containers::graph;
 
-		preorder_path_cursor<graph> c(g, r_s1);
+		path_cursor<graph> c(g, r_s1);
 
 		std::cout << c->back().offset << std::endl;
 
@@ -252,7 +252,7 @@ void graph_test()
 	}
 
 	// Preorder path iterator with skipping:
-	if (true)
+	if (false)
 	{
 		using namespace containers::graph;
 
@@ -267,6 +267,20 @@ void graph_test()
 			{
 				it.skip();
 			}
+		}
+	}
+
+	// Postorder path iterator:
+	if (true)
+	{
+		using namespace containers::graph;
+
+		postorder_path_iterator<graph> it(g, struct_r);
+		postorder_path_iterator<graph> it_end(g);
+
+		for (; it != it_end; ++it)
+		{
+			std::cout << g[g[it->back()].source].property << " -> " << g[g[it->back()].target].property << std::endl;
 		}
 	}
 }
