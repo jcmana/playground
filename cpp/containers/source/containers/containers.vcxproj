@@ -113,9 +113,9 @@
   <ItemGroup>
     <ClInclude Include="..\..\include\containers\cursor.hpp" />
     <ClInclude Include="..\..\include\containers\filter_if.hpp" />
-    <ClInclude Include="..\..\include\containers\graph\cursors\postorder_path_cursor.hpp" />
-    <ClInclude Include="..\..\include\containers\graph\cursors\preoder_path_cursor.hpp" />
+    <ClInclude Include="..\..\include\containers\graph\cursors\path_cursor.hpp" />
     <ClInclude Include="..\..\include\containers\graph\iterators\postorder_edge_iterator.hpp" />
+    <ClInclude Include="..\..\include\containers\graph\iterators\postorder_path_iterator.hpp" />
     <ClInclude Include="..\..\include\containers\graph\iterators\preorder_edge_iterator.hpp" />
     <ClInclude Include="..\..\include\containers\graph\iterators\preorder_node_iterator.hpp" />
     <ClInclude Include="..\..\include\containers\graph\iterators\preorder_path_iterator.hpp" />
