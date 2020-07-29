@@ -45,9 +45,9 @@ public:
 		E property;
 	};
 
-	/// \brief		Create a node with property.
+	/// \brief		Adds a node with property.
 	template <typename ... A>
-	node create_node(A && ... node_property_args)
+	node add_node(A && ... node_property_args)
 	{
 		node_storage ns = {{}, {}, node_property_args ...};
 		m_nodes.emplace_back(std::move(ns));
@@ -56,16 +56,16 @@ public:
 		return n;
 	}
 
-	/// \brief		Create an edge with property between nodes.
+	/// \brief		Adds an edge with property between nodes.
 	template <typename ... A>
-	edge create_edge(node source_node, node target_node, A && ... edge_property_args)
+	edge add_edge(node source_node, node target_node, A && ... edge_property_args)
 	{
 		edge_storage es = {source_node.offset, target_node.offset, edge_property_args ...};
 		m_edges.emplace_back(std::move(es));
 		edge e = {m_edges.size() - 1};
 
-		m_nodes[source_node.offset].outgoing.push_back({e.offset});
-		m_nodes[target_node.offset].incoming.push_back({e.offset});
+		m_nodes[source_node.offset].outgoing.push_back(e);
+		m_nodes[target_node.offset].incoming.push_back(e);
 
 		return e;
 	}

@@ -32,24 +32,24 @@ void graph_test()
 	static constexpr int EDGE_AREF = 2;
 
 	// add nodes
-	auto struct_r = g.create_node("struct_root");
-	auto struct_1 = g.create_node("struct_1");
-	auto struct_2 = g.create_node("struct_2");
-	auto struct_3 = g.create_node("struct_3");
-	auto struct_4 = g.create_node("struct_4");
-	auto struct_5 = g.create_node("struct_5");
-	auto struct_6 = g.create_node("struct_6");
+	auto struct_r = g.add_node("struct_root");
+	auto struct_1 = g.add_node("struct_1");
+	auto struct_2 = g.add_node("struct_2");
+	auto struct_3 = g.add_node("struct_3");
+	auto struct_4 = g.add_node("struct_4");
+	auto struct_5 = g.add_node("struct_5");
+	auto struct_6 = g.add_node("struct_6");
 	
 	// add edges
-	auto r_s1 = g.create_edge(struct_r, struct_1, EDGE_SREF);
-	auto r_s2 = g.create_edge(struct_r, struct_2, EDGE_SREF);
-	g.create_edge(struct_1, struct_3, EDGE_SREF);
-	g.create_edge(struct_1, struct_4, EDGE_SREF);
-	g.create_edge(struct_3, struct_4, EDGE_SREF);
-	//g.create_edge(struct_4, struct_5, EDGE_SREF);
-	//g.create_edge(struct_5, struct_6, EDGE_SREF);
-	//g.create_edge(struct_5, struct_1, EDGE_SREF);			// cyclic edge
-	g.create_edge(struct_2, struct_5, EDGE_SREF);
+	auto r_s1 = g.add_edge(struct_r, struct_1, EDGE_SREF);
+	auto r_s2 = g.add_edge(struct_r, struct_2, EDGE_SREF);
+	g.add_edge(struct_1, struct_3, EDGE_SREF);
+	g.add_edge(struct_1, struct_4, EDGE_SREF);
+	g.add_edge(struct_3, struct_4, EDGE_SREF);
+	g.add_edge(struct_4, struct_5, EDGE_SREF);
+	g.add_edge(struct_5, struct_6, EDGE_SREF);
+	//g.add_edge(struct_5, struct_1, EDGE_SREF);			// cyclic edge
+	g.add_edge(struct_2, struct_5, EDGE_SREF);
 
 	/*
     // Cursor:
@@ -141,6 +141,7 @@ void graph_test()
 	std::cout << std::endl;
 	*/
 
+	// Preorder core:
 	if (false)
 	{
 		using namespace std;
@@ -173,7 +174,8 @@ void graph_test()
 		}
 	}
 
-	if (true)
+	// Postorder core:
+	if (false)
 	{
 		using namespace std;
 
@@ -206,5 +208,65 @@ void graph_test()
 		while (e.back().offset != d.back().offset);
 
 		cout << g[g[d.back()].source].property << " -> " << g[g[d.back()].target].property << endl;
+	}
+
+	// Preorder path cursor:
+	if (false)
+	{
+		using namespace containers::graph;
+
+		preorder_path_cursor<graph> c(g, r_s1);
+
+		std::cout << c->back().offset << std::endl;
+
+		while (c.match() == false)
+		{
+			c.expand();
+			std::cout << c->back().offset << std::endl;
+		}
+
+		while (c.match())
+		{
+			c.consume();
+		}
+
+		while (c.match() == false)
+		{
+			c.expand();
+			std::cout << c->back().offset << std::endl;
+		}
+	}
+
+	// Preorder path iterator:
+	if (false)
+	{
+		using namespace containers::graph;
+
+		preorder_path_iterator<graph> it(g, struct_r);
+		preorder_path_iterator<graph> it_end(g);
+
+		for (; it != it_end; ++it)
+		{
+			std::cout << g[g[it->back()].source].property << " -> " << g[g[it->back()].target].property << std::endl;
+		}
+	}
+
+	// Preorder path iterator with skipping:
+	if (true)
+	{
+		using namespace containers::graph;
+
+		preorder_path_iterator<graph> it(g, struct_r);
+		preorder_path_iterator<graph> it_end(g);
+
+		for (; it != it_end; ++it)
+		{
+			std::cout << g[g[it->back()].source].property << " -> " << g[g[it->back()].target].property << std::endl;
+
+			if (it->back().offset == 3)
+			{
+				it.skip();
+			}
+		}
 	}
 }
