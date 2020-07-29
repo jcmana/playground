@@ -6,6 +6,7 @@
 namespace containers {
 namespace graph {
 
+/// \brief		Dual-stack graph traversal.
 template<typename G>
 class path_cursor
 {
@@ -28,37 +29,42 @@ public:
 		m_stack_down.pop_back();
 	}
 
+	/// \brief		Removes last node from both stacks.
 	void consume()
 	{
 		m_stack_down.pop_back();
 		m_stack_path.pop_back();
 	}
 
+	/// \brief		Expands last node from expansion stack.
 	void expand()
 	{
-		const auto e = m_stack_down.back();
-		const auto n = m_graph[e].target;
+		const auto edge = m_stack_down.back();
+		const auto node = m_graph[edge].target;
 
-		const auto & es = m_graph[e];
-		const auto & ns = m_graph[n];
+		const auto & edge_storage = m_graph[edge];
+		const auto & node_storage = m_graph[node];
 
-		for (auto it = ns.outgoing.rbegin(); it < ns.outgoing.rend(); ++it)
+		// Expand in reverse order (to visit leftmost subtrees first)
+		for (auto it = node_storage.outgoing.rbegin(); it < node_storage.outgoing.rend(); ++it)
 		{
 			m_stack_down.push_back(*it);
 		}
 
 #ifndef NDEBUG
+		// Check if adding current edge creates a cycle
 		{
 			const auto pred = [e](typename G::edge edge)
 			{
 				return e.offset == edge.offset;
 			};
-
 			const auto it = std::find_if(m_stack_path.begin(), m_stack_path.end(), pred);
+
 			assert(it == m_stack_path.end() && "Graph cycle detected.");
 		}
 #endif
 
+		// Push the expanded edge onto path stack
 		m_stack_path.push_back(e);
 	}
 
@@ -135,19 +141,19 @@ public:
 		return &m_stack_path;
 	}
 
-	/// \brief			Stack expansion is empty.
+	/// \brief			Expansion stack is empty.
 	bool empty() const
 	{
 		return m_stack_down.empty();
 	}
 
-	/// \brief			Stack expansion is at bottom.
+	/// \brief			Expansion and path stack last nodes match.
 	bool match() const
 	{
 		return m_stack_down.back().offset == m_stack_path.back().offset;
 	}
 
-	/// \brief			Depth (distance from initial `edge`).
+	/// \brief			Path stack depth.
 	std::size_t depth() const
 	{
 		return m_stack_path.size();
