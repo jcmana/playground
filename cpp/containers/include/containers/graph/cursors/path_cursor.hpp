@@ -15,30 +15,6 @@ public:
 	{
 	}
 
-	path_cursor(G & graph, typename G::node node) :
-		m_graph(graph)
-	{
-		if (m_graph[node].outgoing.empty())
-		{
-			return;
-		}
-
-		for (auto it = m_graph[node].outgoing.rbegin(); it != m_graph[node].outgoing.rend(); ++it)
-		{
-			m_stack_down.push_back(*it);
-		}
-
-		expand();
-	}
-
-	path_cursor(G & graph, typename G::edge edge) :
-		m_graph(graph)
-	{
-		m_stack_down.push_back(edge);
-
-		expand();
-	}
-
 	path_cursor(G & graph, std::vector<typename G::edge> edges) :
 		m_graph(graph),
 		m_stack_down(edges)

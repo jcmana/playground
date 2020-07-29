@@ -51,96 +51,6 @@ void graph_test()
 	//g.add_edge(struct_5, struct_1, EDGE_SREF);			// cyclic edge
 	g.add_edge(struct_2, struct_5, EDGE_SREF);
 
-	/*
-    // Cursor:
-    if (false)
-    {
-        using namespace containers::graph;
-
-        graph::edge * edge_ptr = nullptr;
-
-        postorder_path_cursor<graph> c(r_s1);
-
-        while (c.empty() == false)
-        {
-            if (c.valid())
-            {
-                std::cout << c->source->property << "->" << c->target->property << "\n";
-                c.consume();
-            }
-            else
-            {
-                c.expand();
-            }
-        }
-    }
-
-    // Postorder edge iterator:
-    if (true)
-    {
-        using namespace containers::graph;
-
-        postorder_edge_iterator<graph> it(r_s1);
-        postorder_edge_iterator<graph> it_end;
-
-        for (; it != it_end; ++it)
-        {
-            std::cout << it->source->property << "->" << it->target->property << "\n";
-        }
-    }
-
-    if (false)
-    {
-        using namespace containers::graph;
-
-        preorder_path_cursor<graph> c;
-    }
-
-	// Node iterator:
-	if (false)
-	{
-		containers::graph::preorder_node_iterator<graph> it(root);
-		containers::graph::preorder_node_iterator<graph> it_end;
-		for (; it != it_end; ++it)
-		{
-			std::cout << it->property << std::endl;
-		}
-	}
-
-	// Path iterator:
-	if (false)
-	{
-		containers::graph::preorder_path_iterator<graph> it(r_s1);
-		containers::graph::preorder_path_iterator<graph> it_end;
-
-		for (; it != it_end; ++it)
-		{
-			auto path = *it;
-
-			std::cout << path.back()->target->property << ": ";
-			for (const graph::edge * edge_ptr : path)
-			{
-				std::cout << edge_ptr->source->property << "->" << edge_ptr->target->property << " ";
-			}
-
-			std::cout << std::endl;
-		}
-	}
-
-	// Dijkstra search:
-	if (false)
-	{
-		auto path = containers::graph::dijkstra<graph>(g, root, struct_5);
-
-		for (const graph::node * node_ptr : path)
-		{
-			std::cout << node_ptr->property << "\n";
-		}
-	}
-
-	std::cout << std::endl;
-	*/
-
 	// Preorder core:
 	if (false)
 	{
@@ -210,12 +120,12 @@ void graph_test()
 		cout << g[g[d.back()].source].property << " -> " << g[g[d.back()].target].property << endl;
 	}
 
-	// Preorder path cursor:
+	// Path cursor:
 	if (false)
 	{
 		using namespace containers::graph;
 
-		path_cursor<graph> c(g, r_s1);
+		path_cursor<graph> c(g, {r_s1});
 
 		std::cout << c->back().offset << std::endl;
 
@@ -238,7 +148,7 @@ void graph_test()
 	}
 
 	// Preorder path iterator:
-	if (false)
+	if (true)
 	{
 		using namespace containers::graph;
 
@@ -252,7 +162,7 @@ void graph_test()
 	}
 
 	// Preorder path iterator with skipping:
-	if (false)
+	if (true)
 	{
 		using namespace containers::graph;
 
@@ -283,4 +193,17 @@ void graph_test()
 			std::cout << g[g[it->back()].source].property << " -> " << g[g[it->back()].target].property << std::endl;
 		}
 	}
+
+	// Dijkstra search:
+	/*
+	if (false)
+	{
+	auto path = containers::graph::dijkstra<graph>(g, struct_r, struct_5);
+
+	for (const graph::node * node_ptr : path)
+	{
+	std::cout << node_ptr->property << "\n";
+	}
+	}
+	*/
 }

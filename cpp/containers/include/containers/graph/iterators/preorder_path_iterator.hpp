@@ -6,38 +6,75 @@ namespace containers {
 namespace graph {
 
 template<typename G>
-struct preorder_path_iterator : path_cursor<G>
+class preorder_path_iterator
 {
-	using path_cursor<G>::path_cursor;
+public:
+	preorder_path_iterator(G & graph) :
+		m_cursor(graph)
+	{
+	}
+
+	preorder_path_iterator(G & graph, typename G::node node) :
+		m_cursor(graph, std::vector<typename G::edge>(graph[node].outgoing.rbegin(), graph[node].outgoing.rend()))
+	{
+	}
+
+	preorder_path_iterator(G & graph, typename G::edge edge) :
+		m_cursor(graph, edge)
+	{
+	}
 
 	/// \brief		Finds next path in postorder traversal.
 	preorder_path_iterator & operator ++()
 	{
-		const auto cursor_depth = depth();
+		const auto cursor_depth = m_cursor.depth();
 
-		for (std::size_t n = 0; n < cursor_depth && match(); ++n)
+		for (std::size_t n = 0; n < cursor_depth && m_cursor.match(); ++n)
 		{
-			consume();
+			m_cursor.consume();
 		}
 
-		if (empty() == false)
+		if (m_cursor.empty() == false)
 		{
-			expand();
+			m_cursor.expand();
 		}
 
 		return (*this);
 	}
 
+	bool operator ==(const preorder_path_iterator & other) const
+	{
+		return m_cursor == other.m_cursor;
+	}
+
+	bool operator !=(const preorder_path_iterator & other) const
+	{
+		return m_cursor != other.m_cursor;
+	}
+
+	const std::vector<typename G::edge> & operator  *() const
+	{
+		return *m_cursor;
+	}
+
+	const std::vector<typename G::edge> * operator ->() const
+	{
+		return &*m_cursor;
+	}
+
 	/// \brief		Skips entire subtree.
 	void skip()
 	{
-		const auto cursor_depth = depth();
+		const auto cursor_depth = m_cursor.depth();
 
-		for (std::size_t n = 0; n < cursor_depth && !match(); ++n)
+		for (std::size_t n = 0; n < cursor_depth && !m_cursor.match(); ++n)
 		{
-			path_cursor<G>::skip();
+			m_cursor.skip();
 		}
 	}
+
+private:
+	path_cursor<G> m_cursor;
 };
 
 } // namespace graph
