@@ -64,10 +64,10 @@
     <ClInclude Include="..\..\include\containers\graph\iterators\postorder_edge_iterator.hpp">
       <Filter>Header Files\graph\iterators</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\containers\graph\iterators\postorder_path_iterator.hpp">
-      <Filter>Header Files\graph\iterators</Filter>
+    <ClInclude Include="..\..\include\containers\graph\cursors\postorder_path_cursor.hpp">
+      <Filter>Header Files\graph\cursors</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\containers\graph\cursors\path_cursor.hpp">
+    <ClInclude Include="..\..\include\containers\graph\cursors\preoder_path_cursor.hpp">
       <Filter>Header Files\graph\cursors</Filter>
     </ClInclude>
   </ItemGroup>

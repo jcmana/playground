@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../cursors/path_cursor.hpp"
+#include "../cursors/postorder_path_cursor.hpp"
 
 namespace containers {
 namespace graph {
@@ -52,7 +52,7 @@ public:
     friend bool operator !=(const postorder_edge_iterator<G> & lhs, const postorder_edge_iterator<G> & rhs);
 
 private:
-    path_cursor<G> m_cursor;
+    postorder_path_cursor<G> m_cursor;
 };
 
 template<typename G>
