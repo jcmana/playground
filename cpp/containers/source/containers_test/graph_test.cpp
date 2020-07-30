@@ -9,12 +9,14 @@
 #include "../../generic/generic/bidirectional_map.hpp"
 
 #include "containers/graph/node_centric.hpp"
+#include "containers/graph/cursors/path_cursor.hpp"
 #include "containers/graph/cursors/preorder_path_cursor.hpp"
 #include "containers/graph/cursors/postorder_path_cursor.hpp"
 #include "containers/graph/iterators/preorder_edge_iterator.hpp"
 #include "containers/graph/iterators/preorder_node_iterator.hpp"
 #include "containers/graph/iterators/preorder_path_iterator.hpp"
 #include "containers/graph/iterators/postorder_edge_iterator.hpp"
+#include "containers/graph/iterators/postorder_path_iterator.hpp"
 #include "containers/graph/search/dijkstra.hpp"
 #include "containers/graph/ordering/preordered.hpp"
 
@@ -55,20 +57,20 @@ void graph_test()
 	//g.create_edge(struct_5, struct_1, EDGE_SREF);			// cyclic edge
     g.create_edge(struct_2, struct_5, EDGE_SREF);
 
-    // Cursor:
+    // Path cursor:
     if (false)
     {
         using namespace containers::graph;
 
         graph::edge * edge_ptr = nullptr;
 
-        postorder_path_cursor<graph> c(r_s1);
+		path_cursor<graph> c({r_s1});
 
         while (c.empty() == false)
         {
-            if (c.valid())
+            if (c.match())
             {
-                std::cout << c->source->property << "->" << c->target->property << "\n";
+                std::cout << c->back()->source->property << "->" << c->back()->target->property << "\n";
                 c.consume();
             }
             else
@@ -79,7 +81,7 @@ void graph_test()
     }
 
     // Postorder edge iterator:
-    if (true)
+    if (false)
     {
         using namespace containers::graph;
 
@@ -90,13 +92,6 @@ void graph_test()
         {
             std::cout << it->source->property << "->" << it->target->property << "\n";
         }
-    }
-
-    if (false)
-    {
-        using namespace containers::graph;
-
-        preorder_path_cursor<graph> c;
     }
 
 	// Node iterator:
@@ -110,23 +105,37 @@ void graph_test()
 		}
 	}
 
-	// Path iterator:
-	if (false)
+	// Preorder path iterator:
+	if (true)
 	{
-		containers::graph::preorder_path_iterator<graph> it(r_s1);
-		containers::graph::preorder_path_iterator<graph> it_end;
+		using namespace containers::graph;
+
+		preorder_path_iterator<graph> it(r_s1);
+		preorder_path_iterator<graph> it_end;
 
 		for (; it != it_end; ++it)
 		{
-			auto path = *it;
-
-			std::cout << path.back()->target->property << ": ";
-			for (const graph::edge * edge_ptr : path)
+			std::cout << it->back()->target->property << ": ";
+			for (const graph::edge * edge_ptr : *it)
 			{
 				std::cout << edge_ptr->source->property << "->" << edge_ptr->target->property << " ";
 			}
 
 			std::cout << std::endl;
+		}
+	}
+
+	// Postorder path iterator:
+	if (false)
+	{
+		using namespace containers::graph;
+
+		postorder_path_iterator<graph> it(root);
+		postorder_path_iterator<graph> it_end;
+
+		for (; it != it_end; ++it)
+		{
+			std::cout << it->back()->source->property << "->" << it->back()->target->property << "\n";
 		}
 	}
 
