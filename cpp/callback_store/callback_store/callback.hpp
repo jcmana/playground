@@ -70,7 +70,10 @@ callback<T>::invoke(F method_ptr, A && ... args) const
 {
     if (link_element::linked())
     {
+        //static_cast<callback_listener<T> *>(m_interface_ptr)->invoke(method_ptr, std::forward<A>(args) ...);
+
         (m_interface_ptr->*method_ptr)(std::forward<A>(args) ...);
+        std::invoke(method_ptr, m_interface_ptr, std::forward<A>(args) ...);
     }
 }
 

@@ -25,5 +25,8 @@
     <ClInclude Include="callback_store.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="callback_listener.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

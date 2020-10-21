@@ -4,6 +4,7 @@
 #include <chrono>
 
 #include "callback_store.hpp"
+#include "callback_listener.hpp"
 
 struct callback_intf
 {
@@ -19,6 +20,18 @@ struct callback_intf
     }
 };
 
+struct callback_abstract_intf
+{
+    virtual void method()
+    {
+    }
+
+    virtual void method_slow()
+    {
+    }
+};
+
+
 void function()
 {
     std::cout << "function(): " << std::endl;
@@ -33,7 +46,7 @@ void function_slow()
 int main()
 {
     // Simple callback_store test:
-    if (true)
+    if (false)
     {
         callback_intf cia;
         callback_intf cib;
@@ -94,13 +107,30 @@ int main()
     }
 
     // Function callback_store test:
-    if (true)
+    if (false)
     {
         callback_store<void()> s;
         auto g = s.subscribe(function);
         auto g_slow = s.subscribe(function_slow);
 
         s.invoke();
+    }
+
+    // callback_listener test:
+    if (true)
+    {
+        callback_intf ci;
+        callback_listener<callback_abstract_intf, callback_intf> cl;
+        cl.bind(&callback_abstract_intf::method, &callback_intf::method, ci);
+        cl.invoke(&callback_abstract_intf::method);
+
+        /*
+        auto cbpack = make_callback<callback_intf>(cl);
+        auto cb = std::move(std::get<0>(cbpack));
+        auto cg = std::move(std::get<1>(cbpack));
+        */
+
+        //cb.invoke(&callback_intf::method);
     }
 
     return 0;
