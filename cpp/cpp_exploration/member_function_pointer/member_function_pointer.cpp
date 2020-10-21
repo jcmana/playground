@@ -91,14 +91,35 @@ int main()
 		delete ib_ptr;
 	}
 
+    const auto intf_method_id = pointer_to_member_id(&intf::method);
+    const auto intf_method_const_id = pointer_to_member_id(&intf::method_const);
+    const auto intf_method_parametric_id = pointer_to_member_id(&intf::method_parameteric);
+
     // member function identification:
     {
-        std::cout << std::hex << "0x" << pointer_to_member_id(&intf::method) << std::endl;
-        std::cout << std::hex << "0x" << pointer_to_member_id(&intf::method_const) << std::endl;
-        std::cout << std::hex << "0x" << pointer_to_member_id(&intf::method_parameteric) << std::endl;
+        std::cout << std::hex << "0x" << intf_method_id << std::endl;
+        std::cout << std::hex << "0x" << intf_method_const_id << std::endl;
+        std::cout << std::hex << "0x" << intf_method_parametric_id << std::endl;
     }
 
 	// WHAT IN THE ACTUAL FUCK?!
+
+    // cast the id back to member pointer:
+    {
+        using method_ptr_t = void (intf:: *)();
+                
+        method_ptr_t intf_method_ptr;
+        *reinterpret_cast<std::ptrdiff_t *>(&intf_method_ptr) = intf_method_id;
+
+        intf * ia_ptr = new impl_a;
+        intf * ib_ptr = new impl_b;
+
+        (ia_ptr->*intf_method_ptr)();
+        (ib_ptr->*intf_method_ptr)();
+
+        delete ia_ptr;
+        delete ib_ptr;
+    }
 
 	return 0;
 }
