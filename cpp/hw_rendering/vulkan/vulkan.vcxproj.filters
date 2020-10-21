@@ -31,13 +31,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shader.vert.glsl">
-      <Filter>Shader Files</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <CustomBuild Include="Shader.frag.glsl">
       <Filter>Shader Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="Shader.vert.glsl" />
   </ItemGroup>
 </Project>
