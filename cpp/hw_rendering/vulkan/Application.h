@@ -20,12 +20,15 @@ private:
 	void initialize();
 	void deinitialize();
 
-	std::vector<std::uint32_t> readFile(const std::string & filename) const;
+    void drawFrame();
+
+	std::vector<char> readSharedFile(const std::string & filename) const;
 
 private:
 	/// \brief		Main application window.
 	GLFWwindow * m_window_ptr = nullptr;
 
+    // Pipeline:
 	VkInstance m_instance;
 
 	VkDevice m_device;
@@ -44,4 +47,19 @@ private:
 
 	VkShaderModule m_vertexShader;
 	VkShaderModule m_fragmentShader;
+
+    VkPipelineLayout m_pipelineLayout;
+    VkRenderPass m_renderPass;
+    VkPipeline m_pipeline;
+
+    // Framebuffers:
+    std::vector<VkFramebuffer> m_framebuffers;
+
+    // Commands:
+    VkCommandPool m_commandPool;
+    std::vector<VkCommandBuffer> m_commandBuffers;
+
+    // Synchronization:
+    VkSemaphore m_imageAvailableSemaphore;
+    VkSemaphore m_renderFinishedSemaphore;
 };
