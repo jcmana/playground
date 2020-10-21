@@ -81,9 +81,10 @@ public:
 
         // JMTODO: threads need to be stateful to check if it still runs
 
+        // Pool size reduction
         if (diff < 0)
         {
-            for (unsigned int n = 0; n > diff; --n)
+            for (int n = 0; n > diff; --n)
             {
                 std::packaged_task<T()> task;
                 m_queue.push(std::move(task));
@@ -91,15 +92,18 @@ public:
 
             auto predicate = [](const auto & thread)
             {
-                return thread.state == thread.state::finished;
+                //return thread.state == thread.state::finished;
+                return true;
             };
 
-            m_pool.erase(std::remove(m_pool.begin(), m_pool.end(), predicate));
+            
+
         }
 
+        // Pool size increase
         if (diff > 0)
         {
-
+            m_pool.resize(size);
         }
     }
 
