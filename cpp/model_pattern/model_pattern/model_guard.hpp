@@ -25,8 +25,10 @@ public:
     ~model_guard();
 
     /// \brief      Modifiable model value.
+    /*
     typename std::enable_if_t<std::is_const<M>::value != true, T> &
     value();
+    */
 
     /*
     typename std::enable_if_t<std::is_const<M>::value == true, const T> &
@@ -68,12 +70,14 @@ model_guard<M, T>::~model_guard()
     release();
 }
 
+/*
 template<typename M, typename T>
 typename std::enable_if_t<std::is_const<M>::value != true, T> &
 model_guard<M, T>::value()
 {
     return m_model_ref.m_value;
 }
+*/
 
 template<typename M, typename T>
 model_guard<M, T>::model_guard(M & model_ref) :

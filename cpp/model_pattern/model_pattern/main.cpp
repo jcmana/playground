@@ -188,6 +188,7 @@ void main()
     // model_guard test:
     if (false)
     {
+        /*
         int n = 6;
         model<int> m(n);
 
@@ -201,6 +202,7 @@ void main()
             auto ma = m.accessor_guard();
             std::cout << ma.value() << std::endl;
         }
+        */
     }
 
     // wait test:
