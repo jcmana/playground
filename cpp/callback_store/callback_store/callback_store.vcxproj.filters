@@ -28,5 +28,8 @@
     <ClInclude Include="callback_listener.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="callback_factory.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

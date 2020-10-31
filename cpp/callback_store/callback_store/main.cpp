@@ -4,13 +4,14 @@
 #include <chrono>
 
 #include "callback_store.hpp"
+#include "callback_factory.hpp"
 #include "callback_listener.hpp"
 
 struct callback_intf
 {
     void method()
     {
-        std::cout << "callback_intf::method(): " << std::endl;
+        std::cout << "callback_intf::method()" << std::endl;
     }
 
     void method_slow()
@@ -31,10 +32,9 @@ struct callback_abstract_intf
     }
 };
 
-
 void function()
 {
-    std::cout << "function(): " << std::endl;
+    std::cout << "function()" << std::endl;
 }
 
 void function_slow()
@@ -43,8 +43,81 @@ void function_slow()
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 }
 
+auto lambda = []
+{
+    std::cout << "lambda[]" << std::endl;
+};
+
 int main()
 {
+    // Core idea behind callback wrapper:
+    if (false)
+    {
+        // Calling back to function
+        {
+            auto function_ptr = function;
+            function_ptr();
+        }
+
+        // Calling back to method
+        {
+            callback_intf ci;
+            auto method_ptr = &callback_intf::method;
+            (ci.*method_ptr)();
+        }
+
+        // Calling back to functor
+        {
+            callback_intf ci;
+            auto functor = std::bind(&callback_intf::method_slow, &ci);
+            functor();
+        }
+    }
+
+    if (true)
+    {
+        callback<void(*)> cbf;
+        callback<callback_intf> cbi; 
+
+        // Lambda
+        {
+            auto [cb, cg] = make_callback(lambda);
+            cb.invoke();
+        }
+
+        // Plain function
+        {
+            auto [cb, cg] = make_callback(function);
+            cb.invoke();
+        }
+
+        // std::bind functor
+        {
+            callback_intf ci;
+            auto [cb, cg] = make_callback(std::bind(&callback_intf::method, &ci));
+            cb.invoke();
+        }
+
+        // std::function functor
+        {
+            auto f = std::function(function_slow);
+
+            auto [cb, cg] = make_callback(f);
+            cb.invoke();
+
+            auto cb_move = std::move(cb);
+        }
+
+        // interface callback
+        {
+            callback_intf ci;
+
+            auto [cb, cg] = make_callback(ci);
+            cb.invoke(&callback_intf::method);
+        }
+    }
+
+    /*
     // Simple callback_store test:
     if (false)
     {
@@ -117,21 +190,20 @@ int main()
     }
 
     // callback_listener test:
-    if (true)
+    if (false)
     {
         callback_intf ci;
         callback_listener<callback_abstract_intf, callback_intf> cl;
         cl.bind(&callback_abstract_intf::method, &callback_intf::method, ci);
         cl.invoke(&callback_abstract_intf::method);
 
-        /*
         auto cbpack = make_callback<callback_intf>(cl);
         auto cb = std::move(std::get<0>(cbpack));
         auto cg = std::move(std::get<1>(cbpack));
-        */
 
         //cb.invoke(&callback_intf::method);
     }
+    */
 
     return 0;
 }
