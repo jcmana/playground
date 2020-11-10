@@ -15,6 +15,11 @@ struct callback_intf
         std::cout << "callback_intf::method()" << std::endl;
     }
 
+    void method_params(int n)
+    {
+        std::cout << "callback_intf::method_params()" << std::endl;
+    }
+
     void method_slow()
     {
         std::cout << "callback_intf::method_slow()" << std::endl;
@@ -108,8 +113,12 @@ int main()
 
     if (true)
     {
+        // Functors:
         callback<void()> cbf;
-        callback<callback_intf> cbi; 
+        callback<void(int, int, bool)> cbp;
+
+        // Classes:
+        callback<callback_intf> cbi;
 
         // Lambda
         {
