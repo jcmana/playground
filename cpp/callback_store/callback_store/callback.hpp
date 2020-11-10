@@ -10,6 +10,35 @@
 template <typename T, typename E = void>
 class callback;
 
+/// \brief      Scope-guarded callback to invocable.
+/// \param      F       Functor invocation signature (same as std::function).
+template<typename F>
+class callback<F, typename std::enable_if_t<std::is_invocable_v<F> == true>> :
+    private link_element
+{
+public:
+    /// \brief      Default constructor, creates inactive callback.
+    callback()
+    {
+    }
+
+    /// \brief      Constructor, creates active callback.
+    callback(std::function<F> functor, link_element link_element) :
+        link_element(std::move(link_element)),
+        m_functor(std::move(functor))
+    {
+    }
+    /// \brief      Invokes function `T`, if the callback is still active.
+    template<typename ... A>
+    void invoke(A && ... args) const
+    {
+        m_functor(std::forward<A>(args) ...);
+    }
+
+private:
+    std::function<F> m_functor;
+};
+
 /// \brief      Scope-guarded callback to interface.
 ///
 /// Callback is bound to a interface pointer and allows invoking methods
@@ -27,8 +56,8 @@ public:
     }
 
     /// \brief      Constructor, creates active callback.
-    callback(T & inteface_ref, link_element && link_element_rref) :
-        link_element(std::move(link_element_rref)),
+    callback(T & inteface_ref, link_element link_element) :
+        link_element(std::move(link_element)),
         m_interface_ptr(&inteface_ref)
     {
     }
@@ -46,32 +75,4 @@ public:
 
 private:
     T * m_interface_ptr;
-};
-
-/// \brief      Scope-guarded callback to invocable.
-template<typename F>
-class callback<F, typename std::enable_if_t<std::is_invocable_v<F> == true>> :
-    private link_element
-{
-public:
-    /// \brief      Default constructor, creates inactive callback.
-    callback()
-    {
-    }
-
-    /// \brief      Constructor, creates active callback.
-    callback(F functor, link_element && link_element_rref) :
-        link_element(std::move(link_element_rref)),
-        m_functor(std::move(functor))
-    {
-    }
-    /// \brief      Invokes function `T`, if the callback is still active.
-    template<typename ... A>
-    void invoke(A && ... args) const
-    {
-        m_functor(std::forward<A>(args) ...);
-    }
-
-private:
-    F m_functor;
 };

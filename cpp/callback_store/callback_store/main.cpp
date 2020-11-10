@@ -2,6 +2,7 @@
 
 #include <thread>
 #include <chrono>
+#include <type_traits>
 
 #include "callback_store.hpp"
 #include "callback_factory.hpp"
@@ -48,6 +49,22 @@ auto lambda = []
     std::cout << "lambda[]" << std::endl;
 };
 
+// Function-like callback:
+template<typename R, typename ... A>
+struct flc;
+
+template<typename R, typename ... A>
+struct flc<R(A ...)>
+{
+    template<typename F>
+    flc(F functor) :
+        m_functor(std::move(functor))
+    {
+    }
+
+    std::function<R(A ...)> m_functor;
+};
+
 int main()
 {
     // Core idea behind callback wrapper:
@@ -74,27 +91,42 @@ int main()
         }
     }
 
+    if (false)
+    {
+        flc<void()> c(function);
+
+        auto lambda = []
+        {
+            std::cout << "holyfuck lambda" << std::endl;
+        };
+
+        flc<void()> l(lambda);
+
+        auto ci = callback_intf();
+        flc<void()> b(std::bind(&callback_intf::method, ci));
+    }
+
     if (true)
     {
-        callback<void(*)> cbf;
+        callback<void()> cbf;
         callback<callback_intf> cbi; 
 
         // Lambda
         {
-            auto [cb, cg] = make_callback(lambda);
+            auto [cb, cg] = make_callback<void()>(lambda);
             cb.invoke();
         }
 
         // Plain function
         {
-            auto [cb, cg] = make_callback(function);
+            auto [cb, cg] = make_callback<void()>(function);
             cb.invoke();
         }
 
         // std::bind functor
         {
             callback_intf ci;
-            auto [cb, cg] = make_callback(std::bind(&callback_intf::method, &ci));
+            auto [cb, cg] = make_callback<void()>(std::bind(&callback_intf::method, &ci));
             cb.invoke();
         }
 

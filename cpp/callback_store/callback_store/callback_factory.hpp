@@ -8,7 +8,7 @@
 /// \brief      Creates active `callback` and appropriate `callback_guard`.
 /// \relates    callback<T>
 template<typename F, typename = std::enable_if_t<std::is_invocable_v<F> == true>>
-std::tuple<callback<F>, callback_guard<F>> make_callback(F functor)
+std::tuple<callback<F>, callback_guard<F>> make_callback(std::function<F> functor)
 {
     auto [link_a, link_b] = make_link();
 
