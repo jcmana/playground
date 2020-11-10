@@ -122,20 +122,20 @@ int main()
 
         // Lambda
         {
-            auto [cb, cg] = make_callback<void()>(lambda);
-            cb.invoke();
+            //auto [cb, cg] = make_callback(lambda);
+            //cb.invoke();
         }
 
         // Plain function
         {
-            auto [cb, cg] = make_callback<void()>(function);
+            auto [cb, cg] = make_callback(function);
             cb.invoke();
         }
 
         // std::bind functor
         {
             callback_intf ci;
-            auto [cb, cg] = make_callback<void()>(std::bind(&callback_intf::method, &ci));
+            auto [cb, cg] = make_callback<callback_intf>(&callback_intf::method, ci);
             cb.invoke();
         }
 
@@ -146,7 +146,7 @@ int main()
             auto [cb, cg] = make_callback(f);
             cb.invoke();
 
-            auto cb_move = std::move(cb);
+            //auto cb_move = std::move(cb);
         }
 
         // interface callback
