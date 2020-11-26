@@ -1,0 +1,20 @@
+#frame, #frame_2, #frame_3
+{
+	border-style:solid;
+	border-width:1px;
+	border-color:#0078B3;
+}
+
+#frame
+{
+	border-left-style:none;
+	border-top-style:none;
+	border-bottom-style:none;
+}
+
+#frame_3
+{
+	border-left-style:none;
+	border-right-style:none;
+	border-bottom-style:none;
+}

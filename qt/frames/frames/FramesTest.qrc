@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="FramesTest">
+      <file>Style.qss</file>
+    </qresource>
+</RCC>
