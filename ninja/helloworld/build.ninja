@@ -1,0 +1,31 @@
+builddir = logs
+
+rule CPP_COMPILE
+  command = cl ${FLAGS} /Zi /Fo$OBJ_OUT /Fd$PDB_OUT /c $in
+
+rule CPP_LINK
+  command = link ${FLAGS} $in /debug /out:$BIN_OUT /pdb:$PDB_OUT
+
+rule RUN
+  command = $in ${FLAGS}
+
+SRC_DIR = ../src
+BIN_DIR = bin
+OBJ_DIR = object
+PDB_DIR = bin
+
+build $OBJ_DIR/helloworld.obj $PDB_DIR/helloworld.pdb: CPP_COMPILE $SRC_DIR/helloworld.cpp
+  OBJ_OUT = $OBJ_DIR/helloworld.obj
+  PDB_OUT = $PDB_DIR/helloworld
+  FLAGS = /W3 /EHsc /MDd /Zi /Ob0 /Od /RTC1 /std:c++17
+
+build ${BIN_DIR}/helloworld.exe: CPP_LINK $OBJ_DIR/helloworld.obj
+  BIN_OUT = $BIN_DIR/helloworld.exe
+  PDB_OUT = $BIN_DIR/helloworld.pdb
+  FLAGS = 
+
+build all: phony ${BIN_DIR}/helloworld.exe
+
+build run: RUN ${BIN_DIR}/helloworld.exe
+
+default all
