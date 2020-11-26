@@ -30,19 +30,19 @@ public:
 
 public:
     /// \brief      Default constructor.
-    explicit model();
-
-    /// \brief      Constructor, creates model value by copying.
-    explicit model(const T & other);
-
-    /// \brief      Constructor, creates model value by moving.
-    explicit model(T && other);
+    model();
 
     /// \brief      Copy constructor, copies model value only.
     model(const model & other);
 
     /// \brief      Move constructor, moves value only.
     model(model && other);
+
+    /// \brief      Constructor, creates model value by copying.
+    explicit model(const T & other);
+
+    /// \brief      Constructor, creates model value by moving.
+    explicit model(T && other);
 
     /// \brief      Copy assignment, copies model value only.
     model & operator  =(const model & other);

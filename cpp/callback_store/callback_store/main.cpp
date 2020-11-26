@@ -54,20 +54,9 @@ auto lambda = []
     std::cout << "lambda[]" << std::endl;
 };
 
-// Function-like callback:
-template<typename R, typename ... A>
-struct flc;
 
-template<typename R, typename ... A>
-struct flc<R(A ...)>
+struct forward_call
 {
-    template<typename F>
-    flc(F functor) :
-        m_functor(std::move(functor))
-    {
-    }
-
-    std::function<R(A ...)> m_functor;
 };
 
 int main()
@@ -97,21 +86,6 @@ int main()
     }
 
     if (false)
-    {
-        flc<void()> c(function);
-
-        auto lambda = []
-        {
-            std::cout << "holyfuck lambda" << std::endl;
-        };
-
-        flc<void()> l(lambda);
-
-        auto ci = callback_intf();
-        flc<void()> b(std::bind(&callback_intf::method, ci));
-    }
-
-    if (true)
     {
         // Functors:
         callback<void()> cbf;

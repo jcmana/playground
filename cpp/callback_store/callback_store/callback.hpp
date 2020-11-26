@@ -46,7 +46,7 @@ private:
 /// Callback is bound to a interface pointer and allows invoking methods
 /// from it. Callback requires `callback_guard` to be alive, otherwise it won't
 /// be invoked.
-template<typename T>
+template<typename T, template <typename F> typename I>
 class callback<T, typename std::enable_if_t<std::is_class_v<T>>> :
     private link_element
 {

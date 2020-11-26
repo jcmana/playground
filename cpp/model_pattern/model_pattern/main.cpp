@@ -299,10 +299,23 @@ void main()
         t.join();
     }
 
-    // reference model:
+    // model hierarchy:
     if (true)
     {
-        //Marker marker;
-        //model<Marker &> m(marker);
+        struct a
+        {
+            model<int> n;
+            model<double> u;
+        };
+
+        struct b
+        {
+            model<a> v;
+            model<std::string> name;
+        };
+
+        model<b> k;
+        
+        k.modifier().value().v.modifier().value().n.modifier().value() = 4;
     }
 }
