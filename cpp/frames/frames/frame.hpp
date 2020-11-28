@@ -1,9 +1,9 @@
 #pragma once
 
 #include "xy.hpp"
-#include "frame_default.hpp"
+#include "space_default.hpp"
 
-template<typename F = frame_default>
+template<typename S = space_default>
 struct frame
 {
     struct basis
@@ -37,8 +37,8 @@ struct frame
 };
 
 /// \brief      Computes `xy` in standard `frame` from local coordinates.
-template<typename F>
-xy<F> make_xy(double local_x, double local_y, const frame<F> & local_frame)
+template<typename S>
+xy<S> make_xy(double local_x, double local_y, const frame<S> & local_frame)
 {
     // Matrix inversion:
     //
@@ -52,8 +52,8 @@ xy<F> make_xy(double local_x, double local_y, const frame<F> & local_frame)
 
     const auto base_determinant = local_frame.base_x.x * local_frame.base_y.y - local_frame.base_x.y * local_frame.base_y.x;
 
-    const auto base_x_adjugate = frame<F>::basis{+local_frame.base_y.y, -local_frame.base_x.y};
-    const auto base_y_adjugate = frame<F>::basis{-local_frame.base_y.x, +local_frame.base_x.x};
+    const frame<S>::basis base_x_adjugate = {+local_frame.base_y.y, -local_frame.base_x.y};
+    const frame<S>::basis base_y_adjugate = {-local_frame.base_y.x, +local_frame.base_x.x};
 
     local_x = local_x / base_determinant;
     local_y = local_y / base_determinant;
@@ -65,15 +65,29 @@ xy<F> make_xy(double local_x, double local_y, const frame<F> & local_frame)
 }
 
 /// \brief      Computes `frame` local `x` coordinate from `xy`.
-template<typename F>
-double get_x(const xy<F> & coordinate, const frame<F> & frame)
+template<typename S>
+double get_x(const xy<S> & coordinate, const frame<S> & frame)
 {
     return frame.base_x.x * (coordinate.x - frame.origin.x) + frame.base_y.x * (coordinate.y - frame.origin.y);
 }
 
 /// \brief      Computes `frame` local `y` coordinate from `xy`.
-template<typename F>
-double get_y(const xy<F> & coordinate, const frame<F> & frame)
+template<typename S>
+double get_y(const xy<S> & coordinate, const frame<S> & frame)
 {
     return frame.base_x.y * (coordinate.x - frame.origin.x) + frame.base_y.y * (coordinate.y - frame.origin.y);
+}
+
+/// \brief      Returns local `xy` of `coordinate` in `frame`.
+template<typename S>
+constexpr xy<void> operator  &(xy<S> coordinate, frame<S> frame)
+{
+    return xy<void>{get_x(coordinate, frame), get_y(coordinate, frame)};
+}
+
+/// \brief      Returns `xy` of local `coordinate` from `frame` in space `S`.
+template<typename S>
+constexpr xy<S> operator  &(xy<void> coordinate, frame<S> frame)
+{
+    return make_xy(coordinate.x, coordinate.y, frame);;
 }
