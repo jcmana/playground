@@ -15,4 +15,5 @@ struct xy
 /// This type is bridge between strong-typed `xy`, which ensures using only
 /// coordinates in compatible spaces, and between weak-typed `xy`, which depends
 /// on programmer's knowledge what frame and space it belongs to.
-template struct xy<void>;
+template 
+struct xy<void>;
