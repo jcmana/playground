@@ -8,6 +8,8 @@
 #include "callback_factory.hpp"
 #include "callback_listener.hpp"
 
+#include "../../invocation/invocation/invocation.hpp"
+
 struct callback_intf
 {
     void method()
@@ -54,11 +56,6 @@ auto lambda = []
     std::cout << "lambda[]" << std::endl;
 };
 
-
-struct forward_call
-{
-};
-
 int main()
 {
     // Core idea behind callback wrapper:
@@ -87,12 +84,13 @@ int main()
 
     if (false)
     {
+        /*
         // Functors:
         callback<void()> cbf;
         callback<void(int, int, bool)> cbp;
 
         // Classes:
-        callback<callback_intf> cbi;
+        //callback<callback_intf> cbi;
 
         // Lambda
         {
@@ -129,6 +127,30 @@ int main()
 
             auto [cb, cg] = make_callback(ci);
             cb.invoke(&callback_intf::method);
+        }
+        */
+    }
+
+    // Callback using invocation wrapper:
+    if (true)
+    {
+        {
+            invocation::function i(function);
+            callback cb(i);
+            cb.invoke();
+        }
+
+        {
+            invocation::lambda i(lambda);
+            callback cb(i);
+            cb.invoke();
+        }
+
+        {
+            callback_intf intf;
+            invocation::interface i(intf);
+            callback cb(i);
+            cb.invoke(&callback_intf::method_params, 13);
         }
     }
 

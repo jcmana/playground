@@ -6,6 +6,24 @@
 
 #include "../../link/link/link_element.hpp"
 
+template<typename I>
+class callback :
+    public I,
+    private link_element
+{
+public:
+    /// \brief      Default constructor, creates inactive callback.
+    callback()
+    {
+    }
+
+    callback(I invocation) :
+        I(invocation)
+    {
+    }
+};
+
+/*
 /// \brief      Scope-guarded callback SFINAE template.
 template <typename T, typename E = void>
 class callback;
@@ -78,3 +96,4 @@ public:
 private:
     T * m_interface_ptr;
 };
+*/

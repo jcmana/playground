@@ -5,6 +5,7 @@
 #include "callback.hpp"
 #include "callback_guard.hpp"
 
+/*
 /// \brief      Creates `callback` from `std::function`.
 template<typename ... A>
 auto make_callback(std::function<void(A ...)> functor)
@@ -48,3 +49,4 @@ auto make_callback(T & interface_ref)
         callback_guard<T>(std::move(link_b))
     };
 }
+*/
