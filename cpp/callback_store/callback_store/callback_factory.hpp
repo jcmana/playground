@@ -50,3 +50,15 @@ auto make_callback(T & interface_ref)
     };
 }
 */
+
+template<typename I>
+auto make_callback(I invocation)
+{
+    auto [link_a, link_b] = make_link();
+
+    return std::tuple
+    {
+        callback<I>(std::move(invocation), std::move(link_a)),
+        callback_guard<I>(std::move(link_b))
+    };
+}

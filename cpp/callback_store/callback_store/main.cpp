@@ -136,20 +136,20 @@ int main()
     {
         {
             invocation::function i(function);
-            callback cb(i);
+            auto [cb, cg] = make_callback(i);
             cb.invoke();
         }
 
         {
             invocation::lambda i(lambda);
-            callback cb(i);
+            auto [cb, cg] = make_callback(i);
             cb.invoke();
         }
 
         {
             callback_intf intf;
             invocation::interface i(intf);
-            callback cb(i);
+            auto [cb, cg] = make_callback(i);
             cb.invoke(&callback_intf::method_params, 13);
         }
     }

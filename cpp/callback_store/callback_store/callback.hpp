@@ -8,7 +8,7 @@
 
 template<typename I>
 class callback :
-    public I,
+    private I,
     private link_element
 {
 public:
@@ -17,9 +17,19 @@ public:
     {
     }
 
-    callback(I invocation) :
-        I(invocation)
+    callback(I invocation, link_element link) :
+        I(std::move(invocation)),
+        link_element(std::move(link))
     {
+    }
+
+    template<typename ... A>
+    auto invoke(A ... args)
+    {
+        if (link_element::linked())
+        {
+            I::invoke(std::forward<A>(args) ...);
+        }
     }
 };
 
