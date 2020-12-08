@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="function.hpp" />
     <ClInclude Include="interface.hpp" />
     <ClInclude Include="invocation.hpp" />
     <ClInclude Include="lambda.hpp" />

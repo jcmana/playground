@@ -15,17 +15,56 @@ struct interface
     }
 };
 
+void function()
+{
+    std::cout << "function()" << std::endl;
+}
+
 void main()
 {
-    auto l = [](int n)
+    // Lambda decay to function:
+    if (false)
     {
-        std::cout << "lambda[] = " << n << std::endl;
-    };
+        using function_t = void(*)(int);
 
-    invocation::lambda il(l);
-    il.invoke(6);
+        function_t l = nullptr;
 
-    interface i;
-    invocation::interface ii(i);
-    ii.invoke(&interface::method_parametrized, 7);
+        {
+            l = [](int n)
+            {
+                std::cout << "lambda[] = " << n << std::endl;
+            };
+
+            // Decays automatically if there is no capture
+        }
+
+        l(12);
+    }
+
+    // Function:
+    if (true)
+    {
+        invocation::function i(function);
+        i.invoke();
+    }
+
+    // Lambda invocation:
+    if (false)
+    {
+        auto l = [](int n)
+        {
+            std::cout << "lambda[] = " << n << std::endl;
+        };
+
+        invocation::lambda i(l);
+        i.invoke(6);
+    }
+
+    // Interface invocation:
+    if (false)
+    {
+        interface intf;
+        invocation::interface i(intf);
+        i.invoke(&interface::method_parametrized, 7);
+    }
 }
