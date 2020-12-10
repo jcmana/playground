@@ -39,9 +39,19 @@ public:
         return m_value;
     }
 
+    virtual T & value() override
+    {
+        return m_value;
+    }
+
     virtual void increment() override
     {
         ++m_value;
+    }
+
+    virtual void decrement() override
+    {
+        --m_value;
     }
 
 private:

@@ -50,7 +50,7 @@ protected:
 
 
 template<typename T>
-class ouput :
+class output :
     virtual protected base<T>
 {
 public:
@@ -61,7 +61,7 @@ public:
 };
 
 template<typename T>
-class iterator_input :
+class input :
     virtual protected base<T>
 {
 public:
@@ -86,6 +86,25 @@ public:
     {
         auto copy = (*this);
         ++(*this);
+        return copy;
+    }
+};
+
+template<typename T>
+class backward :
+    virtual protected base<T>
+{
+public:
+    backward & operator --()
+    {
+        static_cast<backward_intf<value_type> &>(*m_up_iterator).decrement();
+        return (*this);
+    }
+
+    backward operator --(int)
+    {
+        auto copy = (*this);
+        --(*this);
         return copy;
     }
 };
