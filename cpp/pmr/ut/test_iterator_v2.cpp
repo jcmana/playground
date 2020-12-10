@@ -59,3 +59,8 @@ TEST(my_forward_iterator, backward_intf)
     EXPECT_EQ(*it, 5);
 }
 
+TEST(my_forward_iterator, generic)
+{
+    //iterator<int, pmr::iterator::output> it;
+}
+

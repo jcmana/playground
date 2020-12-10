@@ -48,6 +48,20 @@ protected:
     std::unique_ptr<T> m_up_iterator;
 };
 
+template<typename TF>
+bool operator ==(const base<TF> & lhs, const base<TF> & rhs)
+{
+    const auto & lhs_base = static_cast<base_intf<TF::value_type> &>(*lhs.m_up_iterator);
+    const auto & rhs_base = static_cast<base_intf<TF::value_type> &>(*rhs.m_up_iterator);
+
+    return lhs_base.equals(rhs_base);
+}
+
+template<typename TF>
+bool operator !=(const base<TF> & lhs, const base<TF> & rhs)
+{
+    return !(lhs == rhs);
+}
 
 template<typename T>
 class output :
@@ -56,7 +70,7 @@ class output :
 public:
     const typename T::value_type & operator  *() const
     {
-        return static_cast<const output_intf<value_type> &>(*m_up_iterator).value();
+        return (*m_up_iterator).const_value();
     }
 };
 
@@ -67,7 +81,7 @@ class input :
 public:
     typename T::value_type & operator  *()
     {
-        return static_cast<input_intf<value_type> &>(*m_up_iterator).value();
+        return (*m_up_iterator).value();
     }
 };
 
@@ -78,7 +92,7 @@ class forward :
 public:
     forward & operator ++()
     {
-        static_cast<forward_intf<value_type> &>(*m_up_iterator).increment();
+        (*m_up_iterator).increment();
         return (*this);
     }
 
@@ -108,20 +122,5 @@ public:
         return copy;
     }
 };
-
-template<typename TF>
-bool operator ==(const base<TF> & lhs, const base<TF> & rhs)
-{
-    const auto & lhs_base = static_cast<base_intf<TF::value_type> &>(*lhs.m_up_iterator);
-    const auto & rhs_base = static_cast<base_intf<TF::value_type> &>(*rhs.m_up_iterator);
-
-    return lhs_base.equals(rhs_base);
-}
-
-template<typename TF>
-bool operator !=(const base<TF> & lhs, const base<TF> & rhs)
-{
-    return !(lhs == rhs);
-}
 
 }

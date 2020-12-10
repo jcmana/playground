@@ -19,7 +19,7 @@ template<typename T>
 struct output_intf :
     virtual base_intf<T>
 {
-    virtual const T & value() const = 0;
+    virtual const T & const_value() const = 0;
 };
 
 template<typename T>

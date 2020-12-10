@@ -13,5 +13,4 @@ public:
     using value_type = T;
     using pointer = T *;
     using reference = T &;
-
 };
