@@ -111,7 +111,7 @@ class backward :
 public:
     backward & operator --()
     {
-        static_cast<backward_intf<value_type> &>(*m_up_iterator).decrement();
+        (*m_up_iterator).decrement();
         return (*this);
     }
 
