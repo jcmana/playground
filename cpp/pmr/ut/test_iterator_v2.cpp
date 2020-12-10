@@ -9,12 +9,12 @@ using namespace pmr::iterator;
 
 TEST(my_forward_iterator, make_copy_move)
 {
-    auto it = iterator<my_iterator_intf<int>>(std::make_unique<my_iterator<int>>(7));
+    auto it = my_iterator<my_iterator_intf<int>>(std::make_unique<my_iterator_impl<int>>(7));
 }
 
 TEST(my_forward_iterator, base_intf)
 {
-    auto it = iterator<my_iterator_intf<int>>(std::make_unique<my_iterator<int>>(7));
+    auto it = my_iterator<my_iterator_intf<int>>(std::make_unique<my_iterator_impl<int>>(7));
 
     auto it_copy = it;
     EXPECT_TRUE(it == it_copy);
@@ -27,20 +27,20 @@ TEST(my_forward_iterator, base_intf)
 
 TEST(my_forward_iterator, output_intf)
 {
-    const auto it = iterator<my_iterator_intf<int>>(std::make_unique<my_iterator<int>>(7));
+    const auto it = my_iterator<my_iterator_intf<int>>(std::make_unique<my_iterator_impl<int>>(7));
     EXPECT_EQ(*it, 7);
 }
 
 TEST(my_forward_iterator, input_intf)
 {
-    auto it = iterator<my_iterator_intf<int>>(std::make_unique<my_iterator<int>>(7));
+    auto it = my_iterator<my_iterator_intf<int>>(std::make_unique<my_iterator_impl<int>>(7));
     EXPECT_EQ(*it, 7);
     //*it = 8;        // Fails on missing input_intf impl
 }
 
 TEST(my_forward_iterator, forward_intf)
 {
-    auto it = iterator<my_iterator_intf<int>>(std::make_unique<my_iterator<int>>(7));
+    auto it = my_iterator<my_iterator_intf<int>>(std::make_unique<my_iterator_impl<int>>(7));
 
     ++it;
     it++;

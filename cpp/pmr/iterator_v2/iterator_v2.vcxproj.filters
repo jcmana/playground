@@ -21,10 +21,13 @@
     <ClInclude Include="iterator_intf.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="my_iterator.hpp">
+    <ClInclude Include="my_iterator_intf.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="my_iterator_intf.hpp">
+    <ClInclude Include="my_iterator_impl.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="my_iterator.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

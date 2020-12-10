@@ -4,7 +4,6 @@
 
 template<typename T>
 class my_iterator_intf :
-    public pmr::iterator::base_intf<T>,
     public pmr::iterator::output_intf<T>,
     public pmr::iterator::forward_intf<T>
 {
@@ -13,6 +12,4 @@ public:
     using pointer = T *;
     using reference = T &;
 
-public:
-    virtual ~my_iterator_intf() = default;
 };
