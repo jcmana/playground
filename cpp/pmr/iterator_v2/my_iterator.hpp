@@ -16,8 +16,6 @@ public:
     {
     }
 
-    virtual ~my_iterator() = default;
-
 public:
     virtual bool equals(const pmr::iterator::base_intf<T> & other) const override
     {

@@ -7,12 +7,6 @@
 using namespace testing;
 using namespace pmr::iterator;
 
-class forward_iterator_facade_int
-{
-public:
-    MOCK_METHOD0(copy, void());
-};
-
 TEST(my_forward_iterator, make_copy_move)
 {
     auto it = iterator<my_iterator_intf<int>>(std::make_unique<my_iterator<int>>(7));
@@ -33,6 +27,13 @@ TEST(my_forward_iterator, base_intf)
 
 TEST(my_forward_iterator, output_intf)
 {
+    const auto it = iterator<my_iterator_intf<int>>(std::make_unique<my_iterator<int>>(7));
+    EXPECT_EQ(*it, 7);
+}
+
+TEST(my_forward_iterator, input_intf)
+{
     auto it = iterator<my_iterator_intf<int>>(std::make_unique<my_iterator<int>>(7));
-    //auto value = *it;
+    // Fails on missing input_intf impl
+    //EXPECT_EQ(*it, 7);
 }
