@@ -4,6 +4,7 @@
 #include "../iterator/forward_iterator.hpp"
 #include "../iterator/random_access_iterator.hpp"
 
+using namespace testing;
 using namespace pmr;
 
 TEST(iterator, api)
