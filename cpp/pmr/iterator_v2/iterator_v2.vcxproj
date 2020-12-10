@@ -146,6 +146,7 @@
     <ClInclude Include="iterator.hpp" />
     <ClInclude Include="iterator_intf.hpp" />
     <ClInclude Include="my_iterator.hpp" />
+    <ClInclude Include="my_iterator_intf.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

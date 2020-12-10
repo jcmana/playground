@@ -13,12 +13,26 @@ public:
     MOCK_METHOD0(copy, void());
 };
 
-TEST(my_forward_iterator, api)
+TEST(my_forward_iterator, make_copy_move)
 {
-    auto up = std::make_unique<my_iterator<int>>(0);
+    auto it = iterator<my_iterator_intf<int>>(std::make_unique<my_iterator<int>>(7));
+}
 
-    auto it = iterator<int>(std::move(up));
-    
+TEST(my_forward_iterator, base_intf)
+{
+    auto it = iterator<my_iterator_intf<int>>(std::make_unique<my_iterator<int>>(7));
+
+    auto it_copy = it;
+    EXPECT_TRUE(it == it_copy);
+    EXPECT_FALSE(it != it_copy);
+
     auto it_move = std::move(it);
-    auto it_copy = it_move;
+    EXPECT_TRUE(it_move == it_copy);
+    EXPECT_FALSE(it_move != it_copy);
+}
+
+TEST(my_forward_iterator, output_intf)
+{
+    auto it = iterator<my_iterator_intf<int>>(std::make_unique<my_iterator<int>>(7));
+    //auto value = *it;
 }

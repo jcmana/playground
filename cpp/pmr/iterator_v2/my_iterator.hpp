@@ -1,12 +1,10 @@
 #pragma once
 
-#include "iterator_intf.hpp"
+#include "my_iterator_intf.hpp"
 
 template<typename T>
 class my_iterator :
-    public pmr::iterator::base_intf<T>,
-    public pmr::iterator::output_intf<T>,
-    public pmr::iterator::forward_intf<T>
+    public my_iterator_intf<T>
 {
 public:
     my_iterator()
@@ -33,7 +31,9 @@ public:
 
     virtual std::unique_ptr<pmr::iterator::base_intf<T>> move() override
     {
-        return std::make_unique<my_iterator>(std::move(m_value));
+        auto copy = m_value;
+        m_value = 0;
+        return std::make_unique<my_iterator>(std::move(copy));
     }
 
     virtual const T & value() const override
