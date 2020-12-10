@@ -19,14 +19,14 @@ template<typename T>
 struct output_intf :
     virtual base_intf<T>
 {
-    virtual const T & const_value() const = 0;
+    virtual const T & const_value_reference() const = 0;
 };
 
 template<typename T>
 struct input_intf :
     virtual base_intf<T>
 {
-    virtual T & value() = 0;
+    virtual T & value_reference() = 0;
 };
 
 template<typename T>

@@ -70,7 +70,7 @@ class output :
 public:
     const typename T::value_type & operator  *() const
     {
-        return (*m_up_iterator).const_value();
+        return (*m_up_iterator).const_value_reference();
     }
 };
 
@@ -81,7 +81,7 @@ class input :
 public:
     typename T::value_type & operator  *()
     {
-        return (*m_up_iterator).value();
+        return (*m_up_iterator).value_reference();
     }
 };
 

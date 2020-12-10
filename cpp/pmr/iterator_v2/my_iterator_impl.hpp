@@ -34,12 +34,12 @@ public:
         return std::make_unique<my_iterator_impl>(std::move(copy));
     }
 
-    virtual const T & const_value() const override
+    virtual const T & const_value_reference() const override
     {
         return m_value;
     }
 
-    virtual T & value() override
+    virtual T & value_reference() override
     {
         return m_value;
     }
