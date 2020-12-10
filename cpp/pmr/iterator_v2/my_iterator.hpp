@@ -7,10 +7,10 @@
 template<typename T>
 class my_iterator :
     virtual public pmr::iterator::base<T>,
-    virtual public pmr::iterator::output<T>,
-    virtual public pmr::iterator::input<T>,
-    virtual public pmr::iterator::forward<T>,
-    virtual public pmr::iterator::backward<T>
+    public pmr::iterator::output<T>,
+    public pmr::iterator::input<T>,
+    public pmr::iterator::forward<T>,
+    public pmr::iterator::backward<T>
 {
 public:
     using pmr::iterator::base<T>::base;
