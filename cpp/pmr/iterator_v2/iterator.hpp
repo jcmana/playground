@@ -43,18 +43,31 @@ public:
     template<typename TF>
     friend bool operator !=(const iterator<TF> & lhs, const iterator<TF> & rhs);
 
+    template<typename = std::enable_if_t<std::is_base_of_v<output_intf<value_type>, T>>>
     const typename T::value_type & operator  *() const
     {
-        static_assert(std::is_base_of_v<base_intf<value_type>, T>, "missing 'outpu_intf' implementation");
-
         return static_cast<const output_intf<value_type> &>(*m_up_iterator).value();
     }
 
+    template<typename = std::enable_if_t<std::is_base_of_v<input_intf<value_type>, T>>>
     typename T::value_type & operator  *()
     {
-        static_assert(std::is_base_of_v<base_intf<value_type>, T>, "missing 'input_intf' implementation");
-
         return static_cast<input_intf<value_type> &>(*m_up_iterator).value();
+    }
+
+    template<typename = std::enable_if_t<std::is_base_of_v<forward_intf<value_type>, T>>>
+    iterator & operator ++()
+    {
+        static_cast<forward_intf<value_type> &>(*m_up_iterator).increment();
+        return (*this);
+    }
+
+    template<typename = std::enable_if_t<std::is_base_of_v<forward_intf<value_type>, T>>>
+    iterator operator ++(int)
+    {
+        iterator copy = (*this);
+        ++(*this);
+        return copy;
     }
 
 private:

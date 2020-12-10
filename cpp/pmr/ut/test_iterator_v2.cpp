@@ -34,6 +34,16 @@ TEST(my_forward_iterator, output_intf)
 TEST(my_forward_iterator, input_intf)
 {
     auto it = iterator<my_iterator_intf<int>>(std::make_unique<my_iterator<int>>(7));
-    // Fails on missing input_intf impl
-    //EXPECT_EQ(*it, 7);
+    EXPECT_EQ(*it, 7);
+    //*it = 8;        // Fails on missing input_intf impl
+}
+
+TEST(my_forward_iterator, forward_intf)
+{
+    auto it = iterator<my_iterator_intf<int>>(std::make_unique<my_iterator<int>>(7));
+
+    ++it;
+    it++;
+
+    EXPECT_EQ(*it, 9);
 }

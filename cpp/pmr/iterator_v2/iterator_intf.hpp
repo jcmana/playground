@@ -28,13 +28,13 @@ struct input_intf
 template<typename T>
 struct forward_intf
 {
-    virtual forward_intf & increment() = 0;
+    virtual void increment() = 0;
 };
 
 template<typename T>
 struct backward_intf
 {
-    virtual backward_intf & decrement() = 0;
+    virtual void decrement() = 0;
 };
 
 }

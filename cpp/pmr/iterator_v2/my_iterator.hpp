@@ -39,9 +39,9 @@ public:
         return m_value;
     }
 
-    virtual pmr::iterator::forward_intf<T> & increment() override
+    virtual void increment() override
     {
-        return (*this);
+        ++m_value;
     }
 
 private:
