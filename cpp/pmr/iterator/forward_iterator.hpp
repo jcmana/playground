@@ -81,18 +81,27 @@ template<typename T>
 forward_iterator<T> &
 forward_iterator<T>::operator ++()
 {
-	auto & f = static_cast<facade &>(*m_up_facade);
-	f.next();
-	return (*this);
+    // Retrieve facade implementation
+    auto facade_ptr = static_cast<facade *>(m_up_facade.get());
+
+    if (facade_ptr == nullptr)
+    {
+        throw std::exception("facade pointer is nullptr");
+    }
+
+    // Increment the iterator
+    facade_ptr->next();
+
+    return (*this);
 }
 
 template<typename T>
-forward_iterator<T> 
+forward_iterator<T>
 forward_iterator<T>::operator ++(int)
 {
-	auto that = (*this);
-	operator ++();
-	return that;
+    auto copy = (*this);
+    operator ++();
+    return copy;
 }
 
 #pragma endregion

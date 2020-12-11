@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <utility>
+#include <exception>
 
 namespace pmr {
 

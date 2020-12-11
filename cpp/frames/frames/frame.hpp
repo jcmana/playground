@@ -1,9 +1,9 @@
 #pragma once
 
 #include "xy.hpp"
-#include "frame_default.hpp"
+#include "space_default.hpp"
 
-template<typename F = frame_default>
+template<typename S = space_default>
 struct frame
 {
     struct basis
@@ -36,9 +36,20 @@ struct frame
     basis origin;
 };
 
-/// \brief      Computes `xy` in standard `frame` from local coordinates.
-template<typename F>
-xy<F> make_xy(double local_x, double local_y, const frame<F> & local_frame)
+/// \brief      Returns local `xy` of `coordinate` in `source`.
+template<typename S>
+constexpr xy<void> operator  &(xy<S> coordinate, frame<S> source)
+{
+    return 
+    {
+        source.base_x.x * (coordinate.x - source.origin.x) + source.base_y.x * (coordinate.y - source.origin.y),
+        source.base_x.y * (coordinate.x - source.origin.x) + source.base_y.y * (coordinate.y - source.origin.y)
+    };
+}
+
+/// \brief      Returns `xy` of local `coordinate` from `frame` in space `S`.
+template<typename S>
+constexpr xy<S> operator  &(xy<void> coordinate, frame<S> target)
 {
     // Matrix inversion:
     //
@@ -50,30 +61,20 @@ xy<F> make_xy(double local_x, double local_y, const frame<F> & local_frame)
     // adjugate(      ) = (       )
     //         ( c  d )   ( -c +d )
 
-    const auto base_determinant = local_frame.base_x.x * local_frame.base_y.y - local_frame.base_x.y * local_frame.base_y.x;
+    const auto base_determinant = target.base_x.x * target.base_y.y - target.base_x.y * target.base_y.x;
 
-    const auto base_x_adjugate = frame<F>::basis{+local_frame.base_y.y, -local_frame.base_x.y};
-    const auto base_y_adjugate = frame<F>::basis{-local_frame.base_y.x, +local_frame.base_x.x};
+    const frame<S>::basis base_x_adjugate = {+target.base_y.y, -target.base_x.y};
+    const frame<S>::basis base_y_adjugate = {-target.base_y.x, +target.base_x.x};
 
-    local_x = local_x / base_determinant;
-    local_y = local_y / base_determinant;
+    const auto base_x = coordinate.x / base_determinant;
+    const auto base_y = coordinate.y / base_determinant;
 
-    const auto coordinate_x = (base_x_adjugate.x * local_x + base_y_adjugate.x * local_y) + local_frame.origin.x;
-    const auto coordinate_y = (base_x_adjugate.y * local_x + base_y_adjugate.y * local_y) + local_frame.origin.y;
+    const auto coordinate_x = (base_x_adjugate.x * base_x + base_y_adjugate.x * base_y) + target.origin.x;
+    const auto coordinate_y = (base_x_adjugate.y * base_x + base_y_adjugate.y * base_y) + target.origin.y;
 
-    return {coordinate_x, coordinate_y};
-}
-
-/// \brief      Computes `frame` local `x` coordinate from `xy`.
-template<typename F>
-double get_x(const xy<F> & coordinate, const frame<F> & frame)
-{
-    return frame.base_x.x * (coordinate.x - frame.origin.x) + frame.base_y.x * (coordinate.y - frame.origin.y);
-}
-
-/// \brief      Computes `frame` local `y` coordinate from `xy`.
-template<typename F>
-double get_y(const xy<F> & coordinate, const frame<F> & frame)
-{
-    return frame.base_x.y * (coordinate.x - frame.origin.x) + frame.base_y.y * (coordinate.y - frame.origin.y);
+    return 
+    {
+        coordinate_x, 
+        coordinate_y
+    };
 }

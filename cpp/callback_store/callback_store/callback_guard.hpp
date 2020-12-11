@@ -2,16 +2,10 @@
 
 #include "../../link/link/link_element.hpp"
 
-template<typename T>
-class callback;
-
 /// \brief          Scope-guard for `callback`, limiting its activity.
 template<typename T>
 class callback_guard : private link_element
 {
-public:
-	friend class callback<T>;
-
 public:
 	/// \brief          Default constructor, creates empty guard.
 	callback_guard();

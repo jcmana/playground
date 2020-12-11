@@ -158,6 +158,7 @@ int main()
         ei.post(task);
     }
 
+    /*
     if (false)
     {
         executor_ordered_pool<void> e(2);
@@ -180,7 +181,7 @@ int main()
         wait_all(futures);
     }
 
-    if (true)
+    if (false)
     {
         executor_queue<std::packaged_task<void()>> q;
         executor_thread<void> t(q);
@@ -247,5 +248,28 @@ int main()
 
         threadsafe_provider a_moved;
         a_moved = std::move(a);
+    }
+
+    if (true)
+    {
+        executor_ordered_pool<void> e(2);
+
+        auto task = []
+        {
+            std::cout << "task in " << std::this_thread::get_id() << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+        };
+
+        std::vector<std::future<void>> futures;
+
+        futures.emplace_back(e.post(task));
+        e.resize(3);
+        futures.emplace_back(e.post(task));
+    }
+    */
+
+    if (true)
+    {
+        executor_thread<void> t;
     }
 }

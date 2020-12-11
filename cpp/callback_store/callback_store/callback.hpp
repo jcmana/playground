@@ -1,99 +1,109 @@
 #pragma once
 
+#include <functional>
 #include <utility>
 #include <type_traits>
 
 #include "../../link/link/link_element.hpp"
 
-template<typename T>
-class callback_guard;
-
-/// \brief      Scope-guarded callback.
-///
-/// Callback is mapped to a interface pointer and allows invoking methods
-/// from it. Callback requires `callback_guard` to be alive, otherwise it can't
-/// be invoked.
-///
-/// Implementation doesn't support lambdas or binders.
-template<typename T>
-class callback : private link_element
+template<typename I>
+class callback :
+    private I,
+    private link_element
 {
 public:
-    friend class callback_guard<T>;
+    /// \brief      Default constructor, creates inactive callback.
+    callback()
+    {
+    }
 
+    callback(I invocation, link_element link) :
+        I(std::move(invocation)),
+        link_element(std::move(link))
+    {
+    }
+
+    template<typename ... A>
+    auto invoke(A ... args)
+    {
+        if (link_element::linked())
+        {
+            I::invoke(std::forward<A>(args) ...);
+        }
+    }
+};
+
+/*
+/// \brief      Scope-guarded callback SFINAE template.
+template <typename T, typename E = void>
+class callback;
+
+/// \brief      Scope-guarded callback to invocable.
+/// \param      F       Functor invocation signature (same as std::function).
+template<typename ... A>
+class callback<void(A ...)> :
+    private link_element
+{
 public:
     /// \brief      Default constructor, creates inactive callback.
-    callback();
+    callback()
+    {
+    }
 
     /// \brief      Constructor, creates active callback.
-    callback(T & inteface_ref, link_element && link_element_rref);
+    callback(std::function<void(A ...)> functor, link_element link_element) :
+        link_element(std::move(link_element)),
+        m_functor(std::move(functor))
+    {
+    }
+    /// \brief      Invokes function `T`, if the callback is still active.
+    void invoke(A && ... args) const
+    {
+        if (link_element::linked())
+        {
+            m_functor(std::forward<A>(args) ...);
+        }
+    }
+
+private:
+    std::function<void(A ...)> m_functor;
+};
+
+/// \brief      Scope-guarded callback to interface.
+///
+/// Callback is bound to a interface pointer and allows invoking methods
+/// from it. Callback requires `callback_guard` to be alive, otherwise it won't
+/// be invoked.
+template<typename T, template <typename F> typename I>
+class callback<T, typename std::enable_if_t<std::is_class_v<T>>> :
+    private link_element
+{
+public:
+    /// \brief      Default constructor, creates inactive callback.
+    callback() :
+        m_interface_ptr(nullptr)
+    {
+    }
+
+    /// \brief      Constructor, creates active callback.
+    callback(T & inteface_ref, link_element link_element) :
+        link_element(std::move(link_element)),
+        m_interface_ptr(&inteface_ref)
+    {
+    }
 
     /// \brief      Invokes method from `T`, if the callback is still active.
-    template<typename F, typename ... A>
-    typename std::enable_if_t<std::is_class<T>::value == true>
-    invoke(F method_ptr, A && ... args) const;
-
-    /// \brief      Invokes function `T`, if the callback is still active.
     template<typename ... A>
-    typename std::enable_if_t<std::is_class<T>::value != true>
-    invoke(A && ... args) const;
-
-    /// \brief      Creates active `callback` and appropriate `callback_guard`.
-    /// \relates    callback<T>
-    template<typename T>
-    friend std::tuple<callback<T>, callback_guard<T>> make_callback(T & interface_ref);
+    void
+    invoke(void (T:: * method_ptr)(A ...) , A && ... args) const
+    {
+        if (link_element::linked())
+        {
+            (m_interface_ptr->*method_ptr)(std::forward<A>(args) ...);
+        }
+    }
 
 private:
     T * m_interface_ptr;
 };
-
-#pragma region callback implementation:
-
-template<typename T>
-callback<T>::callback() :
-    link_element(),
-    m_interface_ptr(nullptr)
-{
-}
-
-template<typename T>
-callback<T>::callback(T & inteface_ref, link_element && link_element_rref) :
-    link_element(std::move(link_element_rref)),
-    m_interface_ptr(&inteface_ref)
-{
-}
-
-template<typename T>
-template<typename F, typename ... A>
-typename std::enable_if_t<std::is_class<T>::value == true>
-callback<T>::invoke(F method_ptr, A && ... args) const
-{
-    if (link_element::linked())
-    {
-        (m_interface_ptr->*method_ptr)(std::forward<A>(args) ...);
-    }
-}
-
-template<typename T>
-template<typename ... A>
-typename std::enable_if_t<std::is_class<T>::value != true> 
-callback<T>::invoke(A && ... args) const
-{
-    if (link_element::linked())
-    {
-        m_interface_ptr(std::forward<A>(args) ...);
-    }
-}
-
-template<typename T>
-std::tuple<callback<T>, callback_guard<T>> make_callback(T & interface_ref)
-{
-    auto link = make_link();
-
-    callback<T> c(interface_ref, std::move(std::get<0>(link)));
-    callback_guard<T> g(std::move(std::get<1>(link)));
-
-    return std::make_tuple(std::move(c), std::move(g));
-}
-
-#pragma endregion
+*/

@@ -17,7 +17,7 @@
     <ClInclude Include="frame.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="frame_default.hpp">
+    <ClInclude Include="space_default.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

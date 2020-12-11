@@ -6,6 +6,7 @@
 #include "callback.hpp"
 #include "callback_guard.hpp"
 
+/*
 /// \brief          Stores callbacks and allows their invocation.
 template<typename T>
 class callback_store
@@ -29,7 +30,7 @@ public:
     invoke(A && ... args) const;
 
 private:
-	std::vector<callback<T>> m_callback_store;
+	std::vector<callback<T, int>> m_callback_store;
 };
 
 #pragma region callback_store implementation:
@@ -72,3 +73,4 @@ callback_store<T>::invoke(A && ... args) const
 }
 
 #pragma endregion
+*/
