@@ -6,6 +6,16 @@
 
 using namespace pmr;
 
+/*
+template<typename T>
+class iterator_facade_mock : 
+	iterator<T>::facade
+{
+	virtual bool equal(const facade & other) const = 0;
+	virtual std::unique_ptr<facade> copy() const = 0;
+};
+*/
+
 TEST(iterator, api)
 {
 	std::unique_ptr<iterator<int>::facade> up;
