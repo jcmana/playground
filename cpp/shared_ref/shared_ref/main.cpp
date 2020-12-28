@@ -39,4 +39,15 @@ void main()
         shared_ref<std::string> sr = "asdfasdf";
         std::cout << (*sr) << std::endl;
     }
+
+    // Construct from a copy
+    {
+        std::string s = "tuhnhdfgh";
+        shared_ref<std::string> sr = s;
+    }
+
+    // Construct from a rref
+    {
+        shared_ref<std::string> sr = std::string("tuhnhdfgh");
+    }
 }

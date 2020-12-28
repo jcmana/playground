@@ -1,16 +1,30 @@
 #pragma once
 
-#include <memory>
 #include <stdexcept>
+#include <memory>
+#include <utility>
 
-/// \brief      `shared_ptr` that cannot be `nullptr` or reseated, keeping `const`-ness.
+/// \brief      `shared_ptr` that cannot be `nullptr` or reseated.
 template<typename T>
 class shared_ref
 {
 public:
+    /// \brief      Constructor, new `T` using constructor.
     template<typename ... A>
-    shared_ref(A ... args) :
+    shared_ref(A ... args) noexcept :
         m_sp(new T(args ...))
+    {
+    }
+
+    /// \brief      Constructor, new `T` using copy constructor.
+    shared_ref(const T & other) noexcept :
+        m_sp(new T(other))
+    {
+    }
+
+    /// \brief      Constructor, new `T` using move constructor.
+    shared_ref(T && other) noexcept :
+        m_sp(new T(std::move(other)))
     {
     }
 
