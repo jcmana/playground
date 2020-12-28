@@ -3,18 +3,15 @@
 #include <memory>
 #include <stdexcept>
 
-/// \brief      `shared_ptr` that cannot be `nullptr` or reseated.
+/// \brief      `shared_ptr` that cannot be `nullptr` or reseated, keeping `const`-ness.
 template<typename T>
 class shared_ref
 {
 public:
-    shared_ref(std::shared_ptr<T> sp) :
-        m_sp(sp)
+    template<typename ... A>
+    shared_ref(A ... args) :
+        m_sp(new T(args ...))
     {
-        if (m_sp == nullptr)
-        {
-            throw std::invalid_argument("shared_ptr was nullptr");
-        }
     }
 
     shared_ref(const shared_ref & other) noexcept = default;
@@ -28,22 +25,12 @@ public:
         return m_sp;
     }
 
-    T & operator  *() noexcept
+    T & operator  *() const noexcept
     {
         return (*m_sp);
     }
 
-    T * operator ->() noexcept
-    {
-        return m_sp.get();
-    }
-
-    const T & operator  *() const noexcept
-    {
-        return (*m_sp);
-    }
-
-    const T * operator ->() const noexcept
+    T * operator ->() const noexcept
     {
         return m_sp.get();
     }
