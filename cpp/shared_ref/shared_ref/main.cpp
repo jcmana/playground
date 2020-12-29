@@ -23,6 +23,8 @@ void main()
         std::cout << (*sr) << std::endl;
         std::cout << (*sr_copy) << std::endl;
         std::cout << (*sp) << std::endl;
+
+        auto sp_ptr = sp.get();
     }
 
     {
@@ -56,6 +58,6 @@ void main()
     {
         auto sp = std::make_shared<std::string>("xvcbjteyueetu");
         auto sr = from_shared_ptr(sp);
-        auto sq = from_shared_ptr<std::string>(nullptr);
+        auto sq = from_shared_ptr<std::string>(nullptr);        // runtime exception
     }
 }

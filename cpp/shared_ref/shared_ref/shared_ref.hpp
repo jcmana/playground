@@ -37,6 +37,11 @@ public:
         return m_sp.get();
     }
 
+    T * get() const noexcept
+    {
+        return m_sp.get();
+    }
+
     template<typename TF>
     friend shared_ref<TF> from_shared_ptr(std::shared_ptr<TF> sp);
 
@@ -52,6 +57,9 @@ private:
 
 /// \brief          Constructs `shared_ref` from `shared_ptr`.
 /// \throws         std::invalid_argument       If `shared_ptr` is `nullptr`.
+/// 
+/// `shared_ref` will refer to the same object as passed `shared_ptr` and will
+/// prolong its lifetime even after the original `shared_ptr` is destroyed.
 template<typename T>
 shared_ref<T> from_shared_ptr(std::shared_ptr<T> sp)
 {
