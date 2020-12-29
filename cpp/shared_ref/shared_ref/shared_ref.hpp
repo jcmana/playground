@@ -50,6 +50,8 @@ private:
     std::shared_ptr<T> m_sp;
 };
 
+/// \brief          Constructs `shared_ref` from `shared_ptr`.
+/// \throws         std::invalid_argument       If `shared_ptr` is `nullptr`.
 template<typename T>
 shared_ref<T> from_shared_ptr(std::shared_ptr<T> sp)
 {
