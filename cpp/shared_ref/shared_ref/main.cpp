@@ -48,6 +48,14 @@ void main()
 
     // Construct from a rref
     {
-        shared_ref<std::string> sr = std::string("tuhnhdfgh");
+        std::string s("tuhnhdfgh");
+        shared_ref<std::string> sr = std::move(s);
+    }
+
+    // Construct from a shared_ptr
+    {
+        auto sp = std::make_shared<std::string>("xvcbjteyueetu");
+        auto sr = from_shared_ptr(sp);
+        auto sq = from_shared_ptr<std::string>(nullptr);
     }
 }

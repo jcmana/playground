@@ -9,22 +9,10 @@ template<typename T>
 class shared_ref
 {
 public:
-    /// \brief      Constructor, new `T` using constructor.
+    /// \brief      Constructor, new `T` using forwarding constructor.
     template<typename ... A>
     shared_ref(A ... args) noexcept :
-        m_sp(new T(args ...))
-    {
-    }
-
-    /// \brief      Constructor, new `T` using copy constructor.
-    shared_ref(const T & other) noexcept :
-        m_sp(new T(other))
-    {
-    }
-
-    /// \brief      Constructor, new `T` using move constructor.
-    shared_ref(T && other) noexcept :
-        m_sp(new T(std::move(other)))
+        m_sp(new T(std::forward<A>(args) ...))
     {
     }
 
@@ -49,6 +37,26 @@ public:
         return m_sp.get();
     }
 
+    template<typename TF>
+    friend shared_ref<TF> from_shared_ptr(std::shared_ptr<TF> sp);
+
+private:
+    shared_ref(std::shared_ptr<T> sp) noexcept :
+        m_sp(std::move(sp))
+    {
+    }
+
 private:
     std::shared_ptr<T> m_sp;
 };
+
+template<typename T>
+shared_ref<T> from_shared_ptr(std::shared_ptr<T> sp)
+{
+    if (sp == nullptr)
+    {
+        throw std::invalid_argument("shared_ptr was nullptr");
+    }
+
+    return shared_ref<T>(std::move(sp));
+}
