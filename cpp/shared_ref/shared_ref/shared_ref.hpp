@@ -17,6 +17,10 @@ public:
     }
 
     shared_ref(const shared_ref & other) noexcept = default;
+
+    // !!!
+    // MOVE SEMANTICS BREAK THE CLASS AS IT REQUIRES INTRODUCTION OF NULL STATE
+
     shared_ref(shared_ref && other) noexcept = default;
 
     shared_ref & operator  =(const shared_ref & other) = delete;

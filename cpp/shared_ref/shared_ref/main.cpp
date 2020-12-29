@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 
+#include "unique_ref.hpp"
 #include "shared_ref.hpp"
 
 void main()
@@ -58,6 +59,12 @@ void main()
     {
         auto sp = std::make_shared<std::string>("xvcbjteyueetu");
         auto sr = from_shared_ptr(sp);
-        auto sq = from_shared_ptr<std::string>(nullptr);        // runtime exception
+        if (false) auto sq = from_shared_ptr<std::string>(nullptr);        // runtime exception
+    }
+
+    {
+        unique_ref<int> ur = 7;
+        //unique_ref<int> ur_copy = ur;             // compile error, deleted function
+        unique_ref<int> ur_move = std::move(ur);
     }
 }
