@@ -1,26 +1,26 @@
 #include <iostream>
 
-struct S 
+struct S
 {
-	void f() &
-	{ 
-		std::cout << "lvalue\n";
-	}
+    void f() &
+    {
+        std::cout << "lvalue\n";
+    }
 
-	void f() &&
-	{
-		std::cout << "rvalue\n";
-	}
+    void f() &&
+    {
+        std::cout << "rvalue\n";
+    }
 };
 
 int main()
 {
-	S s;
+    S s;
 
-	// l-value overload
-	S & lvalue = s;
-	lvalue.f();
+    // l-value overload
+    S & lvalue = s;
+    lvalue.f();
 
-	// r-value overload
-	std::move(s).f();
+    // r-value overload
+    std::move(s).f();
 }
