@@ -11,6 +11,11 @@ template<typename F>
 class function
 {
 public:
+    function() :
+        m_function(nullptr)
+    {
+    }
+
     function(F f) :
         m_function(f)
     {

@@ -24,7 +24,7 @@ public:
     invoke(F method_ptr, A ... args)
     {
         static_assert(std::is_same_v<std::tuple<A ...>, member_function_traits<F>::arguments_tuple_type>, "invalid parameters for member function call");
-        (m_interface_ptr->*method_ptr)(std::forward<A>(args) ...);
+        (*m_interface_ptr.*method_ptr)(std::forward<A>(args) ...);
     }
 
 private:
