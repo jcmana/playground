@@ -1,7 +1,7 @@
 #pragma once
 
-#include <tuple>
 #include <type_traits>
+#include <tuple>
 
 template<typename T>
 struct function_traits
@@ -22,7 +22,7 @@ struct function_traits<R(*)(A ...)>
     using arguments_tuple_type = std::tuple<A ...>;
 };
 
-template<typename T>
+template<typename F, typename ... A>
 struct member_function_traits
 {
 };

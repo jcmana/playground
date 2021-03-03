@@ -1,5 +1,7 @@
 #pragma once
 
+#include "traits.hpp"
+
 namespace invocation
 {
 
@@ -13,15 +15,13 @@ public:
     }
 
     template<typename ... A>
-    typename member_function_traits<decltype(&F::operator())>::return_type
-    invoke(A ... args)
+    auto invoke(A ... args)
     {
-        m_functor(std::forward<A>(args) ...);
+        return m_functor(std::forward<A>(args) ...);
     }
 
 private:
     F m_functor;
 };
-
 
 } // namespace invocation

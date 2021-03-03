@@ -1,5 +1,6 @@
 #include <iostream>
 #include <functional>
+#include <utility>
 
 #include "invocation.hpp"
 
@@ -14,12 +15,37 @@ struct interface
     {
         std::cout << "interface::method_parametrized() = " << n << std::endl;
     }
+
+    bool method_retval()
+    {
+        std::cout << "interface::method_retval()" << std::endl;
+        return true;
+    }
 };
 
 void function()
 {
     std::cout << "function()" << std::endl;
 }
+
+struct functor
+{
+    void operator ()()
+    {
+        std::cout << "functor::operator()" << std::endl;
+    }
+
+    void operator ()(int n)
+    {
+        std::cout << "functor::operator(int)" << std::endl;
+    }
+
+    bool operator ()(int m, int n)
+    {
+        std::cout << "interface::operator(int, int)" << std::endl;
+        return false;
+    }
+};
 
 void main()
 {
@@ -57,16 +83,17 @@ void main()
             std::cout << "lambda[] = " << n << std::endl;
         };
 
-        invocation::lambda i(l);
-        i.invoke(6);
+        invocation::functor i(l);
+        i.invoke(7);
     }
 
     // Interface invocation:
-    if (false)
+    if (true)
     {
         interface intf;
         invocation::interface i(intf);
         i.invoke(&interface::method_parametrized, 7);
+        auto r = i.invoke(&interface::method_retval);
     }
 
     // std::function invocation:
@@ -82,16 +109,17 @@ void main()
     {
         interface intf;
         auto b = std::bind(&interface::method_parametrized, &intf, std::placeholders::_1);
-        //b(7);
-        //using F = decltype(b.operator()());
-        //using T = decltype(b);
-        //void(T:: * ptr)(int) const = &T::operator();
-        //(b.*ptr)(7);
-        //invocation::functor i(b);
-        //i.invoke();
+        invocation::functor i(b);
+        i.invoke(7);
+    }
 
-        // CAN'T MAKE THIS WORK
-        // std::bind SEEMS LIKE TEMPLATE BULLSHIT
-        // USE invocation::interface INSTEAD
+    // Custom functor invocation:
+    if (false)
+    {
+        functor f;
+        invocation::functor i(f);
+        i.invoke();
+        i.invoke(7);
+        auto r = i.invoke(7, 3);
     }
 }

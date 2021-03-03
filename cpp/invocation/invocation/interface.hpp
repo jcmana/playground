@@ -20,11 +20,10 @@ public:
     }
 
     template<typename F, typename ... A>
-    typename member_function_traits<F>::return_type
-    invoke(F method_ptr, A ... args)
+    auto invoke(F method_ptr, A ... args)
     {
         static_assert(std::is_same_v<std::tuple<A ...>, member_function_traits<F>::arguments_tuple_type>, "invalid parameters for member function call");
-        (*m_interface_ptr.*method_ptr)(std::forward<A>(args) ...);
+        return (*m_interface_ptr.*method_ptr)(std::forward<A>(args) ...);
     }
 
 private:

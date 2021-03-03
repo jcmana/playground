@@ -147,7 +147,6 @@
     <ClInclude Include="functor.hpp" />
     <ClInclude Include="interface.hpp" />
     <ClInclude Include="invocation.hpp" />
-    <ClInclude Include="lambda.hpp" />
     <ClInclude Include="traits.hpp" />
   </ItemGroup>
   <ItemGroup>
