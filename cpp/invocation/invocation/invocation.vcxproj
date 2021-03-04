@@ -143,11 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="function.hpp" />
-    <ClInclude Include="functor.hpp" />
     <ClInclude Include="interface.hpp" />
-    <ClInclude Include="invocation.hpp" />
-    <ClInclude Include="traits.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
