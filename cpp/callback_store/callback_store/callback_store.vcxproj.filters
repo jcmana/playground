@@ -31,5 +31,8 @@
     <ClInclude Include="callback_factory.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="callback_ref.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
