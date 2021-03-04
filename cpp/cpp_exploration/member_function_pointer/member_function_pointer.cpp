@@ -79,7 +79,7 @@ int main()
         (a.*ptr)();
 
         void(simple:: * ptr_overload)(int) const = &simple::method;
-        (a.*ptr)();
+        (a.*ptr_overload)(7);
     }
 
     // pointer to polymorphic class method
