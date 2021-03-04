@@ -48,7 +48,7 @@ public:
         auto target_ptr = reinterpret_cast<T *>(target_that);
         auto target_method_ptr = member_id_to_pointer<signature>(target_id);
 
-        (target_ptr->*target_method_ptr)();
+        (*target_ptr.*target_method_ptr)();
     }
 
 private:

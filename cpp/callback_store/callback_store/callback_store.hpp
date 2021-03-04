@@ -7,14 +7,14 @@
 #include "callback_guard.hpp"
 #include "callback_factory.hpp"
 
-/// \brief          Stores callbacks and allows their invocation.
+/// \brief          Stores `callback`s in order and allows their invocation.
 template<typename T>
 class callback_store
 {
 public:
     /// \brief          Subscribes `invocation` for notifications.
     /// \param          invocation      Invocation receiving notifications.
-    callback_guard<T> subscribe(T invocation);
+    callback_guard<T> subscribe(T callable);
 
     /// \brief          Invokes each subscribed callback.
     /// \param          args            `callback` arguments.
@@ -29,11 +29,11 @@ private:
 
 template<typename T>
 callback_guard<T>
-callback_store<T>::subscribe(T invocation)
+callback_store<T>::subscribe(T callable)
 {
     callback<T> c;
     callback_guard<T> g;
-    std::tie(c, g) = make_callback(invocation);
+    std::tie(c, g) = make_callback(callable);
 
     for (auto && callback : m_callback_store)
     {

@@ -4,6 +4,8 @@
 
 #include "../../link/link/link_element.hpp"
 
+/// \brief      Scope-guarded `Callable` wrapper over `Callable` type.
+/// \param      T       Functor storage type.
 template<typename T>
 class callback : private link_element
 {
@@ -13,9 +15,9 @@ public:
     {
     }
 
-    callback(T functor, link_element element) :
+    callback(T callable, link_element element) :
         link_element(std::move(element)),
-        m_functor(std::move(functor))
+        m_callable(std::move(callable))
     {
     }
 
@@ -29,10 +31,11 @@ public:
     {
         if (active())
         {
-            m_functor(std::forward<A>(args) ...);
+            m_callable(std::forward<A>(args) ...);
         }
     }
 
 private:
-    T m_functor;
+    //typename std::decay<T>::type m_callable;
+    T m_callable;
 };
