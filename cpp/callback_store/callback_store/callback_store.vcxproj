@@ -133,7 +133,7 @@
     <ClInclude Include="callback.hpp" />
     <ClInclude Include="callback_factory.hpp" />
     <ClInclude Include="callback_guard.hpp" />
-    <ClInclude Include="callback_listener.hpp" />
+    <ClInclude Include="callback_ref_listener.hpp" />
     <ClInclude Include="callback_ref.hpp" />
     <ClInclude Include="callback_store.hpp" />
   </ItemGroup>

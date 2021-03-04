@@ -5,9 +5,10 @@
 #include <type_traits>
 
 #include "callback_ref.hpp"
+#include "callback_ref_listener.hpp"
+
 #include "callback_store.hpp"
 #include "callback_factory.hpp"
-#include "callback_listener.hpp"
 
 struct callback_intf
 {
@@ -28,14 +29,16 @@ struct callback_intf
     }
 };
 
-struct callback_abstract_intf
+struct callback_intf_consumer
 {
-    virtual void method()
+    void on_method()
     {
+        std::cout << "callback_intf_consumer::on_method()" << std::endl;
     }
 
-    virtual void method_slow()
+    void on_method_params(int n)
     {
+        std::cout << "callback_intf_consumer::on_method_params() = " << n << std::endl;
     }
 };
 
@@ -173,22 +176,18 @@ int main()
         s.invoke();
     }
 
-    /*
     // callback_listener test:
     if (true)
     {
-        callback_intf ci;
-        callback_listener<callback_abstract_intf, callback_intf> cl;
-        cl.bind(&callback_abstract_intf::method, &callback_intf::method, ci);
-        cl.invoke(&callback_abstract_intf::method);
+        callback_intf_consumer cic;
+
+        callback_ref_listener<callback_intf, callback_intf_consumer> cl;
+        cl.bind(&callback_intf::method, &callback_intf_consumer::on_method, cic);
+        cl.bind(&callback_intf::method_params, &callback_intf_consumer::on_method_params, cic);
 
         auto [cb, cg] = make_callback(cl);
-        //auto cb = std::move(std::get<0>(cbpack));
-        //auto cg = std::move(std::get<1>(cbpack));
-
-        //cb.invoke(&callback_intf::method);
+        cb.invoke(&callback_intf::method);
+        cb.invoke(&callback_intf::method_params, 1337);
+        cb.invoke(&callback_intf::method_slow);         // unbound method call is discarded
     }
-    */
-
-    return 0;
 }

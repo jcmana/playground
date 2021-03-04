@@ -18,6 +18,7 @@ public:
     {
     }
 
+    /*
     callback_ref(const callback_ref<T> & other) noexcept :
         m_object_ptr(other.m_object_ptr)
     {
@@ -41,6 +42,7 @@ public:
         other.m_object_ptr = nullptr;
         return (*this);
     }
+    */
 
     template<typename R, typename ... A>
     auto operator ()(R(T:: * method_ptr)(A ...), A ... args)

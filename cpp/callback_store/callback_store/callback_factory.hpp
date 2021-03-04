@@ -5,7 +5,7 @@
 #include "callback.hpp"
 #include "callback_guard.hpp"
 
-/// \brief      
+/// \brief      Creates `callback` and its `callback_guard` from `callable`.
 template<typename T>
 auto make_callback(T callable)
 {
