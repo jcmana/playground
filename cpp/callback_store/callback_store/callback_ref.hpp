@@ -18,32 +18,6 @@ public:
     {
     }
 
-    /*
-    callback_ref(const callback_ref<T> & other) noexcept :
-        m_object_ptr(other.m_object_ptr)
-    {
-    }
-
-    callback_ref(callback_ref<T> && other) noexcept :
-        m_object_ptr(other.m_object_ptr)
-    {
-        other.m_object_ptr = nullptr;
-    }
-
-    auto & operator  =(const callback_ref<T> & other) noexcept
-    {
-        m_object_ptr = other.m_object_ptr;
-        return (*this);
-    }
-
-    auto & operator  =(callback_ref<T> && other) noexcept
-    {
-        m_object_ptr = other.m_object_ptr;
-        other.m_object_ptr = nullptr;
-        return (*this);
-    }
-    */
-
     template<typename R, typename ... A>
     auto operator ()(R(T:: * method_ptr)(A ...), A ... args)
     {

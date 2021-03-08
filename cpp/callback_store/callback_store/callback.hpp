@@ -11,11 +11,12 @@ class callback : private link_element
 {
 public:
     /// \brief      Default constructor, creates inactive callback.
-    callback()
+    callback() noexcept :
+        m_callable()
     {
     }
 
-    callback(T callable, link_element element) :
+    callback(T callable, link_element element) noexcept :
         link_element(std::move(element)),
         m_callable(std::move(callable))
     {
@@ -36,6 +37,5 @@ public:
     }
 
 private:
-    //typename std::decay<T>::type m_callable;
     T m_callable;
 };

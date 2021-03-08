@@ -84,20 +84,47 @@ int main()
         }
     }
 
-    // Callback using invocation wrapper:
+    // Callback default ctor, move, copy:
     if (false)
     {
+        callback<void(*)()> cf;
+        callback<callback_ref<callback_intf>> cr;
 
+        callback<std::function<void()>> csf;
+        callback_guard<std::function<void()>> g;
+
+        std::tie(csf, g) = make_callback(std::function(function));
+
+        // Copy, move
+        //auto csf_copy = csf;        // deleted function
+        auto csf_move = std::move(csf);
+
+        // Check
+        csf.invoke();
+        csf_move.invoke();
+    }
+
+    // Callback using various functors:
+    if (true)
+    {
         {
             callback_intf i;
-            callback_ref ri(i);
-            auto [cb, cg] = make_callback(ri);
+            auto [cb, cg] = make_callback(callback_ref(i));
             cb.invoke(&callback_intf::method_params, 13);
         }
 
         {
-            std::function f(function);
-            auto [cb, cg] = make_callback(f);
+            auto [cb, cg] = make_callback(function);
+            cb.invoke();
+        }
+
+        {
+            auto [cb, cg] = make_callback(std::function(function));
+            cb.invoke();
+        }
+
+        {
+            auto [cb, cg] = make_callback(lambda);
             cb.invoke();
         }
 
@@ -105,11 +132,6 @@ int main()
             callback_intf i;
             auto [cb, cg] = make_callback(std::bind(&callback_intf::method_params, &i, std::placeholders::_1));
             cb.invoke(7);
-        }
-
-        {
-            auto [cb, cg] = make_callback(function);
-            cb.invoke();
         }
     }
 
@@ -177,7 +199,7 @@ int main()
     }
 
     // callback_listener test:
-    if (true)
+    if (false)
     {
         callback_intf_consumer cic;
 
