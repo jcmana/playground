@@ -105,7 +105,7 @@ int main()
     }
 
     // Callback using various functors:
-    if (true)
+    if (false)
     {
         {
             callback_intf i;
@@ -170,7 +170,7 @@ int main()
         cs_move.invoke(&callback_intf::method);
     }
 
-    // Callback vector re-alloccation test:
+    // Callback store vector re-alloccation test:
     if (false)
     {
         static constexpr std::size_t count = 100;
@@ -187,6 +187,24 @@ int main()
         }
     }
 
+    // Callback store inactive callback reuse:
+    if (true)
+    {
+        callback_store<void(*)()> cs;
+
+        decltype(cs.subscribe(function)) gp;
+
+        {
+            gp = cs.subscribe(function);
+            auto gl = cs.subscribe(function);
+            // gl is discarded here and callback becomes inactive
+        }
+
+        // inactive callback should be replaced here, instead of emplacing back
+        auto gn = cs.subscribe(function);
+
+        cs.invoke();
+    }
 
     // Function callback_store test:
     if (false)
