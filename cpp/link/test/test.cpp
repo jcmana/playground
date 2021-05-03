@@ -86,7 +86,7 @@ int main()
         //a_copy = a;                   = deleted function
     }
 
-    if (false)
+    if (true)
     {
         atomic_link_element a;
         atomic_link_element b;
@@ -135,7 +135,7 @@ int main()
         }
     }
 
-    if (true)
+    if (false)
     {
         std::future<void> f;
 
