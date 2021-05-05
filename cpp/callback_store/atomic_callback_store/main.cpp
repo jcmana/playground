@@ -7,6 +7,8 @@
 #include "atomic_callback.hpp"
 #include "atomic_callback_store.hpp"
 
+#include "../callback_store/callback_ref.hpp"
+
 struct callback_intf
 {
     void method()
@@ -39,42 +41,41 @@ void main()
     {
         callback_intf i;
 
-        auto callback_pair = make_atomic_callback(i);
-        auto callback = std::move(std::get<0>(callback_pair));
-        auto callback_guard = std::move(std::get<1>(callback_pair));
-
-        callback.invoke(&callback_intf::method);
+        auto [c, g] = make_atomic_callback(callback_ref(i));
+        c.invoke(&callback_intf::method);
     }
 
     // Multi-thread atomic_callback_store test:
-    if (false)
+    if (true)
     {
         callback_intf i;
 
-        atomic_callback<callback_intf> callback;
-        atomic_callback_guard<callback_intf> callback_guard;
+        atomic_callback<callback_ref<callback_intf>> callback;
+        atomic_callback_guard<callback_ref<callback_intf>> callback_guard;
 
-        std::tie(callback, callback_guard) = make_atomic_callback(i);
+        std::tie(callback, callback_guard) = make_atomic_callback(callback_ref(i));
 
-        std::thread t([&]
+        auto proc = [&]
         {
-            auto g = std::move(callback_guard);
-            callback.invoke(&callback_intf::method_slow);
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            callback.invoke(&callback_intf::method_slow);
+            while (callback.active())
+            {
+                callback.invoke(&callback_intf::method_slow);
+            }
+        };
 
-            auto g_move = std::move(g);
+        std::thread t(proc);
 
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            callback.invoke(&callback_intf::method_slow);
-        });
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
 
-        auto c_move = std::move(callback);
-        //callback = std::move(c_move);
+        // Depending on the scheduling of this thread and t, following instruction
+        // disconnects the link and callback becomes inactive, therefore only limited
+        // number of invokes will go through
+        callback_guard = {};
 
         t.join();
     }
 
+    /*
     if (true)
     {
         callback_intf i;
@@ -87,4 +88,5 @@ void main()
         cs.invoke(&callback_intf::method);
         cs.invoke(&callback_intf::method_slow);
     }
+    */
 }

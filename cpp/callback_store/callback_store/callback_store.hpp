@@ -12,7 +12,7 @@ template<typename T>
 class callback_store
 {
 public:
-    /// \brief          Subscribes `invocation` for notifications.
+    /// \brief          Subscribes `callable` for notifications.
     /// \param          invocation      Invocation receiving notifications.
     callback_guard<T> subscribe(T callable);
 

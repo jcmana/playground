@@ -11,11 +11,11 @@ class atomic_callback_store
 {
 public:
     /// \copydoc        callback::subscribe(T &)
-    atomic_callback_guard<T> subscribe(T & interface_ref);
+    atomic_callback_guard<T> subscribe(T callable);
 
     /// \brief          Invokes a method from `T` on each subscribed callback.
-    template<typename = std::enable_if_t<std::is_class<T>::value>, typename F, typename ... A>
-    void invoke(F method_ptr, A && ... args) const;
+    template<typename ... A>
+    void invoke(A && ... args) const;
 
 private:
     mutable std::mutex m_mutex;
@@ -26,11 +26,11 @@ private:
 
 template<typename T>
 atomic_callback_guard<T>
-atomic_callback_store<T>::subscribe(T & interface_ref)
+atomic_callback_store<T>::subscribe(T callable)
 {
     atomic_callback<T> c;
     atomic_callback_guard<T> g;
-    std::tie(c, g) = make_atomic_callback(interface_ref);
+    std::tie(c, g) = make_atomic_callback(std::move(callable));
 
     // Critical section:
     {
@@ -44,15 +44,15 @@ atomic_callback_store<T>::subscribe(T & interface_ref)
 }
 
 template<typename T>
-template<typename, typename F, typename ... A>
+template<typename ... A>
 void
-atomic_callback_store<T>::invoke(F method_ptr, A && ... args) const
+atomic_callback_store<T>::invoke(A && ... args) const
 {
     std::unique_lock<std::mutex> lock(m_mutex);
 
     for (auto & callback : m_callback_store)
     {
-        callback.invoke(method_ptr, std::forward<A>(args) ...);
+        callback(std::forward<A>(args) ...);
     }
 }
 

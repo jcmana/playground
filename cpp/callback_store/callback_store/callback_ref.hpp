@@ -19,7 +19,7 @@ public:
     }
 
     template<typename R, typename ... A>
-    auto operator ()(R(T:: * method_ptr)(A ...), A ... args)
+    auto operator ()(R(T:: * method_ptr)(A ...), A ... args) const
     {
         return (*m_object_ptr.*method_ptr)(std::forward<A>(args) ...);
     }
