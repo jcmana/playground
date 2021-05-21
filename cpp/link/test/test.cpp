@@ -4,6 +4,7 @@
 
 #include "../link/link_element.hpp"
 #include "../link/atomic_link_element.hpp"
+#include "../link/atomic_link_element_nosp.hpp"
 
 int main()
 {
@@ -86,7 +87,7 @@ int main()
         //a_copy = a;                   = deleted function
     }
 
-    if (true)
+    if (false)
     {
         atomic_link_element a;
         atomic_link_element b;
@@ -161,11 +162,21 @@ int main()
         std::cout << "done" << std::endl;
     }
 
-    if (true)
+    if (false)
     {
         atomic_link_element a;
         std::unique_lock<atomic_link_element> lock(a);
         //auto a_moved = std::move(a);        // deadlock = acquiring already locked mutex
+    }
+
+    if (true)
+    {
+        atomic_link_element_nosp a;
+        atomic_link_element_nosp b;
+
+        std::tie(a, b) = make_atomic_link_nosp();
+
+        auto a_moved = std::move(a);
     }
 
 	return 0;
