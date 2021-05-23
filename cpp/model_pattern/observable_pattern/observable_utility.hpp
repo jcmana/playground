@@ -78,7 +78,13 @@ void await(observable<T> & o, std::initializer_list<T> awaited_list)
 }
 
 /// \brief      Joins `observable` values `a` and `b` into single `callback`.
+/// \param      a               First observable.
+/// \param      b               Second observable.
 /// \param      callback        Functor with signature `void(const Ta &, const Tb &)`.
+///
+/// Invokes `callback` upon modification of either `observable` `a` or `b`. One value is
+/// propagated through the notification, the other is read under lock from the other
+/// `observable`, as if `observable::get()` was called.
 template<typename Ta, typename Tb, typename F>
 auto join(observable<Ta> & a, observable<Tb> & b, F && callback)
 {
