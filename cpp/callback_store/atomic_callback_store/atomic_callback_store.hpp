@@ -52,7 +52,7 @@ atomic_callback_store<T>::invoke(A && ... args) const
 
     for (auto & callback : m_callback_store)
     {
-        callback(std::forward<A>(args) ...);
+        callback.invoke(std::forward<A>(args) ...);
     }
 }
 
