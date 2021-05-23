@@ -3,7 +3,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <initializer_list>
-#include <type_traits>
+#include <tuple>
 
 #include "observable.hpp"
 
@@ -75,4 +75,23 @@ void await(observable<T> & o, std::initializer_list<T> awaited_list)
     };
 
     await_if(o, std::move(predicate));
+}
+
+template<typename T, typename F>
+auto join(observable<T> & a, observable<T> & b, F && callback)
+{
+    auto observer_a = [&](const T & value_a)
+    {
+        callback(value_a, b.get());
+    };
+
+    auto observer_b = [&](const T & value_b)
+    {
+        callback(a.get(), value_b);
+    };
+
+    auto guard_a = a.observe(std::move(observer_a));
+    auto guard_b = b.observe(std::move(observer_b));
+
+    return std::make_tuple(std::move(guard_a), std::move(guard_b));
 }

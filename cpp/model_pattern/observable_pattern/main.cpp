@@ -2,16 +2,17 @@
 
 #include <thread>
 #include <future>
+#include <functional>
 
 #include "observable.hpp"
 #include "observable_utility.hpp"
 
-void cb(const int & value)
+void cb(int value)
 {
     std::cout << "modification = " << value << std::endl;
 }
 
-void main()
+int main()
 {
     // test interface #0
     if (false)
@@ -61,8 +62,8 @@ void main()
         }
     }
 
-    // test utils
-    if (true)
+    // test await
+    if (false)
     {
         observable<int> o;
 
@@ -79,5 +80,23 @@ void main()
 
         await(o, {6, 7, 8, 9});
         std::cout << "modified" << std::endl;
+    }
+
+    // test join
+    if (true)
+    {
+        observable<int> oa;
+        observable<int> ob;
+
+        auto f = [](int a, int b)
+        {
+            std::cout << "a = " << a << ", b = " << b << std::endl; 
+        };
+
+        decltype(join(oa, ob, f)) g = join(oa, ob, f);
+
+        oa.set(15);
+        ob.set(28);
+        oa.set(-4);
     }
 }
