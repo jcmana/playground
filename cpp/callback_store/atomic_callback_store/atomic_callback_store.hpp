@@ -55,6 +55,8 @@ atomic_callback_store<T>::operator  =(atomic_callback_store & other) noexcept
     atomic_callback_store empty;
     swap(*this, empty);
     swap(*this, other);
+
+    return (*this);
 }
 
 template<typename T>
