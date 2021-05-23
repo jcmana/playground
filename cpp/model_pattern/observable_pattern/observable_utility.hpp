@@ -3,40 +3,21 @@
 #include <mutex>
 #include <condition_variable>
 #include <initializer_list>
+#include <type_traits>
 
 #include "observable.hpp"
 
-/// \brief      Waits for any modfication of `observable`.
-template<typename T>
-void await(observable<T> & o)
+/// \brief      Waits for modfication of `observable` to meet the `predicate`.
+/// \param      predicate       Functor with signature `bool(const T & value)`; should return `true`
+///                             if condition is met, `false` otherwise.
+template<typename T, typename F>
+void await_if(const observable<T> & o, F && predicate)
 {
-    std::mutex mutex;
-    std::condition_variable cv;
-
-    auto wait = [&](const T &)
-    {
-        cv.notify_one();
-    };
-
-    auto guard = o.observe(wait);
-    
-    // Critical section:
-    {
-        std::unique_lock lock(mutex);
-        cv.wait(lock);
-    }
-}
-
-/// \brief      Waits for modfication to `value` of `observable`.
-template<typename T>
-void await(observable<T> & o, const T & awaited_value)
-{
-    std::mutex mutex;
     std::condition_variable cv;
 
     auto wait = [&](const T & value)
     {
-        if (value == awaited_value)
+        if (predicate(value))
         {
             cv.notify_one();
         }
@@ -46,34 +27,52 @@ void await(observable<T> & o, const T & awaited_value)
 
     // Critical section:
     {
+        std::mutex mutex;
         std::unique_lock lock(mutex);
         cv.wait(lock);
     }
+}
+
+/// \brief      Waits for any modfication of `observable`.
+template<typename T>
+void await_any(const observable<T> & o)
+{
+    auto predicate = [](const T &)
+    {
+        return true;
+    };
+
+    await_if(o, std::move(predicate));
+}
+
+/// \brief      Waits for modfication of `observable` to `value`.
+template<typename T>
+void await(const observable<T> & o, const T & awaited_value)
+{
+    auto predicate = [&](const T & value)
+    {
+        return value == awaited_value;
+    };
+
+    await_if(o, std::move(predicate));
 }
 
 /// \brief      Waits for modfication to `value` of `observable`.
 template<typename T>
 void await(observable<T> & o, std::initializer_list<T> awaited_list)
 {
-    std::mutex mutex;
-    std::condition_variable cv;
-
-    auto wait = [&](const T & value)
+    auto predicate = [&](const T & value)
     {
-        for (const auto awaited_value : awaited_list)
+        for (const auto & awaited_value : awaited_list)
         {
             if (value == awaited_value)
             {
-                cv.notify_one();
+                return true;
             }
         }
+
+        return false;
     };
 
-    auto guard = o.observe(wait);
-
-    // Critical section:
-    {
-        std::unique_lock lock(mutex);
-        cv.wait(lock);
-    }
+    await_if(o, std::move(predicate));
 }

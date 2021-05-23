@@ -77,7 +77,7 @@ void main()
             o.set(7);
         });
 
-        await(o, {4, 5, 7});
+        await(o, {6, 7, 8, 9});
         std::cout << "modified" << std::endl;
     }
 }

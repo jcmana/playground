@@ -4,12 +4,12 @@
 #include <functional>
 
 #include "../../callback_store/atomic_callback_store/atomic_callback_store.hpp"
+
+/// \brief      Observable value, issues notifications after each modification.
 template<typename T>
 class observable
 {
 public:
-    using callback = std::function<void(const T &)>;
-
     class modifier
     {
     public:
@@ -30,8 +30,8 @@ public:
         }
 
     private:
-        observable & m_mref;
         std::unique_lock<std::shared_mutex> m_lock;
+        observable & m_mref;
     };
 
     class accessor
@@ -57,10 +57,15 @@ public:
         const observable & m_cref;
     };
 
+    friend class modifier;
+    friend class accessor;
+
 public:
-    auto observe(callback c)
+    /// \brief      Subscribes `callback` for modification notifications.
+    template<typename F>
+    auto observe(F && callback) const
     {
-        return m_store.subscribe(std::move(c));
+        return m_store.subscribe(std::move(callback));
     }
 
     void set(T value)
@@ -76,6 +81,8 @@ public:
         return m_value;
     }
 
+    /// \brief      Modifies value with `functor`.
+    /// \param      functor     Functor with signature `void(T &)`.
     template<typename F>
     void modify(F && functor)
     {
@@ -84,6 +91,8 @@ public:
         m_store.invoke(m_value);
     }
 
+    /// \brief      Reads value with `functor`.
+    /// \param      functor     Functor with signature `void(const T &)`.
     template<typename F>
     void access(F && functor) const
     {
@@ -91,11 +100,13 @@ public:
         functor(static_cast<const T &>(m_value));
     }
 
+    /// \brief      Write-lock guard for the `observable`.
     modifier modify()
     {
         return modifier(*this);
     }
 
+    /// \brief      Read-lock guard for the `observable`.
     accessor access() const
     {
         return accessor(*this);
@@ -103,10 +114,7 @@ public:
 
 private:
     mutable std::shared_mutex m_mutex;
-    mutable atomic_callback_store<callback> m_store;
+    mutable atomic_callback_store<std::function<void(const T &)>> m_store;
 
     T m_value;
-
-    friend class modifier;
-    friend class accessor;
 };
