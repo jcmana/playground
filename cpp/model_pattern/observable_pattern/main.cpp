@@ -108,5 +108,7 @@ int main()
         auto oa_moved = std::move(oa);
         oa.set(7);
         oa_moved.set(7);
+
+        oa_moved.trigger();
     }
 }

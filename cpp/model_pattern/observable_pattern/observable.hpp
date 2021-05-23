@@ -139,6 +139,12 @@ public:
         return accessor(*this);
     }
 
+    /// \brief      Triggers subscribed callbacks as if modified.
+    void trigger() const
+    {
+        m_store.invoke(m_value);
+    }
+
     /// \brief      Swaps `lhs` and `rhs` `observable`s.
     template<typename T>
     friend void swap(observable<T> & lhs, observable<T> & rhs);
