@@ -77,17 +77,19 @@ void await(observable<T> & o, std::initializer_list<T> awaited_list)
     await_if(o, std::move(predicate));
 }
 
-template<typename T, typename F>
-auto join(observable<T> & a, observable<T> & b, F && callback)
+/// \brief      Joins `observable` values `a` and `b` into single `callback`.
+/// \param      callback        Functor with signature `void(const Ta &, const Tb &)`.
+template<typename Ta, typename Tb, typename F>
+auto join(observable<Ta> & a, observable<Tb> & b, F && callback)
 {
-    auto observer_a = [&](const T & value_a)
+    auto observer_a = [&](const Ta & value_a)
     {
-        callback(value_a, b.get());
+        callback({value_a}, {b.get()});
     };
 
-    auto observer_b = [&](const T & value_b)
+    auto observer_b = [&](const Tb & value_b)
     {
-        callback(a.get(), value_b);
+        callback({a.get()}, {value_b});
     };
 
     auto guard_a = a.observe(std::move(observer_a));

@@ -86,9 +86,9 @@ int main()
     if (true)
     {
         observable<int> oa;
-        observable<int> ob;
+        observable<double> ob;
 
-        auto f = [](int a, int b)
+        auto f = [](int a, double b)
         {
             std::cout << "a = " << a << ", b = " << b << std::endl; 
         };
@@ -96,7 +96,7 @@ int main()
         decltype(join(oa, ob, f)) g = join(oa, ob, f);
 
         oa.set(15);
-        ob.set(28);
+        ob.set(21.4);
         oa.set(-4);
     }
 }
