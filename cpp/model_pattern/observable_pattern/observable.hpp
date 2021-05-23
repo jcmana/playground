@@ -61,6 +61,33 @@ public:
     friend class accessor;
 
 public:
+    /// \brief      Default contructor.
+    observable() :
+        m_value()
+    {
+    }
+
+    /// \brief      Constructor, initializes observable with `value`.
+    observable(T value) :
+        m_value(std::move(value))
+    {
+    }
+
+    observable(observable && other) noexcept :
+        observable()
+    {
+        swap(*this, other);
+    }
+
+    observable & operator  =(observable && other) noexcept
+    {
+        observable empty;
+        swap(*this, empty);
+        swap(*this, other);
+
+        return (*this);
+    }
+
     /// \brief      Subscribes `callback` for modification notifications.
     template<typename F>
     auto observe(F && callback) const
@@ -112,9 +139,24 @@ public:
         return accessor(*this);
     }
 
+    /// \brief      Swaps `lhs` and `rhs` `observable`s.
+    template<typename T>
+    friend void swap(observable<T> & lhs, observable<T> & rhs);
+
 private:
     mutable std::shared_mutex m_mutex;
     mutable atomic_callback_store<std::function<void(const T &)>> m_store;
 
     T m_value;
 };
+
+template<typename T>
+void swap(observable<T> & lhs, observable<T> & rhs)
+{
+    std::unique_lock lock_lhs(lhs.m_mutex);
+    std::unique_lock lock_rhs(rhs.m_mutex);
+
+    using std::swap;
+    swap(lhs.m_store, rhs.m_store);
+    swap(lhs.m_value, rhs.m_value);
+}

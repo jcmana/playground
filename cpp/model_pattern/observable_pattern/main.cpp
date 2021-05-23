@@ -83,7 +83,7 @@ int main()
     }
 
     // test join
-    if (true)
+    if (false)
     {
         observable<int> oa;
         observable<double> ob;
@@ -98,5 +98,15 @@ int main()
         oa.set(15);
         ob.set(21.4);
         oa.set(-4);
+    }
+
+    if (true)
+    {
+        observable<int> oa;
+        auto g = oa.observe(cb);
+
+        auto oa_moved = std::move(oa);
+        oa.set(7);
+        oa_moved.set(7);
     }
 }
