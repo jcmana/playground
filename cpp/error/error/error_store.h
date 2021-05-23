@@ -6,7 +6,7 @@
 
 #include "error.h"
 
-/// <summary>Pairs `error` code with its detailed description.</summary>
+/// <summary>Pairs `error` with its description.</summary>
 template<typename T>
 class error_store
 {
