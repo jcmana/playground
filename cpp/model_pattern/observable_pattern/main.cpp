@@ -100,7 +100,7 @@ int main()
         oa.set(-4);
     }
 
-    if (true)
+    if (false)
     {
         observable<int> oa;
         auto g = oa.observe(cb);
@@ -110,5 +110,19 @@ int main()
         oa_moved.set(7);
 
         oa_moved.trigger();
+    }
+
+    // manual composite
+    if (true)
+    {
+        struct comp
+        {
+            int x;
+            int y;
+        };
+
+        observable<int> oa;
+        observable<int> ob;
+        observable<comp> oc;
     }
 }

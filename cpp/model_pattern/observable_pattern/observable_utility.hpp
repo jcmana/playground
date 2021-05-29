@@ -103,3 +103,9 @@ auto join(observable<Ta> & a, observable<Tb> & b, F && callback)
 
     return std::make_tuple(std::move(guard_a), std::move(guard_b));
 }
+
+template<typename Ta, typename Tb, typename Tc>
+auto join(observable<Ta> & a, observable<Tb> & b, observable<Tc> & c)
+{
+    return composite;
+}

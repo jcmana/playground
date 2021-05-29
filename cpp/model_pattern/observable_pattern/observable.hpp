@@ -10,6 +10,12 @@ template<typename T>
 class observable
 {
 public:
+    using value_type = T;
+    using store_callback_type = std::function<void(const T &)>;
+    using store_type = atomic_callback_store<store_callback_type>;
+    using guard_type = atomic_callback_guard<store_callback_type>;
+
+public:
     class modifier
     {
     public:
@@ -93,6 +99,10 @@ public:
     auto observe(F && callback) const
     {
         return m_store.subscribe(std::move(callback));
+    }
+
+    void operator ()(const T & value)
+    {
     }
 
     void set(T value)
