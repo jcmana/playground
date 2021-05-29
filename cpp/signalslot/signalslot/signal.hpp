@@ -21,7 +21,5 @@ struct signal
         }
     }
 
-    void add_connection(
-
     std::vector<std::reference_wrapper<slot<A ...>>> m_slots;
 };

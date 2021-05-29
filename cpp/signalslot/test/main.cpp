@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "../signals/connection.hpp"
+#include "../signalslot/connection.hpp"
 
 struct fucker
 {
