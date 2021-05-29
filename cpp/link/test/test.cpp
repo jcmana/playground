@@ -5,6 +5,7 @@
 #include "../link/link_element.hpp"
 #include "../link/atomic_link_element.hpp"
 #include "../link/atomic_link_element_nosp.hpp"
+#include "../link/atomic_link_element_asym.hpp"
 
 int main()
 {
@@ -169,7 +170,7 @@ int main()
         //auto a_moved = std::move(a);        // deadlock = acquiring already locked mutex
     }
 
-    if (true)
+    if (false)
     {
         atomic_link_element_nosp a;
         atomic_link_element_nosp b;
@@ -177,6 +178,59 @@ int main()
         std::tie(a, b) = make_atomic_link_nosp();
 
         auto a_moved = std::move(a);
+    }
+
+    if (false)
+    {
+        asymetric_link_element::slave s;
+        asymetric_link_element::master m;
+
+        m.m_element_ptr = &s;
+        s.m_element_ptr = &m;
+
+        auto f = std::async([&]
+        {
+            std::unique_lock lock(s);
+            std::cout << "slave locked" << std::endl;
+        });
+
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+
+        std::unique_lock lock(m);
+        std::cout << "master locked" << std::endl;
+    }
+
+    if (true)
+    {
+        for (auto n = 0; n != 1'000; ++n)
+        {
+            std::mutex m;
+            std::mutex s;
+        
+            auto proc_m = [&]
+            {
+                m.lock();
+                s.lock();
+                //std::cout << "cricical section in master" << std::endl;
+                s.unlock();
+                m.unlock();
+            };
+
+            auto proc_s = [&]
+            {
+                s.lock();
+                m.lock();
+                //std::cout << "cricical section in slave" << std::endl;
+                m.unlock();
+                s.unlock();
+            };
+
+            auto tm = std::thread(proc_m);
+            auto ts = std::thread(proc_s);
+
+            ts.join();
+            tm.join();
+        }
     }
 
 	return 0;
