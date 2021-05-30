@@ -4,17 +4,12 @@
 #include <utility>
 
 #include "../../link/link/atomic_link_element.hpp"
-
-template<typename T>
-class atomic_callback_guard;
+#include "atomic_callback_guard.hpp"
 
 /// \brief      Thread-safe scope-guarded callback.
 template<typename T>
 class atomic_callback : private atomic_link_element
 {
-public:
-    friend class atomic_callback_guard<T>;
-
 public:
     /// \copydoc        callback<T>::callback()
     atomic_callback();
