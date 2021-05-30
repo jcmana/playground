@@ -31,4 +31,14 @@ void main()
 
     signal_b(3, 12);
     signal_a(7);
+
+    // note:
+    // signal+slot models a bit different situation than observable, which i inteded
+    // to replace with this
+    //
+    // observable is more strict implementation:
+    //  - supports only modification "signal"
+    //  - handles and synchronizes the value storage
+    //  - its composition doesn't allow to mix presentation logic with storage, which
+    //    is easily achievable with signal+slot
 }
