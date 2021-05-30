@@ -1,25 +1,27 @@
 #pragma once
 
-#include <vector>
 #include <functional>
 
-#include "slot.hpp"
+#include "../../callback_store/atomic_callback_store/atomic_callback_store.hpp"
 
 template<typename ... A>
-struct signal
+class slot;
+
+template<typename ... A>
+class signal
 {
-    void connect(slot<A ...> & st)
+public:
+    using signature = void(A ...);
+
+public:
+    void operator ()(A ... args)
     {
-        m_slots.emplace_back(st);
+        m_store.invoke(std::forward<A>(args) ...);
     }
 
-    void send(A ... arguments)
-    {
-        for (auto && slot : m_slots)
-        {
-            slot.get().receive(std::forward<A>(arguments) ...);
-        }
-    }
+    template<typename ... A>
+    friend void connect(signal<A ...> & signal, slot<A ...> & slot);
 
-    std::vector<std::reference_wrapper<slot<A ...>>> m_slots;
+private:
+    atomic_callback_store<std::function<void(A ...)>> m_store;
 };

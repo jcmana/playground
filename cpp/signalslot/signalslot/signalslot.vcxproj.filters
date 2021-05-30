@@ -17,7 +17,7 @@
     <ClInclude Include="slot.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="connection.hpp">
+    <ClInclude Include="connect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

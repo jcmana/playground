@@ -1,20 +1,39 @@
 #pragma once
 
 #include <functional>
+#include <vector>
+
+#include "../../callback_store/atomic_callback_store/atomic_callback_guard.hpp"
 
 template<typename ... A>
-struct slot
+class signal;
+
+template<typename ... A>
+class slot
 {
-    template< class Function/*, class ... A*/>
-    explicit slot(Function && f/*, A &&... args*/) :
-        m_function(std::move(f))
+public:
+    slot()
     {
     }
 
-    void receive(A ... arguments)
+    template<typename F>
+    slot(F && functor) :
+        m_functor(functor)
     {
-        m_function(std::forward<A>(arguments) ...);
     }
 
-    std::function<void(A ...)> m_function;
+    void operator ()(A ... args)
+    {
+        if (m_functor)
+        {
+            m_functor(std::forward<A>(args) ...);
+        }
+    }
+
+    template<typename ... A>
+    friend void connect(signal<A ...> & signal, slot<A ...> & slot);
+
+private:
+    std::function<void(A ...)> m_functor;
+    std::vector<atomic_callback_guard<std::function<void(A ...)>>> m_connection;
 };

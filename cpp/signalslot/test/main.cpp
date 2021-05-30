@@ -1,50 +1,34 @@
 #include <iostream>
 
-#include "../signalslot/connection.hpp"
-
-struct fucker
-{
-    fucker() :
-        shit([this]{ assfuck = true; })
-    {
-    }
-
-    slot<> shit;
-
-    bool assfuck = false;
-};
+#include "../signalslot/signal.hpp"
+#include "../signalslot/slot.hpp"
+#include "../signalslot/connect.h"
 
 void main()
 {
-    if (false)
+    signal<int> signal_a;
+    signal<int, int> signal_b;
+
     {
-        auto f = []
+        auto slot_a_func = [](int value)
         {
-            std::cout << "holy fuck slot" << std::endl;
+            std::cout << "slot() = " << value << std::endl;
         };
-        slot<> st(f);
+        slot<int> slot_a(slot_a_func);
 
-        signal<> sl;
+        auto slot_b_func = [](int value_x, int value_y)
+        {
+            std::cout << "slot() = " << value_x << ", " << value_y << std::endl;
+        };
+        slot<int, int> slot_b(slot_b_func);
 
-        fucker fr;
+        connect(signal_a, slot_a);
+        connect(signal_b, slot_b);
 
-        sl.connect(st);
-        sl.connect(fr.shit);
-        sl.send();
+        signal_b(3, 12);
+        signal_a(7);
     }
 
-    if (true)
-    {
-        signal<int> sl;
-
-        auto f = [](int n)
-        {
-            std::cout << "holy fuck numbered slot " << n << std::endl;
-        };
-        slot<int> st(f);
-
-        //sl.connect(st);
-        connect(sl, st);
-        sl.send(4);
-    }
+    signal_b(3, 12);
+    signal_a(7);
 }
