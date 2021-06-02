@@ -80,7 +80,7 @@ public:
         auto element = std::move(m_queue.front());
         m_queue.pop();
         
-        return element;
+        return std::move(element);
     }
 
     friend void swap(executor_queue & lhs, executor_queue & rhs)

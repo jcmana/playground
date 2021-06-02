@@ -9,33 +9,33 @@ class atomic_link_element
 {
 public:
     /// \copydoc    link_element::link_element() noexcept
-    inline atomic_link_element() noexcept;
+    atomic_link_element() noexcept;
 
     /// \copydoc    link_element::link_element(atomic_link_element && other) noexcept
-    inline atomic_link_element(atomic_link_element && other) noexcept;
+    atomic_link_element(atomic_link_element && other) noexcept;
 
-    inline ~atomic_link_element();
+    ~atomic_link_element();
 
-    inline atomic_link_element & operator  =(atomic_link_element && other) noexcept;
+    atomic_link_element & operator  =(atomic_link_element && other) noexcept;
 
     /// \copydoc    link_element::linked()
-    inline bool linked() const noexcept;
+    bool linked() const noexcept;
 
 public:
     // BasicLockable concept implementation:
 
     /// \brief      Locks the mutex, blocks if the mutex is not available.
-    inline void lock() const;
+    void lock() const;
 
     /// \brief      Unlocks the mutex.
-    inline void unlock() const;
+    void unlock() const;
 
 public:
     /// \copydoc    make_link()
-    friend inline std::tuple<atomic_link_element, atomic_link_element> make_atomic_link();
+    friend std::tuple<atomic_link_element, atomic_link_element> make_atomic_link();
 
     /// \copydoc    swap(link_element &, link_element &)
-    friend inline void swap(atomic_link_element & lhs, atomic_link_element & rhs);
+    friend void swap(atomic_link_element & lhs, atomic_link_element & rhs);
 
 private:
     std::shared_ptr<std::mutex> m_sp_mutex;
@@ -56,8 +56,20 @@ atomic_link_element::atomic_link_element(atomic_link_element && other) noexcept 
 
 atomic_link_element::~atomic_link_element()
 {
-    // Synchronize after all currently running operations are done and clear
+    // Synchronize after all currently running operations are done
+    //
+    // Strategy:
+    // 1. lock shared mutex exclusively 
+    // 2. check linked state (if already unlinked, there is no need for complex destruction)
+    // 3. reset shared pointer to mutex (this is can't be use-after-delete because mutex is still owned by shared pointer)
+    // 4. unlock shared mutex
+
     std::unique_lock<std::mutex> lock(*m_sp_mutex);
+    
+    if (linked())
+    {
+        m_sp_mutex.reset();
+    }
 }
 
 atomic_link_element & atomic_link_element::operator  =(atomic_link_element && other) noexcept
@@ -68,7 +80,7 @@ atomic_link_element & atomic_link_element::operator  =(atomic_link_element && ot
     auto empty = atomic_link_element();
     swap(*this, empty);
 
-    // Swap this now default and therefore unlinked element for `other`
+    // Swap this, now default and therefore unlinked element, for other
     swap(*this, other);
 
     return (*this);

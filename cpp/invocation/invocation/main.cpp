@@ -1,6 +1,11 @@
 #include <iostream>
+#include <functional>
+#include <utility>
 
-#include "invocation.hpp"
+#include <string>
+#include <algorithm>
+
+#include "interface.hpp"
 
 struct interface
 {
@@ -13,58 +18,19 @@ struct interface
     {
         std::cout << "interface::method_parametrized() = " << n << std::endl;
     }
-};
 
-void function()
-{
-    std::cout << "function()" << std::endl;
-}
+    bool method_retval()
+    {
+        std::cout << "interface::method_retval()" << std::endl;
+        return true;
+    }
+};
 
 void main()
 {
-    // Lambda decay to function:
-    if (false)
-    {
-        using function_t = void(*)(int);
-
-        function_t l = nullptr;
-
-        {
-            l = [](int n)
-            {
-                std::cout << "lambda[] = " << n << std::endl;
-            };
-
-            // Decays automatically if there is no capture
-        }
-
-        l(12);
-    }
-
-    // Function:
-    if (true)
-    {
-        invocation::function i(function);
-        i.invoke();
-    }
-
-    // Lambda invocation:
-    if (false)
-    {
-        auto l = [](int n)
-        {
-            std::cout << "lambda[] = " << n << std::endl;
-        };
-
-        invocation::lambda i(l);
-        i.invoke(6);
-    }
-
-    // Interface invocation:
-    if (false)
-    {
-        interface intf;
-        invocation::interface i(intf);
-        i.invoke(&interface::method_parametrized, 7);
-    }
+    interface intf;
+    invocation::interface i(intf);
+    i(&interface::method);
+    i(&interface::method_parametrized, 7);
+    auto r = i(&interface::method_retval);
 }

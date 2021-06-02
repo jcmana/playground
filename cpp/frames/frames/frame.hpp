@@ -3,6 +3,7 @@
 #include "xy.hpp"
 #include "space_default.hpp"
 
+/// \brief      Defines frame of reference in a space `S`.
 template<typename S = space_default>
 struct frame
 {

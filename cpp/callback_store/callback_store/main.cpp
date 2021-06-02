@@ -4,11 +4,11 @@
 #include <chrono>
 #include <type_traits>
 
+#include "callback_ref.hpp"
+#include "callback_ref_listener.hpp"
+
 #include "callback_store.hpp"
 #include "callback_factory.hpp"
-#include "callback_listener.hpp"
-
-#include "../../invocation/invocation/invocation.hpp"
 
 struct callback_intf
 {
@@ -29,14 +29,16 @@ struct callback_intf
     }
 };
 
-struct callback_abstract_intf
+struct callback_intf_consumer
 {
-    virtual void method()
+    void on_method()
     {
+        std::cout << "callback_intf_consumer::on_method()" << std::endl;
     }
 
-    virtual void method_slow()
+    void on_method_params(int n)
     {
+        std::cout << "callback_intf_consumer::on_method_params() = " << n << std::endl;
     }
 };
 
@@ -82,86 +84,64 @@ int main()
         }
     }
 
+    // Callback default ctor, move, copy:
     if (false)
     {
-        /*
-        // Functors:
-        callback<void()> cbf;
-        callback<void(int, int, bool)> cbp;
+        callback<void(*)()> cf;
+        callback<callback_ref<callback_intf>> cr;
 
-        // Classes:
-        //callback<callback_intf> cbi;
+        callback<std::function<void()>> csf;
+        callback_guard<std::function<void()>> g;
 
-        // Lambda
+        std::tie(csf, g) = make_callback(std::function(function));
+
+        // Copy, move
+        //auto csf_copy = csf;        // deleted function
+        auto csf_move = std::move(csf);
+
+        // Check
+        csf.invoke();
+        csf_move.invoke();
+    }
+
+    // Callback using various functors:
+    if (false)
+    {
         {
-            //auto [cb, cg] = make_callback(lambda);
-            //cb.invoke();
+            callback_intf i;
+            auto [cb, cg] = make_callback(callback_ref(i));
+            cb.invoke(&callback_intf::method_params, 13);
         }
 
-        // Plain function
         {
             auto [cb, cg] = make_callback(function);
             cb.invoke();
         }
 
-        // std::bind functor
         {
-            callback_intf ci;
-            auto [cb, cg] = make_callback<callback_intf>(&callback_intf::method, ci);
-            cb.invoke();
-        }
-
-        // std::function functor
-        {
-            auto f = std::function(function_slow);
-
-            auto [cb, cg] = make_callback(f);
-            cb.invoke();
-
-            //auto cb_move = std::move(cb);
-        }
-
-        // interface callback
-        {
-            callback_intf ci;
-
-            auto [cb, cg] = make_callback(ci);
-            cb.invoke(&callback_intf::method);
-        }
-        */
-    }
-
-    // Callback using invocation wrapper:
-    if (true)
-    {
-        {
-            invocation::function i(function);
-            auto [cb, cg] = make_callback(i);
+            auto [cb, cg] = make_callback(std::function(function));
             cb.invoke();
         }
 
         {
-            invocation::lambda i(lambda);
-            auto [cb, cg] = make_callback(i);
+            auto [cb, cg] = make_callback(lambda);
             cb.invoke();
         }
 
         {
-            callback_intf intf;
-            invocation::interface i(intf);
-            auto [cb, cg] = make_callback(i);
-            cb.invoke(&callback_intf::method_params, 13);
+            callback_intf i;
+            auto [cb, cg] = make_callback(std::bind(&callback_intf::method_params, &i, std::placeholders::_1));
+            cb.invoke(7);
         }
     }
 
-    /*
     // Simple callback_store test:
     if (false)
     {
         callback_intf cia;
         callback_intf cib;
 
-        callback_store<callback_intf> cs;
+        callback_store<callback_ref<callback_intf>> cs;
         cs.invoke(&callback_intf::method);
 
         {
@@ -190,36 +170,46 @@ int main()
         cs_move.invoke(&callback_intf::method);
     }
 
-    // Callback vector re-alloccation test:
+    // Callback store vector re-alloccation test:
     if (false)
     {
-        std::size_t count = 100;
+        static constexpr std::size_t count = 100;
 
         std::vector<callback_intf> ci;
-        callback_store<callback_intf> cs;
+
+        callback_store<callback_ref<callback_intf>> cs;
+        std::vector<callback_guard<callback_ref<callback_intf>>> cg;
 
         for (std::size_t n = 0; n < count; ++n)
         {
             auto it = ci.emplace(ci.end());
-            cs.subscribe(*it);
+            cg.push_back(cs.subscribe(*it));
         }
     }
 
-    // Function callback test:
-    if (false)
+    // Callback store inactive callback reuse:
+    if (true)
     {
-        callback<void()> c;
-        callback_guard<void()> g;
+        callback_store<void(*)()> cs;
 
-        std::tie(c, g) = make_callback(function);
+        decltype(cs.subscribe(function)) gp;
 
-        c.invoke();
+        {
+            gp = cs.subscribe(function);
+            auto gl = cs.subscribe(function);
+            // gl is discarded here and callback becomes inactive
+        }
+
+        // inactive callback should be replaced here, instead of emplacing back
+        auto gn = cs.subscribe(function);
+
+        cs.invoke();
     }
 
     // Function callback_store test:
     if (false)
     {
-        callback_store<void()> s;
+        callback_store<void(*)()> s;
         auto g = s.subscribe(function);
         auto g_slow = s.subscribe(function_slow);
 
@@ -229,18 +219,15 @@ int main()
     // callback_listener test:
     if (false)
     {
-        callback_intf ci;
-        callback_listener<callback_abstract_intf, callback_intf> cl;
-        cl.bind(&callback_abstract_intf::method, &callback_intf::method, ci);
-        cl.invoke(&callback_abstract_intf::method);
+        callback_intf_consumer cic;
 
-        auto cbpack = make_callback<callback_intf>(cl);
-        auto cb = std::move(std::get<0>(cbpack));
-        auto cg = std::move(std::get<1>(cbpack));
+        callback_ref_listener<callback_intf, callback_intf_consumer> cl;
+        cl.bind(&callback_intf::method, &callback_intf_consumer::on_method, cic);
+        cl.bind(&callback_intf::method_params, &callback_intf_consumer::on_method_params, cic);
 
-        //cb.invoke(&callback_intf::method);
+        auto [cb, cg] = make_callback(cl);
+        cb.invoke(&callback_intf::method);
+        cb.invoke(&callback_intf::method_params, 1337);
+        cb.invoke(&callback_intf::method_slow);         // unbound method call is discarded
     }
-    */
-
-    return 0;
 }

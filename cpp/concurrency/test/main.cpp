@@ -1,6 +1,8 @@
 #include <iostream>
 #include <thread>
+#include <future>
 #include <chrono>
+#include <vector>
 #include <string>
 
 #include "../concurrency/barrier.hpp"
@@ -8,8 +10,8 @@
 #include "../concurrency/condition.hpp"
 
 #include "../concurrency/executor_immediate.hpp"
-#include "../concurrency/executor_ordered.hpp"
-#include "../concurrency/executor_ordered_pool.hpp"
+//#include "../concurrency/executor_ordered.hpp"
+//#include "../concurrency/executor_ordered_pool.hpp"
 #include "../concurrency/executor_thread.hpp"
 
 #include "../concurrency/memory.hpp"
@@ -20,12 +22,23 @@
 barrier barr_a;
 barrier barr_b;
 
-void print(const std::string & text)
+void print()
+{
+    std::cout << "print()" << std::endl;
+}
+
+void print_slow()
+{
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+    std::cout << "print_slow()" << std::endl;
+}
+
+void print_parametric(const std::string & text)
 {
     static std::mutex m;
 
     std::unique_lock<std::mutex> lock(m);
-    std::cout << text << std::endl;
+    std::cout << "print_parametric()" << text << std::endl;
 }
 
 void thread(const std::string & text)
@@ -34,6 +47,36 @@ void thread(const std::string & text)
     std::cout << "thread(): '" << text << "' start" << "\n";
     std::cout << "thread(): '" << text << "' stop" << "\n";
     barr_b.arrive_and_drop();
+}
+
+void thread_ordered_queue(executor_queue<std::packaged_task<void()>> & queue)
+{
+    while (true)
+    {
+        auto task = queue.pop();
+
+        if (task.valid() == false)
+        {
+            break;
+        }
+
+        try
+        {
+            task();
+        }
+        catch (...)
+        {
+        }
+    }
+}
+
+template<typename T>
+void thread_tasklist(T & container)
+{
+    for (auto & task : container)
+    {
+        task();
+    }
 }
 
 int main()
@@ -91,7 +134,8 @@ int main()
         tc.join();
         std::cout << "done" << std::endl;
     }
-
+    
+    /*
     if (false)
     {
         executor_ordered<void> eo;
@@ -158,7 +202,6 @@ int main()
         ei.post(task);
     }
 
-    /*
     if (false)
     {
         executor_ordered_pool<void> e(2);
@@ -269,7 +312,13 @@ int main()
     */
 
     if (true)
-    {
-        executor_thread<void> t;
+    {   
+        std::vector l = {print, print_slow, print};
+        auto e = executor_thread(thread_tasklist<decltype(l)>, l);
+
+        for (auto n : {1, 2, 3, 4, 5})
+        {
+            std::cout << n << std::endl;
+        }
     }
 }

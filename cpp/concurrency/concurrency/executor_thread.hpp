@@ -2,14 +2,21 @@
 
 #include <thread>
 #include <future>
+#include <memory>
 
 #include "executor_queue.hpp"
 
-template<typename T>
 class executor_thread
 {
 public:
-    executor_thread()
+    executor_thread() :
+        m_thread()
+    {
+    }
+
+    template<typename F, typename ... A>
+    executor_thread(F && functor, A ... args) :
+        m_thread(std::move(functor), std::forward<A>(args) ...)
     {
     }
 
@@ -21,21 +28,9 @@ public:
         }
     }
 
-private:
-    void thread_procedure(executor_queue<std::packaged_task<T()>> & queue_ref)
+    bool joinable() const
     {
-        while (true)
-        {
-            auto task = queue_ref.pop();
-
-            try
-            {
-                task();
-            }
-            catch (...)
-            {
-            }
-        }
+        return m_thread.joinable();
     }
 
 private:

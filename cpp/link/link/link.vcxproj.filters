@@ -17,5 +17,11 @@
     <ClInclude Include="link_element.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="atomic_link_element_nosp.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="atomic_link_element_asym.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

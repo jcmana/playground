@@ -1,109 +1,63 @@
 #pragma once
 
-#include <functional>
 #include <utility>
-#include <type_traits>
 
 #include "../../link/link/link_element.hpp"
 
-template<typename I>
-class callback :
-    private I,
-    private link_element
+/// \brief      Scope-guarded `Callable` wrapper over `Callable` type.
+/// \param      T       Functor storage type.
+template<typename T>
+class callback : private link_element
 {
 public:
     /// \brief      Default constructor, creates inactive callback.
-    callback()
-    {
-    }
+    callback() noexcept;
 
-    callback(I invocation, link_element link) :
-        I(std::move(invocation)),
-        link_element(std::move(link))
-    {
-    }
+    /// \brief      Constructor, creates active callback with `callable`.
+    callback(T callable, link_element element) noexcept;
 
+    /// \brief      `true` for invokable callback, `false` otherwise.
+    bool active() const;
+
+    /// \brief      Invokes callback's `callable` if `active()` with `args`.
     template<typename ... A>
-    auto invoke(A ... args)
-    {
-        if (link_element::linked())
-        {
-            I::invoke(std::forward<A>(args) ...);
-        }
-    }
+    void invoke(A ... args);
+
+private:
+    T m_callable;
 };
 
-/*
-/// \brief      Scope-guarded callback SFINAE template.
-template <typename T, typename E = void>
-class callback;
+#pragma region callback_implementation:
 
-/// \brief      Scope-guarded callback to invocable.
-/// \param      F       Functor invocation signature (same as std::function).
+template<typename T>
+callback<T>::callback() noexcept :
+    m_callable()
+{
+}
+
+template<typename T>
+callback<T>::callback(T callable, link_element element) noexcept :
+    link_element(std::move(element)),
+    m_callable(std::move(callable))
+{
+}
+
+template<typename T>
+bool 
+callback<T>::active() const
+{
+    return link_element::linked();
+}
+
+template<typename T>
 template<typename ... A>
-class callback<void(A ...)> :
-    private link_element
+void 
+callback<T>::invoke(A ... args)
 {
-public:
-    /// \brief      Default constructor, creates inactive callback.
-    callback()
+    if (active())
     {
+        m_callable(std::forward<A>(args) ...);
     }
+}
 
-    /// \brief      Constructor, creates active callback.
-    callback(std::function<void(A ...)> functor, link_element link_element) :
-        link_element(std::move(link_element)),
-        m_functor(std::move(functor))
-    {
-    }
-    /// \brief      Invokes function `T`, if the callback is still active.
-    void invoke(A && ... args) const
-    {
-        if (link_element::linked())
-        {
-            m_functor(std::forward<A>(args) ...);
-        }
-    }
-
-private:
-    std::function<void(A ...)> m_functor;
-};
-
-/// \brief      Scope-guarded callback to interface.
-///
-/// Callback is bound to a interface pointer and allows invoking methods
-/// from it. Callback requires `callback_guard` to be alive, otherwise it won't
-/// be invoked.
-template<typename T, template <typename F> typename I>
-class callback<T, typename std::enable_if_t<std::is_class_v<T>>> :
-    private link_element
-{
-public:
-    /// \brief      Default constructor, creates inactive callback.
-    callback() :
-        m_interface_ptr(nullptr)
-    {
-    }
-
-    /// \brief      Constructor, creates active callback.
-    callback(T & inteface_ref, link_element link_element) :
-        link_element(std::move(link_element)),
-        m_interface_ptr(&inteface_ref)
-    {
-    }
-
-    /// \brief      Invokes method from `T`, if the callback is still active.
-    template<typename ... A>
-    void
-    invoke(void (T:: * method_ptr)(A ...) , A && ... args) const
-    {
-        if (link_element::linked())
-        {
-            (m_interface_ptr->*method_ptr)(std::forward<A>(args) ...);
-        }
-    }
-
-private:
-    T * m_interface_ptr;
-};
-*/
+#pragma endregion

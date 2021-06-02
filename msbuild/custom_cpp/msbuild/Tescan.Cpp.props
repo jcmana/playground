@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <!-- Project configuration -->
+    <ItemGroup>
+        <ProjectConfiguration Include="Debug|x64">
+            <Configuration>Debug</Configuration>
+            <Platform>x64</Platform>
+        </ProjectConfiguration>
+        <ProjectConfiguration Include="Release|x64">
+            <Configuration>Release</Configuration>
+            <Platform>x64</Platform>
+        </ProjectConfiguration>
+    </ItemGroup>
+    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.default.props" />
+
+    <!-- Toolset configuration -->
+    <PropertyGroup>
+        <PlatformToolset>v142</PlatformToolset>
+        <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+        <LanguageStandard>stdcpp17</LanguageStandard>
+    </PropertyGroup>
+
+    <!-- Compiler configuration -->
+    <ItemDefinitionGroup>
+        <ClCompile>
+            <WarningLevel>Level3</WarningLevel>
+            <LanguageStandard>stdcpp17</LanguageStandard>
+        </ClCompile>
+    </ItemDefinitionGroup>
+
+    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+</Project>

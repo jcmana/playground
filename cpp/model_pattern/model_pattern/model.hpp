@@ -3,8 +3,10 @@
 #include <mutex>
 #include <condition_variable>
 #include <utility>
+#include <functional>
 
 #include "../../callback_store/callback_store/callback_store.hpp"
+#include "../../callback_store/callback_store/callback_ref.hpp"
 
 #include "model_observer_intf.h"
 #include "model_accessor.hpp"
@@ -26,7 +28,7 @@ public:
     friend class model_guard;
 
     /// \brief      Modelled type.
-    using Type = T;
+    using type = T;
 
 public:
     /// \brief      Default constructor.
@@ -76,7 +78,7 @@ public:
     model_accessor<T> wait() const;
 
     /// \brief      Observer modifications of this object.
-    callback_guard<model_observer_intf<T>> observe(model_observer_intf<T> & observer) const;
+    callback_guard<std::function<void(T)>> observe(std::function<void(T)>) const;
 
 private:
     /// \brief      Trigger the modification notification.
@@ -91,7 +93,7 @@ private:
     /// \brief      Represents the 'modification' condition.
     mutable std::size_t m_trigger;
     /// \brief      Registered observers.
-    mutable callback_store<model_observer_intf<T>> m_callback_store;
+    mutable callback_store<std::function<void(T)>> m_callback_store;
 
     /// \brief      Modelled value.
     T m_value;
@@ -186,7 +188,6 @@ model<T>::wait() const
     while (m_trigger == initial_trigger)
     {
         m_cv.wait(lock);
-        __nop();
     }
 
     // Leave the mutex locked, model_accessor<T> extends the lock ownership
@@ -196,10 +197,10 @@ model<T>::wait() const
 }
 
 template<typename T>
-callback_guard<model_observer_intf<T>>
-model<T>::observe(model_observer_intf<T> & observer) const
+callback_guard<std::function<void(T)>> 
+model<T>::observe(std::function<void(T)> callback) const
 {
-    return m_callback_store.subscribe(observer);
+    return m_callback_store.subscribe(callback);
 }
 
 template<typename T>
@@ -211,7 +212,7 @@ model<T>::trigger()
     // Observer callback is synchronized by default, because each is executed in modifying thread, meaning
     // using model_modifier<T> which is a critical section by itself
     {
-        m_callback_store.invoke(&model_observer_intf<T>::on_modification, m_value);
+        m_callback_store.invoke(m_value);
     }
 
     // Notify waiting threads:

@@ -1,8 +1,9 @@
 #include <iostream>
 #include <thread>
 #include <mutex>
-#include <string>
 #include <memory>
+#include <string>
+#include <functional>
 
 #include "../generic/scope_guard.h"
 #include "../generic/bidirectional_map.hpp"

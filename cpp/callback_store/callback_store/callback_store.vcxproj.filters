@@ -25,10 +25,13 @@
     <ClInclude Include="callback_store.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="callback_listener.hpp">
+    <ClInclude Include="callback_factory.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="callback_factory.hpp">
+    <ClInclude Include="callback_ref.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="callback_ref_listener.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -5,12 +5,17 @@ struct simple
 {
     void method() const
     {
-        std::cout << "A::method()" << std::endl;
+        std::cout << "simple::method()" << std::endl;
     }
 
     void method(int n) const
     {
-        std::cout << "A::method(int)" << std::endl;
+        std::cout << "simple::method(int)" << std::endl;
+    }
+
+    static void function()
+    {
+        std::cout << "simple::function()" << std::endl;
     }
 };
 
@@ -79,7 +84,7 @@ int main()
         (a.*ptr)();
 
         void(simple:: * ptr_overload)(int) const = &simple::method;
-        (a.*ptr)();
+        (a.*ptr_overload)(7);
     }
 
     // pointer to polymorphic class method
@@ -126,6 +131,13 @@ int main()
 
         delete ia_ptr;
         delete ib_ptr;
+    }
+
+    // static function:
+    {
+        void * s = nullptr;
+        const auto static_member_fn = &simple::function;
+        (*s.*static_member_fn)();
     }
 
     return 0;
