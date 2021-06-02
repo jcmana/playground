@@ -112,7 +112,7 @@ int main()
         t.join();
     }
 
-    if (true)
+    if (false)
     {
         callback_intf i;
         atomic_callback_store<callback_ref<callback_intf>> cs;
@@ -127,5 +127,11 @@ int main()
         auto cs_moved = std::move(cs);
         cs.invoke(&callback_intf::method);
         cs_moved.invoke(&callback_intf::method);
+    }
+
+    if (true)
+    {
+        atomic_callback_guard<void> g;
+        auto g_moved = std::move(g);
     }
 }
