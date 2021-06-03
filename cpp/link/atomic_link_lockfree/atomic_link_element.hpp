@@ -2,6 +2,7 @@
 
 #include <atomic>
 
+/*
 struct atomic_link_element
 {
 
@@ -39,3 +40,4 @@ struct atomic_link_element
     atomic_link_element * m_element_ptr;
     std::atomic<std::uint8_t> m_state;
 };
+*/
