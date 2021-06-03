@@ -142,6 +142,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="observable.hpp" />
+    <ClInclude Include="observable_composite.hpp" />
     <ClInclude Include="observable_utility.hpp" />
   </ItemGroup>
   <ItemGroup>

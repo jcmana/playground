@@ -101,10 +101,6 @@ public:
         return m_store.subscribe(std::move(callback));
     }
 
-    void operator ()(const T & value)
-    {
-    }
-
     void set(T value)
     {
         std::unique_lock lock(m_mutex);

@@ -5,6 +5,7 @@
 #include <functional>
 
 #include "observable.hpp"
+#include "observable_composite.hpp"
 #include "observable_utility.hpp"
 
 void cb(int value)
@@ -93,7 +94,7 @@ int main()
             std::cout << "a = " << a << ", b = " << b << std::endl; 
         };
 
-        decltype(join(oa, ob, f)) g = join(oa, ob, f);
+        decltype(join(f, oa, ob)) g = join(f, oa, ob);
 
         oa.set(15);
         ob.set(21.4);
@@ -112,10 +113,10 @@ int main()
         oa_moved.trigger();
     }
 
-    // manual composite
+    // observable composite
     if (true)
     {
-        struct comp
+        struct composite
         {
             int x;
             int y;
@@ -123,6 +124,23 @@ int main()
 
         observable<int> oa;
         observable<int> ob;
-        observable<comp> oc;
+
+        auto compose = [](int x, int y)
+        {
+            return composite{x, y};
+        };
+        observable_composite<composite, int, int> oc(compose, oa, ob);
+
+        auto print = [](const composite & c)
+        {
+            std::cout << "x = " << c.x << ", y = " << c.y << std::endl;
+        };
+        auto g = oc.observe(print);
+
+        // Test:
+        oa.set(4);
+        ob.set(7);
+        ob.set(42);
+        oa.set(0);
     }
 }

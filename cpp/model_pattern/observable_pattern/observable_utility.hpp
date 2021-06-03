@@ -57,7 +57,7 @@ void await(const observable<T> & o, const T & awaited_value)
     await_if(o, std::move(predicate));
 }
 
-/// \brief      Waits for modfication to `value` of `observable`.
+/// \brief      Waits for modfication to one of `awaited_list` values of `observable`.
 template<typename T>
 void await(observable<T> & o, std::initializer_list<T> awaited_list)
 {
@@ -81,12 +81,13 @@ void await(observable<T> & o, std::initializer_list<T> awaited_list)
 /// \param      a               First observable.
 /// \param      b               Second observable.
 /// \param      callback        Functor with signature `void(const Ta &, const Tb &)`.
+/// \returns    `tuple` of subscription guards.
 ///
 /// Invokes `callback` upon modification of either `observable` `a` or `b`. One value is
 /// propagated through the notification, the other is read under lock from the other
 /// `observable`, as if `observable::get()` was called.
-template<typename Ta, typename Tb, typename F>
-auto join(observable<Ta> & a, observable<Tb> & b, F && callback)
+template<typename F, typename Ta, typename Tb>
+auto join(F && callback, const observable<Ta> & a, const observable<Tb> & b)
 {
     auto observer_a = [&](const Ta & value_a)
     {
@@ -98,14 +99,14 @@ auto join(observable<Ta> & a, observable<Tb> & b, F && callback)
         callback({a.get()}, {value_b});
     };
 
+    // JMTODO: a.get(), b.get() is not good, the reference might be dangling
+    // and we are accessing deleted observable
+    //  - maybe somehow limit this by cb guard active() state? 
+    //  - what is the expected semantics of composite observable outliving 
+    //    the underlaying ones?
+
     auto guard_a = a.observe(std::move(observer_a));
     auto guard_b = b.observe(std::move(observer_b));
 
     return std::make_tuple(std::move(guard_a), std::move(guard_b));
-}
-
-template<typename Ta, typename Tb, typename Tc>
-auto join(observable<Ta> & a, observable<Tb> & b, observable<Tc> & c)
-{
-    return composite;
 }
