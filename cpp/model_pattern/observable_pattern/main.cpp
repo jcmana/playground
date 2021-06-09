@@ -3,6 +3,7 @@
 #include <thread>
 #include <future>
 #include <functional>
+#include <memory>
 
 #include "observable.hpp"
 #include "observable_composite.hpp"
@@ -114,7 +115,7 @@ int main()
     }
 
     // observable composite
-    if (true)
+    if (false)
     {
         struct composite
         {
@@ -142,5 +143,54 @@ int main()
         ob.set(7);
         ob.set(42);
         oa.set(0);
+    }
+
+    // observable composite (different approach)
+    if (true)
+    {
+        struct composite
+        {
+            std::shared_ptr<observable<int>> x;
+            decltype(x)::element_type::guard_type gx;
+
+            std::shared_ptr<observable<int>> y;
+            decltype(y)::element_type::guard_type gy;
+        };
+
+        auto x = std::make_shared<observable<int>>(0);
+        auto y = std::make_shared<observable<int>>(0);
+        std::shared_ptr<observable<composite>> c;
+        {
+            c = std::make_shared<observable<composite>>();
+
+            auto m = c->modify();
+            m.get().x = x;
+            m.get().y = y;
+        }
+
+        {
+            auto observer_x = [&c](const int &)
+            {
+                c->trigger();
+            };
+            auto observer_y = [&c](const int &)
+            {
+                c->trigger();
+            };
+
+            auto m = c->modify();
+            m.get().gx = m.get().x->observe(observer_x);
+            m.get().gy = m.get().y->observe(observer_y);
+        }
+
+        auto observer = [](const composite & c)
+        {
+            std::cout << "x = " << c.x->get() << ", y = " << c.y->get() << std::endl;       // deadlock on get()
+        };
+
+        auto g = c->observe(observer);
+
+        x->set(7);
+        y->set(3);
     }
 }
