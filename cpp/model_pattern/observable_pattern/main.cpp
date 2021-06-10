@@ -145,8 +145,8 @@ int main()
         oa.set(0);
     }
 
-    // observable composite (different approach)
-    if (true)
+    // observable composite (shared observable approach)
+    if (false)
     {
         struct composite
         {
@@ -192,5 +192,75 @@ int main()
 
         x->set(7);
         y->set(3);
+
+        // THIS DOESN'T MAKE SENSE STRUCTURALLY
+        // I don't wanna compose observables, only their value. That means struct composite is 
+        // just weird and doesn't describe what I mean.
+    }
+
+    // observable composite (caching approach)
+    if (false)
+    {
+        struct observer
+        {
+            observable<int>::guard_type guard_x;
+            observable<int>::guard_type guard_y;
+
+            int cached_x;
+            int cached_y;
+
+            std::function<void(int, int)> functor;
+        };
+
+        observable<int> x;
+        observable<int> y;
+
+        observer c;
+        c.cached_x = x.get();
+        c.cached_y = y.get();
+
+        auto observer_c_x = [&c](int x)
+        {
+            c.cached_x = x;
+            c.functor(c.cached_x, c.cached_y);
+        };
+        auto observer_c_y = [&c](int y)
+        {
+            c.cached_y = y;
+            c.functor(c.cached_x, c.cached_y);
+        };
+
+        auto observer_c = [](int x, int y)
+        {
+            std::cout << "x = " << x << ", y = " << y << std::endl;
+        };
+        c.functor = observer_c;
+
+        c.guard_x = x.observe(observer_c_x);
+        c.guard_y = y.observe(observer_c_y);
+
+        x.set(4);
+        x.set(8);
+        y.set(2);
+        x.set(7);
+        y.set(0);
+    }
+
+    // observer (mimicking signal/slot, but only for changes propagation)
+    if (true)
+    {
+        using T = int;
+
+        struct observer
+        {
+            observable<T>::guard_type guard;
+            std::function<void(T)> functor;
+        };
+
+        observable<T> x;
+        observable<T> y;
+
+        observer ox;
+        observer oy;
     }
 }
