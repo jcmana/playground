@@ -170,6 +170,12 @@ int main()
         //auto a_moved = std::move(a);        // deadlock = acquiring already locked mutex
     }
 
+    if (true)
+    {
+        atomic_link_element a;
+        auto a_moved = std::move(a);
+    }
+
     if (false)
     {
         atomic_link_element_nosp a;
@@ -200,7 +206,7 @@ int main()
         std::cout << "master locked" << std::endl;
     }
 
-    if (true)
+    if (false)
     {
         for (auto n = 0; n != 1'000; ++n)
         {

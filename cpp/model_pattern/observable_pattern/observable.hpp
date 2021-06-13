@@ -27,6 +27,11 @@ public:
 
         operator T & ()
         {
+            return get();
+        }
+
+        T & get()
+        {   
             return m_mref.m_value;
         }
 
@@ -49,8 +54,13 @@ public:
         {
         }
 
-        operator const T & ()
+        operator const T & () const
         {
+            return get();
+        }
+
+        const T & get() const
+        {   
             return m_cref.m_value;
         }
 
@@ -96,13 +106,9 @@ public:
 
     /// \brief      Subscribes `callback` for modification notifications.
     template<typename F>
-    auto observe(F && callback) const
+    auto observe(F callback) const
     {
         return m_store.subscribe(std::move(callback));
-    }
-
-    void operator ()(const T & value)
-    {
     }
 
     void set(T value)
