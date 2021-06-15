@@ -100,6 +100,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "std_filesystem_path", "std_
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "std_ref", "std_ref\std_ref.vcxproj", "{2CC30610-9D52-4C6F-AFBE-7ADE02950553}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lambda", "lambda\lambda.vcxproj", "{FFCFAFC3-E314-46BF-BB9F-CBF743BDB376}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -496,6 +498,14 @@ Global
 		{2CC30610-9D52-4C6F-AFBE-7ADE02950553}.Release|x64.Build.0 = Release|x64
 		{2CC30610-9D52-4C6F-AFBE-7ADE02950553}.Release|x86.ActiveCfg = Release|Win32
 		{2CC30610-9D52-4C6F-AFBE-7ADE02950553}.Release|x86.Build.0 = Release|Win32
+		{FFCFAFC3-E314-46BF-BB9F-CBF743BDB376}.Debug|x64.ActiveCfg = Debug|x64
+		{FFCFAFC3-E314-46BF-BB9F-CBF743BDB376}.Debug|x64.Build.0 = Debug|x64
+		{FFCFAFC3-E314-46BF-BB9F-CBF743BDB376}.Debug|x86.ActiveCfg = Debug|Win32
+		{FFCFAFC3-E314-46BF-BB9F-CBF743BDB376}.Debug|x86.Build.0 = Debug|Win32
+		{FFCFAFC3-E314-46BF-BB9F-CBF743BDB376}.Release|x64.ActiveCfg = Release|x64
+		{FFCFAFC3-E314-46BF-BB9F-CBF743BDB376}.Release|x64.Build.0 = Release|x64
+		{FFCFAFC3-E314-46BF-BB9F-CBF743BDB376}.Release|x86.ActiveCfg = Release|Win32
+		{FFCFAFC3-E314-46BF-BB9F-CBF743BDB376}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

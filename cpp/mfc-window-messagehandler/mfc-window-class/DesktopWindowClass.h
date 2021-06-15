@@ -10,10 +10,6 @@
 #include "DesktopWindowClass_intf.h"
 #include "DesktopWindowCallback_intf.h"
 
-namespace asw {
-namespace winapi {
-
-
 class CDesktopWindowClass : public IDesktopWindowClass
 {
 public:
@@ -46,7 +42,3 @@ private:
 	ATOM		m_windowClassAtom;
 	WNDCLASSEX	m_wndClassEx;
 };
-
-
-} // namespace winapi
-} // namespace asw

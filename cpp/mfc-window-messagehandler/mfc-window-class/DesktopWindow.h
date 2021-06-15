@@ -11,10 +11,6 @@
 #include "DesktopWindowClass_intf.h"
 #include "DesktopWindowCallback_intf.h"
 
-namespace asw {
-namespace winapi {
-
-
 class CDesktopWindow :
 	public IDesktopWindow,
 	public IDesktopWindowCallback
@@ -57,7 +53,6 @@ public:
 public:
 	virtual bool OnMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 
-
 protected:
 	HWND							m_hWnd;
 	std::wstring					m_wsClassName;
@@ -73,6 +68,3 @@ protected:
 	HINSTANCE						m_hInstance;
 };
 
-
-} // namespace winapi
-} // namespace asw

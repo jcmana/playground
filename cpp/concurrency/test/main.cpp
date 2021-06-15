@@ -4,15 +4,17 @@
 #include <chrono>
 #include <vector>
 #include <string>
+#include <sstream>
 
 #include "../concurrency/barrier.hpp"
 #include "../concurrency/latch.hpp"
 #include "../concurrency/condition.hpp"
 
-#include "../concurrency/executor_immediate.hpp"
-//#include "../concurrency/executor_ordered.hpp"
+#include "../concurrency/atomic_queue.hpp"
+#include "../concurrency/basic_executor.hpp"
+#include "../concurrency/immediate_executor.hpp"
+#include "../concurrency/ordered_executor.hpp"
 //#include "../concurrency/executor_ordered_pool.hpp"
-#include "../concurrency/executor_thread.hpp"
 
 #include "../concurrency/memory.hpp"
 #include "../concurrency/memory_guard.hpp"
@@ -41,6 +43,11 @@ void print_parametric(const std::string & text)
     std::cout << "print_parametric()" << text << std::endl;
 }
 
+int calculate(int n)
+{
+    return n * n;
+}
+
 void thread(const std::string & text)
 {
     barr_a.arrive_and_wait();
@@ -49,29 +56,14 @@ void thread(const std::string & text)
     barr_b.arrive_and_drop();
 }
 
-void thread_ordered_queue(executor_queue<std::packaged_task<void()>> & queue)
+template<typename F>
+void execute_task(F functor)
 {
-    while (true)
-    {
-        auto task = queue.pop();
-
-        if (task.valid() == false)
-        {
-            break;
-        }
-
-        try
-        {
-            task();
-        }
-        catch (...)
-        {
-        }
-    }
+    functor();
 }
 
 template<typename T>
-void thread_tasklist(T & container)
+void execute_tasklist(T container)
 {
     for (auto & task : container)
     {
@@ -311,14 +303,83 @@ int main()
     }
     */
 
-    if (true)
+    if (false)
+    {
+        auto e = basic_executor([]{});
+        auto e_moved = std::move(e);
+    }
+
+    if (false)
     {   
         std::vector l = {print, print_slow, print};
-        auto e = executor_thread(thread_tasklist<decltype(l)>, l);
+        auto e = basic_executor(execute_tasklist<decltype(l)>, std::move(l));
 
-        for (auto n : {1, 2, 3, 4, 5})
+        for (auto n : {1, 2, 3, 4})
         {
+            std::this_thread::sleep_for(std::chrono::milliseconds(300));
             std::cout << n << std::endl;
         }
+    }
+
+    if (false)
+    {   
+        auto e = basic_executor(execute_task<void()>, print);
+
+        for (auto n : {1, 2, 3, 4})
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(300));
+            std::cout << n << std::endl;
+        }
+    }
+
+    if (false)
+    {
+        ordered_executor<int> e;
+        auto f1 = e.post(calculate, 7);
+        auto f2 = e.post(calculate, 12);
+        auto f3 = e.post(calculate, 42);
+
+        //wait_all(f1, f2, f3);
+
+        std::cout << "f1 = " << f1.get() << std::endl;
+        std::cout << "f2 = " << f2.get() << std::endl;
+        std::cout << "f3 = " << f3.get() << std::endl;
+    }
+
+    if (true)
+    {
+        std::stringstream a;
+        std::stringstream b;
+
+        std::mutex m;
+
+        auto proca = [&]
+        {
+            a << "a: thread id = " << std::this_thread::get_id() << "\n";
+            std::unique_lock lock(m);
+        };
+
+        auto procb = [&]
+        {
+            b << "b: thread id = " << std::this_thread::get_id() << "\n";
+            std::unique_lock lock(m);
+        };
+
+        {
+            ordered_executor<void> ea;
+            ordered_executor<void> eb;
+
+            std::unique_lock lock(m);
+            ea.post(proca);
+            ea.post(proca);
+
+            eb.post(procb);
+            eb.post(procb);
+
+            swap(ea, eb);
+        }
+
+        std::cout << a.str();
+        std::cout << b.str();
     }
 }

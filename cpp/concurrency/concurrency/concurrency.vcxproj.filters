@@ -19,19 +19,19 @@
     <ClInclude Include="utility.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="executor_ordered.hpp">
+    <ClInclude Include="ordered_executor.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="executor_immediate.hpp">
+    <ClInclude Include="immediate_executor.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="executor_ordered_pool.hpp">
+    <ClInclude Include="parallel_executor.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="executor_queue.hpp">
+    <ClInclude Include="atomic_queue.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="executor_thread.hpp">
+    <ClInclude Include="basic_executor.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="memory.hpp">

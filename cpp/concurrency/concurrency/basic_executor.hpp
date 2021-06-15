@@ -1,26 +1,20 @@
 #pragma once
 
 #include <thread>
-#include <future>
-#include <memory>
 
-#include "executor_queue.hpp"
-
-class executor_thread
+/// \brief      Joining thread minimal implementation for executors.
+class basic_executor
 {
 public:
-    executor_thread() :
-        m_thread()
-    {
-    }
-
     template<typename F, typename ... A>
-    executor_thread(F && functor, A ... args) :
+    basic_executor(F && functor, A ... args) :
         m_thread(std::move(functor), std::forward<A>(args) ...)
     {
     }
 
-    ~executor_thread()
+    basic_executor(basic_executor && other) = default;
+
+    ~basic_executor()
     {
         if (m_thread.joinable())
         {
@@ -28,10 +22,7 @@ public:
         }
     }
 
-    bool joinable() const
-    {
-        return m_thread.joinable();
-    }
+    basic_executor & operator  =(basic_executor && other) = default;
 
 private:
     std::thread m_thread;

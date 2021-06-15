@@ -8,9 +8,6 @@ CApplication::CApplication()
 
 BOOL CApplication::InitInstance()
 {
-	while (::IsDebuggerPresent() == FALSE) ::Sleep(500);
-
-
 	WNDCLASSEX sWindowClass;
 	sWindowClass.cbSize = sizeof(sWindowClass);
 	sWindowClass.style = 0;
@@ -29,7 +26,7 @@ BOOL CApplication::InitInstance()
 
 
 	HWND hWindow = CreateWindowEx(
-		/* dwStyleEx */		WS_EX_TRANSPARENT,
+		/* dwStyleEx */		NULL, //WS_EX_TRANSPARENT,
 		/* lpClassName */	m_wsWindowClassName.c_str(),
 		/* lpWindowName  */	m_wsWindowName.c_str(),
 		/* dwStyle */		WS_VISIBLE,
