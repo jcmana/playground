@@ -143,5 +143,5 @@ private:
 
 private:
     std::vector<executor_thread<T>> m_pool;
-    executor_queue<std::packaged_task<T()>> m_queue;
+    atomic_queue<std::packaged_task<T()>> m_queue;
 };

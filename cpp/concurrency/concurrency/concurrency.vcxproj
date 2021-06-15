@@ -127,13 +127,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="executor_queue.hpp" />
+    <ClInclude Include="atomic_queue.hpp" />
     <ClInclude Include="barrier.hpp" />
     <ClInclude Include="condition.hpp" />
-    <ClInclude Include="executor_immediate.hpp" />
-    <ClInclude Include="executor_ordered.hpp" />
-    <ClInclude Include="executor_ordered_pool.hpp" />
-    <ClInclude Include="executor_thread.hpp" />
+    <ClInclude Include="immediate_executor.hpp" />
+    <ClInclude Include="ordered_executor.hpp" />
+    <ClInclude Include="parallel_executor.hpp" />
+    <ClInclude Include="basic_executor.hpp" />
     <ClInclude Include="latch.hpp" />
     <ClInclude Include="memory.hpp" />
     <ClInclude Include="memory_guard.hpp" />

@@ -5,28 +5,28 @@
 #include <queue>
 
 template<typename T>
-class executor_queue
+class atomic_queue
 {
 public:
-    executor_queue()
+    atomic_queue()
     {
     }
 
-    executor_queue(const executor_queue & other)
+    atomic_queue(const atomic_queue & other)
     {
         std::unique_lock<std::mutex> lock(other.m_mutex);
         m_queue = other.m_queue;
     }
 
-    executor_queue(executor_queue && other) noexcept :
-        executor_queue()
+    atomic_queue(atomic_queue && other) noexcept :
+        atomic_queue()
     {
         std::unique_lock<std::mutex> lock(other.m_mutex);
 
         swap(*this, other);
     }
 
-    executor_queue & operator  =(const executor_queue & other)
+    atomic_queue & operator  =(const atomic_queue & other)
     {
         std::unique_lock<std::mutex> lock(other.m_mutex);
         m_queue = other.m_queue;
@@ -34,11 +34,11 @@ public:
         return (*this);
     }
 
-    executor_queue & operator  =(executor_queue && other) noexcept
+    atomic_queue & operator  =(atomic_queue && other) noexcept
     {
         std::unique_lock<std::mutex> lock(other.m_mutex);
         
-        auto empty = executor_queue();
+        auto empty = atomic_queue();
 
         swap(*this, empty);
         swap(*this, other);
@@ -83,7 +83,7 @@ public:
         return std::move(element);
     }
 
-    friend void swap(executor_queue & lhs, executor_queue & rhs)
+    friend void swap(atomic_queue & lhs, atomic_queue & rhs)
     {
         std::unique_lock<std::mutex> lock_rhs(rhs.m_mutex);
         std::unique_lock<std::mutex> lock_lhs(lhs.m_mutex);
