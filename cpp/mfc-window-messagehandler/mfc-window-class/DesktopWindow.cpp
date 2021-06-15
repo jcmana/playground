@@ -3,10 +3,6 @@
 
 #include <iostream>
 
-namespace asw {
-namespace winapi {
-
-
 std::shared_ptr<IDesktopWindow> CDesktopWindow::Factory::CreateDesktopWindow() const
 {
 	std::shared_ptr<CDesktopWindow> spImpl = std::make_shared<CDesktopWindow>();
@@ -182,7 +178,3 @@ bool CDesktopWindow::OnMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 
 	return false;
 }
-
-
-} // namespace winapi
-} // namespace asw

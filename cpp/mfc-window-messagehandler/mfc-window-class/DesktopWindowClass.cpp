@@ -3,10 +3,6 @@
 
 #include <iostream>
 
-namespace asw {
-namespace winapi {
-namespace internal {
-
 ///	<summary>WindowProc function common for every IDesktopWindowCallback implementation.</summary>
 /// <remarks>Don't use this method in any other way than through IDesktopWindowCallback interface.</remarks>
 LRESULT CALLBACK InternalWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -58,16 +54,6 @@ LRESULT CALLBACK InternalWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
 	return ::DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-
-} // namespace internal
-} // namespace winapi
-} // namespace asw
-
-
-namespace asw {
-namespace winapi {
-
-
 ///	<summary>Maximum allowed size of string names used in WNDCLASSEX struct.</summary>
 /// <remarks>This is defined in documentation for 'WNDCLASSEX structure' here:
 /// https://msdn.microsoft.com/en-us/library/windows/desktop/ms633577(v=vs.85).aspx
@@ -87,7 +73,7 @@ CDesktopWindowClass::CDesktopWindowClass()
 
 	m_wndClassEx.cbSize = sizeof(m_wndClassEx);
 	m_wndClassEx.style = NULL;
-	m_wndClassEx.lpfnWndProc = asw::winapi::internal::InternalWindowProc;
+	m_wndClassEx.lpfnWndProc = InternalWindowProc;
 	m_wndClassEx.cbClsExtra = 0;
 	m_wndClassEx.cbWndExtra = 0;
 	m_wndClassEx.hInstance = NULL;
@@ -201,7 +187,3 @@ bool CDesktopWindowClass::SetClassName(const std::wstring & wsClassName)
 	wcscpy((WCHAR *)(m_wndClassEx.lpszClassName), (WCHAR *)(wsClassName.c_str()));
 	return true;
 }
-
-
-} // namespace winapi
-} // namespace asw

@@ -8,7 +8,7 @@
 #include "../mfc-window-class/DesktopWindowMessageDef.h"
 
 
-class CHiddenDesktopWindow : public asw::winapi::CDesktopWindow
+class CHiddenDesktopWindow : public CDesktopWindow
 {
 public:
 	class Factory
@@ -46,25 +46,24 @@ public:
 	}
 };
 
-
 class Runner :
-	public asw::winapi::CDesktopWindowClass::Factory,
-	public asw::winapi::CDesktopWindow::Factory,
+	public CDesktopWindowClass::Factory,
+	public CDesktopWindow::Factory,
 	public CHiddenDesktopWindow::Factory
 {
 public:
 	void TestMFCWindow()
 	{
 		/* Window Class wc1 */
-		std::wstring wc1_className = L"asw_window_class";
-		std::shared_ptr<asw::winapi::IDesktopWindowClass> wc1 = CreateDesktopWindowClass();
+		std::wstring wc1_className = L"window_class";
+		std::shared_ptr<IDesktopWindowClass> wc1 = CreateDesktopWindowClass();
 		wc1->SetClassName(wc1_className);
 		if (wc1->Register() == false)
 		{
 			std::cout << "Window class registreation failed" << std::endl;
 		}
 
-		std::shared_ptr<asw::winapi::IDesktopWindow> w1 = CreateDesktopWindow();
+		std::shared_ptr<IDesktopWindow> w1 = CreateDesktopWindow();
 		w1->SetClassName(wc1_className);
 		w1->SetWindowName(L"window one");
 		if (w1->Create() == false)
@@ -72,7 +71,7 @@ public:
 			std::cout << "Window create failed" << std::endl;
 		}
 
-		std::shared_ptr<asw::winapi::IDesktopWindow> w2 = CreateDesktopWindow();
+		std::shared_ptr<IDesktopWindow> w2 = CreateDesktopWindow();
 		w2->SetClassName(wc1_className);
 		w2->SetWindowName(L"window two");
 		w2->SetParent(w1->GetSafeHwnd());
@@ -83,15 +82,15 @@ public:
 
 
 		/* Window Class wc2 */
-		std::wstring wc2_className = L"asw_window_class_for_something_else";
-		std::shared_ptr<asw::winapi::IDesktopWindowClass> wc2 = CreateDesktopWindowClass();
+		std::wstring wc2_className = L"window_class_for_something_else";
+		std::shared_ptr<IDesktopWindowClass> wc2 = CreateDesktopWindowClass();
 		wc2->SetClassName(wc2_className);
 		if (wc2->Register() == false)
 		{
 			std::cout << "Window class registreation failed" << std::endl;
 		}
 
-		std::shared_ptr<asw::winapi::IDesktopWindow> w3 = CreateDesktopWindow();
+		std::shared_ptr<IDesktopWindow> w3 = CreateDesktopWindow();
 		w3->SetClassName(wc2_className);
 		w3->SetWindowName(L"window three");
 		if (w3->Create() == false)
@@ -99,11 +98,10 @@ public:
 			std::cout << "Window create failed" << std::endl;
 		}
 
-
 		/* Testing thread */
 		std::thread testingThread = std::thread([]
 		{
-			HWND hWnd = ::FindWindow(L"asw_window_class", NULL);
+			HWND hWnd = ::FindWindow(L"window_class", NULL);
 
 			for (int n = 0; n < 5; ++n)
 			{
@@ -132,13 +130,11 @@ public:
 
 		// Wait for testing thread exit
 		testingThread.join();
-
-		return;
 	}
 
 	void TestMFCWindowSpecialized()
 	{
-		std::shared_ptr<asw::winapi::IDesktopWindowClass> spDesktopWindowClass = CreateDesktopWindowClass();
+		std::shared_ptr<IDesktopWindowClass> spDesktopWindowClass = CreateDesktopWindowClass();
 		spDesktopWindowClass->SetClassName(L"jebex_pica");
 		spDesktopWindowClass->SetStyle(NULL);
 		if (spDesktopWindowClass->Register() == false)
@@ -146,7 +142,7 @@ public:
 			std::cout << "Window class registration failed" << std::endl;
 		}
 
-		std::shared_ptr<asw::winapi::IDesktopWindow> spHiddenDesktopWindow = CreateHiddenDesktopWindow();
+		std::shared_ptr<IDesktopWindow> spHiddenDesktopWindow = CreateHiddenDesktopWindow();
 		spHiddenDesktopWindow->SetClassName(L"jebex_pica");
 		spHiddenDesktopWindow->SetWindowName(L"Pojebex pica");
 		if (spHiddenDesktopWindow->Create() == false)
@@ -185,14 +181,11 @@ public:
 
 		// Wait for testing thread to exit
 		testingThread.join();
-		return;
 	}
 };
 
-int main(void)
+int main()
 {
-	//Runner().TestMFCWindow();
-	Runner().TestMFCWindowSpecialized();
-
-	return 0;
+	Runner().TestMFCWindow();
+	//Runner().TestMFCWindowSpecialized();
 }

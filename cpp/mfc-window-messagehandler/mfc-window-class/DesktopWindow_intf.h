@@ -6,10 +6,6 @@
 #include <wtypes.h>
 #undef	WIN32_LEAN_AND_MEAN
 
-namespace asw {
-namespace winapi {
-
-
 class IDesktopWindow
 {
 public:
@@ -31,7 +27,3 @@ public:
 	virtual HWND GetSafeHwnd() = 0;
 	virtual HWND GetParentHwnd() = 0;
 };
-
-
-} // namespace winapi
-} // namespace asw

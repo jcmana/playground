@@ -6,10 +6,6 @@
 #include <wtypes.h>
 #undef	WIN32_LEAN_AND_MEAN
 
-namespace asw {
-namespace winapi {
-
-
 class IDesktopWindowClass
 {
 public:
@@ -28,6 +24,3 @@ public:
 	virtual bool SetMenuName(const std::wstring & wsMenuName) = 0;
 	virtual bool SetClassName(const std::wstring & wsClassName) = 0;
 };
-
-} // namespace winapi
-} // namespace asw
