@@ -19,9 +19,6 @@
     <ClInclude Include="utility.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ordered_executor.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="immediate_executor.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -38,6 +35,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="memory_guard.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="executor.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

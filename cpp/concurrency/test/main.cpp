@@ -13,7 +13,7 @@
 #include "../concurrency/atomic_queue.hpp"
 #include "../concurrency/basic_executor.hpp"
 #include "../concurrency/immediate_executor.hpp"
-#include "../concurrency/ordered_executor.hpp"
+#include "../concurrency/executor.hpp"
 //#include "../concurrency/executor_ordered_pool.hpp"
 
 #include "../concurrency/memory.hpp"
@@ -128,72 +128,6 @@ int main()
     }
     
     /*
-    if (false)
-    {
-        executor_ordered<void> eo;
-
-        auto task = []
-        {
-            std::cout << "task" << std::endl;
-        };
-
-        std::vector<std::future<void>> futures;
-
-        futures.emplace_back(eo.post(task));
-        futures.emplace_back(eo.post(task));
-        futures.emplace_back(eo.post(task));
-
-        wait_all(futures);
-
-        {
-            auto future1 = eo.post(task);
-            auto future2 = eo.post(task);
-
-            wait_all(future1, future2, std::future<int>());
-        }
-
-        std::cout << "fuck" << std::endl;
-    }
-
-    if (false)
-    {
-        {
-            executor_ordered<void> eo;
-            auto eo_move = std::move(eo);
-        }
-
-        {
-            auto task = []
-            {
-                std::cout << "thread id = " << std::this_thread::get_id() << "\n";
-            };
-
-            executor_ordered<void> eo;
-            executor_ordered<void> eo_move;
-
-            eo.post(task);
-            eo_move.post(task);
-
-            eo_move = std::move(eo);
-
-            eo.post(task);
-            eo_move.post(task);
-        }
-    }
-
-    if (false)
-    {
-        executor_immediate<int> ei;
-
-        auto task = []
-        {
-            std::cout << "task" << std::endl;
-            return 0;
-        };
-
-        ei.post(task);
-    }
-
     if (false)
     {
         executor_ordered_pool<void> e(2);
@@ -334,16 +268,10 @@ int main()
 
     if (false)
     {
-        ordered_executor<int> e;
-        auto f1 = e.post(calculate, 7);
-        auto f2 = e.post(calculate, 12);
-        auto f3 = e.post(calculate, 42);
-
-        //wait_all(f1, f2, f3);
-
-        std::cout << "f1 = " << f1.get() << std::endl;
-        std::cout << "f2 = " << f2.get() << std::endl;
-        std::cout << "f3 = " << f3.get() << std::endl;
+        executor<int> e;
+        e.post(calculate, 7);
+        e.post(calculate, 12);
+        e.post(calculate, 42);
     }
 
     if (true)
@@ -366,8 +294,8 @@ int main()
         };
 
         {
-            ordered_executor<void> ea;
-            ordered_executor<void> eb;
+            executor<void> ea;
+            executor<void> eb;
 
             std::unique_lock lock(m);
             ea.post(proca);

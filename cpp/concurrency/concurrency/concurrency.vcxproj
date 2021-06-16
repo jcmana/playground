@@ -131,7 +131,7 @@
     <ClInclude Include="barrier.hpp" />
     <ClInclude Include="condition.hpp" />
     <ClInclude Include="immediate_executor.hpp" />
-    <ClInclude Include="ordered_executor.hpp" />
+    <ClInclude Include="executor.hpp" />
     <ClInclude Include="parallel_executor.hpp" />
     <ClInclude Include="basic_executor.hpp" />
     <ClInclude Include="latch.hpp" />
