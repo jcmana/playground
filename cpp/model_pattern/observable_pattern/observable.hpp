@@ -2,6 +2,7 @@
 
 #include <shared_mutex>
 #include <functional>
+#include <memory>
 
 #include "../../callback_store/atomic_callback_store/atomic_callback_store.hpp"
 
@@ -182,3 +183,36 @@ void swap(observable<T> & lhs, observable<T> & rhs)
     swap(lhs.m_store, rhs.m_store);
     swap(lhs.m_value, rhs.m_value);
 }
+
+/// \brief      Shared `observable` to be passed shared across concurrent threads.
+template<typename T>
+class shared_observable
+{
+public:
+    shared_observable() :
+        m_sp(new observable<T>)
+    {
+    }
+
+    template<typename F>
+    auto observe(F callback) const
+    {
+        return m_sp->observe(std::move(callback));
+    }
+
+    void set(T value)
+    {
+        m_sp->set(std::move(value));
+    }
+
+    const T & get() const
+    {
+        return m_sp->get();
+    }
+
+    // JMTODO: wrap rest of the observable interface
+
+private:
+    const std::shared_ptr<observable<T>> m_sp;
+};
+
