@@ -14,6 +14,21 @@ void cb(int value)
     std::cout << "modification = " << value << std::endl;
 }
 
+template<typename T>
+struct ref_specialization;
+
+template<typename T>
+struct ref_specialization
+{
+    T value;
+};
+
+template<typename T>
+struct ref_specialization<T &>
+{
+    std::reference_wrapper<T> reference;
+};
+
 int main()
 {
     // test interface #0
@@ -295,7 +310,7 @@ int main()
     }
 
     // shared observable
-    if (true)
+    if (false)
     {
         shared_observable<int> o;
         auto g = o.observe(cb);
@@ -303,5 +318,15 @@ int main()
 
         auto o_copy = o;
         o_copy.set(14);
+    }
+
+    // specialization for reference types
+    if (false)
+    {
+        auto value = 0;
+        auto sp_value = std::make_shared<int>(0);
+
+        auto rsv = ref_specialization<int>{value};
+        auto rsr = ref_specialization<int &>{*sp_value};
     }
 }

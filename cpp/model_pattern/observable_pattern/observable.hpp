@@ -210,7 +210,7 @@ public:
         return m_sp->get();
     }
 
-    // JMTODO: wrap rest of the observable interface
+    // JMTODO: wrap the rest of the observable interface
 
 private:
     const std::shared_ptr<observable<T>> m_sp;
