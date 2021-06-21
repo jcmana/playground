@@ -3,12 +3,16 @@
 #include <thread>
 
 /// \brief      Joining thread minimal implementation for executors.
-class basic_executor
+class basic_executor : std::thread
 {
 public:
+    basic_executor()
+    {
+    }
+
     template<typename F, typename ... A>
     basic_executor(F && functor, A ... args) :
-        m_thread(std::move(functor), std::forward<A>(args) ...)
+        std::thread(std::move(functor), std::forward<A>(args) ...)
     {
     }
 
@@ -16,14 +20,11 @@ public:
 
     ~basic_executor()
     {
-        if (m_thread.joinable())
+        if (joinable())
         {
-            m_thread.join();
+            join();
         }
     }
 
     basic_executor & operator  =(basic_executor && other) = default;
-
-private:
-    std::thread m_thread;
 };

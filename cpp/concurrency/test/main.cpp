@@ -268,10 +268,27 @@ int main()
 
     if (false)
     {
+        /*
         executor<int> e;
         e.post(calculate, 7);
         e.post(calculate, 12);
         e.post(calculate, 42);
+        */
+    }
+
+    if (false)
+    {
+        using executor_task = std::packaged_task<void()>;
+
+        auto proc = []
+        {
+            std::cout << "procedure ..." << std::endl;
+        };
+        auto task = executor_task(proc);
+        auto future = task.get_future();
+
+        executor<executor_task> e;
+        e.post(std::move(task));
     }
 
     if (true)
@@ -279,32 +296,31 @@ int main()
         std::stringstream a;
         std::stringstream b;
 
-        std::mutex m;
-
         auto proca = [&]
         {
             a << "a: thread id = " << std::this_thread::get_id() << "\n";
-            std::unique_lock lock(m);
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+
         };
 
         auto procb = [&]
         {
             b << "b: thread id = " << std::this_thread::get_id() << "\n";
-            std::unique_lock lock(m);
+            std::this_thread::sleep_for(std::chrono::seconds(1));
         };
 
         {
-            executor<void> ea;
-            executor<void> eb;
+            executor<std::function<void()>> ea;
+            executor<std::function<void()>> eb;
 
-            std::unique_lock lock(m);
             ea.post(proca);
             ea.post(proca);
-
             eb.post(procb);
             eb.post(procb);
 
-            swap(ea, eb);
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+
+            std::swap(ea, eb);
         }
 
         std::cout << a.str();
