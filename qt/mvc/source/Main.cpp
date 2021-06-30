@@ -1,6 +1,7 @@
 #include <thread>
 #include <future>
 #include <memory>
+#include <functional>
 
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QWidget>
@@ -9,10 +10,12 @@
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QSpacerItem>
 
-int computation(int value)
+void worker_procedure(int question, int & answer)
 {
     std::this_thread::sleep_for(std::chrono::seconds(2));
-    return value * 3 + 14;
+    answer = question * 3 + 14;
+
+    // Answer is now computed
 }
 
 int main(int argc, char * argv[])
@@ -60,13 +63,11 @@ int main(int argc, char * argv[])
 
     QObject::connect(pPushButton, &QPushButton::clicked, [&]
     {
-        question = pSpinBox->value();
-
-        worker = std::thread([&]
-        {
-            answer = computation(question);
-        });
+        // Event-like situation, upon user request start the computation
+        worker = std::thread(std::bind(worker_procedure, question, std::ref(answer)));
     });
+
+    // How to update the computed answer in view?
 
     // Run the application:
     mainWidget.show();
