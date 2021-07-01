@@ -6,25 +6,47 @@
 #include <QtCore/QObject>
 #include <QtCore/QTimer>
 #include <QtWidgets/QApplication>
-#include <QtWidgets/QWidget>
-#include <QtWidgets/QSpinBox>
-#include <QtWidgets/QPushButton>
-#include <QtWidgets/QGridLayout>
-#include <QtWidgets/QSpacerItem>
 
-void worker_procedure(int question, int & answer, std::function<void(int)> & callback, std::function<void()> & event)
+#include "Model.h"
+#include "MainWidget.h"
+
+enum class Approach
+{
+    PULL,
+    PUSH,
+    PUSHPULL,
+};
+
+constexpr static auto approach = Approach::PUSHPULL;
+
+int answer_computation(int question)
 {
     std::this_thread::sleep_for(std::chrono::seconds(2));
-    answer = question * 3 + 14;
+    return question * 3 + 14;
+}
 
-    if (callback)
-    {
-        callback(answer);
-    }
+void worker_procedure_no_notification(int question, int & answer)
+{
+    answer = answer_computation(question);
+}
 
-    if (event)
+void worker_procedure_with_callback(int question, int & answer, std::function<void(int)> & callback)
+{
+    answer = answer_computation(question);
+    callback(answer);
+}
+
+void worker_procedure_with_event(int question, int & answer, std::function<void()> & event)
+{
+    answer = answer_computation(question);
+    event();
+}
+
+void join(std::thread & t)
+{
+    if (t.joinable())
     {
-        event();
+        t.join();
     }
 }
 
@@ -33,94 +55,92 @@ int main(int argc, char * argv[])
     QApplication application(argc, argv);
 
     // Setup model:
-    auto question = 0;
-    auto answer = 0;
-    std::function<void(int)> answerCallback;
-    std::function<void()> answerEvent;
+    Model question;
+    Model answer;
 
     // Setup worker actor:
     auto worker = std::thread();
 
-    // Setup view actor:
-    auto pMainWidget = new QWidget();
+    // Setup GUI actor:
+    auto pMainWidget = new MainWidget();
     pMainWidget->show();
 
-    auto pLayout = new QGridLayout(pMainWidget);
-    
-    auto pSpinBox = new QSpinBox();
-    pSpinBox->setMinimum(0);
-    pSpinBox->setMaximum(100);
-    pSpinBox->setValue(question);
-
-    auto pPushButton = new QPushButton();
-    pPushButton->setText("Compute the answer to universe");
-
-    auto pSpinBoxResult = new QSpinBox();
-    pSpinBoxResult->setMinimum(0);
-    pSpinBoxResult->setMaximum(100'000);
-    pSpinBoxResult->setReadOnly(true);
-    pSpinBoxResult->setValue(answer);
-
-    auto pSpacer = new QSpacerItem(20, 40, QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Expanding);
-
-    pMainWidget->setLayout(pLayout);
-    pLayout->addWidget(pSpinBox, 0, 0);
-    pLayout->addWidget(pPushButton, 0, 1);
-    pLayout->addWidget(pSpinBoxResult, 1, 0, 1, 2);
-    pLayout->addItem(pSpacer, 2, 0, 1, 2);
-
+    // Setup timer actor:
     QTimer viewUpdateTimer;
-    viewUpdateTimer.setInterval(100);
 
-    // Connect:
-    QObject::connect(pSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), [&](int value)
+    // Connect actors with model:
+    QObject::connect(pMainWidget, &MainWidget::questionChanged, [&](int value)
     {
-        question = value;
+        question.value = value;
     });
 
-    QObject::connect(pPushButton, &QPushButton::clicked, [&]
+    QObject::connect(pMainWidget, &MainWidget::answerRequested, [&]
     {
         if (worker.joinable())
         {
             worker.join();
         }
-        worker = std::thread(std::bind(worker_procedure, question, std::ref(answer), std::ref(answerCallback), std::ref(answerEvent)));
+
+        switch (approach)
+        {
+            case Approach::PULL:
+            {
+                worker = std::thread(std::bind(worker_procedure_no_notification, question.value, std::ref(answer.value)));
+                break;
+            }
+
+            case Approach::PUSH:
+            {
+                worker = std::thread(std::bind(worker_procedure_with_callback, question.value, std::ref(answer.value), answer.callback));
+                break;
+            }
+
+            case Approach::PUSHPULL:
+            {
+                worker = std::thread(std::bind(worker_procedure_with_event, question.value, std::ref(answer.value), answer.event));
+                break;
+            }
+        }
     });
 
     // How to update the computed answer in view?
 
-    // #1 - Pull approach (value polling)
-    if (false)
+    switch (approach)
     {
-        QObject::connect(&viewUpdateTimer, &QTimer::timeout, pSpinBoxResult, [&]
+        case Approach::PULL:
         {
-            pSpinBoxResult->setValue(answer);
-        });
-    }
+            QObject::connect(&viewUpdateTimer, &QTimer::timeout, pMainWidget, [&]
+            {
+                pMainWidget->setAnswer(answer.value);
+            });
 
-    // #2 - Push approach (callbacks)
-    if (false)
-    {
-        answerCallback = [&](int value)
-        {
-            QMetaObject::invokeMethod(pSpinBoxResult, "setValue", Q_ARG(int, value));
-        };
-    }
+            viewUpdateTimer.setInterval(100);
+            viewUpdateTimer.start();
 
-    // #3 - Push+pull approach (event)
-    if (true)
-    {
-        answerEvent = [&]
+            break;
+        }
+
+        case Approach::PUSH:
         {
-            // First, retrieve the value from source model
-            const auto value = answer;
-            // Second, update the view
-            QMetaObject::invokeMethod(pSpinBoxResult, "setValue", Q_ARG(int, value));
-        };
+            answer.callback = [&](int value)
+            {
+                QMetaObject::invokeMethod(pMainWidget, "setAnswer", Q_ARG(int, value));
+            };
+            break;
+        }
+
+        case Approach::PUSHPULL:
+        {
+            answer.event = [&]
+            {
+                const auto value = answer.value;
+                QMetaObject::invokeMethod(pMainWidget, "setAnswer", Q_ARG(int, value));
+            };
+            break;
+        }
     }
 
     // Run the application:
-    viewUpdateTimer.start();
     const auto rc = application.exec();
 
     // Cleanup and exit:

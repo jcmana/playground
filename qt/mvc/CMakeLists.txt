@@ -13,6 +13,9 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-add_executable("mvc" WIN32 "source/Main.cpp")
+add_executable("mvc" WIN32 
+	"source/Model.h"
+	"source/MainWidget.h"
+	"source/Main.cpp")
 
 target_link_libraries("mvc" PRIVATE Qt5::Core Qt5::Widgets Qt5::Gui)
