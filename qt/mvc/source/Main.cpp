@@ -17,7 +17,7 @@ enum class Approach
     PUSHPULL,
 };
 
-constexpr static auto approach = Approach::PUSHPULL;
+constexpr static auto approach = Approach::PUSH;
 
 int answer_computation(int question)
 {
@@ -25,21 +25,19 @@ int answer_computation(int question)
     return question * 3 + 14;
 }
 
-void worker_procedure_no_notification(int question, int & answer)
+void worker_procedure(const Model & question, Model & answer)
 {
-    answer = answer_computation(question);
-}
+    answer.value = answer_computation(question.value);
+    
+    if (answer.callback)
+    {
+        answer.callback(answer.value);
+    }
 
-void worker_procedure_with_callback(int question, int & answer, std::function<void(int)> & callback)
-{
-    answer = answer_computation(question);
-    callback(answer);
-}
-
-void worker_procedure_with_event(int question, int & answer, std::function<void()> & event)
-{
-    answer = answer_computation(question);
-    event();
+    if (answer.event)
+    {
+        answer.event();
+    }
 }
 
 void join(std::thread & t)
@@ -81,26 +79,7 @@ int main(int argc, char * argv[])
             worker.join();
         }
 
-        switch (approach)
-        {
-            case Approach::PULL:
-            {
-                worker = std::thread(std::bind(worker_procedure_no_notification, question.value, std::ref(answer.value)));
-                break;
-            }
-
-            case Approach::PUSH:
-            {
-                worker = std::thread(std::bind(worker_procedure_with_callback, question.value, std::ref(answer.value), answer.callback));
-                break;
-            }
-
-            case Approach::PUSHPULL:
-            {
-                worker = std::thread(std::bind(worker_procedure_with_event, question.value, std::ref(answer.value), answer.event));
-                break;
-            }
-        }
+        worker = std::thread(std::bind(worker_procedure, std::cref(question), std::ref(answer)));
     });
 
     // How to update the computed answer in view?
