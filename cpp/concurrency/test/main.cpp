@@ -320,7 +320,14 @@ int main()
 
             std::this_thread::sleep_for(std::chrono::seconds(1));
 
-            std::swap(ea, eb);
+            //std::swap(ea, eb);
+            {
+                auto tmp = std::move(ea);
+                ea = std::move(eb);
+                eb = std::move(tmp);
+            }
+
+            ea.post(proca);
         }
 
         std::cout << a.str();
