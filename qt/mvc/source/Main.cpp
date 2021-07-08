@@ -40,14 +40,6 @@ void worker_procedure(const Model & question, Model & answer)
     }
 }
 
-void join(std::thread & t)
-{
-    if (t.joinable())
-    {
-        t.join();
-    }
-}
-
 int main(int argc, char * argv[])
 {
     QApplication application(argc, argv);
