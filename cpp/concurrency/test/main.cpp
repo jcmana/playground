@@ -6,6 +6,8 @@
 #include <string>
 #include <sstream>
 
+#include <windows.h>
+
 #include "../concurrency/barrier.hpp"
 #include "../concurrency/latch.hpp"
 #include "../concurrency/condition.hpp"
@@ -320,17 +322,85 @@ int main()
 
             std::this_thread::sleep_for(std::chrono::seconds(1));
 
-            //std::swap(ea, eb);
-            {
-                auto tmp = std::move(ea);
-                ea = std::move(eb);
-                eb = std::move(tmp);
-            }
+            std::swap(ea, eb);
 
             ea.post(proca);
         }
 
         std::cout << a.str();
         std::cout << b.str();
+    }
+
+    // manual thread impl. using winapi threads:
+    if (false)
+    {
+        struct thread
+        {
+            thread() :
+                m_functor(),
+                m_handle(NULL)
+            {
+            }
+
+            thread(std::function<void()> functor) :
+                m_functor(std::move(functor)),
+                m_handle(CreateThread(NULL, 0, procedure, reinterpret_cast<LPVOID>(&m_functor), 0, 0))
+            {
+            }
+
+            thread(thread && other) :
+                thread()
+            {
+                swap(*this, other);
+            }
+
+            void join()
+            {                    
+                WaitForSingleObject(m_handle, INFINITE);
+                CloseHandle(m_handle);
+            }
+
+            bool joinable()
+            {
+                return (m_handle != NULL);
+            }
+
+            ~thread()
+            {
+                if (joinable())
+                {
+                    join();
+                }
+            }
+
+            static DWORD WINAPI procedure(LPVOID that)
+            {
+                auto * functor = reinterpret_cast<std::function<void()> *>(that);
+                if (*functor)
+                {
+                    (*functor)();
+                }
+                return 0;
+            }
+
+            static void swap(thread & lhs, thread & rhs)
+            {
+                using std::swap;
+                swap(lhs.m_functor, rhs.m_functor);
+                swap(lhs.m_handle, rhs.m_handle);
+            }
+
+            std::function<void()> m_functor;
+            HANDLE m_handle;
+        };
+
+        auto proc = []
+        {
+            std::cout << "thread procedure" << std::endl;
+        };
+
+        thread t(proc);
+
+        auto t_moved = std::move(t);
     }
 }
