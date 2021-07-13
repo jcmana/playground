@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31424.327
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "graph", "graph\graph.vcxproj", "{4A6A90BD-9C95-432B-A458-5090BF225506}"
 EndProject
@@ -10,8 +10,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{F6BB3C54-26AF-4057-8DB2-1627F7412D3A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "generic", "..\generic\generic\generic.vcxproj", "{99B037A6-AA80-485E-B227-784D39DC1BA2}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "node_centric_graph", "node_centric_graph\node_centric_graph.vcxproj", "{D3692E71-DEF7-4909-A3DA-B707E12E8A8F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,14 +39,6 @@ Global
 		{99B037A6-AA80-485E-B227-784D39DC1BA2}.Release|x64.Build.0 = Release|Win32
 		{99B037A6-AA80-485E-B227-784D39DC1BA2}.Release|x86.ActiveCfg = Release|Win32
 		{99B037A6-AA80-485E-B227-784D39DC1BA2}.Release|x86.Build.0 = Release|Win32
-		{D3692E71-DEF7-4909-A3DA-B707E12E8A8F}.Debug|x64.ActiveCfg = Debug|Win32
-		{D3692E71-DEF7-4909-A3DA-B707E12E8A8F}.Debug|x64.Build.0 = Debug|Win32
-		{D3692E71-DEF7-4909-A3DA-B707E12E8A8F}.Debug|x86.ActiveCfg = Debug|Win32
-		{D3692E71-DEF7-4909-A3DA-B707E12E8A8F}.Debug|x86.Build.0 = Debug|Win32
-		{D3692E71-DEF7-4909-A3DA-B707E12E8A8F}.Release|x64.ActiveCfg = Release|Win32
-		{D3692E71-DEF7-4909-A3DA-B707E12E8A8F}.Release|x64.Build.0 = Release|Win32
-		{D3692E71-DEF7-4909-A3DA-B707E12E8A8F}.Release|x86.ActiveCfg = Release|Win32
-		{D3692E71-DEF7-4909-A3DA-B707E12E8A8F}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
