@@ -3,10 +3,11 @@
 #include <memory>
 #include <utility>
 #include <optional>
+#include <functional>
 
 #include "atomic_queue.hpp"
 
-/// \brief      Executes posted tasks asynchronously in order.
+/// \brief      Executes tasks asynchronously in FIFO order.
 template<typename F>
 class executor
 {
@@ -18,6 +19,7 @@ public:
         m_thread = std::thread(&executor::thread_procedure, std::ref(*m_up_queue));
     }
 
+    /// \brief      Waits for all enqueued tasks and terminates worker thread.
     ~executor()
     {
         if (m_thread.joinable())
@@ -27,7 +29,10 @@ public:
         }
     }
 
+    /// \brief      Move constructor, transfers worker thread and task queue ownership.
     executor(executor && other) = default;
+
+    /// \brief      Move assignment, transfers worker thread and task queue ownership.
     executor & operator  =(executor && other) = default;
 
     /// \brief      Posts task into queue for asynchronous execution.
@@ -57,5 +62,8 @@ private:
 
 private:
     std::thread m_thread;
+
+    // Queue is stored on heap to keep its address constant during move
+    // operations to allow thread_procedure to keep working correctly.
     std::unique_ptr<atomic_queue<std::optional<F>>> m_up_queue;
 };
