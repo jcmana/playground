@@ -6,6 +6,8 @@
 #include <string>
 #include <sstream>
 
+#include <windows.h>
+
 #include "../concurrency/barrier.hpp"
 #include "../concurrency/latch.hpp"
 #include "../concurrency/condition.hpp"
@@ -268,10 +270,27 @@ int main()
 
     if (false)
     {
+        /*
         executor<int> e;
         e.post(calculate, 7);
         e.post(calculate, 12);
         e.post(calculate, 42);
+        */
+    }
+
+    if (false)
+    {
+        using executor_task = std::packaged_task<void()>;
+
+        auto proc = []
+        {
+            std::cout << "procedure ..." << std::endl;
+        };
+        auto task = executor_task(proc);
+        auto future = task.get_future();
+
+        executor<executor_task> e;
+        e.post(std::move(task));
     }
 
     if (true)
@@ -279,35 +298,109 @@ int main()
         std::stringstream a;
         std::stringstream b;
 
-        std::mutex m;
-
         auto proca = [&]
         {
             a << "a: thread id = " << std::this_thread::get_id() << "\n";
-            std::unique_lock lock(m);
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+
         };
 
         auto procb = [&]
         {
             b << "b: thread id = " << std::this_thread::get_id() << "\n";
-            std::unique_lock lock(m);
+            std::this_thread::sleep_for(std::chrono::seconds(1));
         };
 
         {
-            executor<void> ea;
-            executor<void> eb;
+            executor<std::function<void()>> ea;
+            executor<std::function<void()>> eb;
 
-            std::unique_lock lock(m);
             ea.post(proca);
             ea.post(proca);
-
             eb.post(procb);
             eb.post(procb);
 
-            swap(ea, eb);
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+
+            std::swap(ea, eb);
+
+            ea.post(proca);
         }
 
         std::cout << a.str();
         std::cout << b.str();
+    }
+
+    // manual thread impl. using winapi threads:
+    if (false)
+    {
+        struct thread
+        {
+            thread() :
+                m_functor(),
+                m_handle(NULL)
+            {
+            }
+
+            thread(std::function<void()> functor) :
+                m_functor(std::move(functor)),
+                m_handle(CreateThread(NULL, 0, procedure, reinterpret_cast<LPVOID>(&m_functor), 0, 0))
+            {
+            }
+
+            thread(thread && other) :
+                thread()
+            {
+                swap(*this, other);
+            }
+
+            void join()
+            {                    
+                WaitForSingleObject(m_handle, INFINITE);
+                CloseHandle(m_handle);
+            }
+
+            bool joinable()
+            {
+                return (m_handle != NULL);
+            }
+
+            ~thread()
+            {
+                if (joinable())
+                {
+                    join();
+                }
+            }
+
+            static DWORD WINAPI procedure(LPVOID that)
+            {
+                auto * functor = reinterpret_cast<std::function<void()> *>(that);
+                if (*functor)
+                {
+                    (*functor)();
+                }
+                return 0;
+            }
+
+            static void swap(thread & lhs, thread & rhs)
+            {
+                using std::swap;
+                swap(lhs.m_functor, rhs.m_functor);
+                swap(lhs.m_handle, rhs.m_handle);
+            }
+
+            std::function<void()> m_functor;
+            HANDLE m_handle;
+        };
+
+        auto proc = []
+        {
+            std::cout << "thread procedure" << std::endl;
+        };
+
+        thread t(proc);
+
+        auto t_moved = std::move(t);
     }
 }

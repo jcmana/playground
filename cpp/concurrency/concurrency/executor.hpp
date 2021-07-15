@@ -1,80 +1,69 @@
 #pragma once
 
-#include <future>
-#include <mutex>
-#include <condition_variable>
-#include <queue>
+#include <memory>
 #include <utility>
+#include <optional>
+#include <functional>
 
-#include "basic_executor.hpp"
 #include "atomic_queue.hpp"
 
-/// \brief      Executes posted tasks asynchronously in order.
-template<typename T>
+/// \brief      Executes tasks asynchronously in FIFO order.
+template<typename F>
 class executor
 {
 public:
     /// \brief      Default constructor, initializes executor ready to receive tasks.
-    executor() :
-        m_executor(&executor::thread_procedure, this)
+    executor()
     {
+        m_up_queue = std::make_unique<atomic_queue<std::optional<F>>>();
+        m_thread = std::thread(&executor::thread_procedure, std::ref(*m_up_queue));
     }
 
+    /// \brief      Waits for all enqueued tasks and terminates worker thread.
     ~executor()
     {
-        m_queue.push(std::function<T()>());
+        if (m_thread.joinable())
+        {
+            m_up_queue->push(std::nullopt);
+            m_thread.join();
+        }
     }
 
-    executor(const executor & other) = delete;
-    
-    executor(executor && other) noexcept :
-        executor()
-    {
-        swap(*this, other);
-    }
-    executor & operator  =(const executor & other) = delete;
+    /// \brief      Move constructor, transfers worker thread and task queue ownership.
+    executor(executor && other) = default;
 
-    executor & operator  =(executor && other) noexcept
-    {
-        swap(*this, executor());
-        swap(*this, other);
+    /// \brief      Move assignment, transfers worker thread and task queue ownership.
+    executor & operator  =(executor && other) = default;
 
-        return (*this);
-    }
-
-    /// \brief      Posts tasks into queue for asynchronous execution.
-    template<typename F, typename ... A>
-    void post(F && f, A ... args)
+    /// \brief      Posts task into queue for asynchronous execution.
+    void post(F task)
     {
-        m_queue.push(std::bind(f, std::forward<A>(args) ...));
-    }
-
-    friend void swap(executor<T> & lhs, executor<T> & rhs)
-    {
-        using std::swap;
-        swap(lhs.m_queue, rhs.m_queue);
+        m_up_queue->push(std::move(task));
     }
 
 private:
-    void thread_procedure()
+    static void thread_procedure(atomic_queue<std::optional<F>> & queue)
     {
         while (true)
         {
-            auto task = m_queue.pop();
+            // Retrieve task from reader-writer queue
+            auto optional_task = queue.pop();
 
-            if (task == false)
+            // Check for terminating task
+            if (optional_task.has_value() == false)
             {
                 break;
             }
 
-            task();
+            // Execute the task
+            optional_task.value()();
         }
     }
 
 private:
-    // Synchronization FIFO for passing incoming tasks from issuing thread
-    // to the worker thread = the executor
-    atomic_queue<std::function<T()>> m_queue;
+    std::thread m_thread;
 
-    basic_executor m_executor;
+    // Queue is stored on heap to keep its address constant during move
+    // operations to allow thread_procedure to keep working correctly.
+    std::unique_ptr<atomic_queue<std::optional<F>>> m_up_queue;
 };

@@ -14,6 +14,21 @@ void cb(int value)
     std::cout << "modification = " << value << std::endl;
 }
 
+template<typename T>
+struct ref_specialization;
+
+template<typename T>
+struct ref_specialization
+{
+    T value;
+};
+
+template<typename T>
+struct ref_specialization<T &>
+{
+    std::reference_wrapper<T> reference;
+};
+
 int main()
 {
     // test interface #0
@@ -246,13 +261,21 @@ int main()
         y.set(0);
     }
 
-    // observer (mimicking signal/slot, but only for changes propagation)
-    if (true)
+    // observer (mimicking signal/slot, but only for changes propagation, and with attached value)
+    if (false)
     {
         using T = int;
 
         struct observer
         {
+            void operator ()(const T & value)
+            {
+                if (functor)
+                {
+                    functor(value);
+                }
+            }
+
             observable<T>::guard_type guard;
             std::function<void(T)> functor;
         };
@@ -262,5 +285,48 @@ int main()
 
         observer ox;
         observer oy;
+
+        ox.functor = [](T value){ std::cout << "x = " << value << std::endl; };
+        oy.functor = [](T value){ std::cout << "y = " << value << std::endl; };
+
+        ox.guard = x.observe(std::ref(ox));
+        oy.guard = y.observe(std::ref(oy));
+
+        x.set(4);
+        y.set(7);
+
+        /*
+        struct composite
+        {
+            observable<int, int> o;
+
+        private:
+            observer ox;
+            T x_cached;
+            observer oy;
+            T y_cached;
+        };
+        */
+    }
+
+    // shared observable
+    if (false)
+    {
+        shared_observable<int> o;
+        auto g = o.observe(cb);
+        o.set(7);
+
+        auto o_copy = o;
+        o_copy.set(14);
+    }
+
+    // specialization for reference types
+    if (false)
+    {
+        auto value = 0;
+        auto sp_value = std::make_shared<int>(0);
+
+        auto rsv = ref_specialization<int>{value};
+        auto rsr = ref_specialization<int &>{*sp_value};
     }
 }

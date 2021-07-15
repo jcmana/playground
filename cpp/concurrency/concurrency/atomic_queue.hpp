@@ -14,21 +14,19 @@ public:
 
     atomic_queue(const atomic_queue & other)
     {
-        std::unique_lock<std::mutex> lock(other.m_mutex);
+        std::unique_lock lock(other.m_mutex);
         m_queue = other.m_queue;
     }
 
     atomic_queue(atomic_queue && other) noexcept :
         atomic_queue()
     {
-        std::unique_lock<std::mutex> lock(other.m_mutex);
-
         swap(*this, other);
     }
 
     atomic_queue & operator  =(const atomic_queue & other)
     {
-        std::unique_lock<std::mutex> lock(other.m_mutex);
+        std::unique_lock lock(other.m_mutex);
         m_queue = other.m_queue;
 
         return (*this);
@@ -36,8 +34,6 @@ public:
 
     atomic_queue & operator  =(atomic_queue && other) noexcept
     {
-        std::unique_lock<std::mutex> lock(other.m_mutex);
-        
         auto empty = atomic_queue();
 
         swap(*this, empty);
@@ -46,16 +42,9 @@ public:
         return (*this);
     }
 
-    void push(const T & element)
+    void push(T element)
     {
-        std::unique_lock<std::mutex> lock(m_mutex);
-        m_queue.push(element);
-        m_cv.notify_one();
-    }
-
-    void push(T && element)
-    {
-        std::unique_lock<std::mutex> lock(m_mutex);
+        std::unique_lock lock(m_mutex);
         m_queue.push(std::move(element));
         m_cv.notify_one();
     }
@@ -63,14 +52,14 @@ public:
     template<typename ... A>
     void emplace(A && ... args)
     {
-        std::unique_lock<std::mutex> lock(m_mutex);
+        std::unique_lock lock(m_mutex);
         m_queue.emplace(std::forward<A>(args) ...);
         m_cv.notify_one();
     }
 
     T pop()
     {
-        std::unique_lock<std::mutex> lock(m_mutex);
+        std::unique_lock lock(m_mutex);
 
         while (m_queue.empty())
         {
@@ -85,8 +74,8 @@ public:
 
     friend void swap(atomic_queue & lhs, atomic_queue & rhs)
     {
-        std::unique_lock<std::mutex> lock_rhs(rhs.m_mutex);
-        std::unique_lock<std::mutex> lock_lhs(lhs.m_mutex);
+        std::unique_lock lock_rhs(rhs.m_mutex);
+        std::unique_lock lock_lhs(lhs.m_mutex);
 
         using std::swap;
         swap(lhs.m_queue, rhs.m_queue);
