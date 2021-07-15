@@ -12,6 +12,9 @@ template<typename ... A>
 class slot
 {
 public:
+    using signature = void(A ...);
+
+public:
     slot()
     {
     }
@@ -35,5 +38,5 @@ public:
 
 private:
     std::function<void(A ...)> m_functor;
-    std::vector<atomic_callback_guard<std::function<void(A ...)>>> m_connection;
+    std::vector<atomic_callback_guard<std::function<signature>>> m_connection;
 };
