@@ -119,6 +119,7 @@ auto join(shared_observable_v2<Ta> & a, shared_observable_v2<Tb> & b)
     auto observer_a = [composite, b](const Ta & value)
     {
         composite.m_sp->m_store.invoke(value, b.m_sp->get());
+        // JMTODO: composite.set(value, b.get());
     };
 
     auto observer_b = [composite, a](const Tb & value)
@@ -129,34 +130,9 @@ auto join(shared_observable_v2<Ta> & a, shared_observable_v2<Tb> & b)
     a.m_guard = a.m_sp->observe(std::move(observer_a));
     b.m_guard = b.m_sp->observe(std::move(observer_b));
 
-    /*
-    struct joining_observer_a
-    {
-        shared_observable_v2<Tb> b;
-        shared_observable_v2<Ta, Tb> composite;
-
-        void operator ()(const Ta & value)
-        {
-            std::cout << "fuck\n";
-            composite.m_sp->m_store; //.invoke(value, b->m_sp.m_value);
-        }
-    };
-
-    struct joining_observer_b
-    {
-        shared_observable_v2<Tb> a;
-        shared_observable_v2<Ta, Tb> composite;
-
-        void operator ()(const Tb & value)
-        {
-            std::cout << "fuck\n";
-            composite.m_sp->m_store; //.invoke(value, b->m_sp.m_value);
-        }
-    };
-    */
-
-    //a.m_guard = a.m_sp->observe(joining_observer_a{b, composite});
-    //b.m_guard = b.m_sp->observe(joining_observer_b{a, composite});
+    // JMTODO: this wastes the shared_observable built-in guard for the joining and therefore
+    // makes it not usable for custom observation; also it is most likely not possible to use
+    // single shared observable in multiple joins
 
     return composite;
 }
