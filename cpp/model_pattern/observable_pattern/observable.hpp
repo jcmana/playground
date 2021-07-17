@@ -3,12 +3,16 @@
 #include <shared_mutex>
 #include <functional>
 #include <memory>
+#include <tuple>
 
 #include "../../callback_store/atomic_callback_store/atomic_callback_store.hpp"
 
+template<typename ... A>
+class observable;
+
 /// \brief      Observable value, issues notifications after each modification.
 template<typename T>
-class observable
+class observable<T>
 {
 public:
     using value_type = T;
@@ -173,6 +177,30 @@ private:
     T m_value;
 };
 
+template<typename ... A>
+class observable
+{
+public:
+    using store_callback_type = std::function<void(const A & ...)>;
+    using store_type = atomic_callback_store<store_callback_type>;
+    using guard_type = atomic_callback_guard<store_callback_type>;
+
+    observable() :
+        m_value()
+    {
+    }
+
+    observable(const A & ... args) :
+        m_value(std::forward<const A &>(args) ...)
+    {
+    }
+
+    mutable std::shared_mutex m_mutex;
+    mutable atomic_callback_store<std::function<void(const A & ...)>> m_store;
+
+    std::tuple<A ...> m_value;
+};
+
 template<typename T>
 void swap(observable<T> & lhs, observable<T> & rhs)
 {
@@ -185,8 +213,11 @@ void swap(observable<T> & lhs, observable<T> & rhs)
 }
 
 /// \brief      Shared `observable` to be passed shared across concurrent threads.
+template<typename ... A>
+class shared_observable;
+
 template<typename T>
-class shared_observable
+class shared_observable<T>
 {
 public:
     shared_observable() :
@@ -216,3 +247,36 @@ private:
     const std::shared_ptr<observable<T>> m_sp;
 };
 
+template<typename ... A>
+class shared_observable_v2
+{
+public:
+    using observable_type = observable<A ...>;
+    using guard_type = typename observable_type::guard_type;
+
+    shared_observable_v2() :
+        m_sp(new observable<A ...>)
+    {
+    }
+
+    shared_observable_v2(const shared_observable_v2 & other) :
+        m_sp(other.m_sp),
+        m_guard()
+    {
+    }
+
+    const std::shared_ptr<observable_type> m_sp;
+    guard_type m_guard;
+};
+
+template<typename ... A>
+class shared_observable
+{
+public:
+    shared_observable() :
+        m_sp(new observable<A ...>)
+    {
+    }
+
+    const std::shared_ptr<observable<A ...>> m_sp;
+};

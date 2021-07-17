@@ -329,4 +329,22 @@ int main()
         auto rsv = ref_specialization<int>{value};
         auto rsr = ref_specialization<int &>{*sp_value};
     }
+
+    if (true)
+    {
+        shared_observable_v2<int> a;
+        shared_observable_v2<int> b;
+
+        auto c = join(a, b);
+
+        auto observer = [](int a, int b)
+        {
+            std::cout << "a = " << a << ", b = " << b << std::endl;
+        };
+
+        auto g = c.m_sp->m_store.subscribe(observer);
+
+        a.m_sp->set(7);
+        b.m_sp->set(4);
+    }
 }
