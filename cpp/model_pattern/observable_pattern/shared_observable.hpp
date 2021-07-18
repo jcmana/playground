@@ -84,6 +84,8 @@ public:
     {
         auto guard = m_sp->observe(std::move(functor));
         m_guards.push_back(std::move(guard));
+
+        // JMTODO: scan for unused guards instead of pushing back
     }
 
     const std::shared_ptr<observable_type> m_sp;

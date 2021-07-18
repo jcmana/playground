@@ -6,7 +6,6 @@
 #include <memory>
 
 #include "observable.hpp"
-#include "observable_composite.hpp"
 #include "shared_observable.hpp"
 #include "observable_utility.hpp"
 
@@ -100,24 +99,6 @@ int main()
         std::cout << "modified" << std::endl;
     }
 
-    // test join
-    if (false)
-    {
-        observable<int> oa;
-        observable<double> ob;
-
-        auto f = [](int a, double b)
-        {
-            std::cout << "a = " << a << ", b = " << b << std::endl; 
-        };
-
-        decltype(join(f, oa, ob)) g = join(f, oa, ob);
-
-        oa.set(15);
-        ob.set(21.4);
-        oa.set(-4);
-    }
-
     if (false)
     {
         observable<int> oa;
@@ -128,37 +109,6 @@ int main()
         oa_moved.set(7);
 
         oa_moved.trigger();
-    }
-
-    // observable composite
-    if (false)
-    {
-        struct composite
-        {
-            int x;
-            int y;
-        };
-
-        observable<int> oa;
-        observable<int> ob;
-
-        auto compose = [](int x, int y)
-        {
-            return composite{x, y};
-        };
-        observable_composite<composite, int, int> oc(compose, oa, ob);
-
-        auto print = [](const composite & c)
-        {
-            std::cout << "x = " << c.x << ", y = " << c.y << std::endl;
-        };
-        auto g = oc.observe(print);
-
-        // Test:
-        oa.set(4);
-        ob.set(7);
-        ob.set(42);
-        oa.set(0);
     }
 
     // observable composite (shared observable approach)
@@ -295,33 +245,7 @@ int main()
 
         x.set(4);
         y.set(7);
-
-        /*
-        struct composite
-        {
-            observable<int, int> o;
-
-        private:
-            observer ox;
-            T x_cached;
-            observer oy;
-            T y_cached;
-        };
-        */
     }
-
-    // shared observable
-    /*
-    if (false)
-    {
-        shared_observable<int> o;
-        auto g = o.observe(cb);
-        o.set(7);
-
-        auto o_copy = o;
-        o_copy.set(14);
-    }
-    */
 
     // specialization for reference types
     if (false)
@@ -332,26 +256,6 @@ int main()
         auto rsv = ref_specialization<int>{value};
         auto rsr = ref_specialization<int &>{*sp_value};
     }
-
-    /*
-    if (true)
-    {
-        shared_observable_v2<int> a;
-        shared_observable_v2<int> b;
-
-        auto c = join(a, b);
-
-        auto observer = [](int a, int b)
-        {
-            std::cout << "a = " << a << ", b = " << b << std::endl;
-        };
-
-        auto g = c.m_sp->m_store.subscribe(observer);
-
-        a.m_sp->set(7);
-        b.m_sp->set(4);
-    }
-    */
 
     if (true)
     {
