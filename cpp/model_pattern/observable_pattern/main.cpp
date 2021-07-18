@@ -7,6 +7,7 @@
 
 #include "observable.hpp"
 #include "observable_composite.hpp"
+#include "shared_observable.hpp"
 #include "observable_utility.hpp"
 
 void cb(int value)
@@ -310,6 +311,7 @@ int main()
     }
 
     // shared observable
+    /*
     if (false)
     {
         shared_observable<int> o;
@@ -319,6 +321,7 @@ int main()
         auto o_copy = o;
         o_copy.set(14);
     }
+    */
 
     // specialization for reference types
     if (false)
@@ -330,6 +333,7 @@ int main()
         auto rsr = ref_specialization<int &>{*sp_value};
     }
 
+    /*
     if (true)
     {
         shared_observable_v2<int> a;
@@ -346,5 +350,24 @@ int main()
 
         a.m_sp->set(7);
         b.m_sp->set(4);
+    }
+    */
+
+    if (true)
+    {
+        shared_observable<int> a;
+        shared_observable<int> b;
+
+        shared_observable<int, int> c = join(a, b);
+
+        auto observer = [](int value_a, int value_b)
+        {
+            std::cout << value_a << ", " << value_b << std::endl;
+        };
+        c.observe(observer);
+
+        a.set(7);
+        b.set(4);
+        
     }
 }

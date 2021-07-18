@@ -111,6 +111,7 @@ auto join(F && callback, const observable<Ta> & a, const observable<Tb> & b)
     return std::make_tuple(std::move(guard_a), std::move(guard_b));
 }
 
+/*
 template<typename Ta, typename Tb>
 auto join(shared_observable_v2<Ta> & a, shared_observable_v2<Tb> & b)
 {
@@ -136,3 +137,4 @@ auto join(shared_observable_v2<Ta> & a, shared_observable_v2<Tb> & b)
 
     return composite;
 }
+*/

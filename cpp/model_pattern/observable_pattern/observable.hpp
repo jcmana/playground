@@ -181,6 +181,7 @@ template<typename ... A>
 class observable
 {
 public:
+    using value_type = std::tuple<A ...>;
     using store_callback_type = std::function<void(const A & ...)>;
     using store_type = atomic_callback_store<store_callback_type>;
     using guard_type = atomic_callback_guard<store_callback_type>;
@@ -195,10 +196,42 @@ public:
     {
     }
 
-    mutable std::shared_mutex m_mutex;
-    mutable atomic_callback_store<std::function<void(const A & ...)>> m_store;
+    void set(const value_type & value)
+    {
+        m_value = value;
+        std::apply([this](auto && ... args)
+        {
+            m_store.invoke(args ...);
+        }, m_value);
+    }
 
-    std::tuple<A ...> m_value;
+    void set(const A & ... args)
+    {
+        m_value = {args ...};
+        m_store.invoke(args ...);
+    }
+
+    const value_type & get() const
+    {
+        return m_value;
+    }
+
+    template<typename F>
+    auto observe(F callback) const
+    {
+        return m_store.subscribe(std::move(callback));
+    }
+
+    void trigger() const
+    {
+
+    }
+
+private:
+    mutable std::shared_mutex m_mutex;
+    mutable store_type m_store;
+
+    value_type m_value;
 };
 
 template<typename T>
@@ -212,6 +245,7 @@ void swap(observable<T> & lhs, observable<T> & rhs)
     swap(lhs.m_value, rhs.m_value);
 }
 
+/*
 /// \brief      Shared `observable` to be passed shared across concurrent threads.
 template<typename ... A>
 class shared_observable;
@@ -280,3 +314,4 @@ public:
 
     const std::shared_ptr<observable<A ...>> m_sp;
 };
+*/

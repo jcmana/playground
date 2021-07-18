@@ -144,6 +144,7 @@
     <ClInclude Include="observable.hpp" />
     <ClInclude Include="observable_composite.hpp" />
     <ClInclude Include="observable_utility.hpp" />
+    <ClInclude Include="shared_observable.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

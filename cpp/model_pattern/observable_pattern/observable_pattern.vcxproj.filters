@@ -24,6 +24,9 @@
     <ClInclude Include="observable_composite.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="shared_observable.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
