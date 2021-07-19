@@ -92,6 +92,23 @@ public:
     std::vector<guard_type> m_guards;
 };
 
+template<typename F, typename Ta, typename Tb>
+void join(F && functor, shared_observable<Ta> & a, shared_observable<Tb> & b)
+{
+    auto observer_a = [functor, b](const Ta & value) mutable
+    {
+        functor(value, b.get());
+    };
+
+    auto observer_b = [functor, a](const Tb & value) mutable
+    {
+        functor(a.get(), value);
+    };
+
+    a.observe(std::move(observer_a));
+    b.observe(std::move(observer_b));
+}
+
 template<typename Ta, typename Tb>
 auto join(shared_observable<Ta> & a, shared_observable<Tb> & b)
 {

@@ -257,12 +257,16 @@ int main()
         auto rsr = ref_specialization<int &>{*sp_value};
     }
 
-    if (true)
+    // join observables
+    if (false)
     {
         shared_observable<int> a;
         shared_observable<int> b;
 
         shared_observable<int, int> c = join(a, b);
+
+        // Is creating new observable redundant? It might be desirable simply to 
+        // use both original observables and pass it the common callback.
 
         auto observer = [](int value_a, int value_b)
         {
@@ -272,6 +276,23 @@ int main()
 
         a.set(7);
         b.set(4);
-        
+    }
+
+    // join observables (no composite)
+    if (true)
+    {
+        shared_observable<int> a;
+        shared_observable<int> b;
+
+        auto observer = [](int value_a, int value_b)
+        {
+            std::cout << value_a << ", " << value_b << std::endl;
+        };
+
+        join(observer, a, b);
+
+        a.set(7);
+        b.set(2);
+        a.set(0);
     }
 }
