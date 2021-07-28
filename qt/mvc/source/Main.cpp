@@ -89,6 +89,8 @@ int main(int argc, char * argv[])
 
     QObject::connect(pMainWidget, &MainWidget::answerRequested, [&]
     {
+        terminate = true;
+
         if (worker.joinable())
         {
             worker.join();
