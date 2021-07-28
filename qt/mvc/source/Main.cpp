@@ -17,45 +17,68 @@ enum class Approach
     PUSHPULL,
 };
 
-constexpr static auto approach = Approach::PUSH;
+constexpr static auto approach = Approach::PUSHPULL;
 
-int answer_computation(int question)
+void task(Model & state, const Model & question, Model & answer, const bool & terminate)
 {
-    std::this_thread::sleep_for(std::chrono::seconds(2));
-    return question * 3 + 14;
-}
+    state.set(1);
+    answer.set(0);
 
-void worker_procedure(const Model & question, Model & answer)
-{
-    answer.value = answer_computation(question.value);
-    
-    if (answer.callback)
+    auto q = question.value;
+    auto a = 0;
+
+    // compute the answer (q * 3 + 14) with the possibility to terminate early:
+
+    for (auto n = 0; n < 3; ++n)
     {
-        answer.callback(answer.value);
+        a += q;
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+        if (terminate)
+        {
+            state.set(-1);
+            return;
+        }
     }
 
-    if (answer.event)
+    for (auto n = 0; n < 14; ++n)
     {
-        answer.event();
+        a += 1;
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+        if (terminate)
+        {
+            state.set(-1);
+            return;
+        }
     }
+
+    answer.set(a);
+    state.set(0);
 }
 
 int main(int argc, char * argv[])
 {
     QApplication application(argc, argv);
 
-    // Setup model:
+    // Setup model
     Model question;
     Model answer;
+    Model state;  // -1 = terminated; 0 = done; 1 = running
 
-    // Setup worker actor:
+    // Worker task termination token
+    auto terminate = false;
+    
+    // Setup worker actor
     auto worker = std::thread();
 
-    // Setup GUI actor:
+    // Setup GUI actor
     auto pMainWidget = new MainWidget();
     pMainWidget->show();
 
-    // Setup timer actor:
+    // Setup timer actor
     QTimer viewUpdateTimer;
 
     // Connect actors with model:
@@ -71,7 +94,13 @@ int main(int argc, char * argv[])
             worker.join();
         }
 
-        worker = std::thread(std::bind(worker_procedure, std::cref(question), std::ref(answer)));
+        terminate = false;
+        worker = std::thread(std::bind(task, std::ref(state), std::cref(question), std::ref(answer), std::cref(terminate)));
+    });
+
+    QObject::connect(pMainWidget, &MainWidget::terminateRequested, [&]
+    {
+        terminate = true;
     });
 
     // How to update the computed answer in view?
@@ -83,6 +112,15 @@ int main(int argc, char * argv[])
             QObject::connect(&viewUpdateTimer, &QTimer::timeout, pMainWidget, [&]
             {
                 pMainWidget->setAnswer(answer.value);
+                
+                if (state.value > 0)
+                {
+                    pMainWidget->setRunning();
+                }
+                else
+                {
+                    pMainWidget->setDone();
+                }
             });
 
             viewUpdateTimer.setInterval(100);
@@ -95,8 +133,31 @@ int main(int argc, char * argv[])
         {
             answer.callback = [&](int value)
             {
-                QMetaObject::invokeMethod(pMainWidget, "setAnswer", Q_ARG(int, value));
+                auto proc = [pMainWidget, value]
+                {
+                    pMainWidget->setAnswer(value);
+                };
+
+                QMetaObject::invokeMethod(pMainWidget, proc);
             };
+
+            state.callback = [&](int value)
+            {
+                auto proc = [pMainWidget, value]
+                {
+                    if (value > 0)
+                    {
+                        pMainWidget->setRunning();
+                    }
+                    else
+                    {
+                        pMainWidget->setDone();
+                    }
+                };
+
+                QMetaObject::invokeMethod(pMainWidget, proc);
+            };
+
             break;
         }
 
@@ -105,11 +166,39 @@ int main(int argc, char * argv[])
             answer.event = [&]
             {
                 const auto value = answer.value;
-                QMetaObject::invokeMethod(pMainWidget, "setAnswer", Q_ARG(int, value));
+
+                auto proc = [pMainWidget, value]
+                {
+                    pMainWidget->setAnswer(value);
+                };
+
+                QMetaObject::invokeMethod(pMainWidget, proc);
             };
+
+            state.event = [&]
+            {
+                const auto value = state.value;
+
+                auto proc = [pMainWidget, value]
+                {
+                    if (value > 0)
+                    {
+                        pMainWidget->setRunning();
+                    }
+                    else
+                    {
+                        pMainWidget->setDone();
+                    }
+                };
+
+                QMetaObject::invokeMethod(pMainWidget, proc);
+            };
+
             break;
         }
     }
+
+    state.set(0);
 
     // Run the application:
     const auto rc = application.exec();
