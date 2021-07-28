@@ -69,7 +69,7 @@ public:
         m_sp->set(std::move(value));
     }
 
-    void set(const A & ... args)
+    void set(A ... args)
     {
         m_sp->set(args ...);
     }
