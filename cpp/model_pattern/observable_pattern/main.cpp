@@ -5,9 +5,13 @@
 #include <functional>
 #include <memory>
 
+#include "basic_observable.hpp"
 #include "observable.hpp"
 #include "shared_observable.hpp"
 #include "observable_utility.hpp"
+
+template<typename ... A>
+using F = std::function<void(A ...)>;
 
 void cb(int value)
 {
@@ -279,7 +283,7 @@ int main()
     }
 
     // join observables (no composite)
-    if (true)
+    if (false)
     {
         shared_observable<int> a;
         shared_observable<int> b;
@@ -294,5 +298,43 @@ int main()
         a.set(7);
         b.set(2);
         a.set(0);
+    }
+
+    // basic observable (single type)
+    if (false)
+    {
+        basic_observable<F, int> o = 12;
+
+        auto observer = [](int value)
+        {
+            std::cout << value << std::endl;
+        };
+
+        auto g = o.observe(observer);
+        o.notify();
+        o.get<0>() = 7;
+        o.notify();
+        o.get<0>() = 3;
+        o.notify();
+    }
+
+    // basic observable (muliple types)
+    if (true)
+    {
+        basic_observable<F, int, char> o = {4, 'x'};
+
+        auto observer = [](int i, char c)
+        {
+            std::cout << i << ", " << c << std::endl;
+        };
+
+        auto g = o.observe(observer);
+        o.notify();
+        o.get<0>() = 7;
+        o.get<1>() = 'f';
+        o.notify();
+        o.get<0>() = 3;
+        o.get<1>() = 'g';
+        o.notify();
     }
 }
