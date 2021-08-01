@@ -303,7 +303,7 @@ int main()
     // basic observable (single type)
     if (false)
     {
-        basic_observable<F, int> o = 12;
+        basic_observable<F, int> o = {12};
 
         auto observer = [](int value)
         {
@@ -334,7 +334,20 @@ int main()
         o.get<1>() = 'f';
         o.notify();
         o.get<0>() = 3;
-        o.get<1>() = 'g';
+        o.get<1>() = 'k';
         o.notify();
+
+
+        auto o_move = std::move(o);
+        o_move = {2, 'l'};
+        o_move.notify();
+        o.notify();
+
+        {
+            const auto & o_ref = o;
+            auto c = o_ref.get<1>();
+        }
+
+        auto && [a, b] = o;
     }
 }

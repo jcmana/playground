@@ -6,7 +6,7 @@
 
 #include "../../callback_store/atomic_callback_store/atomic_callback_store.hpp"
 
-/// <summary> Common base for observable pattern implementation.</summary>
+/// \brief      Common base for observable pattern implementation.
 template<template <typename> typename F, typename ... A>
 class basic_observable
 {
@@ -18,35 +18,44 @@ public:
 
 public:
     /// \brief      Default contructor.
-    basic_observable() :
-        m_value()
-    {
-    }
+    basic_observable() noexcept = default;
+    basic_observable(const basic_observable & other) noexcept = delete;
+    basic_observable(basic_observable && other) noexcept = default;
 
+    /// \brief      Contructor, initializes value with args.
     basic_observable(A ... args) :
         m_value(std::forward<A>(args) ...)
     {
     }
 
+    basic_observable & operator =(const basic_observable & other) noexcept = delete;
+    basic_observable & operator =(basic_observable && other) noexcept = default;
+
+    basic_observable & operator =(value_type && value)
+    {
+        m_value = std::move(value);
+        return (*this);
+    };
+
     template<std::size_t I>
-    typename std::tuple_element<I, value_type>::type & get() noexcept
+    auto & get() noexcept
     {
         return std::get<I>(m_value);
     }
 
     template<std::size_t I>
-    const typename std::tuple_element<I, value_type>::type & cget() noexcept
+    const auto & get() const noexcept
     {
-        return m_value;
+        return std::get<I>(m_value);
     }
 
     /// \brief      Subscribes `callback` for modification notifications.
-    auto observe(store_callback_type callback) const
+    auto observe(store_callback_type callback) const noexcept
     {
         return m_store.subscribe(std::move(callback));
     }
 
-    /// \brief      Invokes each subscribed callback.
+    /// \brief      Invokes each active callback with current value as argument.
     void notify() const
     {
         auto application = [this](auto ... args)
@@ -57,41 +66,26 @@ public:
         std::apply(std::move(application), m_value);
     }
 
-public:
-    // SharedMutex implementation:
-    void lock() const
-    {
-        m_mutex.lock();
-    }
-
-    auto try_lock() const
-    {
-        return m_mutex.try_lock();
-    }
-
-    void lock_shared() const
-    {
-        m_mutex.lock_shared();
-    }
-
-    auto try_lock_shared() const
-    {
-        return m_mutex.try_lock_shared();
-    }
-
-    void unlock() const
-    {
-        m_mutex.unlock();
-    }
-
-    void unlock_shared() const
-    {
-        m_mutex.unlock_shared();
-    }
-
 private:
-    mutable std::shared_mutex m_mutex;
     mutable store_type m_store;
 
     value_type m_value;
 };
+
+template <template <typename> typename F, typename ... A> 
+struct std::tuple_size<basic_observable<F, A ...>> : std::integral_constant<std::size_t, std::tuple_size_v<std::tuple<A ...>>> 
+{
+};
+
+template<std::size_t I, template <typename> typename F, typename ... A> 
+struct std::tuple_element<I, basic_observable<F, A ...>> : std::tuple_element<I, std::tuple<A ...>>
+{
+};
+
+/*
+template< std::size_t I, class T >
+struct std::tuple_element< I, const T > {
+    using type = typename
+        std::add_const<typename std::tuple_element<I, T>::type>::type;
+};
+*/
