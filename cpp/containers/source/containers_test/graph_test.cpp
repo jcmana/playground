@@ -10,6 +10,7 @@
 
 #include "containers/graph/node_centric.hpp"
 #include "containers/graph/cursors/path_cursor.hpp"
+#include "containers/graph/cursors/path_cursor_generic.hpp"
 #include "containers/graph/iterators/preorder_edge_iterator.hpp"
 #include "containers/graph/iterators/preorder_node_iterator.hpp"
 #include "containers/graph/iterators/preorder_path_iterator.hpp"
@@ -77,6 +78,18 @@ void graph_test()
         }
     }
 
+	// Path cursor generic:
+	if (true)
+	{
+		using namespace containers::graph::experimental;
+
+		graph::edge * edge_ptr = nullptr;
+
+		path_cursor<graph::edge *> c;
+		c.push(r_s1, {r_s1, r_s2});
+		c->back()->source->property;
+	}
+
 	// Node iterator:
 	if (false)
 	{
@@ -89,7 +102,7 @@ void graph_test()
 	}
 
 	// Preorder path iterator:
-	if (true)
+	if (false)
 	{
 		using namespace containers::graph;
 
