@@ -7,28 +7,43 @@ namespace containers::graph::experimental
 {
 
 /// \brief		Dual-stack graph cursor.
+///
+/// Dual-stack automata with specific set of operations, binding both stacks together in a way
+/// compatible with directed acyclic graph traversal.
+///
+/// First stack (down) represents searching down the graph through each possible edge.
+///
+/// Second stack (path) represents current position as unique path through the graph.
 template<typename T>
 class path_cursor
 {
 public:
-	/// \brief		Default constructure, intializes empty cursor.
-	path_cursor()
+	/// \brief		Default constructur, intializes empty cursor.
+	path_cursor() :
+		m_stack_down(),
+		m_stack_path()
 	{
 	}
 
 	path_cursor(std::vector<T> expansion_elements) :
-		m_stack_down(std::move(expansion_elements))
+		m_stack_down(std::move(expansion_elements)),
+		m_stack_path()
 	{
 	}
 
-	/// \brief		Removes last node from both stacks.
+	/// \brief		Removes top element from both stacks.
+	///
+	/// This represents leaving current subgraph of the graph upwards.
 	void pop()
 	{
 		m_stack_down.pop_back();
 		m_stack_path.pop_back();
 	}
 
-	/// \brief		Push expansion of `T` into `down` elements onto stacks.
+	/// \brief		Push expansion of `path_element` onto stacks.
+	///
+	/// This represents operation of moving down the graph through the `path_element` while planning to
+	/// visit all `expansion_elements` next.
 	void push(T path_element, const std::vector<T> & expansion_elements)
 	{
 		m_stack_down.insert(m_stack_down.end(), expansion_elements.begin(), expansion_elements.end());
@@ -50,7 +65,17 @@ public:
 	/// \brief			Expansion and path stack last nodes match.
 	bool match() const
 	{
-		return m_stack_down.back() == m_stack_path.back();
+		if (m_stack_down.empty())
+		{
+			return false;
+		}
+
+		if (m_stack_path.empty())
+		{
+			return false;
+		}
+
+		return (m_stack_down.back() == m_stack_path.back());
 	}
 
 	/// \brief			Path stack size.

@@ -99,8 +99,15 @@ void graph_test()
 
 		graph::edge * edge_ptr = nullptr;
 
-		path_cursor<graph::edge *> c;
-		c.push(r_s1, {r_s1, s1_s4, s1_s3});
+		//path_cursor<graph::edge *> c;
+		//c.push(r_s1, {r_s1, s1_s4, s1_s3});
+		
+		path_cursor<graph::edge *> c({r_s2, r_s1});
+
+		while (c.match() == false)
+		{
+			expand(c);
+		}
 
 		while (c.empty() == false)
 		{
