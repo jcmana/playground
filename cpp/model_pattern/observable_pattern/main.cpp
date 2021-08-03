@@ -348,6 +348,6 @@ int main()
             auto c = o_ref.get<1>();
         }
 
-        auto && [a, b] = o;
+        auto & [a, b] = o;
     }
 }

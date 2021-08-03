@@ -73,7 +73,7 @@ private:
 };
 
 template <template <typename> typename F, typename ... A> 
-struct std::tuple_size<basic_observable<F, A ...>> : std::integral_constant<std::size_t, std::tuple_size_v<std::tuple<A ...>>> 
+struct std::tuple_size<basic_observable<F, A ...>> : std::tuple_size<std::tuple<A ...>>
 {
 };
 
@@ -81,11 +81,3 @@ template<std::size_t I, template <typename> typename F, typename ... A>
 struct std::tuple_element<I, basic_observable<F, A ...>> : std::tuple_element<I, std::tuple<A ...>>
 {
 };
-
-/*
-template< std::size_t I, class T >
-struct std::tuple_element< I, const T > {
-    using type = typename
-        std::add_const<typename std::tuple_element<I, T>::type>::type;
-};
-*/
