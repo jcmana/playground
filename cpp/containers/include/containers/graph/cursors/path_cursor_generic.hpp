@@ -16,6 +16,11 @@ public:
 	{
 	}
 
+	path_cursor(std::vector<T> expansion_elements) :
+		m_stack_down(std::move(expansion_elements))
+	{
+	}
+
 	/// \brief		Removes last node from both stacks.
 	void pop()
 	{
@@ -28,6 +33,12 @@ public:
 	{
 		m_stack_down.insert(m_stack_down.end(), expansion_elements.begin(), expansion_elements.end());
 		m_stack_path.push_back(path_element);
+	}
+
+	/// \brief		Top element from expansion stack.
+	const T & top() const
+	{
+		return m_stack_down.back();
 	}
 
 	/// \brief			Expansion stack is empty.

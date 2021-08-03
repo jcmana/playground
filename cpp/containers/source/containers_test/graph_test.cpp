@@ -36,26 +36,26 @@ void graph_test()
 	});
 
 	// add nodes
-	graph::node * root = g.create_node("root");
-	graph::node * struct_1 = g.create_node("struct_1");
-	graph::node * struct_2 = g.create_node("struct_2");
-	graph::node * struct_3 = g.create_node("struct_3");
-	graph::node * struct_4 = g.create_node("struct_4");
-	graph::node * struct_5 = g.create_node("struct_5");
-	graph::node * struct_6 = g.create_node("struct_6");
+	auto * root = g.create_node("root");
+	auto * struct_1 = g.create_node("struct_1");
+	auto * struct_2 = g.create_node("struct_2");
+	auto * struct_3 = g.create_node("struct_3");
+	auto * struct_4 = g.create_node("struct_4");
+	auto * struct_5 = g.create_node("struct_5");
+	auto * struct_6 = g.create_node("struct_6");
 	
 	// add edges
-	graph::edge * r_s1 = g.create_edge(root, struct_1, EDGE_SREF);
-	graph::edge * r_s2 = g.create_edge(root, struct_2, EDGE_SREF);
-	g.create_edge(struct_1, struct_3, EDGE_SREF);
-	g.create_edge(struct_1, struct_4, EDGE_SREF);
+	auto * r_s1 = g.create_edge(root, struct_1, EDGE_SREF);
+	auto * r_s2 = g.create_edge(root, struct_2, EDGE_SREF);
+	auto * s1_s3 = g.create_edge(struct_1, struct_3, EDGE_SREF);
+	auto * s1_s4 = g.create_edge(struct_1, struct_4, EDGE_SREF);
 	g.create_edge(struct_3, struct_4, EDGE_SREF);
 	//g.create_edge(struct_4, struct_5, EDGE_SREF);
 	//g.create_edge(struct_5, struct_6, EDGE_SREF);
 	//g.create_edge(struct_5, struct_1, EDGE_SREF);			// cyclic edge
     g.create_edge(struct_2, struct_5, EDGE_SREF);
 
-    // Path cursor:
+    // Path cursor (postorder traversal):
     if (false)
     {
         using namespace containers::graph;
@@ -78,16 +78,42 @@ void graph_test()
         }
     }
 
-	// Path cursor generic:
+	// Path cursor generic (postorder traversal):
 	if (true)
 	{
 		using namespace containers::graph::experimental;
 
+		auto expand = [](auto & c)
+		{
+			auto * curr_edge_ptr = c.top();
+			auto * curr_node_ptr = curr_edge_ptr->target;
+
+			std::vector<graph::edge *> expansion;
+			for (auto it = curr_node_ptr->outgoing.rbegin(); it < curr_node_ptr->outgoing.rend(); ++it)
+			{
+				expansion.push_back(*it);
+			}
+
+			c.push(curr_edge_ptr, expansion);
+		};
+
 		graph::edge * edge_ptr = nullptr;
 
 		path_cursor<graph::edge *> c;
-		c.push(r_s1, {r_s1, r_s2});
-		c->back()->source->property;
+		c.push(r_s1, {r_s1, s1_s4, s1_s3});
+
+		while (c.empty() == false)
+		{
+			if (c.match())
+			{
+				std::cout << c->back()->source->property << "->" << c->back()->target->property << "\n";
+				c.pop();
+			}
+			else
+			{
+				expand(c);
+			}
+		}
 	}
 
 	// Node iterator:
