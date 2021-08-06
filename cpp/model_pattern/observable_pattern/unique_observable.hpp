@@ -3,6 +3,7 @@
 #include <memory>
 #include <vector>
 #include <functional>
+#include <initializer_list>
 
 #include "basic_observable.hpp"
 
@@ -16,30 +17,44 @@ public:
     using value_type = typename observable_type::value_type;
 
 public:
-    unique_observable() :
+    unique_observable() noexcept :
         m_up(new observable_type)
     {
     }
 
-    unique_observable(A ... args) :
+    unique_observable(A ... args) noexcept :
         m_up(new observable_type(std::forward<A>(args) ...))
     {
     }
 
     unique_observable(const unique_observable & other) = delete;
 
-    unique_observable(unique_observable && other) :
-        m_up(std::move(other.m_up)),
-        m_observers()
+    unique_observable(unique_observable && other) noexcept :
+        unique_observable()
     {
-        other.m_up.reset(new observable_type);
-        other.m_observers.clear();
+        swap(*this, other);
     }
 
-    unique_observable & operator  =(value_type && value)
+    unique_observable & operator  =(const unique_observable & other) = delete;
+
+    unique_observable & operator  =(unique_observable && other) noexcept
     {
-        *m_up = std::move(value);
+        auto empty = unique_observable();
+        swap(*this, empty);
+        swap(*this, other);
         return (*this);
+    }
+
+    template<std::size_t I>
+    auto & get() noexcept
+    {
+        return m_up->get<I>();
+    }
+
+    template<std::size_t I>
+    const auto & get() const noexcept
+    {
+        return m_up->get<I>();
     }
 
     void observe(functor_type<A ...> callback) const noexcept
@@ -50,6 +65,12 @@ public:
     void notify() const
     {
         m_up->notify();
+    }
+
+    static void swap(unique_observable & lhs, unique_observable & rhs)
+    {    
+        using std::swap;
+        swap(lhs.m_up, rhs.m_up);
     }
 
 private:
