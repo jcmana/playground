@@ -7,6 +7,7 @@
 
 #include "basic_observable.hpp"
 #include "observable.hpp"
+#include "unique_observable.hpp"
 #include "shared_observable.hpp"
 #include "observable_utility.hpp"
 
@@ -319,7 +320,7 @@ int main()
     }
 
     // basic observable (muliple types)
-    if (true)
+    if (false)
     {
         basic_observable<F, int, char> o = {4, 'x'};
 
@@ -349,5 +350,30 @@ int main()
         }
 
         auto & [a, b] = o;
+    }
+
+    // unique observable
+    if (true)
+    {
+        unique_observable o = {4, 'd'};
+
+        auto observer = [](int i, char c)
+        {
+            std::cout << i << ", " << c << std::endl;
+        };
+
+        o.observe(observer);
+        o.notify();
+        o = {12, 'x'};
+        o.notify();
+
+        auto o_moved = std::move(o);
+        o.notify();
+        o_moved.notify();
+
+        o_moved.observe(observer);
+        o_moved.notify();
+        o.observe(observer);
+        o.notify();
     }
 }
