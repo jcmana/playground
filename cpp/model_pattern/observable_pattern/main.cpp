@@ -279,8 +279,8 @@ int main()
         };
         c.observe(observer);
 
-        a.set(7);
-        b.set(4);
+        a = 7;
+        b = 4;
     }
 
     // join observables (no composite)
@@ -296,9 +296,9 @@ int main()
 
         join(observer, a, b);
 
-        a.set(7);
-        b.set(2);
-        a.set(0);
+        a = 7;
+        b = 2;
+        a = 0;
     }
 
     // basic observable (single type)

@@ -3,7 +3,6 @@
 #include <memory>
 #include <vector>
 #include <functional>
-#include <initializer_list>
 
 #include "basic_observable.hpp"
 
@@ -22,17 +21,17 @@ public:
     {
     }
 
-    unique_observable(A ... args) noexcept :
-        m_up(new observable_type(std::forward<A>(args) ...))
-    {
-    }
-
     unique_observable(const unique_observable & other) = delete;
 
     unique_observable(unique_observable && other) noexcept :
         unique_observable()
     {
         swap(*this, other);
+    }
+
+    unique_observable(A ... args) noexcept :
+        m_up(new observable_type(std::forward<A>(args) ...))
+    {
     }
 
     unique_observable & operator  =(const unique_observable & other) = delete;
