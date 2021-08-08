@@ -22,7 +22,7 @@ public:
     {
     }
 
-    shared_observable(const shared_observable & other) :
+    shared_observable(const shared_observable & other) noexcept :
         m_sp(other.m_sp),
         m_observers()
     {
@@ -34,13 +34,17 @@ public:
         swap(*this, other);
     }
 
-    shared_observable(A ... args) noexcept :
+    explicit shared_observable(A ... args) noexcept :
         m_sp(new observable_type(std::forward<A>(args) ...)),
         m_observers()
     {
     }
 
-    shared_observable & operator  =(const shared_observable & other) = delete;
+    shared_observable & operator  =(const shared_observable & other) noexcept
+    {
+        m_sp = other.m_sp;
+        return (*this);
+    }
 
     shared_observable & operator  =(shared_observable && other) noexcept
     {
@@ -48,6 +52,17 @@ public:
         swap(*this, empty);
         swap(*this, other);
         return (*this);
+    }
+
+    shared_observable & operator  =(value_type && value) noexcept
+    {
+        (*m_sp) = std::move(value);
+        return (*this);
+    }
+
+    operator std::tuple<A ...>() const
+    {
+        return (*m_sp);
     }
 
     template<std::size_t I>
@@ -72,10 +87,14 @@ public:
         m_sp->notify();
     }
 
-    static void swap(shared_observable & lhs, shared_observable & rhs)
+    template<typename ... FA>
+    friend void swap(shared_observable & lhs, shared_observable & rhs)
     {    
         using std::swap;
         swap(lhs.m_sp, rhs.m_sp);
+
+        lhs.m_observers.clear();
+        rhs.m_observers.clear();
     }
 
 private:
@@ -96,20 +115,24 @@ struct std::tuple_element<I, shared_observable<A ...>> : std::tuple_element<I, s
 template<typename F, typename Ta, typename Tb>
 void join(F && functor, shared_observable<Ta> & a, shared_observable<Tb> & b)
 {
-    /*
     auto observer_a = [functor, b](auto ... args) mutable
     {
-        //functor(value, b.get());
+        std::tuple<Ta> args_a = {args ...};
+        std::tuple<Tb> args_b = b;
+
+        std::apply(functor, std::tuple_cat(args_a, args_b));
     };
 
     auto observer_b = [functor, a](auto ... args) mutable
     {
-        //functor(a.get(), value);
+        std::tuple<Ta> args_a = a;
+        std::tuple<Tb> args_b = {args ...};
+
+        std::apply(functor, std::tuple_cat(args_a, args_b));
     };
 
     a.observe(std::move(observer_a));
     b.observe(std::move(observer_b));
-    */
 }
 
 template<typename Ta, typename Tb>
@@ -117,20 +140,26 @@ auto join(shared_observable<Ta> & a, shared_observable<Tb> & b)
 {
     shared_observable<Ta, Tb> composite;
 
-    /*
     auto observer_a = [composite, b](auto ... args) mutable
     {
-        composite = {args ..., b.get<0>()};
+        std::tuple<Ta> args_a = {args ...};
+        std::tuple<Tb> args_b = b;
+
+        composite = std::tuple_cat(args_a, args_b);
+        composite.notify();
     };
 
     auto observer_b = [composite, a](auto ... args) mutable
     {
-        composite = {a.get<0>(), args ...};
+        std::tuple<Ta> args_a = a;
+        std::tuple<Tb> args_b = {args ...};
+
+        composite = std::tuple_cat(args_a, args_b);
+        composite.notify();
     };
 
     a.observe(std::move(observer_a));
     b.observe(std::move(observer_b));
-    */
 
     return composite;
 }

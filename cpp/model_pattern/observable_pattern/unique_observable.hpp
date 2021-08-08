@@ -17,7 +17,8 @@ public:
 
 public:
     unique_observable() noexcept :
-        m_up(new observable_type)
+        m_up(new observable_type),
+        m_observers()
     {
     }
 
@@ -29,8 +30,9 @@ public:
         swap(*this, other);
     }
 
-    unique_observable(A ... args) noexcept :
-        m_up(new observable_type(std::forward<A>(args) ...))
+    explicit unique_observable(A ... args) noexcept :
+        m_up(new observable_type(std::forward<A>(args) ...)),
+        m_observers()
     {
     }
 
@@ -41,6 +43,12 @@ public:
         auto empty = unique_observable();
         swap(*this, empty);
         swap(*this, other);
+        return (*this);
+    }
+
+    unique_observable & operator  =(value_type && value)
+    {
+        (*m_up) = std::move(value);
         return (*this);
     }
 
@@ -66,10 +74,14 @@ public:
         m_up->notify();
     }
 
-    static void swap(unique_observable & lhs, unique_observable & rhs)
+    template<typename ... FA>
+    friend void swap(unique_observable & lhs, unique_observable & rhs)
     {    
         using std::swap;
         swap(lhs.m_up, rhs.m_up);
+
+        lhs.m_observers.clear();
+        rhs.m_observers.clear();
     }
 
 private:

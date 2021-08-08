@@ -270,9 +270,6 @@ int main()
 
         shared_observable<int, int> c = join(a, b);
 
-        // Is creating new observable redundant? It might be desirable simply to 
-        // use both original observables and pass it the common callback.
-
         auto observer = [](int value_a, int value_b)
         {
             std::cout << value_a << ", " << value_b << std::endl;
@@ -280,7 +277,12 @@ int main()
         c.observe(observer);
 
         a = 7;
+        a.notify();
         b = 4;
+        b.notify();
+
+        c = std::tuple{4, 8};
+        c.notify();
     }
 
     // join observables (no composite)
@@ -297,14 +299,17 @@ int main()
         join(observer, a, b);
 
         a = 7;
+        a.notify();
         b = 2;
+        b.notify();
         a = 0;
+        a.notify();
     }
 
     // basic observable (single type)
     if (false)
     {
-        basic_observable<F, int> o = {12};
+        basic_observable<F, int> o{12};
 
         auto observer = [](int value)
         {
@@ -322,7 +327,7 @@ int main()
     // basic observable (muliple types)
     if (false)
     {
-        basic_observable<F, int, char> o = {4, 'x'};
+        basic_observable<F, int, char> o{4, 'x'};
 
         auto observer = [](int i, char c)
         {
@@ -355,7 +360,7 @@ int main()
     // unique observable
     if (true)
     {
-        unique_observable o = {4, 'd'};
+        unique_observable o{4, 'd'};
 
         auto observer = [](int i, char c)
         {
@@ -364,7 +369,7 @@ int main()
 
         o.observe(observer);
         o.notify();
-        o = {12, 'x'};
+        o = std::tuple{12, 'x'};
         o.notify();
 
         auto o_moved = std::move(o);

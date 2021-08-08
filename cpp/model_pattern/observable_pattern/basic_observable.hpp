@@ -22,9 +22,15 @@ public:
     basic_observable(const basic_observable & other) noexcept = delete;
     basic_observable(basic_observable && other) noexcept = default;
 
-    /// \brief      Contructor, initializes value with args.
-    basic_observable(A ... args) :
+    /// \brief      Contructor, initializes value with `args`.
+    explicit basic_observable(A ... args) :
         m_value(std::forward<A>(args) ...)
+    {
+    }
+
+    /// \brief      Contructor, initializes value from `tuple`.
+    basic_observable(value_type && value) :
+        m_value(std::move(value))
     {
     }
 
@@ -35,7 +41,12 @@ public:
     {
         m_value = std::move(value);
         return (*this);
-    };
+    }
+
+    operator std::tuple<A ...>() const
+    {
+        return m_value;
+    }
 
     template<std::size_t I>
     auto & get() noexcept
