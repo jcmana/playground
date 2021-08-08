@@ -1,5 +1,6 @@
 #pragma once
 
+#include <mutex>
 #include <memory>
 #include <vector>
 #include <functional>
@@ -84,7 +85,40 @@ public:
         rhs.m_observers.clear();
     }
 
+public:
+    // SharedMutex implementation:
+    void lock() const
+    {
+        m_mutex.lock();
+    }
+
+    bool try_lock() const
+    {
+        return m_mutex.try_lock();
+    }
+
+    void unlock()
+    {
+        m_mutex.unlock();
+    }
+
+    void lock_shared() const
+    {
+        m_mutex.lock_shared();
+    }
+
+    bool try_lock_shared() const
+    {
+        return m_mutex.try_lock_shared();
+    }
+
+    void unlock_shared()
+    {
+        m_mutex.unlock_shared();
+    }
+
 private:
+    mutable std::shared_mutex m_mutex;
     std::unique_ptr<observable_type> m_up;
     mutable std::vector<typename observable_type::guard_type> m_observers;
 };
