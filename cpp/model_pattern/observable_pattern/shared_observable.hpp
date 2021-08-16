@@ -98,6 +98,7 @@ public:
     }
 
 private:
+    std::shared_ptr<std::shared_mutex> m_sp_mutex;
     std::shared_ptr<observable_type> m_sp;
     mutable std::vector<typename observable_type::guard_type> m_observers;
 };

@@ -15,6 +15,7 @@ public:
     using store_callback_type = F<A ...>;
     using store_type = atomic_callback_store<store_callback_type>;
     using guard_type = atomic_callback_guard<store_callback_type>;
+    using mutex_type = std::shared_mutex;
 
 public:
     /// \brief      Default contructor.
@@ -77,9 +78,41 @@ public:
         std::apply(std::move(application), m_value);
     }
 
+public:
+    // SharedMutex implementation:
+    void lock() const
+    {
+        m_mutex.lock();
+    }
+
+    bool try_lock() const
+    {
+        return m_mutex.try_lock();
+    }
+
+    void unlock()
+    {
+        m_mutex.unlock();
+    }
+
+    void lock_shared() const
+    {
+        m_mutex.lock_shared();
+    }
+
+    bool try_lock_shared() const
+    {
+        return m_mutex.try_lock_shared();
+    }
+
+    void unlock_shared()
+    {
+        m_mutex.unlock_shared();
+    }
+
 private:
     mutable store_type m_store;
-
+    mutable mutex_type m_mutex;
     value_type m_value;
 };
 

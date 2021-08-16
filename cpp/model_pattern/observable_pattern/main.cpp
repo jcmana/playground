@@ -358,7 +358,7 @@ int main()
     }
 
     // unique observable
-    if (true)
+    if (false)
     {
         unique_observable o{4, 'd'};
 
