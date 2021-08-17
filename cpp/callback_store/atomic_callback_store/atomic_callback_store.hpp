@@ -17,7 +17,7 @@ public:
     atomic_callback_store(atomic_callback_store && other) noexcept;
 
     /// \brief          Move operator, moves from `other`.
-    atomic_callback_store & operator  =(atomic_callback_store & other) noexcept;
+    atomic_callback_store & operator  =(atomic_callback_store && other) noexcept;
 
     /// \copydoc        callback::subscribe(T &)
     atomic_callback_guard<T> subscribe(T callable);
@@ -50,7 +50,7 @@ atomic_callback_store<T>::atomic_callback_store(atomic_callback_store && other) 
 
 template<typename T>
 atomic_callback_store<T> & 
-atomic_callback_store<T>::operator  =(atomic_callback_store & other) noexcept
+atomic_callback_store<T>::operator  =(atomic_callback_store && other) noexcept
 {
     atomic_callback_store empty;
     swap(*this, empty);
