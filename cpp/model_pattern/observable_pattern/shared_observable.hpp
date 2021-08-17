@@ -14,6 +14,7 @@ public:
     using functor_type = std::function<void(FA ...)>;
     using observable_type = basic_observable<functor_type, A ...>;
     using value_type = typename observable_type::value_type;
+    using mutex_type = typename observable_type::mutex_type;
 
 public:
     shared_observable() noexcept :
@@ -54,9 +55,9 @@ public:
         return (*this);
     }
 
-    shared_observable & operator  =(value_type && value) noexcept
+    shared_observable & operator  =(const value_type & value) noexcept
     {
-        (*m_sp) = std::move(value);
+        (*m_sp) = value;
         return (*this);
     }
 
@@ -97,8 +98,39 @@ public:
         rhs.m_observers.clear();
     }
 
+public:
+    // SharedMutex implementation:
+    void lock() const
+    {
+        m_sp->lock();
+    }
+
+    bool try_lock() const
+    {
+        return m_sp->try_lock();
+    }
+
+    void unlock()
+    {
+        m_sp->unlock();
+    }
+
+    void lock_shared() const
+    {
+        m_sp->lock_shared();
+    }
+
+    bool try_lock_shared() const
+    {
+        return m_sp->try_lock_shared();
+    }
+
+    void unlock_shared()
+    {
+        m_sp->unlock_shared();
+    }
+
 private:
-    std::shared_ptr<std::shared_mutex> m_sp_mutex;
     std::shared_ptr<observable_type> m_sp;
     mutable std::vector<typename observable_type::guard_type> m_observers;
 };

@@ -9,6 +9,7 @@
 #include "observable.hpp"
 #include "unique_observable.hpp"
 #include "shared_observable.hpp"
+#include "observable_txn.hpp"
 #include "observable_utility.hpp"
 
 template<typename ... A>
@@ -327,7 +328,7 @@ int main()
     // basic observable (muliple types)
     if (false)
     {
-        basic_observable<F, int, char> o{4, 'x'};
+        basic_observable<F, int, char> o;
 
         auto observer = [](int i, char c)
         {
@@ -345,7 +346,7 @@ int main()
 
 
         auto o_move = std::move(o);
-        o_move = {2, 'l'};
+        o_move = std::tuple{2, 'l'};
         o_move.notify();
         o.notify();
 
@@ -380,5 +381,28 @@ int main()
         o_moved.notify();
         o.observe(observer);
         o.notify();
+    }
+
+    if (true)
+    {
+        shared_observable<int> o;
+
+        auto observer = [](int i)
+        {
+            std::cout << i << std::endl;
+        };
+        o.observe(observer);
+
+        {
+            unique_txn ug(o);
+            ug = 4;
+        }
+
+        {
+            shared_txn ug(o);
+            //auto ug_value = ug;      // JMTODO: how to?
+
+            shared_txn sg(o);
+        }
     }
 }

@@ -21,26 +21,37 @@ public:
     /// \brief      Default contructor.
     basic_observable() noexcept = default;
     basic_observable(const basic_observable & other) noexcept = delete;
-    basic_observable(basic_observable && other) noexcept = default;
+
+    /// \brief      Move contructor.
+    basic_observable(basic_observable && other) noexcept :
+        m_mutex(),
+        m_store(std::move(other.m_store)),
+        m_value(std::move(other.m_value))
+    {
+        other.m_store = {};
+        other.m_value = {};
+    }
 
     /// \brief      Contructor, initializes value with `args`.
-    explicit basic_observable(A ... args) :
+    basic_observable(A ... args) :
         m_value(std::forward<A>(args) ...)
     {
     }
 
     /// \brief      Contructor, initializes value from `tuple`.
-    basic_observable(value_type && value) :
-        m_value(std::move(value))
+    basic_observable(const value_type & value) :
+        m_value(value)
     {
     }
 
     basic_observable & operator =(const basic_observable & other) noexcept = delete;
-    basic_observable & operator =(basic_observable && other) noexcept = default;
-
-    basic_observable & operator =(value_type && value)
+    basic_observable & operator =(basic_observable && other) noexcept
     {
-        m_value = std::move(value);
+    }
+
+    basic_observable & operator =(const value_type & value)
+    {
+        m_value = value;
         return (*this);
     }
 

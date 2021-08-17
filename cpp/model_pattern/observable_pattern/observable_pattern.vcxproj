@@ -143,6 +143,7 @@
   <ItemGroup>
     <ClInclude Include="basic_observable.hpp" />
     <ClInclude Include="observable.hpp" />
+    <ClInclude Include="observable_txn.hpp" />
     <ClInclude Include="observable_utility.hpp" />
     <ClInclude Include="shared_observable.hpp" />
     <ClInclude Include="unique_observable.hpp" />

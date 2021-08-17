@@ -15,6 +15,7 @@ public:
     using functor_type = std::function<void(FA ...)>;
     using observable_type = basic_observable<functor_type, A ...>;
     using value_type = typename observable_type::value_type;
+    using mutex_type = typename observable_type::mutex_type;
 
 public:
     unique_observable() noexcept :
