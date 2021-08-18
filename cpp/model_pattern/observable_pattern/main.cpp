@@ -277,6 +277,7 @@ int main()
         };
         c.observe(observer);
 
+        /*
         a = 7;
         a.notify();
         b = 4;
@@ -284,6 +285,7 @@ int main()
 
         c = std::tuple{4, 8};
         c.notify();
+        */
     }
 
     // join observables (no composite)
@@ -299,12 +301,14 @@ int main()
 
         join(observer, a, b);
 
+        /*
         a = 7;
         a.notify();
         b = 2;
         b.notify();
         a = 0;
         a.notify();
+        */
     }
 
     // basic observable (single type)
@@ -385,7 +389,7 @@ int main()
 
     if (true)
     {
-        shared_observable<int> o;
+        shared_observable o(0);
 
         auto observer = [](int i)
         {
@@ -393,16 +397,34 @@ int main()
         };
         o.observe(observer);
 
+        auto proc = [o]
+        {
+            for (auto n = 0; n != 10; ++n)
+            {
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                unique_txn ug(o);
+                ug = 0;
+            }
+        };
+
+        std::thread t(std::move(proc));
+
         {
             unique_txn ug(o);
             ug = 4;
+            ug = 15;
+            ug = 1;
         }
 
+        /*
         {
             shared_txn ug(o);
             //auto ug_value = ug;      // JMTODO: how to?
 
             shared_txn sg(o);
         }
+        */
+
+        t.join();
     }
 }

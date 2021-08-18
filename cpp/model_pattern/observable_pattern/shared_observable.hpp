@@ -16,6 +16,12 @@ public:
     using value_type = typename observable_type::value_type;
     using mutex_type = typename observable_type::mutex_type;
 
+    template<typename ... FA>
+    friend class unique_txn;
+
+    template<typename ... FA>
+    friend class shared_txn;
+
 public:
     shared_observable() noexcept :
         m_sp(new observable_type),
@@ -55,27 +61,9 @@ public:
         return (*this);
     }
 
-    shared_observable & operator  =(const value_type & value) noexcept
-    {
-        (*m_sp) = value;
-        return (*this);
-    }
-
     operator std::tuple<A ...>() const
     {
         return (*m_sp);
-    }
-
-    template<std::size_t I>
-    auto & get() noexcept
-    {
-        return m_sp->get<I>();
-    }
-
-    template<std::size_t I>
-    const auto & get() const noexcept
-    {
-        return m_sp->get<I>();
     }
 
     void observe(functor_type<A ...> callback) const noexcept
@@ -98,38 +86,6 @@ public:
         rhs.m_observers.clear();
     }
 
-public:
-    // SharedMutex implementation:
-    void lock() const
-    {
-        m_sp->lock();
-    }
-
-    bool try_lock() const
-    {
-        return m_sp->try_lock();
-    }
-
-    void unlock()
-    {
-        m_sp->unlock();
-    }
-
-    void lock_shared() const
-    {
-        m_sp->lock_shared();
-    }
-
-    bool try_lock_shared() const
-    {
-        return m_sp->try_lock_shared();
-    }
-
-    void unlock_shared()
-    {
-        m_sp->unlock_shared();
-    }
-
 private:
     std::shared_ptr<observable_type> m_sp;
     mutable std::vector<typename observable_type::guard_type> m_observers;
@@ -143,6 +99,64 @@ struct std::tuple_size<shared_observable<A ...>> : std::tuple_size<std::tuple<A 
 template<std::size_t I, typename ... A> 
 struct std::tuple_element<I, shared_observable<A ...>> : std::tuple_element<I, std::tuple<A ...>>
 {
+};
+
+template<typename ... A>
+class unique_txn
+{
+public:
+    using scoped_observable_type = shared_observable<A ...>;
+    using observable_type = typename scoped_observable_type::observable_type;
+    using value_type = typename scoped_observable_type::value_type;
+
+public:
+    unique_txn() = default;
+
+    explicit unique_txn(const scoped_observable_type & observable_ref) :
+        m_lock(*observable_ref.m_sp),
+        m_sp(observable_ref.m_sp)
+    {
+    }
+
+    ~unique_txn()
+    {
+        if (m_sp)
+        {
+            m_sp->notify();
+        }
+    }
+
+    unique_txn & operator  =(const value_type & value) noexcept
+    {
+        (*m_sp) = value;
+        return (*this);
+    }
+
+    operator std::tuple<A ...>() const
+    {
+        return (*m_sp);
+    }
+
+    template<std::size_t I>
+    auto & get() noexcept
+    {
+        return m_sp->get<I>();
+    }
+
+    template<std::size_t I>
+    const auto & get() const noexcept
+    {
+        return m_sp->get<I>();
+    }
+
+    void release()
+    {
+        m_sp.reset();
+    }
+
+private:
+    mutable std::unique_lock<observable_type> m_lock;
+    std::shared_ptr<observable_type> m_sp;
 };
 
 template<typename F, typename Ta, typename Tb>
@@ -178,8 +192,8 @@ auto join(shared_observable<Ta> & a, shared_observable<Tb> & b)
         std::tuple<Ta> args_a = {args ...};
         std::tuple<Tb> args_b = b;
 
-        composite = std::tuple_cat(args_a, args_b);
-        composite.notify();
+        //unique_txn<Ta, Tb>(composite) = std::tuple_cat(args_a, args_b);
+        //composite.notify();
     };
 
     auto observer_b = [composite, a](auto ... args) mutable
@@ -187,8 +201,8 @@ auto join(shared_observable<Ta> & a, shared_observable<Tb> & b)
         std::tuple<Ta> args_a = a;
         std::tuple<Tb> args_b = {args ...};
 
-        composite = std::tuple_cat(args_a, args_b);
-        composite.notify();
+        //unique_txn<Ta, Tb>(composite) = std::tuple_cat(args_a, args_b);
+        //composite.notify();
     };
 
     a.observe(std::move(observer_a));
