@@ -206,11 +206,12 @@ struct std::tuple_element<I, shared_txn<A ...>> : std::tuple_element<I, std::tup
 {
 };
 
-/// \brief      Waits for modfication of `observable` to meet the `predicate`.
+/// \brief      Waits for modfication of `shared_observable` to meet the `predicate`.
+/// \param      o               `shared_observable` to observe.
 /// \param      predicate       Functor with signature `bool(const T & value)`; should return `true`
 ///                             if condition is met, `false` otherwise.
 template<typename F, typename ... A>
-void await_if(shared_observable<A ...> o, F && predicate)
+void await_if(const shared_observable<A ...> & o, F && predicate)
 {
     std::mutex mutex;
     std::condition_variable cv;
@@ -242,12 +243,11 @@ void await_if(shared_observable<A ...> o, F && predicate)
     }
 }
 
-/*
 /// \brief      Waits for any modfication of `observable`.
-template<typename T>
-void await_any(const observable<T> & o)
+template<typename ... A>
+void await_any(const shared_observable<A ...> & o)
 {
-    auto predicate = [](const T &)
+    auto predicate = [](const A & ... args)
     {
         return true;
     };
@@ -255,38 +255,19 @@ void await_any(const observable<T> & o)
     await_if(o, std::move(predicate));
 }
 
-/// \brief      Waits for modfication of `observable` to `value`.
-template<typename T>
-void await(const observable<T> & o, const T & awaited_value)
+/// \brief      Waits for modfication of `shared_observable` to `value`.
+template<typename ... A>
+void await(const shared_observable<A ...> & o, const A & ... values)
 {
-    auto predicate = [&](const T & value)
+    std::tuple awaited_values{values ...};
+
+    auto predicate = [&awaited_values](const A & ... values)
     {
-        return value == awaited_value;
+        return std::tuple{values ...} == awaited_values;
     };
 
     await_if(o, std::move(predicate));
 }
-
-/// \brief      Waits for modfication to one of `awaited_list` values of `observable`.
-template<typename T>
-void await(observable<T> & o, std::initializer_list<T> awaited_list)
-{
-    auto predicate = [&](const T & value)
-    {
-        for (const auto & awaited_value : awaited_list)
-        {
-            if (value == awaited_value)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    };
-
-    await_if(o, std::move(predicate));
-}
-*/
 
 template<typename F, typename Ta, typename Tb>
 void join(F && functor, shared_observable<Ta> & a, shared_observable<Tb> & b)

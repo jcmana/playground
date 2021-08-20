@@ -421,8 +421,8 @@ int main()
         unique_txn{a} = 7;
     }
 
-    // await shared observable
-    if (true)
+    // await_if shared observable
+    if (false)
     {
         shared_observable<int> a;
 
@@ -443,6 +443,50 @@ int main()
         std::cout << "awaiting value" << std::endl;
         await_if(a, pred);
         std::cout << shared_txn{a}.get<0>() << std::endl;
+
+        t.join();
+    }
+
+    // await_any shared observable
+    if (false)
+    {
+        shared_observable<int, int> a;
+
+        auto proc = [a]
+        {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            unique_txn{a} = {4, 2};
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            unique_txn{a} = {16, 2};
+        };
+        std::thread t(proc);
+
+        std::cout << "awaiting any change" << std::endl;
+        await_any(a);
+        std::cout << shared_txn{a}.get<0>() << ", " << shared_txn{a}.get<1>() << std::endl;
+
+        t.join();
+    }
+
+    // await shared observable
+    if (true)
+    {
+        shared_observable<int, int> a;
+
+        auto proc = [a]
+        {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            unique_txn{a} = {4, 2};
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            unique_txn{a} = {16, 8};
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            unique_txn{a} = {16, 2};
+        };
+        std::thread t(proc);
+
+        std::cout << "awaiting value" << std::endl;
+        await(a, 16, 2);
+        std::cout << shared_txn{a}.get<0>() << ", " << shared_txn{a}.get<1>() << std::endl;
 
         t.join();
     }
