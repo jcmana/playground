@@ -94,21 +94,6 @@ int main()
 
         auto & [a, b] = o;
     }
-
-    // basic observable (void)
-    if (true)
-    {
-        basic_observable<F, void> o;
-
-        auto observer = []
-        {
-            std::cout << "notification received" << std::endl;
-        };
-
-        auto g = o.observe(observer);
-        o.notify();
-    }
-
     // unique observable
     if (false)
     {
