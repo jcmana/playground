@@ -292,6 +292,8 @@ void join(F && functor, shared_observable<Ta> & a, shared_observable<Tb> & b)
     b.observe(std::move(observer_b));
 }
 
+/// \brief      Joins `shared_observable`s into composite.
+/// \note       Changes to composite doesn't propagate into original `shared_observable`s.
 template<typename Ta, typename Tb>
 auto join(shared_observable<Ta> & a, shared_observable<Tb> & b)
 {

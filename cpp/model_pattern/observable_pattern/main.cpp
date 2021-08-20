@@ -95,6 +95,20 @@ int main()
         auto & [a, b] = o;
     }
 
+    // basic observable (void)
+    if (true)
+    {
+        basic_observable<F, void> o;
+
+        auto observer = []
+        {
+            std::cout << "notification received" << std::endl;
+        };
+
+        auto g = o.observe(observer);
+        o.notify();
+    }
+
     // unique observable
     if (false)
     {
@@ -251,7 +265,7 @@ int main()
     }
 
     // await shared observable
-    if (true)
+    if (false)
     {
         shared_observable<int, int> a;
 

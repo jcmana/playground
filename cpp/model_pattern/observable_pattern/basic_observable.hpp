@@ -6,9 +6,12 @@
 
 #include "../../callback_store/atomic_callback_store/atomic_callback_store.hpp"
 
+template<template <typename> typename F, typename ... A>
+class basic_observable;
+
 /// \brief      Common base for observable pattern implementation.
 template<template <typename> typename F, typename ... A>
-class basic_observable
+class basic_observable<F, A ...>
 {
 public:
     using value_type = std::tuple<A ...>;
@@ -19,12 +22,17 @@ public:
 
 public:
     /// \brief      Default contructor.
-    basic_observable() noexcept = default;
+    basic_observable() noexcept :
+        m_store(),
+        m_value()
+    {
+    }
+
+    /// \brief      Copy contructor, deleted.
     basic_observable(const basic_observable & other) noexcept = delete;
 
     /// \brief      Move contructor.
     basic_observable(basic_observable && other) noexcept :
-        m_mutex(),
         m_store(std::move(other.m_store)),
         m_value(std::move(other.m_value))
     {
@@ -33,7 +41,7 @@ public:
     }
 
     /// \brief      Contructor, initializes value with `args`.
-    basic_observable(A ... args) :
+    basic_observable(A ... args) noexcept :
         m_value(std::forward<A>(args) ...)
     {
     }
@@ -44,12 +52,18 @@ public:
     {
     }
 
-    basic_observable & operator =(const basic_observable & other) noexcept = delete;
-    basic_observable & operator =(basic_observable && other) noexcept
+    /// \brief      Copy assignment, deleted.
+    basic_observable & operator  =(const basic_observable & other) noexcept = delete;
+
+    /// \brief      Move assignment.
+    basic_observable & operator  =(basic_observable && other) noexcept
     {
+        m_store = std::move(other.m_store);
+        m_value = std::move(other.m_value);
+        return (*this);
     }
 
-    basic_observable & operator =(const value_type & value)
+    basic_observable & operator  =(const value_type & value)
     {
         m_value = value;
         return (*this);
@@ -135,4 +149,56 @@ struct std::tuple_size<basic_observable<F, A ...>> : std::tuple_size<std::tuple<
 template<std::size_t I, template <typename> typename F, typename ... A> 
 struct std::tuple_element<I, basic_observable<F, A ...>> : std::tuple_element<I, std::tuple<A ...>>
 {
+};
+
+/// \brief      Common base for observable pattern implementation.
+template<template <typename> typename F>
+class basic_observable<F, void>
+{
+public:
+    using store_callback_type = F<void>;
+    using store_type = atomic_callback_store<store_callback_type>;
+    using guard_type = atomic_callback_guard<store_callback_type>;
+
+public:
+    /// \brief      Default contructor.
+    basic_observable() noexcept :
+        m_store()
+    {
+    }
+
+    /// \brief      Copy contructor, deleted.
+    basic_observable(const basic_observable & other) noexcept = delete;
+
+    /// \brief      Move contructor.
+    basic_observable(basic_observable && other) noexcept :
+        m_store(std::move(other.m_store))
+    {
+        other.m_store = {};
+    }
+
+    /// \brief      Copy assignment, deleted.
+    basic_observable & operator  =(const basic_observable & other) noexcept = delete;
+
+    /// \brief      Move assignment.
+    basic_observable & operator  =(basic_observable && other) noexcept
+    {
+        m_store = std::move(other.m_store);
+        return (*this);
+    }
+
+    /// \brief      Subscribes `callback` for notifications.
+    auto observe(store_callback_type callback) const noexcept
+    {
+        return m_store.subscribe(std::move(callback));
+    }
+
+    /// \brief      Invokes each active callback.
+    void notify() const
+    {
+         m_store.invoke();
+    }
+
+private:
+    mutable store_type m_store;
 };
