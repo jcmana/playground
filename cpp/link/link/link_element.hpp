@@ -33,10 +33,10 @@ public:
     inline bool linked() const noexcept;
 
     /// \brief          Creates pair of linked elements.
-    friend inline std::tuple<link_element, link_element> make_link();
+    inline friend std::tuple<link_element, link_element> make_link();
 
     /// \brief          Swaps the linked elements between `lhs` and `rhs`.
-    friend inline void swap(link_element & lhs, link_element & rhs) noexcept;
+    inline friend void swap(link_element & lhs, link_element & rhs) noexcept;
 
 private:
 	link_element * m_element_ptr;

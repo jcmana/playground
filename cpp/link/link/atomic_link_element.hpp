@@ -9,33 +9,33 @@ class atomic_link_element
 {
 public:
     /// \copydoc    link_element::link_element() noexcept
-    atomic_link_element() noexcept;
+    inline atomic_link_element() noexcept;
 
     /// \copydoc    link_element::link_element(atomic_link_element && other) noexcept
-    atomic_link_element(atomic_link_element && other) noexcept;
+    inline atomic_link_element(atomic_link_element && other) noexcept;
 
-    ~atomic_link_element();
+    inline ~atomic_link_element();
 
-    atomic_link_element & operator  =(atomic_link_element && other) noexcept;
+    inline atomic_link_element & operator  =(atomic_link_element && other) noexcept;
 
     /// \copydoc    link_element::linked()
-    bool linked() const noexcept;
+    inline bool linked() const noexcept;
 
 public:
     // BasicLockable concept implementation:
 
     /// \brief      Locks the mutex, blocks if the mutex is not available.
-    void lock() const;
+    inline void lock() const;
 
     /// \brief      Unlocks the mutex.
-    void unlock() const;
+    inline void unlock() const;
 
 public:
     /// \copydoc    make_link()
-    friend std::tuple<atomic_link_element, atomic_link_element> make_atomic_link();
+    inline friend std::tuple<atomic_link_element, atomic_link_element> make_atomic_link();
 
     /// \copydoc    swap(link_element &, link_element &)
-    friend void swap(atomic_link_element & lhs, atomic_link_element & rhs);
+    inline friend void swap(atomic_link_element & lhs, atomic_link_element & rhs);
 
 private:
     std::shared_ptr<std::mutex> m_sp_mutex;
@@ -43,7 +43,7 @@ private:
 
 #pragma region atomic_link_element implementation:
 
-atomic_link_element::atomic_link_element() noexcept :
+inline atomic_link_element::atomic_link_element() noexcept :
     m_sp_mutex(new std::mutex)
 {
 }
