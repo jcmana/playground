@@ -9,7 +9,6 @@
 #include "observable.hpp"
 #include "unique_observable.hpp"
 #include "shared_observable.hpp"
-#include "observable_txn.hpp"
 #include "observable_utility.hpp"
 
 template<typename ... A>
@@ -263,54 +262,6 @@ int main()
         auto rsr = ref_specialization<int &>{*sp_value};
     }
 
-    // join observables
-    if (false)
-    {
-        shared_observable<int> a;
-        shared_observable<int> b;
-
-        shared_observable<int, int> c = join(a, b);
-
-        auto observer = [](int value_a, int value_b)
-        {
-            std::cout << value_a << ", " << value_b << std::endl;
-        };
-        c.observe(observer);
-
-        /*
-        a = 7;
-        a.notify();
-        b = 4;
-        b.notify();
-
-        c = std::tuple{4, 8};
-        c.notify();
-        */
-    }
-
-    // join observables (no composite)
-    if (false)
-    {
-        shared_observable<int> a;
-        shared_observable<int> b;
-
-        auto observer = [](int value_a, int value_b)
-        {
-            std::cout << value_a << ", " << value_b << std::endl;
-        };
-
-        join(observer, a, b);
-
-        /*
-        a = 7;
-        a.notify();
-        b = 2;
-        b.notify();
-        a = 0;
-        a.notify();
-        */
-    }
-
     // basic observable (single type)
     if (false)
     {
@@ -387,7 +338,8 @@ int main()
         o.notify();
     }
 
-    if (true)
+    // unique and shared transactions
+    if (false)
     {
         shared_observable o(0);
 
@@ -401,7 +353,6 @@ int main()
         {
             for (auto n = 0; n != 10; ++n)
             {
-                std::this_thread::sleep_for(std::chrono::seconds(1));
                 unique_txn ug(o);
                 ug = 0;
             }
@@ -414,16 +365,84 @@ int main()
             ug = 4;
             ug = 15;
             ug = 1;
+            // yields only a single notify
         }
 
-        /*
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+
         {
-            shared_txn ug(o);
-            //auto ug_value = ug;      // JMTODO: how to?
-
-            shared_txn sg(o);
+            unique_txn ug(o);
+            ug = 7;
         }
-        */
+
+        {
+            // access from two shared transactions
+            shared_txn sg(o);
+            std::cout << sg.get<0>() << std::endl;
+            std::cout << shared_txn{o}.get<0>() << std::endl;
+        }
+
+        t.join();
+    }
+
+    // join shared observables
+    if (false)
+    {
+        shared_observable<int> a;
+        shared_observable<int> b;
+
+        shared_observable<int, int> c = join(a, b);
+
+        auto observer = [](int value_a, int value_b)
+        {
+            std::cout << value_a << ", " << value_b << std::endl;
+        };
+        c.observe(observer);
+
+        unique_txn{a} = 7;
+        unique_txn{b} = 4;
+        unique_txn{c} = std::tuple{4, 8};
+    }
+
+    // join shared observables (no composite)
+    if (false)
+    {
+        shared_observable<int> a;
+        shared_observable<int> b;
+
+        auto observer = [](int value_a, int value_b)
+        {
+            std::cout << value_a << ", " << value_b << std::endl;
+        };
+
+        join(observer, a, b);
+
+        unique_txn{b} = 4;
+        unique_txn{a} = 7;
+    }
+
+    // await shared observable
+    if (true)
+    {
+        shared_observable<int> a;
+
+        auto proc = [a]
+        {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            unique_txn{a} = 4;
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            unique_txn{a} = 16;
+        };
+        std::thread t(proc);
+
+        auto pred = [](int n)
+        {
+            return n == 16;
+        };
+
+        std::cout << "awaiting value" << std::endl;
+        await_if(a, pred);
+        std::cout << shared_txn{a}.get<0>() << std::endl;
 
         t.join();
     }
