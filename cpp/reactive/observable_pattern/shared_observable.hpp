@@ -214,7 +214,7 @@ struct std::tuple_element<I, shared_txn<A ...>> : std::tuple_element<I, std::tup
 
 /// \brief      Waits for modfication of `shared_observable` to meet the `predicate`.
 /// \param      o               `shared_observable` to observe.
-/// \param      predicate       Functor with signature `bool(const T & value)`; should return `true`
+/// \param      predicate       Functor with signature `bool(const T & ... args)`; should return `true`
 ///                             if condition is met, `false` otherwise.
 template<typename F, typename ... A>
 void await_if(shared_observable<A ...> o, F && predicate)
@@ -223,7 +223,7 @@ void await_if(shared_observable<A ...> o, F && predicate)
     std::condition_variable cv;
     bool awaited = false;
 
-    auto observer = [&predicate, &mutex, &cv, &awaited](A ... args)
+    auto observer = [&predicate, &mutex, &cv, &awaited](const A & ... args)
     {
         if (predicate(args ...))
         {
@@ -275,6 +275,7 @@ void await(const shared_observable<A ...> & o, const A & ... values)
     await_if(o, std::move(predicate));
 }
 
+/// \brief      Joins `shared_observable`s value as `functor`'s arguments.
 template<typename F, typename Ta, typename Tb>
 void join(F && functor, shared_observable<Ta> & a, shared_observable<Tb> & b)
 {
@@ -299,7 +300,7 @@ void join(F && functor, shared_observable<Ta> & a, shared_observable<Tb> & b)
 }
 
 /// \brief      Joins `shared_observable`s into composite.
-/// \note       Changes to composite doesn't propagate into original `shared_observable`s.
+/// \warning    Changes made on composite do not propagate into the original `shared_observable`s.
 template<typename Ta, typename Tb>
 auto join(shared_observable<Ta> & a, shared_observable<Tb> & b)
 {
