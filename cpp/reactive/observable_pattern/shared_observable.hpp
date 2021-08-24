@@ -13,6 +13,7 @@ public:
     template<typename ... FA>
     using functor_type = std::function<void(FA ...)>;
     using observable_type = basic_observable<functor_type, A ...>;
+    using guard_type = typename observable_type::guard_type;
     using value_type = typename observable_type::value_type;
     using mutex_type = typename observable_type::mutex_type;
 
@@ -69,6 +70,11 @@ public:
     void observe(functor_type<A ...> callback) noexcept
     {
         m_observers.push_back(m_sp->observe(std::move(callback)));
+    }
+
+    auto observe_scoped(functor_type<A ...> callback) noexcept
+    {
+        return m_sp->observe(std::move(callback));
     }
 
     void notify() const
