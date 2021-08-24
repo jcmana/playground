@@ -66,7 +66,7 @@ public:
         return (*m_sp);
     }
 
-    void observe(functor_type<A ...> callback) const noexcept
+    void observe(functor_type<A ...> callback) noexcept
     {
         m_observers.push_back(m_sp->observe(std::move(callback)));
     }
@@ -88,7 +88,7 @@ public:
 
 private:
     std::shared_ptr<observable_type> m_sp;
-    mutable std::vector<typename observable_type::guard_type> m_observers;
+    std::vector<typename observable_type::guard_type> m_observers;
 };
 
 template <typename ... A> 
@@ -211,7 +211,7 @@ struct std::tuple_element<I, shared_txn<A ...>> : std::tuple_element<I, std::tup
 /// \param      predicate       Functor with signature `bool(const T & value)`; should return `true`
 ///                             if condition is met, `false` otherwise.
 template<typename F, typename ... A>
-void await_if(const shared_observable<A ...> & o, F && predicate)
+void await_if(shared_observable<A ...> o, F && predicate)
 {
     std::mutex mutex;
     std::condition_variable cv;
