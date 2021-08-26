@@ -41,11 +41,15 @@ int main(int argc, char * argv[])
             }
             unique_txn{terminate} = false;
 
-            worker = std::thread(task, state, question, answer, terminate);
+            worker = std::thread(ComputationTask, 
+                shared_txn{question}.get<0>(), 
+                state, 
+                answer, 
+                terminate);
         }
     });
 
-    state.observe([&](State state)
+    state.observe([running](State state)
     {
         switch (state)
         {

@@ -4,14 +4,14 @@
 
 #include "State.h"
 
-void task(shared_observable<State> state, shared_observable<int> question, shared_observable<int> answer, shared_observable<bool> terminate)
+void ComputationTask(int question, shared_observable<State> state, shared_observable<int> answer, shared_observable<bool> terminate)
 {
-    // reset the output states:
+    // Reset the output states
     unique_txn{state} = State::RUNNING;
     unique_txn{answer} = 0;
 
-    // compute the answer (q * 3 + 14) with the possibility to terminate early:
-    auto q = shared_txn{question}.get<0>();
+    // Compute the answer (q * 3 + 14) with the possibility to terminate early:
+    auto q = question;
     auto a = 0;
 
     for (auto n = 0; n < 3; ++n)
@@ -40,7 +40,7 @@ void task(shared_observable<State> state, shared_observable<int> question, share
         }
     }
 
-    // set the output states:
+    // Set the output states
     unique_txn{answer} = a;
     unique_txn{state} = State::FINISHED;
 }
