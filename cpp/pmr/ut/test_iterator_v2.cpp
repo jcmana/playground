@@ -61,6 +61,14 @@ TEST(my_forward_iterator, backward_intf)
 
 TEST(my_forward_iterator, generic)
 {
-    //iterator<int, pmr::iterator::output> it;
+    using int_iterator = iterator<int, pmr::iterator::output, pmr::iterator::forward>;
+
+    struct int_iterator_impl : int_iterator::intf_type
+    {
+        virtual int_iterator::intf_type::storage_type copy() const override
+        {
+            return {};
+        }
+    };
 }
 

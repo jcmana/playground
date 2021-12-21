@@ -15,6 +15,8 @@ public:
     using pointer = typename T::value_type *;
     using reference = typename T::value_type &;
 
+    using intf_type = typename base_intf<T>;
+
 public:
     base()
     {
@@ -68,7 +70,10 @@ class output :
     virtual protected base<T>
 {
 public:
-    const typename T::value_type & operator  *() const
+    using intf_type = output_intf<T>;
+
+public:
+    const typename base<T>::value_type & operator  *() const
     {
         return (*m_up_iterator).const_value_reference();
     }
@@ -78,6 +83,9 @@ template<typename T>
 class input :
     virtual protected base<T>
 {
+public:
+    using intf_type = input_intf<T>;
+
 public:
     typename T::value_type & operator  *()
     {
@@ -89,6 +97,9 @@ template<typename T>
 class forward :
     virtual protected base<T>
 {
+public:
+    using intf_type = forward_intf<T>;
+
 public:
     forward & operator ++()
     {

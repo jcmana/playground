@@ -5,8 +5,7 @@
 #include "my_iterator_impl.hpp"
 
 template<typename T>
-class my_iterator :
-    virtual public pmr::iterator::base<T>,
+class my_iterator : virtual public pmr::iterator::base<T>,
     public pmr::iterator::output<T>,
     public pmr::iterator::input<T>,
     public pmr::iterator::forward<T>,
@@ -18,21 +17,19 @@ public:
     using pmr::iterator::output<T>::operator *;
 };
 
-
-template<typename T, template<typename X = T> typename ... A>
-class iterator_intf :
-    virtual public pmr::iterator::base_intf<T>,
-    virtual public A ...
+template<typename T, template<typename> typename ... A>
+struct iterator_intf :
+    A<T>::intf_type ...
 {
-public:
-    using pmr::iterator::base<T>::base;
+    using value_type = T;
+    using pointer = T *;
+    using reference = T &;
 };
 
-template<typename T, template<typename X = T> typename ... A>
-class iterator :
-    virtual public pmr::iterator::base<T>,
-    virtual public A ...
+template<typename T, template<typename> typename ... A>
+struct iterator : virtual pmr::iterator::base<iterator_intf<T>>,
+    A<iterator_intf<T>> ...
 {
 public:
-    using pmr::iterator::base<T>::base;
+    using intf_type = iterator_intf<T, A ...>;
 };
