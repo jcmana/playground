@@ -12,9 +12,16 @@
 template<typename ... A>
 using F = std::function<void(A ...)>;
 
+template<typename ... A>
+using Fptr = void(*)(A ...);
+
 void cb(int value)
 {
     std::cout << "modification = " << value << std::endl;
+}
+
+void cb()
+{
 }
 
 template<typename T>
@@ -94,6 +101,27 @@ int main()
 
         auto & [a, b] = o;
     }
+
+    // basic observable (overloading)
+    if (true)
+    {
+        // free function
+        {
+            basic_observable<Fptr, int> o;
+
+            auto g = o.observe(cb);     // automatically takes the correct function
+            o.notify();
+            o.get<0>() = 4;
+            o.notify();
+        }
+
+        // std::function
+        {
+            basic_observable<F, int> o;
+            o.observe<void(*)(int)>(cb);
+        }
+    }
+
     // unique observable
     if (false)
     {

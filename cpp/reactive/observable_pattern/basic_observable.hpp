@@ -89,6 +89,13 @@ public:
         return m_store.subscribe(std::move(callback));
     }
 
+    /// \brief      Subscribes `callback` for modification notifications.
+    template<typename T>
+    auto observe(T callback) const noexcept
+    {
+        return m_store.subscribe(static_cast<store_callback_type>(callback));
+    }
+
     /// \brief      Invokes each active callback with current value as argument.
     void notify() const
     {
