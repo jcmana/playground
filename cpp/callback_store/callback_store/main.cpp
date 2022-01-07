@@ -53,6 +53,20 @@ void function_slow()
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 }
 
+void overload()
+{
+    std::cout << "overload()" << std::endl;
+}
+
+void overload(int)
+{
+    std::cout << "overload(int)" << std::endl;
+}
+void overload(int, double)
+{
+    std::cout << "overload(int, double)" << std::endl;
+}
+
 auto lambda = []
 {
     std::cout << "lambda[]" << std::endl;
@@ -188,7 +202,7 @@ int main()
     }
 
     // Callback store inactive callback reuse:
-    if (true)
+    if (false)
     {
         callback_store<void(*)()> cs;
 
@@ -229,5 +243,12 @@ int main()
         cb.invoke(&callback_intf::method);
         cb.invoke(&callback_intf::method_params, 1337);
         cb.invoke(&callback_intf::method_slow);         // unbound method call is discarded
+    }
+
+    // Free function overloading:
+    if (true)
+    {
+        auto [cb, cg] = make_callback(static_cast<void(*)()>(overload));
+        cb.invoke();
     }
 }
