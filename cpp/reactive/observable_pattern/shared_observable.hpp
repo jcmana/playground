@@ -299,6 +299,41 @@ void join(F && functor, shared_observable<Ta> & a, shared_observable<Tb> & b)
     b.observe(std::move(observer_b));
 }
 
+template<typename F, typename Ta, typename Tb, typename Tc>
+void join(F && functor, shared_observable<Ta> & a, shared_observable<Tb> & b, shared_observable<Tc> & c)
+{
+    auto observer_a = [functor, b, c](auto ... args) mutable
+    {
+        std::tuple<Ta> args_a = {args ...};
+        std::tuple<Tb> args_b = b;
+        std::tuple<Tc> args_c = c;
+
+        std::apply(functor, std::tuple_cat(args_a, args_b, args_c));
+    };
+
+    auto observer_b = [functor, a, c](auto ... args) mutable
+    {
+        std::tuple<Ta> args_a = a;
+        std::tuple<Tb> args_b = {args ...};
+        std::tuple<Tc> args_c = c;
+
+        std::apply(functor, std::tuple_cat(args_a, args_b, args_c));
+    };
+
+    auto observer_c = [functor, a, b](auto ... args) mutable
+    {
+        std::tuple<Ta> args_a = a;
+        std::tuple<Tb> args_b = b;
+        std::tuple<Tc> args_c = {args ...};
+
+        std::apply(functor, std::tuple_cat(args_a, args_b, args_c));
+    };
+
+    a.observe(std::move(observer_a));
+    b.observe(std::move(observer_b));
+    c.observe(std::move(observer_c));
+}
+
 /// \brief      Joins `shared_observable`s into composite.
 /// \warning    Changes made on composite do not propagate into the original `shared_observable`s.
 template<typename Ta, typename Tb>
