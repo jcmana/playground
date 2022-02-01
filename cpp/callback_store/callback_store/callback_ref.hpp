@@ -18,8 +18,9 @@ public:
     {
     }
 
+    /// \brief      Invokes `method_ptr` from referenced object with `args`.
     template<typename R, typename ... A>
-    auto operator ()(R(T:: * method_ptr)(A ...), A ... args) const
+    R operator ()(R(T:: * method_ptr)(A ...), A ... args) const
     {
         return (*m_object_ptr.*method_ptr)(std::forward<A>(args) ...);
     }
