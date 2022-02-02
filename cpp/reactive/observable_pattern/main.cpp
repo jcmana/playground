@@ -103,7 +103,7 @@ int main()
     }
 
     // basic observable (overloading)
-    if (true)
+    if (false)
     {
         // free function
         {
@@ -211,6 +211,29 @@ int main()
         unique_txn{a} = 7;
         unique_txn{b} = 4;
         unique_txn{c} = std::tuple{4, 8};
+    }
+
+    // compose shared observables
+    if (true)
+    {
+        shared_observable<int> a;
+        shared_observable<int> b;
+        shared_observable<int> sum;
+
+        auto observer_ab = [sum](int value_a, int value_b)
+        {
+            unique_txn{sum} = value_a + value_b;
+        };
+        join(observer_ab, a, b);
+
+        auto observer_sum = [](int value_c)
+        {
+            std::cout << value_c << std::endl;
+        };
+        sum.observe(observer_sum);
+
+        unique_txn{a} = 7;
+        unique_txn{b} = 4;
     }
 
     // join shared observables (no composite)
