@@ -8,6 +8,7 @@
 #include "basic_observable.hpp"
 #include "unique_observable.hpp"
 #include "shared_observable.hpp"
+#include "shared_ref_observable.hpp"
 
 template<typename ... A>
 using F = std::function<void(A ...)>;
@@ -214,7 +215,7 @@ int main()
     }
 
     // compose shared observables
-    if (true)
+    if (false)
     {
         shared_observable<int> a;
         shared_observable<int> b;
@@ -321,5 +322,20 @@ int main()
         std::cout << shared_txn{a}.get<0>() << ", " << shared_txn{a}.get<1>() << std::endl;
 
         t.join();
+    }
+
+    // shared observarble of reference
+    if (true)
+    {
+        shared_ref_observable<std::unique_ptr<int>> o(std::make_unique<int>());
+        
+        auto observer = [](const int & ref)
+        {
+            std::cout << ref << std::endl;
+        };
+        o.observe(observer);
+        o.m_sp->notify();
+        *o.m_sp->get<0>() = 5;
+        o.m_sp->notify();
     }
 }
