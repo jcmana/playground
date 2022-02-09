@@ -20,7 +20,7 @@ public:
     using mutex_type = typename observable_type::mutex_type;
 
     shared_ref_observable() noexcept :
-        m_sp(new observable_type()),
+        m_sp(new observable_type(std::unique_ptr<A>(new A()) ...)),
         m_observers()
     {
     }

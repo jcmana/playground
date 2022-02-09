@@ -327,7 +327,7 @@ int main()
     // shared observarble of reference
     if (true)
     {
-        shared_ref_observable<std::unique_ptr<int>> o(std::make_unique<int>());
+        shared_ref_observable<std::unique_ptr<int>> o;
         
         auto observer = [](const int & ref)
         {
