@@ -143,6 +143,7 @@
   <ItemGroup>
     <ClInclude Include="basic_observable.hpp" />
     <ClInclude Include="shared_observable.hpp" />
+    <ClInclude Include="shared_ref_observable.hpp" />
     <ClInclude Include="unique_observable.hpp" />
   </ItemGroup>
   <ItemGroup>
