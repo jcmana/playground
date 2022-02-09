@@ -6,6 +6,7 @@
 
 #include "basic_observable.hpp"
 
+/// \brief      Shared reference to a observable value with observers.
 template<typename ... A>
 class shared_observable
 {
@@ -24,18 +25,21 @@ public:
     friend class shared_txn;
 
 public:
+    /// \brief      Constructor, creates empty observable with default value.
     shared_observable() noexcept :
         m_sp(new observable_type),
         m_observers()
     {
     }
 
+    /// \brief      Copy constructor, copies shared reference, clears observers.
     shared_observable(const shared_observable & other) noexcept :
         m_sp(other.m_sp),
         m_observers()
     {
     }
 
+    /// \brief      Move constructor, moves shared reference, clears observers.
     shared_observable(shared_observable && other) noexcept :
         shared_observable()
     {
