@@ -99,7 +99,7 @@ public:
     /// \brief      Invokes each active callback with current value as argument.
     void notify() const
     {
-        auto application = [this](auto ... args)
+        auto application = [this](const auto & ... args)
         {
             m_store.invoke(args ...);
         };

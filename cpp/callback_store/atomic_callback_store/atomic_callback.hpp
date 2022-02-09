@@ -21,7 +21,7 @@ public:
 
     /// \copydoc        callback<T>::invoke(F, A && ...)
     template<typename ... A>
-    void invoke(A ... args) const;
+    void invoke(const A & ... args) const;
 
     /// \brief      Creates active `atomic_callback` and appropriate `atomic_callback_guard`.
     /// \relates    atomic_callback<T>
@@ -57,13 +57,13 @@ atomic_callback<T>::active() const
 template<typename T>
 template<typename ... A>
 void 
-atomic_callback<T>::invoke(A ... args) const
+atomic_callback<T>::invoke(const A & ... args) const
 {
     std::unique_lock<const atomic_link_element> lock(*this);
 
     if (active())
     {
-        m_callable(std::forward<A>(args) ...);
+        m_callable(std::forward<const A &>(args) ...);
     }
 }
 

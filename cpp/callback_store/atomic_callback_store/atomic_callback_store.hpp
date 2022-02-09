@@ -24,7 +24,7 @@ public:
 
     /// \brief          Invokes a method from `T` on each subscribed callback.
     template<typename ... A>
-    void invoke(A ... args) const;
+    void invoke(const A & ... args) const;
 
     template<typename T>
     friend void swap(atomic_callback_store<T> & lhs, atomic_callback_store<T> & rhs);
@@ -81,13 +81,13 @@ atomic_callback_store<T>::subscribe(T callable)
 template<typename T>
 template<typename ... A>
 void
-atomic_callback_store<T>::invoke(A ... args) const
+atomic_callback_store<T>::invoke(const A & ... args) const
 {
     std::unique_lock<std::mutex> lock(m_mutex);
 
     for (auto & callback : m_callback_store)
     {
-        callback.invoke(std::forward<A>(args) ...);
+        callback.invoke(std::forward<const A &>(args) ...);
     }
 }
 
