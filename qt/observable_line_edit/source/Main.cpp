@@ -10,18 +10,27 @@ int main(int argc, char * argv[])
 {
     QApplication application(argc, argv);
 
-    auto observer = [](const std::string & value)
-    {
-        std::cout << value << std::endl;
-    };
+    shared_observable<std::string> model_name;
+    shared_observable<int> model_id;
+    shared_observable<std::string> model_text;
 
-    shared_observable<std::string> model;
-    model.observe(observer);
-    
-    GUI::LineEdit e(model);
+    auto combine = [model_text](const std::string & name, int id)
+    {
+        unique_txn{model_text} = name + std::to_string(id);
+    };
+    join(combine, model_name, model_id);
+
+    auto log = [](const std::string & text)
+    {
+        std::cout << text << std::endl;
+    };
+    model_text.observe(log);
+
+    GUI::LineEdit e(model_name);
     e.show();
 
-    unique_txn{model} = "hovno";
+    unique_txn{model_name} = "idiot";
+    unique_txn{model_id} = 7;
 
     return application.exec();
 }
