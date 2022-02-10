@@ -13,17 +13,16 @@ namespace GUI
 {
 
 class LineEdit :
-    public QWidget
+    public QLineEdit
 {
     Q_OBJECT
 
 public:
     LineEdit(shared_observable<std::string> model, QWidget * parent = nullptr) :
-        QWidget(parent),
+        QLineEdit(parent),
         m_model(model)
     {
-        m_lineEdit = new QLineEdit(this);
-        connect(m_lineEdit, &QLineEdit::textChanged, this, &LineEdit::OnLineEditChanged);
+        connect(this, &QLineEdit::textChanged, this, &LineEdit::OnViewChanged);
         m_model.observe(std::bind(&LineEdit::OnModelChanged, this, std::placeholders::_1));
     }
 
@@ -35,18 +34,21 @@ public:
 private:
     void OnModelChanged(const std::string & value)
     {
-        QSignalBlocker blocker(m_lineEdit);
-        m_lineEdit->setText(value.c_str());
+        auto functor = [this, value]
+        {
+            QSignalBlocker blocker(this);
+            setText(value.c_str());
+        };
+        QMetaObject::invokeMethod(this, functor);
     }
 
-    void OnLineEditChanged(const QString & value)
+    void OnViewChanged(const QString & value)
     {
         unique_txn{m_model} = value.toStdString();
     }
 
 private:
     shared_observable<std::string> m_model;
-    QLineEdit * m_lineEdit;
 };
 
 };

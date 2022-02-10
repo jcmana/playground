@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1.0)
 
-project("mvc_observables")
+project("observable_widgets")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -15,6 +15,8 @@ set(CMAKE_AUTOUIC ON)
 
 add_executable("mvc_observables" 
 	"source/LineEdit.h"
+	"source/SpinBox.h"
+	"source/MainWidget.h"
 	"source/Main.cpp")
 
 target_include_directories("mvc_observables" PRIVATE
