@@ -14,6 +14,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
 add_executable("mvc_observables" 
+	"source/UserAccountLogic.h"
 	"source/LineEdit.h"
 	"source/SpinBox.h"
 	"source/MainWidget.h"
