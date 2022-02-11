@@ -10,8 +10,7 @@ class UserAccountLogic
 public:
     UserAccountLogic()
     {
-        using namespace std::placeholders;
-        join(std::bind(&UserAccountLogic::BuildUsername, this,  _1, _2), idModel, nameModel);
+        join(std::bind(&UserAccountLogic::BuildUsername, this,  std::placeholders::_1, std::placeholders::_2), idModel, nameModel);
     }
 
 public:
