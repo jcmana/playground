@@ -137,6 +137,7 @@
     <ClInclude Include="latch.hpp" />
     <ClInclude Include="memory.hpp" />
     <ClInclude Include="memory_guard.hpp" />
+    <ClInclude Include="shared_mutex.hpp" />
     <ClInclude Include="utility.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

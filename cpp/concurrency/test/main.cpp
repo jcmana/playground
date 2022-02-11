@@ -23,6 +23,8 @@
 
 #include "../concurrency/utility.hpp"
 
+#include "../concurrency/shared_mutex.hpp"
+
 barrier barr_a;
 barrier barr_b;
 
@@ -293,7 +295,7 @@ int main()
         e.post(std::move(task));
     }
 
-    if (true)
+    if (false)
     {
         std::stringstream a;
         std::stringstream b;
@@ -402,5 +404,16 @@ int main()
         thread t(proc);
 
         auto t_moved = std::move(t);
+    }
+
+    if (true)
+    {
+        shared_mutex mtx;
+
+        mtx.lock_shared();
+        mtx.lock_shared();
+
+        mtx.unlock_shared();
+        mtx.unlock_shared();
     }
 }
