@@ -3,6 +3,7 @@
 #include <mutex>
 #include <shared_mutex>
 #include <condition_variable>
+#include <variant>
 
 class shared_mutex
 {
@@ -85,8 +86,17 @@ private:
 class unique_lock
 {
 public:
+    friend class shared_lock;
+
+public:
     unique_lock(shared_mutex & mutex) :
         m_mutex_ptr(&mutex)
+    {
+        m_mutex_ptr->lock();
+    }
+
+    unique_lock(shared_lock && lock) :
+        m_mutex_ptr(lock.m_mutex_ptr)
     {
         m_mutex_ptr->lock();
     }
@@ -103,6 +113,9 @@ private:
 class shared_lock
 {
 public:
+    friend class unique_lock;
+
+public:
     shared_lock(shared_mutex & mutex) :
         m_mutex_ptr(&mutex)
     {
@@ -116,6 +129,24 @@ public:
 
 private:
     shared_mutex * m_mutex_ptr;
+};
+
+
+class dynamic_lock
+{
+public:
+    dynamic_lock(unique_lock && lock) :
+        m_lock(std::move(lock))
+    {
+    }
+
+    dynamic_lock(shared_lock && lock) :
+        m_lock(std::move(lock))
+    {
+    }
+
+private:
+    std::variant<unique_lock, shared_lock> m_lock;
 };
 
 /*

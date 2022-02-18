@@ -435,7 +435,7 @@ int main()
         t.join();
     }
 
-    if (true)
+    if (false)
     {
         shared_mutex m;
 
@@ -470,5 +470,11 @@ int main()
 
         std::cout << "join t attempt" << std::endl;
         t.join();
+    }
+
+    if (true)
+    {
+        shared_mutex m;
+        dynamic_lock ld(shared_lock(m));
     }
 }
