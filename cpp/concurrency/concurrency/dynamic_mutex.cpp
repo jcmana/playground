@@ -1,22 +1,5 @@
 #include "dynamic_mutex.h"
 
-void dynamic_mutex::lock_unique()
-{
-	std::unique_lock lock(m_mutex);
-	while (m_shared_counter > 1 || m_unique_counter > 0)
-	{
-		m_cv.wait(lock);
-	}
-
-	m_unique_counter++;
-}
-
-void dynamic_mutex::unlock_unique()
-{
-	m_unique_counter--;
-	m_cv.notify_one();
-}
-
 void dynamic_mutex::lock()
 {
 	std::unique_lock lock(m_mutex);
@@ -53,6 +36,23 @@ void dynamic_mutex::unlock_shared()
 		std::unique_lock lock(m_mutex);
 		m_shared_counter--;
 	}
+	m_cv.notify_one();
+}
+
+void dynamic_mutex::lock_unique()
+{
+	std::unique_lock lock(m_mutex);
+	while (m_shared_counter > 1 || m_unique_counter > 0)
+	{
+		m_cv.wait(lock);
+	}
+
+	m_unique_counter++;
+}
+
+void dynamic_mutex::unlock_unique()
+{
+	m_unique_counter--;
 	m_cv.notify_one();
 }
 

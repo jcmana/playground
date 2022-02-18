@@ -479,6 +479,18 @@ int main()
         dynamic_lock ld = shared_lock(m);
         ld.lock_unique();
 
-        shared_lock ls(m);
+        auto proc = [&m]
+        {
+            std::cout << "t shared locked attempt" << std::endl;
+            shared_lock ls(m);
+            std::cout << "t shared locked" << std::endl;
+
+        };
+        std::thread t(proc);
+
+        ld.unlock_unique();
+        std::cout << "main shared unlocked" << std::endl;
+
+        t.join();
     }
 }

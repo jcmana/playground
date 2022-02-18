@@ -9,6 +9,12 @@
 class dynamic_mutex
 {
 public:
+	// SharedMutex implementation:
+	void lock();
+	void unlock();
+	void lock_shared();
+	void unlock_shared();
+
 	/// \brief      Upgrades the mutex lock from shared to unique.
 	///
 	/// Expects mutex in `lock_shared()` state.
@@ -18,12 +24,6 @@ public:
 	///
 	/// Expects mutex in `lock()` state. 
 	void unlock_unique();
-public:
-	// SharedMutex implementation:
-	void lock();
-	void unlock();
-	void lock_shared();
-	void unlock_shared();
 
 private:
 	std::mutex m_mutex;
