@@ -406,12 +406,13 @@ int main()
         auto t_moved = std::move(t);
     }
 
-    if (true)
+    if (false)
     {
         shared_mutex m;
         
         m.lock();
         std::cout << "main shared locked" << std::endl;
+        m.lock_shared();
         
         auto proc = [&m]
         {
@@ -431,6 +432,43 @@ int main()
         m.unlock_unique();
         std::cout << "main shared unlocked" << std::endl;
 
+        t.join();
+    }
+
+    if (true)
+    {
+        shared_mutex m;
+
+        auto proc = [&m]
+        {
+            std::cout << "t unique locked attempt" << std::endl;
+            unique_lock lu(m);
+            std::cout << "t unique locked" << std::endl;
+
+            std::this_thread::sleep_for(std::chrono::seconds(3));
+        };
+
+        std::thread t;
+
+        {
+            std::cout << "main shared locked a attempt" << std::endl;
+            shared_lock lsa(m);
+            std::cout << "main shared locked a" << std::endl;
+
+            t = std::thread(proc);
+
+            std::cout << "main shared locked b attempt" << std::endl;
+            shared_lock lsb(m);
+            std::cout << "main shared locked b" << std::endl;
+
+            std::this_thread::sleep_for(std::chrono::seconds(3));
+        }
+
+        std::cout << "main shared locked attempt" << std::endl;
+        shared_lock ls(m);
+        std::cout << "main shared locked" << std::endl;
+
+        std::cout << "join t attempt" << std::endl;
         t.join();
     }
 }

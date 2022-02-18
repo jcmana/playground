@@ -17,7 +17,7 @@ public:
     void lock_unique()
     {
         std::unique_lock lock(m_mutex);
-        while (m_shared_counter > 1 && m_unique_counter > 0)
+        while (m_shared_counter > 1 || m_unique_counter > 0)
         {
             m_cv.wait(lock);
         }
@@ -27,7 +27,7 @@ public:
 
     /// \brief      Downgrades the mutex lock from unique to shared.
     ///
-    /// Expects mutex in `lock()` state.
+    /// Expects mutex in `lock()` state. 
     void unlock_unique()
     {
         m_unique_counter--;
@@ -39,7 +39,7 @@ public:
     void lock()
     {
         std::unique_lock lock(m_mutex);
-        while (m_shared_counter > 0 && m_unique_counter > 0)
+        while (m_shared_counter > 0 || m_unique_counter > 0)
         {
             m_cv.wait(lock);
         }
@@ -80,6 +80,42 @@ private:
     std::condition_variable m_cv;
     unsigned int m_unique_counter = 0;
     unsigned int m_shared_counter = 0;
+};
+
+class unique_lock
+{
+public:
+    unique_lock(shared_mutex & mutex) :
+        m_mutex_ptr(&mutex)
+    {
+        m_mutex_ptr->lock();
+    }
+
+    ~unique_lock()
+    {
+        m_mutex_ptr->unlock();
+    }
+
+private:
+    shared_mutex * m_mutex_ptr;
+};
+
+class shared_lock
+{
+public:
+    shared_lock(shared_mutex & mutex) :
+        m_mutex_ptr(&mutex)
+    {
+        m_mutex_ptr->lock_shared();
+    }
+
+    ~shared_lock()
+    {
+        m_mutex_ptr->unlock_shared();
+    }
+
+private:
+    shared_mutex * m_mutex_ptr;
 };
 
 /*
