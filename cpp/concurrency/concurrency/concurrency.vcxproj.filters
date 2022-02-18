@@ -5,6 +5,9 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{b51d07ba-2c1d-4179-975e-eeaed04b6ad8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="barrier.hpp">
@@ -40,8 +43,13 @@
     <ClInclude Include="executor.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="shared_mutex.hpp">
+    <ClInclude Include="dynamic_mutex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dynamic_mutex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
