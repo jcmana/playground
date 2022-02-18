@@ -16,7 +16,9 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-add_executable("qslider" WIN32 "Main.cpp")
+add_executable("qslider" WIN32 
+	"Slider.cpp"
+	"Main.cpp")
 
 target_link_libraries("qslider" PRIVATE 
 	Qt5::Core 
