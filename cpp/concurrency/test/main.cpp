@@ -408,12 +408,29 @@ int main()
 
     if (true)
     {
-        shared_mutex mtx;
+        shared_mutex m;
+        
+        m.lock();
+        std::cout << "main shared locked" << std::endl;
+        
+        auto proc = [&m]
+        {
+            std::cout << "t shared locked attempt" << std::endl;
+            m.lock_shared();
+            std::cout << "t shared locked" << std::endl;
 
-        mtx.lock_shared();
-        mtx.lock_shared();
+            std::this_thread::sleep_for(std::chrono::seconds(3));
 
-        mtx.unlock_shared();
-        mtx.unlock_shared();
+            m.unlock_shared();
+            std::cout << "t shared unlocked" << std::endl;
+        };
+        std::thread t(proc);
+
+        std::this_thread::sleep_for(std::chrono::seconds(3));
+
+        m.unlock_unique();
+        std::cout << "main shared unlocked" << std::endl;
+
+        t.join();
     }
 }
