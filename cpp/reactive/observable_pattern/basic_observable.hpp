@@ -111,6 +111,13 @@ public:
         std::apply(std::move(application), m_value);
     }
 
+    friend void swap(basic_observable & lhs, basic_observable & rhs)
+    {
+        using std::swap;
+        swap(lhs.m_store, rhs.m_store);
+        swap(lhs.m_value, rhs.m_value);
+    }
+
 public:
     // SwitchMutex implementation:
     void lock() const

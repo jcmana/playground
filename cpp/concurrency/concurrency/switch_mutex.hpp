@@ -43,6 +43,14 @@ public:
 		}
 	}
 
+	~unique_lock()
+	{
+		if (m_mutex_ptr)
+		{
+			m_mutex_ptr->unlock();
+		}
+	}
+
 	unique_lock & operator  =(unique_lock && lock)
 	{
 		m_mutex_ptr = lock.m_mutex_ptr;
@@ -51,12 +59,17 @@ public:
 		return (*this);
 	}
 
-	~unique_lock()
+	unique_lock & operator  =(shared_lock<T> && lock)
 	{
+		m_mutex_ptr = lock.m_mutex_ptr;
+		lock.m_mutex_ptr = nullptr;
+
 		if (m_mutex_ptr)
 		{
-			m_mutex_ptr->unlock();
+			m_mutex_ptr->lock_unique();
 		}
+
+		return (*this);
 	}
 
 private:
@@ -99,6 +112,14 @@ public:
 		}
 	}
 
+	~shared_lock()
+	{
+		if (m_mutex_ptr)
+		{
+			m_mutex_ptr->unlock_shared();
+		}
+	}
+
 	shared_lock & operator  =(shared_lock && lock)
 	{
 		m_mutex_ptr = lock.m_mutex_ptr;
@@ -107,12 +128,17 @@ public:
 		return (*this);
 	}
 
-	~shared_lock()
+	shared_lock & operator  =(unique_lock<T> && lock)
 	{
+		m_mutex_ptr = lock.m_mutex_ptr;
+		lock.m_mutex_ptr = nullptr;
+
 		if (m_mutex_ptr)
 		{
-			m_mutex_ptr->unlock_shared();
+			m_mutex_ptr->unlock_unique();
 		}
+
+		return (*this);
 	}
 
 private:
