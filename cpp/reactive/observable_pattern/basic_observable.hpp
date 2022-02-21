@@ -7,6 +7,9 @@
 #include "../../callback_store/atomic_callback_store/atomic_callback_store.hpp"
 #include "../../concurrency/concurrency/switch_mutex.hpp"
 
+template<template <typename> typename F, typename ... A>
+class basic_observable;
+
 /// \brief      Common base for observable pattern implementation.
 template<template <typename> typename F, typename ... A>
 class basic_observable
@@ -170,4 +173,42 @@ template<std::size_t I, template <typename> typename F, typename ... A>
 struct std::tuple_element<I, basic_observable<F, A ...>> : std::tuple_element<I, std::tuple<A ...>>
 {
 };
+
+/*
+template<template <typename> typename F>
+class basic_observable<F, void>
+{
+public:
+    using store_callback_type = F<void>;
+    using store_type = atomic_callback_store<store_callback_type>;
+    using guard_type = atomic_callback_guard<store_callback_type>;
+    using mutex_type = switch_mutex;
+
+public:
+    basic_observable(const basic_observable & other) noexcept = delete;
+    basic_observable & operator  =(const basic_observable & other) noexcept = delete;
+
+    /// \brief      Subscribes `callback` for modification notifications.
+    auto observe(store_callback_type callback) const noexcept
+    {
+        return m_store.subscribe(std::move(callback));
+    }
+
+    /// \brief      Subscribes `callback` for modification notifications.
+    template<typename T>
+    auto observe(T callback) const noexcept
+    {
+        return m_store.subscribe(static_cast<store_callback_type>(callback));
+    }
+
+    /// \brief      Invokes each active callback with current value as argument.
+    void notify() const
+    {
+        m_store.invoke();
+    }
+
+private:
+    mutable store_type m_store;
+};
+*/
 

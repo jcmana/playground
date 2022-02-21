@@ -238,7 +238,7 @@ int main()
     }
 
     // join shared observables (no composite)
-    if (true)
+    if (false)
     {
         shared_observable<int> a;
         shared_observable<int> b;
@@ -322,6 +322,29 @@ int main()
         std::cout << shared_txn{a}.get<0>() << ", " << shared_txn{a}.get<1>() << std::endl;
 
         t.join();
+    }
+
+    // shared observable without value (a shared signal)
+    if (true)
+    {
+        shared_observable<void> so;
+
+        auto observer = []
+        {
+            std::cout << "observer notified" << std::endl;
+        };
+        so.observe(observer);
+
+        so.notify();
+
+        auto proc = [so]
+        {
+            std::cout << "observer in thread notified" << std::endl;
+        };
+        std::thread t(proc);
+        so.notify();
+        t.join();
+        so.notify();
     }
 
     // shared observarble of reference

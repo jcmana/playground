@@ -6,7 +6,10 @@
 
 #include "basic_observable.hpp"
 
-/// \brief      Shared reference to a observable value with observers.
+template<typename ... A>
+class shared_observable;
+
+/// \brief      Shared reference to an observable value with observers.
 template<typename ... A>
 class shared_observable
 {
@@ -98,7 +101,78 @@ public:
 
 private:
     std::shared_ptr<observable_type> m_sp;
-    std::vector<typename observable_type::guard_type> m_observers;
+    std::vector<guard_type> m_observers;
+};
+
+/// \brief      Shared reference to an no-value observable.
+template<>
+class shared_observable<void>
+{
+public:
+    using functor_type = std::function<void()>;
+    using observable_type = atomic_callback_store<functor_type>;
+    using guard_type = atomic_callback_guard<functor_type>;
+
+public:
+    shared_observable() noexcept :
+        m_sp(new observable_type),
+        m_observers()
+    {
+    }
+
+    shared_observable(const shared_observable & other) noexcept :
+        m_sp(other.m_sp),
+        m_observers()
+    {
+    }
+
+    shared_observable(shared_observable && other) noexcept :
+        shared_observable()
+    {
+        swap(*this, other);
+    }
+
+    shared_observable & operator  =(const shared_observable & other) noexcept
+    {
+        m_sp = other.m_sp;
+        return (*this);
+    }
+
+    shared_observable & operator  =(shared_observable && other) noexcept
+    {
+        auto empty = shared_observable();
+        swap(*this, empty);
+        swap(*this, other);
+        return (*this);
+    }
+
+    void observe(functor_type callback) noexcept
+    {
+        m_observers.push_back(m_sp->subscribe(std::move(callback)));
+    }
+
+    auto observe_scoped(functor_type callback) noexcept
+    {
+        return m_sp->subscribe(std::move(callback));
+    }
+
+    void notify() const
+    {
+        m_sp->invoke();
+    }
+
+    friend void swap(shared_observable<void> & lhs, shared_observable<void> & rhs)
+    {    
+        using std::swap;
+        swap(lhs.m_sp, rhs.m_sp);
+
+        lhs.m_observers.clear();
+        rhs.m_observers.clear();
+    }
+
+private:
+    std::shared_ptr<observable_type> m_sp;
+    std::vector<guard_type> m_observers;
 };
 
 template <typename ... A> 
