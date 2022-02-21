@@ -23,7 +23,7 @@
 
 #include "../concurrency/utility.hpp"
 
-#include "../concurrency/dynamic_mutex.h"
+#include "../concurrency/switch_mutex.h"
 
 barrier barr_a;
 barrier barr_b;
@@ -408,7 +408,7 @@ int main()
 
     if (false)
     {
-        dynamic_mutex m;
+        switch_mutex m;
         
         m.lock();
         std::cout << "main shared locked" << std::endl;
@@ -437,7 +437,7 @@ int main()
 
     if (false)
     {
-        dynamic_mutex m;
+        switch_mutex m;
 
         auto proc = [&m]
         {
@@ -474,9 +474,9 @@ int main()
 
     if (true)
     {
-        dynamic_mutex m;
+        switch_mutex m;
 
-        dynamic_lock ld = shared_lock(m);
+        switch_lock ld = shared_lock(m);
         ld.lock_unique();
 
         auto proc = [&m]

@@ -1,6 +1,6 @@
-#include "dynamic_mutex.h"
+#include "switch_mutex.h"
 
-void dynamic_mutex::lock()
+void switch_mutex::lock()
 {
 	std::unique_lock lock(m_mutex);
 	while (m_shared_counter > 0 || m_unique_counter > 0)
@@ -12,14 +12,14 @@ void dynamic_mutex::lock()
 	m_shared_counter++;
 }
 
-void dynamic_mutex::unlock()
+void switch_mutex::unlock()
 {
 	m_unique_counter--;
 	m_shared_counter--;
 	m_cv.notify_one();
 }
 
-void dynamic_mutex::lock_shared()
+void switch_mutex::lock_shared()
 {
 	std::unique_lock lock(m_mutex);
 	while (m_unique_counter > 0)
@@ -30,7 +30,7 @@ void dynamic_mutex::lock_shared()
 	m_shared_counter++;
 }
 
-void dynamic_mutex::unlock_shared()
+void switch_mutex::unlock_shared()
 {
 	{
 		std::unique_lock lock(m_mutex);
@@ -39,7 +39,7 @@ void dynamic_mutex::unlock_shared()
 	m_cv.notify_one();
 }
 
-void dynamic_mutex::lock_unique()
+void switch_mutex::lock_unique()
 {
 	std::unique_lock lock(m_mutex);
 	while (m_shared_counter > 1 || m_unique_counter > 0)
@@ -50,7 +50,7 @@ void dynamic_mutex::lock_unique()
 	m_unique_counter++;
 }
 
-void dynamic_mutex::unlock_unique()
+void switch_mutex::unlock_unique()
 {
 	m_unique_counter--;
 	m_cv.notify_one();
@@ -61,7 +61,7 @@ unique_lock::unique_lock() :
 {
 }
 
-unique_lock::unique_lock(dynamic_mutex & mutex) :
+unique_lock::unique_lock(switch_mutex & mutex) :
 	m_mutex_ptr(&mutex)
 {
 	m_mutex_ptr->lock();
@@ -105,7 +105,7 @@ shared_lock::shared_lock() :
 {
 }
 
-shared_lock::shared_lock(dynamic_mutex & mutex) :
+shared_lock::shared_lock(switch_mutex & mutex) :
 	m_mutex_ptr(&mutex)
 {
 	m_mutex_ptr->lock_shared();
@@ -144,22 +144,22 @@ shared_lock::~shared_lock()
 	}
 }
 
-dynamic_lock::dynamic_lock() :
+switch_lock::switch_lock() :
 	m_lock(std::nullopt)
 {
 }
 
-dynamic_lock::dynamic_lock(unique_lock && lock) :
+switch_lock::switch_lock(unique_lock && lock) :
 	m_lock(std::move(lock))
 {
 }
 
-dynamic_lock::dynamic_lock(shared_lock && lock) :
+switch_lock::switch_lock(shared_lock && lock) :
 	m_lock(std::move(lock))
 {
 }
 
-void dynamic_lock::lock_unique()
+void switch_lock::lock_unique()
 {
 	if (std::holds_alternative<std::nullopt_t>(m_lock))
 	{
@@ -175,9 +175,8 @@ void dynamic_lock::lock_unique()
 	m_lock = std::move(lock);
 }
 
-void dynamic_lock::unlock_unique()
+void switch_lock::unlock_unique()
 {
-
 	if (std::holds_alternative<std::nullopt_t>(m_lock))
 	{
 		throw std::exception("Invalid lock");

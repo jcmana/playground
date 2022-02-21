@@ -43,12 +43,12 @@
     <ClInclude Include="executor.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="dynamic_mutex.h">
+    <ClInclude Include="switch_mutex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dynamic_mutex.cpp">
+    <ClCompile Include="switch_mutex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -6,7 +6,7 @@
 #include <variant>
 #include <optional>
 
-class dynamic_mutex
+class switch_mutex
 {
 public:
 	// SharedMutex implementation:
@@ -39,7 +39,7 @@ public:
 
 public:
 	unique_lock();
-	unique_lock(dynamic_mutex & mutex);
+	unique_lock(switch_mutex & mutex);
 	unique_lock(unique_lock && lock);
 	unique_lock(shared_lock && lock);
 
@@ -48,7 +48,7 @@ public:
 	~unique_lock();
 
 private:
-	dynamic_mutex * m_mutex_ptr;
+	switch_mutex * m_mutex_ptr;
 };
 
 class shared_lock
@@ -58,7 +58,7 @@ public:
 
 public:
 	shared_lock();
-	shared_lock(dynamic_mutex & mutex);
+	shared_lock(switch_mutex & mutex);
 	shared_lock(shared_lock && lock);
 	shared_lock(unique_lock && lock);
 
@@ -67,22 +67,26 @@ public:
 	~shared_lock();
 
 private:
-	dynamic_mutex * m_mutex_ptr;
+	switch_mutex * m_mutex_ptr;
 };
 
-
-class dynamic_lock
+/// \brief		Holds either unique locked or shared locked `switch_mutex`.
+class switch_lock
 {
 public:
 	friend class unique_lock;
 	friend class shared_lock;
 
 public:
-	dynamic_lock();
-	dynamic_lock(unique_lock && lock);
-	dynamic_lock(shared_lock && lock);
+	switch_lock();
+	switch_lock(unique_lock && lock);
+	switch_lock(shared_lock && lock);
 
+	/// \brief		Switch from shared to unique lock.
+	/// \throws		std::exception
 	void lock_unique();
+	/// \brief		Switch from unique to shared lock.
+	/// \throws		std::exception
 	void unlock_unique();
 
 private:
