@@ -123,7 +123,7 @@ public:
     unique_txn() = default;
 
     explicit unique_txn(const scoped_observable_type & observable_ref) :
-        m_lock(*observable_ref.m_sp),
+        m_lock(unique_lock(*observable_ref.m_sp)),
         m_sp(observable_ref.m_sp)
     {
     }
@@ -132,6 +132,10 @@ public:
     {
         if (m_sp)
         {
+            // Downgrade to shared lock to avoid dealocking in callbacks
+            m_lock.unlock_unique();
+
+            // Notify callbacks with current value
             m_sp->notify();
         }
     }
@@ -165,7 +169,7 @@ public:
     }
 
 private:
-    mutable std::unique_lock<observable_type> m_lock;
+    mutable switch_lock<observable_type> m_lock;
     std::shared_ptr<observable_type> m_sp;
 };
 
@@ -185,7 +189,7 @@ public:
     }
 
     shared_txn(scoped_observable_type & observable_ref) :
-        m_lock(*observable_ref.m_sp),
+        m_lock(shared_lock(*observable_ref.m_sp)),
         m_sp(observable_ref.m_sp)
     {
     }
@@ -202,7 +206,7 @@ public:
     }
 
 private:
-    mutable std::shared_lock<observable_type> m_lock;
+    mutable shared_lock<observable_type> m_lock;
     std::shared_ptr<observable_type> m_sp;
 };
 

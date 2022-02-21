@@ -23,7 +23,7 @@
 
 #include "../concurrency/utility.hpp"
 
-#include "../concurrency/switch_mutex.h"
+#include "../concurrency/switch_mutex.hpp"
 
 barrier barr_a;
 barrier barr_b;

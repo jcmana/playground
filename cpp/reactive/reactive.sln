@@ -7,6 +7,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "model_pattern", "model_patt
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "observable_pattern", "observable_pattern\observable_pattern.vcxproj", "{391FFFED-0428-4686-9FDE-11215733FB26}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dependencies", "dependencies", "{4D7CEE4D-DA46-4472-9D61-693633CB688A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "concurrency", "..\concurrency\concurrency\concurrency.vcxproj", "{BB76E649-FC4A-4FCB-874C-A8CE08B5368E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,9 +35,20 @@ Global
 		{391FFFED-0428-4686-9FDE-11215733FB26}.Release|x64.Build.0 = Release|x64
 		{391FFFED-0428-4686-9FDE-11215733FB26}.Release|x86.ActiveCfg = Release|Win32
 		{391FFFED-0428-4686-9FDE-11215733FB26}.Release|x86.Build.0 = Release|Win32
+		{BB76E649-FC4A-4FCB-874C-A8CE08B5368E}.Debug|x64.ActiveCfg = Debug|x64
+		{BB76E649-FC4A-4FCB-874C-A8CE08B5368E}.Debug|x64.Build.0 = Debug|x64
+		{BB76E649-FC4A-4FCB-874C-A8CE08B5368E}.Debug|x86.ActiveCfg = Debug|Win32
+		{BB76E649-FC4A-4FCB-874C-A8CE08B5368E}.Debug|x86.Build.0 = Debug|Win32
+		{BB76E649-FC4A-4FCB-874C-A8CE08B5368E}.Release|x64.ActiveCfg = Release|x64
+		{BB76E649-FC4A-4FCB-874C-A8CE08B5368E}.Release|x64.Build.0 = Release|x64
+		{BB76E649-FC4A-4FCB-874C-A8CE08B5368E}.Release|x86.ActiveCfg = Release|Win32
+		{BB76E649-FC4A-4FCB-874C-A8CE08B5368E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BB76E649-FC4A-4FCB-874C-A8CE08B5368E} = {4D7CEE4D-DA46-4472-9D61-693633CB688A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A38CDE51-D9C9-416E-94F6-175C667F8B29}

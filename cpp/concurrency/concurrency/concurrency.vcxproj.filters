@@ -46,6 +46,9 @@
     <ClInclude Include="switch_mutex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="switch_mutex.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="switch_mutex.cpp">

@@ -238,7 +238,7 @@ int main()
     }
 
     // join shared observables (no composite)
-    if (false)
+    if (true)
     {
         shared_observable<int> a;
         shared_observable<int> b;
@@ -325,7 +325,7 @@ int main()
     }
 
     // shared observarble of reference
-    if (true)
+    if (false)
     {
         shared_ref_observable<std::unique_ptr<int>> o;
         

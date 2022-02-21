@@ -5,6 +5,7 @@
 #include <tuple>
 
 #include "../../callback_store/atomic_callback_store/atomic_callback_store.hpp"
+#include "../../concurrency/concurrency/switch_mutex.hpp"
 
 /// \brief      Common base for observable pattern implementation.
 template<template <typename> typename F, typename ... A>
@@ -15,7 +16,7 @@ public:
     using store_callback_type = F<A ...>;
     using store_type = atomic_callback_store<store_callback_type>;
     using guard_type = atomic_callback_guard<store_callback_type>;
-    using mutex_type = std::shared_mutex;
+    using mutex_type = switch_mutex;
 
 public:
     /// \brief      Default contructor.
@@ -108,7 +109,7 @@ public:
     }
 
 public:
-    // SharedMutex implementation:
+    // SwitchMutex implementation:
     void lock() const
     {
         m_mutex.lock();
@@ -137,6 +138,21 @@ public:
     void unlock_shared()
     {
         m_mutex.unlock_shared();
+    }
+
+    void lock_unique() const
+    {
+        m_mutex.lock_unique();
+    }
+
+    bool try_lock_unique() const 
+    {
+        return m_mutex.try_lock_unique();
+    }
+
+    void unlock_unique() const
+    {
+        m_mutex.unlock_unique();
     }
 
 private:

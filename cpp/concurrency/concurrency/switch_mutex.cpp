@@ -3,7 +3,7 @@
 void switch_mutex::lock()
 {
 	std::unique_lock lock(m_mutex);
-	while (m_shared_counter > 0 || m_unique_counter > 0)
+	while (can_lock() == false)
 	{
 		m_cv.wait(lock);
 	}
@@ -12,17 +12,37 @@ void switch_mutex::lock()
 	m_shared_counter++;
 }
 
+bool switch_mutex::try_lock()
+{
+	std::unique_lock lock(m_mutex);
+	if (can_lock() == false)
+	{
+		return false;
+	}
+
+	m_unique_counter++;
+	m_shared_counter++;
+
+	return true;
+}
+
 void switch_mutex::unlock()
 {
-	m_unique_counter--;
-	m_shared_counter--;
+	{
+		// SwitchMutex is uniquelly owned, therefore we don't need to lock
+		// underlaying mutex to modify counters
+
+		m_unique_counter--;
+		m_shared_counter--;
+	}
+
 	m_cv.notify_one();
 }
 
 void switch_mutex::lock_shared()
 {
 	std::unique_lock lock(m_mutex);
-	while (m_unique_counter > 0)
+	while (can_lock_shared() == false)
 	{
 		m_cv.wait(lock);
 	}
@@ -30,9 +50,25 @@ void switch_mutex::lock_shared()
 	m_shared_counter++;
 }
 
+bool switch_mutex::try_lock_shared()
+{
+	std::unique_lock lock(m_mutex);
+	if (can_lock_shared() == false)
+	{
+		return false;
+	}
+
+	m_shared_counter++;
+
+	return true;
+}
+
 void switch_mutex::unlock_shared()
 {
 	{
+		// SwitchMutex is not owned uniquelly and we have to handle concurrent
+		// modification of shared counter
+
 		std::unique_lock lock(m_mutex);
 		m_shared_counter--;
 	}
@@ -50,143 +86,39 @@ void switch_mutex::lock_unique()
 	m_unique_counter++;
 }
 
+bool switch_mutex::try_lock_unique()
+{
+	return false;
+}
+
 void switch_mutex::unlock_unique()
 {
-	m_unique_counter--;
+	{
+		// SwitchMutex is uniquelly owned, therefore we don't need to lock
+		// underlaying mutex to modify counters
+
+		m_unique_counter--;
+	}
+
 	m_cv.notify_one();
 }
 
-unique_lock::unique_lock() :
-	m_mutex_ptr(nullptr)
+bool switch_mutex::can_lock()
 {
+	// Unique lock requires both shared and unique counters at zero
+	return (m_shared_counter == 0 && m_unique_counter == 0);
 }
 
-unique_lock::unique_lock(switch_mutex & mutex) :
-	m_mutex_ptr(&mutex)
+bool switch_mutex::can_lock_unique()
 {
-	m_mutex_ptr->lock();
+	// Upgrading from shared to unique lock both counters at zero but
+	// expects shared lock is already owned
+	return (m_shared_counter == 1 && m_unique_counter == 0);
 }
 
-unique_lock::unique_lock(unique_lock && lock) :
-	m_mutex_ptr(lock.m_mutex_ptr)
+bool switch_mutex::can_lock_shared()
 {
-	lock.m_mutex_ptr = nullptr;
-}
-
-unique_lock::unique_lock(shared_lock && lock) :
-	m_mutex_ptr(lock.m_mutex_ptr)
-{
-	lock.m_mutex_ptr = nullptr;
-
-	if (m_mutex_ptr)
-	{
-		m_mutex_ptr->lock_unique();
-	}
-}
-
-unique_lock & unique_lock::operator  =(unique_lock && lock)
-{
-	m_mutex_ptr = lock.m_mutex_ptr;
-	lock.m_mutex_ptr = nullptr;
-
-	return (*this);
-}
-
-unique_lock::~unique_lock()
-{
-	if (m_mutex_ptr)
-	{
-		m_mutex_ptr->unlock();
-	}
-}
-
-shared_lock::shared_lock() :
-	m_mutex_ptr(nullptr)
-{
-}
-
-shared_lock::shared_lock(switch_mutex & mutex) :
-	m_mutex_ptr(&mutex)
-{
-	m_mutex_ptr->lock_shared();
-}
-
-shared_lock::shared_lock(shared_lock && lock) :
-	m_mutex_ptr(lock.m_mutex_ptr)
-{
-	lock.m_mutex_ptr = nullptr;
-}
-
-shared_lock::shared_lock(unique_lock && lock) :
-	m_mutex_ptr(lock.m_mutex_ptr)
-{
-	lock.m_mutex_ptr = nullptr;
-
-	if (m_mutex_ptr)
-	{
-		m_mutex_ptr->unlock_unique();
-	}
-}
-
-shared_lock & shared_lock::operator  =(shared_lock && lock)
-{
-	m_mutex_ptr = lock.m_mutex_ptr;
-	lock.m_mutex_ptr = nullptr;
-
-	return (*this);
-}
-
-shared_lock::~shared_lock()
-{
-	if (m_mutex_ptr)
-	{
-		m_mutex_ptr->unlock_shared();
-	}
-}
-
-switch_lock::switch_lock() :
-	m_lock(std::nullopt)
-{
-}
-
-switch_lock::switch_lock(unique_lock && lock) :
-	m_lock(std::move(lock))
-{
-}
-
-switch_lock::switch_lock(shared_lock && lock) :
-	m_lock(std::move(lock))
-{
-}
-
-void switch_lock::lock_unique()
-{
-	if (std::holds_alternative<std::nullopt_t>(m_lock))
-	{
-		throw std::exception("Invalid lock");
-	}
-
-	if (std::holds_alternative<unique_lock>(m_lock))
-	{
-		throw std::exception("Unique lock already owned");
-	}
-
-	unique_lock lock = std::move(std::get<shared_lock>(m_lock));
-	m_lock = std::move(lock);
-}
-
-void switch_lock::unlock_unique()
-{
-	if (std::holds_alternative<std::nullopt_t>(m_lock))
-	{
-		throw std::exception("Invalid lock");
-	}
-
-	if (std::holds_alternative<shared_lock>(m_lock))
-	{
-		throw std::exception("Shared lock already owned");
-	}
-
-	shared_lock lock = std::move(std::get<unique_lock>(m_lock));
-	m_lock = std::move(lock);
+	// Shared lock can be concurrent with other shared locks but not
+	// with unique lock, obviously
+	return (m_unique_counter == 0);	
 }
