@@ -37,7 +37,6 @@ public:
 	/// Expects mutex in `lock()` state. 
 	void unlock_unique();
 
-
 private:
 	bool can_lock();
 	bool can_lock_unique();

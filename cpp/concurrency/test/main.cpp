@@ -435,6 +435,30 @@ int main()
         t.join();
     }
 
+    // non-blocking locking 
+    if (true)
+    {
+        switch_mutex m;
+        m.lock_shared();
+
+        if (m.try_lock() == false)
+        {
+            m.try_lock_shared();
+        }
+
+        if (m.try_lock_unique() == false)
+        {
+            m.unlock_shared();
+        }
+
+        if (m.try_lock_unique() == false)
+        {
+            std::cout << "fuuuuu" << std::endl;
+        }
+
+        std::cout << "noice" << std::endl;
+    }
+
     if (false)
     {
         switch_mutex m;
@@ -472,7 +496,7 @@ int main()
         t.join();
     }
 
-    if (true)
+    if (false)
     {
         switch_mutex m;
 

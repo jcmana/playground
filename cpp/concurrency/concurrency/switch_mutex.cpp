@@ -88,7 +88,15 @@ void switch_mutex::lock_unique()
 
 bool switch_mutex::try_lock_unique()
 {
-	return false;
+	std::unique_lock lock(m_mutex);
+	if (can_lock_unique() == false)
+	{
+		return false;
+	}
+
+	m_unique_counter++;
+
+	return true;
 }
 
 void switch_mutex::unlock_unique()
