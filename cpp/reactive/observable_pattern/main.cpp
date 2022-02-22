@@ -149,7 +149,7 @@ int main()
     }
 
     // unique and shared transactions
-    if (false)
+    if (true)
     {
         shared_observable o(0);
 
@@ -167,7 +167,6 @@ int main()
                 ug = 0;
             }
         };
-
         std::thread t(std::move(proc));
 
         {
@@ -325,7 +324,7 @@ int main()
     }
 
     // shared observable without value (a shared signal)
-    if (true)
+    if (false)
     {
         shared_observable<void> so;
 

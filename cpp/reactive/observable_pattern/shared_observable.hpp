@@ -69,11 +69,6 @@ public:
         return (*this);
     }
 
-    operator std::tuple<A ...>() const
-    {
-        return (*m_sp);
-    }
-
     void observe(functor_type<A ...> callback) noexcept
     {
         m_observers.push_back(m_sp->observe(std::move(callback)));
@@ -364,14 +359,14 @@ void join(F && functor, shared_observable<Ta> & a, shared_observable<Tb> & b)
     auto observer_a = [functor, b](auto ... args) mutable
     {
         std::tuple<Ta> args_a = {args ...};
-        std::tuple<Tb> args_b = b;
+        std::tuple<Tb> args_b = shared_txn{b};
 
         std::apply(functor, std::tuple_cat(args_a, args_b));
     };
 
     auto observer_b = [functor, a](auto ... args) mutable
     {
-        std::tuple<Ta> args_a = a;
+        std::tuple<Ta> args_a = shared_txn{a};
         std::tuple<Tb> args_b = {args ...};
 
         std::apply(functor, std::tuple_cat(args_a, args_b));
@@ -404,8 +399,8 @@ void join(F && functor, shared_observable<Ta> & a, shared_observable<Tb> & b, sh
 
     auto observer_c = [functor, a, b](auto ... args) mutable
     {
-        std::tuple<Ta> args_a = a;
-        std::tuple<Tb> args_b = b;
+        std::tuple<Ta> args_a = shared_txn{a};
+        std::tuple<Tb> args_b = shared_txn{b};
         std::tuple<Tc> args_c = {args ...};
 
         std::apply(functor, std::tuple_cat(args_a, args_b, args_c));
@@ -426,14 +421,14 @@ auto join(shared_observable<Ta> & a, shared_observable<Tb> & b)
     auto observer_a = [composite, b](auto ... args) mutable
     {
         std::tuple<Ta> args_a = {args ...};
-        std::tuple<Tb> args_b = b;
+        std::tuple<Tb> args_b = shared_txn{b};
 
         unique_txn{composite} = std::tuple_cat(args_a, args_b);
     };
 
     auto observer_b = [composite, a](auto ... args) mutable
     {
-        std::tuple<Ta> args_a = a;
+        std::tuple<Ta> args_a = shared_txn{a};
         std::tuple<Tb> args_b = {args ...};
 
         unique_txn{composite} = std::tuple_cat(args_a, args_b);
