@@ -170,7 +170,7 @@ int main()
         //auto a_moved = std::move(a);        // deadlock = acquiring already locked mutex
     }
 
-    if (true)
+    if (false)
     {
         atomic_link_element a;
         auto a_moved = std::move(a);
@@ -206,6 +206,7 @@ int main()
         std::cout << "master locked" << std::endl;
     }
 
+    // asymetric locking:
     if (false)
     {
         for (auto n = 0; n != 1'000; ++n)
@@ -237,6 +238,49 @@ int main()
             ts.join();
             tm.join();
         }
+    }
+
+    // double mutex dtor algorithm:
+    if (true)
+    {
+        std::mutex lm;
+        void * lptr;
+
+        std::mutex rm;
+        void * rptr;
+
+
+        auto p = [&]
+        {
+            rm.lock();
+            std::cout << "p locked\n";
+            std::this_thread::sleep_for(std::chrono::seconds(3));
+            rm.unlock();
+
+            rm.lock();
+            std::cout << "p unlocked\n";
+            std::this_thread::sleep_for(std::chrono::seconds(3));
+            rm.unlock();
+        };
+        auto t = std::thread(p);
+
+        while (true)
+        {
+            lm.lock();
+
+            if (rm.try_lock())
+            {
+                std::cout << "main locked\n";
+            }
+            else
+            {
+                lm.unlock();
+            }
+        }
+
+        rm.unlock();
+        lm.unlock();
+        std::cout << "main unlocked\n";
     }
 
 	return 0;
