@@ -120,8 +120,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="atomic_link_element.hpp" />
-    <ClInclude Include="atomic_link_element_asym.hpp" />
-    <ClInclude Include="atomic_link_element_nosp.hpp" />
     <ClInclude Include="link_element.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -4,8 +4,6 @@
 
 #include "../link/link_element.hpp"
 #include "../link/atomic_link_element.hpp"
-#include "../link/atomic_link_element_nosp.hpp"
-#include "../link/atomic_link_element_asym.hpp"
 
 int main()
 {
@@ -24,7 +22,7 @@ int main()
         std::cout << std::endl;
     }
 
-    if (false)
+    if (true)
     {
         link_element a;
         link_element x;
@@ -174,84 +172,6 @@ int main()
     {
         atomic_link_element a;
         auto a_moved = std::move(a);
-    }
-
-    // link element without shared_ptr using double on each stack
-    if (false)
-    {
-        nosp::atomic_link_element a;
-        nosp::atomic_link_element b;
-
-        nosp::atomic_link_element x;
-        nosp::atomic_link_element y;
-
-        std::tie(a, b) = nosp::make_atomic_link();
-        std::tie(x, y) = nosp::make_atomic_link();
-
-        swap(a, b);
-        swap(y, x);
-
-        swap(x, a);
-
-        std::cout << "a linked = " << a.linked() << "\n";
-        std::cout << "b linked = " << b.linked() << "\n";
-
-        std::cout << "x linked = " << x.linked() << "\n";
-        std::cout << "y linked = " << y.linked() << "\n";
-    }
-
-    if (true)
-    {
-        nosp::atomic_link_element a;
-
-        auto proc = [&]
-        {
-            for (unsigned int n = 0; n < 5; ++n)
-            {
-                {
-                    std::unique_lock l(a);
-                    std::cout << "a linked = " << a.linked() << "\n";
-                }
-                std::this_thread::sleep_for(std::chrono::seconds(1));
-            }
-        };
-        auto t = std::async(proc);
-
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-
-        {
-            nosp::atomic_link_element b;
-
-            std::tie(a, b) = nosp::make_atomic_link();
-
-            {
-                std::unique_lock l(b);
-                std::cout << "b linked = " << b.linked() << "\n";
-                std::this_thread::sleep_for(std::chrono::seconds(3));
-            }
-
-            std::this_thread::sleep_for(std::chrono::seconds(2));
-        }
-    }
-
-    if (false)
-    {
-        asymetric_link_element::slave s;
-        asymetric_link_element::master m;
-
-        m.m_element_ptr = &s;
-        s.m_element_ptr = &m;
-
-        auto f = std::async([&]
-        {
-            std::unique_lock lock(s);
-            std::cout << "slave locked" << std::endl;
-        });
-
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-
-        std::unique_lock lock(m);
-        std::cout << "master locked" << std::endl;
     }
 
     // asymetric locking:
