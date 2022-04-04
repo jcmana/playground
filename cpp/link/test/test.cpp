@@ -176,14 +176,62 @@ int main()
         auto a_moved = std::move(a);
     }
 
+    // link element without shared_ptr using double on each stack
     if (false)
     {
-        atomic_link_element_nosp a;
-        atomic_link_element_nosp b;
+        nosp::atomic_link_element a;
+        nosp::atomic_link_element b;
 
-        std::tie(a, b) = make_atomic_link_nosp();
+        nosp::atomic_link_element x;
+        nosp::atomic_link_element y;
 
-        auto a_moved = std::move(a);
+        std::tie(a, b) = nosp::make_atomic_link();
+        std::tie(x, y) = nosp::make_atomic_link();
+
+        swap(a, b);
+        swap(y, x);
+
+        swap(x, a);
+
+        std::cout << "a linked = " << a.linked() << "\n";
+        std::cout << "b linked = " << b.linked() << "\n";
+
+        std::cout << "x linked = " << x.linked() << "\n";
+        std::cout << "y linked = " << y.linked() << "\n";
+    }
+
+    if (true)
+    {
+        nosp::atomic_link_element a;
+
+        auto proc = [&]
+        {
+            for (unsigned int n = 0; n < 5; ++n)
+            {
+                {
+                    std::unique_lock l(a);
+                    std::cout << "a linked = " << a.linked() << "\n";
+                }
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+            }
+        };
+        auto t = std::async(proc);
+
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+
+        {
+            nosp::atomic_link_element b;
+
+            std::tie(a, b) = nosp::make_atomic_link();
+
+            {
+                std::unique_lock l(b);
+                std::cout << "b linked = " << b.linked() << "\n";
+                std::this_thread::sleep_for(std::chrono::seconds(3));
+            }
+
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+        }
     }
 
     if (false)
@@ -241,14 +289,10 @@ int main()
     }
 
     // double mutex dtor algorithm:
-    if (true)
+    if (false)
     {
         std::mutex lm;
-        void * lptr;
-
         std::mutex rm;
-        void * rptr;
-
 
         auto p = [&]
         {
@@ -258,11 +302,13 @@ int main()
             rm.unlock();
 
             rm.lock();
-            std::cout << "p unlocked\n";
+            std::cout << "p locked\n";
             std::this_thread::sleep_for(std::chrono::seconds(3));
             rm.unlock();
         };
         auto t = std::thread(p);
+
+        std::this_thread::sleep_for(std::chrono::seconds(1));
 
         while (true)
         {
@@ -271,6 +317,7 @@ int main()
             if (rm.try_lock())
             {
                 std::cout << "main locked\n";
+                break;
             }
             else
             {
@@ -281,6 +328,8 @@ int main()
         rm.unlock();
         lm.unlock();
         std::cout << "main unlocked\n";
+
+        t.join();
     }
 
 	return 0;
