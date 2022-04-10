@@ -13,18 +13,33 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\observable">
+      <UniqueIdentifier>{00c91f64-94ad-461e-9de4-3ff38d3af427}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="shared_observable.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="basic_observable.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="unique_observable.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="shared_ref_observable.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="basic_obe.hpp">
+      <Filter>Header Files\observable</Filter>
+    </ClInclude>
+    <ClInclude Include="shared_obe.hpp">
+      <Filter>Header Files\observable</Filter>
+    </ClInclude>
+    <ClInclude Include="unique_obe.hpp">
+      <Filter>Header Files\observable</Filter>
+    </ClInclude>
+    <ClInclude Include="observable.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="unique_txn.hpp">
+      <Filter>Header Files\observable</Filter>
+    </ClInclude>
+    <ClInclude Include="shared_txn.hpp">
+      <Filter>Header Files\observable</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

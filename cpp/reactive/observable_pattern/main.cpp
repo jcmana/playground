@@ -5,10 +5,7 @@
 #include <functional>
 #include <memory>
 
-#include "basic_observable.hpp"
-#include "unique_observable.hpp"
-#include "shared_observable.hpp"
-#include "shared_ref_observable.hpp"
+#include "observable.hpp"
 
 template<typename ... A>
 using F = std::function<void(A ...)>;
@@ -55,7 +52,7 @@ int main()
     // basic observable (single type)
     if (false)
     {
-        basic_observable<F, int> o{12};
+        basic_obe<F, int> o{12};
 
         auto observer = [](int value)
         {
@@ -64,43 +61,10 @@ int main()
 
         auto g = o.observe(observer);
         o.notify();
-        o.get<0>() = 7;
+        o.get() = 7;
         o.notify();
-        o.get<0>() = 3;
+        o.get() = 3;
         o.notify();
-    }
-
-    // basic observable (muliple types)
-    if (false)
-    {
-        basic_observable<F, int, char> o;
-
-        auto observer = [](int i, char c)
-        {
-            std::cout << i << ", " << c << std::endl;
-        };
-
-        auto g = o.observe(observer);
-        o.notify();
-        o.get<0>() = 7;
-        o.get<1>() = 'f';
-        o.notify();
-        o.get<0>() = 3;
-        o.get<1>() = 'k';
-        o.notify();
-
-
-        auto o_move = std::move(o);
-        o_move = std::tuple{2, 'l'};
-        o_move.notify();
-        o.notify();
-
-        {
-            const auto & o_ref = o;
-            auto c = o_ref.get<1>();
-        }
-
-        auto & [a, b] = o;
     }
 
     // basic observable (overloading)
@@ -108,17 +72,17 @@ int main()
     {
         // free function
         {
-            basic_observable<Fptr, int> o;
+            basic_obe<Fptr, int> o;
 
             auto g = o.observe(cb);     // automatically takes the correct function
             o.notify();
-            o.get<0>() = 4;
+            o.get() = 4;
             o.notify();
         }
 
         // std::function
         {
-            basic_observable<F, int> o;
+            basic_obe<F, int> o;
             o.observe<void(*)(int)>(cb);
         }
     }
@@ -126,16 +90,16 @@ int main()
     // unique observable
     if (false)
     {
-        unique_observable o{4, 'd'};
+        unique_obe o{4};
 
-        auto observer = [](int i, char c)
+        auto observer = [](int i)
         {
-            std::cout << i << ", " << c << std::endl;
+            std::cout << i << std::endl;
         };
 
         o.observe(observer);
         o.notify();
-        o = std::tuple{12, 'x'};
+        o = 12;
         o.notify();
 
         auto o_moved = std::move(o);
@@ -151,7 +115,7 @@ int main()
     // unique and shared transactions
     if (true)
     {
-        shared_observable o(0);
+        shared_obe o(0);
 
         auto observer = [](int i)
         {
@@ -187,8 +151,8 @@ int main()
         {
             // access from two shared transactions
             shared_txn sg(o);
-            std::cout << sg.get<0>() << std::endl;
-            std::cout << shared_txn{o}.get<0>() << std::endl;
+            std::cout << sg.get() << std::endl;
+            std::cout << shared_txn{o}.get() << std::endl;
         }
 
         t.join();
@@ -197,14 +161,14 @@ int main()
     // join shared observables
     if (false)
     {
-        shared_observable<int> a;
-        shared_observable<int> b;
+        shared_obe<int> a;
+        shared_obe<int> b;
 
-        shared_observable<int, int> c = join(a, b);
+        auto c = join(a, b);
 
-        auto observer = [](int value_a, int value_b)
+        auto observer = [](std::tuple<int, int> value)
         {
-            std::cout << value_a << ", " << value_b << std::endl;
+            std::cout << std::get<0>(value) << ", " << std::get<1>(value)<< std::endl;
         };
         c.observe(observer);
 
@@ -216,9 +180,9 @@ int main()
     // compose shared observables
     if (false)
     {
-        shared_observable<int> a;
-        shared_observable<int> b;
-        shared_observable<int> sum;
+        shared_obe<int> a;
+        shared_obe<int> b;
+        shared_obe<int> sum;
 
         auto observer_ab = [sum](int value_a, int value_b)
         {
@@ -239,8 +203,8 @@ int main()
     // join shared observables (no composite)
     if (false)
     {
-        shared_observable<int> a;
-        shared_observable<int> b;
+        shared_obe<int> a;
+        shared_obe<int> b;
 
         auto observer = [](int value_a, int value_b)
         {
@@ -256,7 +220,7 @@ int main()
     // await_if shared observable
     if (false)
     {
-        shared_observable<int> a;
+        shared_obe<int> a;
 
         auto proc = [a]
         {
@@ -274,7 +238,7 @@ int main()
 
         std::cout << "awaiting value" << std::endl;
         await_if(a, pred);
-        std::cout << shared_txn{a}.get<0>() << std::endl;
+        std::cout << shared_txn{a}.get() << std::endl;
 
         t.join();
     }
@@ -282,7 +246,7 @@ int main()
     // await_any shared observable
     if (false)
     {
-        shared_observable<int, int> a;
+        shared_obe<std::tuple<int, int>> a;
 
         auto proc = [a]
         {
@@ -295,7 +259,8 @@ int main()
 
         std::cout << "awaiting any change" << std::endl;
         await_any(a);
-        std::cout << shared_txn{a}.get<0>() << ", " << shared_txn{a}.get<1>() << std::endl;
+        const auto v = shared_txn{a}.get();
+        std::cout << std::get<0>(v) << ", " << std::get<1>(v) << std::endl;
 
         t.join();
     }
@@ -303,7 +268,7 @@ int main()
     // await shared observable
     if (false)
     {
-        shared_observable<int, int> a;
+        shared_obe<std::tuple<int, int>> a;
 
         auto proc = [a]
         {
@@ -317,8 +282,9 @@ int main()
         std::thread t(proc);
 
         std::cout << "awaiting value" << std::endl;
-        await(a, 16, 2);
-        std::cout << shared_txn{a}.get<0>() << ", " << shared_txn{a}.get<1>() << std::endl;
+        await(a, std::tuple{16, 2});
+        const auto v = shared_txn{a}.get();
+        std::cout << std::get<0>(v) << ", " << std::get<1>(v) << std::endl;
 
         t.join();
     }
@@ -326,7 +292,7 @@ int main()
     // shared observable without value (a shared signal)
     if (false)
     {
-        shared_observable<void> so;
+        shared_obe<void> so;
 
         auto observer = []
         {
@@ -346,10 +312,11 @@ int main()
         so.notify();
     }
 
+    /*
     // shared observarble of reference
     if (false)
     {
-        shared_ref_observable<std::unique_ptr<int>> o;
+        shared_obe<std::unique_ptr<int>> o;
         
         auto observer = [](const int & ref)
         {
@@ -357,7 +324,8 @@ int main()
         };
         o.observe(observer);
         o.m_sp->notify();
-        *o.m_sp->get<0>() = 5;
+        *o.m_sp->get() = 5;
         o.m_sp->notify();
     }
+    */
 }
