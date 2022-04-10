@@ -217,7 +217,7 @@ int main()
     }
 
     // join 3 shared observables (no composite)
-    if (true)
+    if (false)
     {
         shared_obe<int> a;
         shared_obe<int> b;
@@ -255,14 +255,14 @@ int main()
         };
 
         std::cout << "awaiting value" << std::endl;
-        await_if(a, pred);
-        std::cout << shared_txn{a}.get() << std::endl;
+        auto txn = await_if(a, pred);
+        std::cout << txn.get() << std::endl;
 
         t.join();
     }
 
     // await_any shared observable
-    if (false)
+    if (true)
     {
         shared_obe<std::tuple<int, int>> a;
 
@@ -275,10 +275,11 @@ int main()
         };
         std::thread t(proc);
 
-        std::cout << "awaiting any change" << std::endl;
-        await_any(a);
-        const auto v = shared_txn{a}.get();
-        std::cout << std::get<0>(v) << ", " << std::get<1>(v) << std::endl;
+        {
+            std::cout << "awaiting any change" << std::endl;
+            auto txn = await_any(a);
+            std::cout << std::get<0>(txn.get()) << ", " << std::get<1>(txn.get()) << std::endl;
+        }
 
         t.join();
     }

@@ -13,13 +13,14 @@
 /// \param      predicate       Functor with signature `bool(const T & ... args)`; should return `true`
 ///                             if condition is met, `false` otherwise.
 template<typename F, typename T>
-void await_if(shared_obe<T> o, F && predicate)
+auto await_if(shared_obe<T> o, F && predicate)
 {
     std::mutex mutex;
     std::condition_variable cv;
     bool awaited = false;
+    shared_txn<T> txn;
 
-    auto observer = [&predicate, &mutex, &cv, &awaited](const T & value)
+    auto observer = [&o, &predicate, &mutex, &cv, &awaited, &txn](const T & value)
     {
         if (predicate(value))
         {
@@ -29,7 +30,11 @@ void await_if(shared_obe<T> o, F && predicate)
                 awaited = true;
             }
 
+            // Wake up the condition variable
             cv.notify_one();
+
+            // Extend the shared lock on observable
+            txn = shared_txn{o};
         }
     };
 
@@ -44,31 +49,31 @@ void await_if(shared_obe<T> o, F && predicate)
         }
     }
 
-    // JMTODO: could await_if return shared_txn to optionally keep the lock?
+    return txn;
 }
 
 /// \brief      Waits for any modfication of `observable`.
 template<typename T>
-void await_any(const shared_obe<T> & o)
+auto await_any(const shared_obe<T> & o)
 {
     auto predicate = [](const T & value)
     {
         return true;
     };
 
-    await_if(o, std::move(predicate));
+    return await_if(o, std::move(predicate));
 }
 
 /// \brief      Waits for modfication of `shared_obe` to `value`.
 template<typename T>
-void await(const shared_obe<T> & o, const T & value)
+auto await(const shared_obe<T> & o, const T & value)
 {
     auto predicate = [&value](const T & modified_value)
     {
         return modified_value == value;
     };
 
-    await_if(o, std::move(predicate));
+    return await_if(o, std::move(predicate));
 }
 
 /// \brief      Joins `shared_obe`s value as `functor`'s arguments.
