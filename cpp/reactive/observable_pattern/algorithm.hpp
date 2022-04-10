@@ -12,16 +12,16 @@
 /// \param      o               `shared_obe` to observe.
 /// \param      predicate       Functor with signature `bool(const T & ... args)`; should return `true`
 ///                             if condition is met, `false` otherwise.
-template<typename F, typename ... A>
-void await_if(shared_obe<A ...> o, F && predicate)
+template<typename F, typename T>
+void await_if(shared_obe<T> o, F && predicate)
 {
     std::mutex mutex;
     std::condition_variable cv;
     bool awaited = false;
 
-    auto observer = [&predicate, &mutex, &cv, &awaited](const A & ... args)
+    auto observer = [&predicate, &mutex, &cv, &awaited](const T & value)
     {
-        if (predicate(args ...))
+        if (predicate(value))
         {
             // Critical section:
             {
@@ -48,10 +48,10 @@ void await_if(shared_obe<A ...> o, F && predicate)
 }
 
 /// \brief      Waits for any modfication of `observable`.
-template<typename ... A>
-void await_any(const shared_obe<A ...> & o)
+template<typename T>
+void await_any(const shared_obe<T> & o)
 {
-    auto predicate = [](const A & ... args)
+    auto predicate = [](const T & value)
     {
         return true;
     };
@@ -60,71 +60,51 @@ void await_any(const shared_obe<A ...> & o)
 }
 
 /// \brief      Waits for modfication of `shared_obe` to `value`.
-template<typename ... A>
-void await(const shared_obe<A ...> & o, const A & ... values)
+template<typename T>
+void await(const shared_obe<T> & o, const T & value)
 {
-    std::tuple awaited_values{values ...};
-
-    auto predicate = [&awaited_values](const A & ... values)
+    auto predicate = [&value](const T & modified_value)
     {
-        return std::tuple{values ...} == awaited_values;
+        return modified_value == value;
     };
 
     await_if(o, std::move(predicate));
 }
 
 /// \brief      Joins `shared_obe`s value as `functor`'s arguments.
-template<typename F, typename Ta, typename Tb>
-void join(F && functor, shared_obe<Ta> & a, shared_obe<Tb> & b)
+template<typename F, typename A, typename B>
+void join(F && functor, shared_obe<A> & a, shared_obe<B> & b)
 {
-    auto observer_a = [functor, b](auto ... args) mutable
+    auto observer_a = [functor, b](const A & value_a) mutable
     {
-        std::tuple<Ta> args_a = {args ...};
-        std::tuple<Tb> args_b = shared_txn{b};
-
-        std::apply(functor, std::tuple_cat(args_a, args_b));
+        functor(value_a, shared_txn{b});
     };
 
-    auto observer_b = [functor, a](auto ... args) mutable
+    auto observer_b = [functor, a](const B & value_b) mutable
     {
-        std::tuple<Ta> args_a = shared_txn{a};
-        std::tuple<Tb> args_b = {args ...};
-
-        std::apply(functor, std::tuple_cat(args_a, args_b));
+        functor(shared_txn{a}, value_b);
     };
 
     a.observe(std::move(observer_a));
     b.observe(std::move(observer_b));
 }
 
-template<typename F, typename Ta, typename Tb, typename Tc>
-void join(F && functor, shared_obe<Ta> & a, shared_obe<Tb> & b, shared_obe<Tc> & c)
+template<typename F, typename A, typename B, typename C>
+void join(F && functor, shared_obe<A> & a, shared_obe<B> & b, shared_obe<C> & c)
 {
-    auto observer_a = [functor, b, c](auto ... args) mutable
+    auto observer_a = [functor, b, c](const A & value_a) mutable
     {
-        std::tuple<Ta> args_a = {args ...};
-        std::tuple<Tb> args_b = b;
-        std::tuple<Tc> args_c = c;
-
-        std::apply(functor, std::tuple_cat(args_a, args_b, args_c));
+        functor(value_a, shared_txn{b}, shared_txn{c});
     };
 
-    auto observer_b = [functor, a, c](auto ... args) mutable
+    auto observer_b = [functor, a, c](const B & value_b) mutable
     {
-        std::tuple<Ta> args_a = a;
-        std::tuple<Tb> args_b = {args ...};
-        std::tuple<Tc> args_c = c;
-
-        std::apply(functor, std::tuple_cat(args_a, args_b, args_c));
+        functor(shared_txn{a}, value_b, shared_txn{c});
     };
 
-    auto observer_c = [functor, a, b](auto ... args) mutable
+    auto observer_c = [functor, a, b](const C & value_c) mutable
     {
-        std::tuple<Ta> args_a = shared_txn{a};
-        std::tuple<Tb> args_b = shared_txn{b};
-        std::tuple<Tc> args_c = {args ...};
-
-        std::apply(functor, std::tuple_cat(args_a, args_b, args_c));
+        functor(shared_txn{a}, shared_txn{b}, value_c);
     };
 
     a.observe(std::move(observer_a));

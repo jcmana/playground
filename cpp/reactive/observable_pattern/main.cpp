@@ -113,7 +113,7 @@ int main()
     }
 
     // unique and shared transactions
-    if (true)
+    if (false)
     {
         shared_obe o(0);
 
@@ -200,7 +200,7 @@ int main()
         unique_txn{b} = 4;
     }
 
-    // join shared observables (no composite)
+    // join 2 shared observables (no composite)
     if (false)
     {
         shared_obe<int> a;
@@ -210,11 +210,29 @@ int main()
         {
             std::cout << value_a << ", " << value_b << std::endl;
         };
-
         join(observer, a, b);
 
         unique_txn{b} = 4;
         unique_txn{a} = 7;
+    }
+
+    // join 3 shared observables (no composite)
+    if (true)
+    {
+        shared_obe<int> a;
+        shared_obe<int> b;
+        shared_obe<int> c;
+
+        auto observer = [](int value_a, int value_b, int value_c)
+        {
+            std::cout << value_a << ", " << value_b << ", " << value_c << std::endl;
+        };
+        join(observer, a, b, c);
+
+        unique_txn{b} = 4;
+        unique_txn{a} = 7;
+        unique_txn{c} = 1;
+        unique_txn{a} = 8;
     }
 
     // await_if shared observable
