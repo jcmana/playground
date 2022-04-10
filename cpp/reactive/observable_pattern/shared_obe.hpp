@@ -49,7 +49,7 @@ public:
     void notify() const;
 
     template<typename TT>
-    friend void swap(shared_obe<TT> & lhs, shared_obe<TT> & rhs);
+    friend void swap(shared_obe<TT> & lhs, shared_obe<TT> & rhs) noexcept;
 
 private:
     std::shared_ptr<observable_type> m_sp;
@@ -78,7 +78,7 @@ public:
 
     void notify() const;
 
-    friend void swap(shared_obe<void> & lhs, shared_obe<void> & rhs);
+    friend void swap(shared_obe<void> & lhs, shared_obe<void> & rhs) noexcept;
 
 private:
     std::shared_ptr<observable_type> m_sp;
@@ -156,7 +156,7 @@ shared_obe<T>::notify() const
 
 template<typename T>
 void 
-swap(shared_obe<T> & lhs, shared_obe<T> & rhs)
+swap(shared_obe<T> & lhs, shared_obe<T> & rhs) noexcept
 {
     using std::swap;
     swap(lhs.m_sp, rhs.m_sp);
@@ -212,7 +212,7 @@ inline void shared_obe<void>::notify() const
     m_sp->invoke();
 }
 
-inline void swap(shared_obe<void> & lhs, shared_obe<void> & rhs)
+inline void swap(shared_obe<void> & lhs, shared_obe<void> & rhs) noexcept
 {
     using std::swap;
     swap(lhs.m_sp, rhs.m_sp);

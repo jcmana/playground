@@ -49,6 +49,7 @@ auto await_if(shared_obe<T> o, F && predicate)
         }
     }
 
+    // Allow caller to optionally keep the transaction and hold the observable locked
     return txn;
 }
 
@@ -119,21 +120,19 @@ void join(F && functor, shared_obe<A> & a, shared_obe<B> & b, shared_obe<C> & c)
 
 /// \brief      Joins `shared_obe`s into composite.
 /// \warning    Changes made on composite do not propagate into the original `shared_obe`s.
-template<typename Ta, typename Tb>
-auto join(shared_obe<Ta> & a, shared_obe<Tb> & b)
+template<typename A, typename B>
+auto join(shared_obe<A> & a, shared_obe<B> & b)
 {
-    shared_obe<std::tuple<Ta, Tb>> composite;
+    shared_obe<std::tuple<A, B>> composite;
 
-    auto observer_a = [composite, b](Ta value_a) mutable
+    auto observer_a = [composite, b](const A & value_a) mutable
     {
-        Tb value_b = shared_txn{b};
-        unique_txn{composite} = {std::move(value_a), std::move(value_b)};
+        unique_txn{composite} = {std::move(value_a), shared_txn{b}};
     };
 
-    auto observer_b = [composite, a](Tb value_b) mutable
+    auto observer_b = [composite, a](const B & value_b) mutable
     {
-        Ta value_a = shared_txn{a};
-        unique_txn{composite} = {std::move(value_a), std::move(value_b)};
+        unique_txn{composite} = {shared_txn{a}, std::move(value_b)};
     };
 
     a.observe(std::move(observer_a));

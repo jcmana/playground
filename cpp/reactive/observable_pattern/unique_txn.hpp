@@ -12,9 +12,13 @@ public:
     using value_type = typename scoped_observable_type::value_type;
 
 public:
-    unique_txn() = default;
+    unique_txn() :
+        m_lock(),
+        m_sp()
+    {
+    }
 
-    explicit unique_txn(const scoped_observable_type & observable_ref) :
+    explicit unique_txn(scoped_observable_type & observable_ref) :
         m_lock(unique_lock(*observable_ref.m_sp)),
         m_sp(observable_ref.m_sp)
     {
@@ -24,7 +28,9 @@ public:
     {
         if (m_sp)
         {
-            // Downgrade to shared lock to avoid read access in callbacks
+            // Downgrade to shared lock to allow read access in callbacks. Using
+            // unique lock leads to deadlock in subsequent callbacks when reading
+            // this observable value is required.
             m_lock.unlock_unique();
 
             // Notify callbacks with current value

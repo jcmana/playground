@@ -115,7 +115,7 @@ int main()
     // unique and shared transactions
     if (false)
     {
-        shared_obe o(0);
+        shared_obe o{0};
 
         auto observer = [](int i)
         {
@@ -123,11 +123,11 @@ int main()
         };
         o.observe(observer);
 
-        auto proc = [o]
+        auto proc = [o]() mutable
         {
             for (auto n = 0; n != 10; ++n)
             {
-                unique_txn ug(o);
+                unique_txn ug{o};
                 ug = 0;
             }
         };
@@ -184,7 +184,7 @@ int main()
         shared_obe<int> b;
         shared_obe<int> sum;
 
-        auto observer_ab = [sum](int value_a, int value_b)
+        auto observer_ab = [sum](int value_a, int value_b) mutable
         {
             unique_txn{sum} = value_a + value_b;
         };
@@ -240,7 +240,7 @@ int main()
     {
         shared_obe<int> a;
 
-        auto proc = [a]
+        auto proc = [a]() mutable
         {
             std::this_thread::sleep_for(std::chrono::seconds(1));
             unique_txn{a} = 4;
@@ -266,7 +266,7 @@ int main()
     {
         shared_obe<std::tuple<int, int>> a;
 
-        auto proc = [a]
+        auto proc = [a]() mutable
         {
             std::this_thread::sleep_for(std::chrono::seconds(1));
             unique_txn{a} = {4, 2};
@@ -289,7 +289,7 @@ int main()
     {
         shared_obe<std::tuple<int, int>> a;
 
-        auto proc = [a]
+        auto proc = [a]() mutable
         {
             std::this_thread::sleep_for(std::chrono::seconds(1));
             unique_txn{a} = {4, 2};
