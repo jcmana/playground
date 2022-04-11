@@ -439,3 +439,14 @@ auto join(shared_observable<Ta> & a, shared_observable<Tb> & b)
 
     return composite;
 }
+
+template<typename ... A>
+void connect(shared_observable<A ...> & a, shared_observable<A ...> & b)
+{
+    auto observer_a = [b](const A & ... args)
+    {
+        unique_txn{b} = {args ...};
+    };
+
+    a.observe(std::move(observer_a));
+}

@@ -149,7 +149,7 @@ int main()
     }
 
     // unique and shared transactions
-    if (true)
+    if (false)
     {
         shared_observable o(0);
 
@@ -359,5 +359,29 @@ int main()
         o.m_sp->notify();
         *o.m_sp->get<0>() = 5;
         o.m_sp->notify();
+    }
+
+    // tunnel value from one observable to another
+    if (true)
+    {
+        shared_observable<int> soA;
+        shared_observable<int> soB;
+
+        auto observer_a = [](int value)
+        {
+            std::cout << "A changed = " << value << "\n";
+        };
+
+        auto observer_b = [](int value)
+        {
+            std::cout << "B changed = " << value << "\n";
+        };
+
+        soA.observe(observer_a);
+        soB.observe(observer_b);
+
+        unique_txn{soA} = 7;
+        connect(soA, soB);
+        unique_txn{soA} = 42;
     }
 }
