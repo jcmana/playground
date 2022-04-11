@@ -19,15 +19,15 @@ public:
     bool linked() const noexcept;
 
     /// \brief      Locks the linked pair if `linked()` or this element.
-    void lock();
-    void unlock();
+    void lock() const;
+    void unlock() const;
 
 public:
     friend std::tuple<atomic_link_element, atomic_link_element> make_atomic_link();
     friend void swap(atomic_link_element & lhs, atomic_link_element & rhs);
 
 private:
-    std::mutex m_mutex;
+    mutable std::mutex m_mutex;
 	atomic_link_element * m_element_ptr;
 };
 
@@ -74,7 +74,7 @@ bool atomic_link_element::linked() const noexcept
 	return m_element_ptr != nullptr;
 }
 
-void atomic_link_element::lock()
+void atomic_link_element::lock() const
 {
     while (true)
     {
@@ -99,7 +99,7 @@ void atomic_link_element::lock()
     }
 }
 
-void atomic_link_element::unlock()
+void atomic_link_element::unlock() const
 {
     if (m_element_ptr != nullptr)
     {

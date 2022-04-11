@@ -3,39 +3,39 @@
 #include <memory>
 #include <vector>
 
-#include "basic_observable.hpp"
+#include "basic_obe.hpp"
 
-template<typename ... A>
+template<typename T>
 class shared_ref_observable;
 
-template<typename ... A>
-class shared_ref_observable<std::unique_ptr<A> ...>
+template<typename T>
+class shared_ref_observable<std::unique_ptr<T>>
 {
 public:
-    template<typename ... FA>
-    using functor_type = std::function<void(const FA & ...)>;
-    using observable_type = basic_observable<functor_type, std::unique_ptr<A> ...>;
+    template<typename TT>
+    using functor_type = std::function<void(const TT &)>;
+    using observable_type = basic_obe<functor_type, std::unique_ptr<T>>;
     using guard_type = typename observable_type::guard_type;
     using value_type = typename observable_type::value_type;
     using mutex_type = typename observable_type::mutex_type;
 
     shared_ref_observable() noexcept :
-        m_sp(new observable_type(std::unique_ptr<A>(new A()) ...)),
+        m_sp(new observable_type(std::unique_ptr<T>(new T()))),
         m_observers()
     {
     }
 
-    shared_ref_observable(std::unique_ptr<A> ... args) noexcept :
-        m_sp(new observable_type(std::forward<std::unique_ptr<A>>(args) ...)),
+    shared_ref_observable(std::unique_ptr<T> up) noexcept :
+        m_sp(new observable_type(std::move(up))),
         m_observers()
     {
     }
 
-    void observe(functor_type<A ...> callback) noexcept
+    void observe(functor_type<T> callback) noexcept
     {
-        auto callback_wrapper = [callback](const std::unique_ptr<A> & ... args)
+        auto callback_wrapper = [callback](const std::unique_ptr<T> & up)
         {
-            callback(*args ...);
+            callback(*up);
         };
         m_observers.push_back(m_sp->observe(std::move(callback_wrapper)));
     }

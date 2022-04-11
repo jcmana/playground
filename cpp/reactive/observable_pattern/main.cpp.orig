@@ -346,13 +346,13 @@ int main()
         *o.m_sp->get() = 5;
         o.m_sp->notify();
     }
-    */
+<<<<<<< HEAD
 
     // tunnel value from one observable to another
     if (true)
     {
-        shared_obe<int> soA;
-        shared_obe<int> soB;
+        shared_observable<int> soA;
+        shared_observable<int> soB;
 
         auto observer_a = [](int value)
         {
@@ -371,4 +371,7 @@ int main()
         connect(soA, soB);
         unique_txn{soA} = 42;
     }
+=======
+    */
+>>>>>>> c35a7d1134e2728cf9e749a2a27d0b89abca2519
 }
