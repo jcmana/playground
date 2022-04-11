@@ -22,7 +22,7 @@ int main()
         std::cout << std::endl;
     }
 
-    if (true)
+    if (false)
     {
         link_element a;
         link_element x;
@@ -250,6 +250,23 @@ int main()
         std::cout << "main unlocked\n";
 
         t.join();
+    }
+
+    if (true)
+    {
+        auto [a, b] = make_atomic_link();
+
+        if (a.try_lock())
+        {
+            std::cout << "a locked\n";
+
+            if (b.try_lock())
+            {
+                std::cout << "b locked\n";
+            }
+
+            b.unlock();
+        }
     }
 
 	return 0;
