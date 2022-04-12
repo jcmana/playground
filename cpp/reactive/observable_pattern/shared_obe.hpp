@@ -46,6 +46,10 @@ public:
     void observe(functor_type<T> callback) noexcept;
     auto observe_scoped(functor_type<T> callback) noexcept;
 
+    /// \brief      Convenience overload for member functions.
+    template<typename C>
+    void observe(void(C:: * f)(const T &), C * ptr);
+
     void notify() const;
 
     template<typename TT>
@@ -145,6 +149,14 @@ auto
 shared_obe<T>::observe_scoped(functor_type<T> callback) noexcept
 {
     return m_sp->observe(std::move(callback));
+}
+
+template<typename T>
+template<typename C>
+void 
+shared_obe<T>::observe(void(C:: * f)(const T &), C * ptr)
+{
+    m_sp->observe(std::bind(f, ptr, std::placeholders::_1));
 }
 
 template<typename T>

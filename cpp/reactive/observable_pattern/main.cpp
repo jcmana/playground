@@ -37,6 +37,14 @@ struct ref_specialization<T &>
     std::reference_wrapper<T> reference;
 };
 
+struct observer
+{
+    void cb(const int & value)
+    {
+        std::cout << "modification = " << value << std::endl;
+    }
+};
+
 int main()
 {
     // specialization for reference types
@@ -110,6 +118,15 @@ int main()
         o_moved.notify();
         o.observe(observer);
         o.notify();
+    }
+
+    // shared observable on member function
+    if (true)
+    {
+        observer o;
+        
+        shared_obe so{7};
+        so.observe(&observer::cb, &o);
     }
 
     // unique and shared transactions
