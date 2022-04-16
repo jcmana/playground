@@ -25,12 +25,12 @@ public:
 
     operator value_type() const
     {
-        return (*m_sp);
+        return static_cast<value_type>(*m_sp);
     }
 
     const value_type & get() const noexcept
     {
-        return (*m_sp);
+        return m_sp->get();
     }
 
 private:

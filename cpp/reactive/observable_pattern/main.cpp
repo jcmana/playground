@@ -279,7 +279,7 @@ int main()
     }
 
     // await_any shared observable
-    if (true)
+    if (false)
     {
         shared_obe<std::tuple<int, int>> a;
 
@@ -366,7 +366,7 @@ int main()
     */
 
     // tunnel value from one observable to another
-    if (true)
+    if (false)
     {
         shared_obe<int> soA;
         shared_obe<int> soB;
@@ -387,5 +387,43 @@ int main()
         unique_txn{soA} = 7;
         connect(soA, soB);
         unique_txn{soA} = 42;
+    }
+
+    // benchmarking
+    if (false)
+    {
+        constexpr unsigned int N = 100'000;
+
+        std::vector<shared_obe<int>> so_list(N);
+        constexpr auto s = sizeof(std::condition_variable);
+
+        unsigned int sum = 0;
+        auto observer = [&sum](const int & value)
+        {
+            sum += value;
+        };
+
+        // observe all
+        for (auto & so : so_list)
+        {
+            so.observe(observer);
+        }
+
+        // update all
+        for (unsigned int n = 0; n < N; ++n)
+        {
+            unique_txn{so_list[n]}.get() += n;
+        }
+
+        std::cout << "sum = " << sum << std::endl;
+    }
+
+    // deadlock detection
+    if (true)
+    {
+        shared_obe<int> so(42);
+
+        unique_txn a(so);
+        unique_txn b(so);
     }
 }

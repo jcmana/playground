@@ -57,7 +57,7 @@ public:
         return (*this);
     }
 
-    /// \brief      Assignement, from copy of `value`.
+    /// \brief      Assignment, from copy of `value`.
     basic_obe & operator  =(value_type value)
     {
         m_value = std::move(value);

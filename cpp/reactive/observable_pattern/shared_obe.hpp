@@ -9,7 +9,7 @@
 template<typename T>
 class shared_obe;
 
-/// \brief      Shared reference to an observable value with observers.
+/// \brief      Shared reference to an observable value.
 template<typename T>
 class shared_obe
 {
@@ -43,14 +43,15 @@ public:
     shared_obe & operator  =(const shared_obe & other) noexcept;
     shared_obe & operator  =(shared_obe && other) noexcept;
 
+    /// \brief      Observe changes with functor.
     void observe(functor_type<T> callback) noexcept;
     auto observe_scoped(functor_type<T> callback) noexcept;
 
-    /// \brief      Convenience overload for member functions.
+    /// \brief      Observe changes with member function.
     template<typename C>
     void observe(void(C:: * f)(const T &), C * ptr);
-
-    void notify() const;
+    template<typename C>
+    auto observe_scoped(void(C:: * f)(const T &), C * ptr);
 
     template<typename TT>
     friend void swap(shared_obe<TT> & lhs, shared_obe<TT> & rhs) noexcept;
@@ -79,6 +80,11 @@ public:
 
     void observe(functor_type callback) noexcept;
     auto observe_scoped(functor_type callback) noexcept;
+
+    template<typename C>
+    void observe(void(C:: * f)(), C * ptr);
+    template<typename C>
+    auto observe_scoped(void(C:: * f)(), C * ptr);
 
     void notify() const;
 
@@ -156,14 +162,15 @@ template<typename C>
 void 
 shared_obe<T>::observe(void(C:: * f)(const T &), C * ptr)
 {
-    m_sp->observe(std::bind(f, ptr, std::placeholders::_1));
+    m_observers.push_back(m_sp->observe(std::bind(f, ptr, std::placeholders::_1)));
 }
 
 template<typename T>
-void 
-shared_obe<T>::notify() const
+template<typename C>
+auto 
+shared_obe<T>::observe_scoped(void(C:: * f)(const T &), C * ptr)
 {
-    m_sp->notify();
+    return m_sp->observe(std::bind(f, ptr, std::placeholders::_1));
 }
 
 template<typename T>
@@ -217,6 +224,18 @@ inline void shared_obe<void>::observe(functor_type callback) noexcept
 inline auto shared_obe<void>::observe_scoped(functor_type callback) noexcept
 {
     return m_sp->subscribe(std::move(callback));
+}
+
+template<typename C>
+inline void shared_obe<void>::observe(void(C:: * f)(), C * ptr)
+{
+    m_observers.push_back(m_sp->subscribe(std::move(std::bind(f, ptr))));
+}
+
+template<typename C>
+inline auto shared_obe<void>::observe_scoped(void(C:: * f)(), C * ptr)
+{
+    return m_sp->subscribe(std::move(std::bind(f, ptr)));
 }
 
 inline void shared_obe<void>::notify() const
