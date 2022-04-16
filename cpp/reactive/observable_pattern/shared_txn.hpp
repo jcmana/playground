@@ -2,6 +2,7 @@
 
 #include "shared_obe.hpp"
 
+/// \brief      Shared transaction on `shared_obe` allows concurrent read.
 template<typename T>
 class shared_txn
 {

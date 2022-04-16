@@ -70,11 +70,13 @@ public:
         return m_value;
     }
 
+    /// \returns    Reference to the value.
     value_type & get() noexcept
     {
         return m_value;
     }
 
+    /// \returns    Const. reference to the value.
     const value_type & get() const noexcept
     {
         return m_value;

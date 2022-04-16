@@ -2,7 +2,7 @@
 
 #include "shared_obe.hpp"
 
-/// \brief      Unique transaction on `shared_obe` allow read and write.
+/// \brief      Unique transaction on `shared_obe` allows unique read and write.
 template<typename T>
 class unique_txn
 {
