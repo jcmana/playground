@@ -172,7 +172,6 @@ public:
 	{
 	}
 
-
 	/// \brief		Switch from shared to unique lock.
 	/// \throws		std::exception
 	void lock_unique()
