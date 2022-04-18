@@ -1,6 +1,9 @@
 #pragma once
 
+#include <mutex>
+#include <variant>
 #include <optional>
+#include <utility>
 
 #include "switch_mutex.h"
 
@@ -24,6 +27,15 @@ public:
 		m_mutex_ptr(&mutex)
 	{
 		m_mutex_ptr->lock();
+	}
+
+	explicit unique_lock(T & mutex, std::try_to_lock_t) :
+		m_mutex_ptr(&mutex)
+	{
+		if (m_mutex_ptr->try_lock() == false)
+		{
+			m_mutex_ptr = nullptr;
+		}
 	}
 
 	unique_lock(unique_lock && lock) :
@@ -70,6 +82,11 @@ public:
 		}
 
 		return (*this);
+	}
+
+	bool owns_lock() const
+	{
+		return (m_mutex_ptr != nullptr);
 	}
 
 private:
@@ -141,6 +158,11 @@ public:
 		return (*this);
 	}
 
+	bool owns_lock() const
+	{
+		return (m_mutex_ptr != nullptr);
+	}
+
 private:
 	T * m_mutex_ptr;
 };
@@ -206,6 +228,21 @@ public:
 
 		shared_lock<T> lock = std::move(std::get<unique_lock<T>>(m_lock));
 		m_lock = std::move(lock);
+	}
+
+	bool owns_lock() const
+	{
+		if (std::holds_alternative<shared_lock<T>>(m_lock))
+		{
+			return std::get<shared_lock<T>>(m_lock).owns_lock();
+		}
+
+		if (std::holds_alternative<unique_lock<T>>(m_lock))
+		{
+			return std::get<unique_lock<T>>(m_lock).owns_lock();
+		}
+
+		return false;
 	}
 
 private:

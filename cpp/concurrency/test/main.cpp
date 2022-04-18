@@ -247,12 +247,12 @@ int main()
         auto e_moved = std::move(e);
     }
 
-    if (false)
+    if (true)
     {   
         std::vector l = {print, print_slow, print};
         auto e = basic_executor(execute_tasklist<decltype(l)>, std::move(l));
 
-        for (auto n : {1, 2, 3, 4})
+        for (auto n : {1, 2, 3, 4, 5, 6, 7, 8})
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(300));
             std::cout << n << std::endl;
@@ -436,7 +436,7 @@ int main()
     }
 
     // non-blocking locking 
-    if (true)
+    if (false)
     {
         switch_mutex m;
         m.lock_shared();

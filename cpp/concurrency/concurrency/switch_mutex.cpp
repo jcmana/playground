@@ -2,6 +2,10 @@
 
 void switch_mutex::lock()
 {
+#ifdef SWITCH_MUTEX_MONITOR_DEADLOCK
+	terminate_on_deadlock();
+#endif
+
 	std::unique_lock lock(m_mutex);
 	while (can_lock() == false)
 	{
@@ -92,8 +96,12 @@ void switch_mutex::unlock_shared()
 
 void switch_mutex::lock_unique()
 {
+#ifdef SWITCH_MUTEX_MONITOR_DEADLOCK
+	terminate_on_deadlock();
+#endif
+
 	std::unique_lock lock(m_mutex);
-	while (m_shared_counter > 1 || m_unique_counter > 0)
+	while (can_lock_unique() == false)
 	{
 		m_cv.wait(lock);
 	}
@@ -140,20 +148,12 @@ void switch_mutex::unlock_unique()
 
 bool switch_mutex::can_lock() const
 {
-#ifdef SWITCH_MUTEX_MONITOR_DEADLOCK
-	terminate_on_deadlock();
-#endif
-
 	// Unique lock requires both shared and unique counters at zero
 	return (m_shared_counter == 0 && m_unique_counter == 0);
 }
 
 bool switch_mutex::can_lock_unique() const
 {
-#ifdef SWITCH_MUTEX_MONITOR_DEADLOCK
-	terminate_on_deadlock();
-#endif
-
 	// Upgrading from shared to unique lock both counters at zero but
 	// expects shared lock is already owned
 	return (m_shared_counter == 1 && m_unique_counter == 0);
