@@ -16,6 +16,7 @@ class shared_obe
 public:
     template<typename TT>
     using functor_type = std::function<void(TT)>;
+    using functor_void_type = std::function<void()>;
     using observable_type = basic_obe<functor_type, T>;
     using guard_type = typename observable_type::guard_type;
     using value_type = typename observable_type::value_type;
@@ -52,6 +53,9 @@ public:
     void observe(void(C:: * f)(const T &), C * ptr);
     template<typename C>
     auto observe_scoped(void(C:: * f)(const T &), C * ptr);
+
+    /// \brief      Observe changes with functor ignoring the value.
+    void observe(functor_void_type callback);
 
     template<typename TT>
     friend void swap(shared_obe<TT> & lhs, shared_obe<TT> & rhs) noexcept;
@@ -99,7 +103,7 @@ private:
 
 template<typename T>
 shared_obe<T>::shared_obe() noexcept :
-    m_sp(new observable_type),
+    m_sp(new observable_type()),
     m_observers()
 {
 }
@@ -171,6 +175,17 @@ auto
 shared_obe<T>::observe_scoped(void(C:: * f)(const T &), C * ptr)
 {
     return m_sp->observe(std::bind(f, ptr, std::placeholders::_1));
+}
+
+template<typename T>
+void 
+shared_obe<T>::observe(functor_void_type callback)
+{
+    auto callback_wrapper = [callback](const T & value)
+    {
+        callback();
+    };
+    m_observers.push_back(m_sp->observe(std::move(callback_wrapper)));
 }
 
 template<typename T>

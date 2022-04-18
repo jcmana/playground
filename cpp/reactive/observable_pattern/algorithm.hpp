@@ -127,12 +127,12 @@ auto join(shared_obe<A> & a, shared_obe<B> & b)
 
     auto observer_a = [composite, b](const A & value_a) mutable
     {
-        unique_txn{composite} = {std::move(value_a), shared_txn{b}};
+        unique_txn{composite} = {value_a, shared_txn{b}};
     };
 
     auto observer_b = [composite, a](const B & value_b) mutable
     {
-        unique_txn{composite} = {shared_txn{a}, std::move(value_b)};
+        unique_txn{composite} = {shared_txn{a}, value_b};
     };
 
     a.observe(std::move(observer_a));

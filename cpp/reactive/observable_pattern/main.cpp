@@ -1,3 +1,7 @@
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+
 #include <iostream>
 
 #include <thread>
@@ -121,7 +125,7 @@ int main()
     }
 
     // shared observable on member function
-    if (true)
+    if (false)
     {
         observer o;
         
@@ -173,6 +177,33 @@ int main()
         }
 
         t.join();
+    }
+
+    // shared and unique transaction with non-blocking ctor
+    if (true)
+    {
+        shared_obe<int> so;
+        unique_txn a(so);
+        unique_txn b(so, std::try_to_lock);
+
+        if (b.owns_lock() == false)
+        {
+            std::cout << "b failed to achieve lock" << std::endl;
+        }
+    }
+
+    // shared observable with ignored value
+    if (false)
+    {
+        shared_obe<int> so;
+
+        auto o = []
+        {
+            std::cout << "value changed" << std::endl;
+        };
+        so.observe(o);
+
+        unique_txn{so} = 12;
     }
 
     // join shared observables
@@ -419,11 +450,14 @@ int main()
     }
 
     // deadlock detection
-    if (true)
+    if (false)
     {
         shared_obe<int> so(42);
 
         unique_txn a(so);
-        unique_txn b(so);
+        unique_txn b(so);   // deadlocks
+        shared_txn c(so);   // deadlocks
     }
+
+    _CrtDumpMemoryLeaks();
 }

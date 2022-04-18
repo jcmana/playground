@@ -18,12 +18,21 @@ public:
     {
     }
 
+    /// \brief      Contructor, uniquelly locks the observable.
     explicit unique_txn(scoped_observable_type & observable_ref) :
         m_lock(unique_lock(*observable_ref.m_sp)),
         m_sp(observable_ref.m_sp)
     {
     }
 
+    /// \brief      Contructor, attempts to uniquelly lock the observable.
+    explicit unique_txn(scoped_observable_type & observable_ref, std::try_to_lock_t) :
+        m_lock(unique_lock(*observable_ref.m_sp, std::try_to_lock)),
+        m_sp(observable_ref.m_sp)
+    {
+    }
+
+    /// \brief      Destrctor, notifies observers under `shared_lock` and unlocks after.
     ~unique_txn()
     {
         if (m_sp)
@@ -57,6 +66,12 @@ public:
     const value_type & get() const noexcept
     {
         return m_sp->get();
+    }
+
+    /// \returns    `true` if uniquelly locked, `false` otherwise.
+    bool owns_lock() const
+    {
+        return m_lock.owns_lock();
     }
 
 private:
