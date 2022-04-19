@@ -56,6 +56,7 @@ public:
 
     /// \brief      Observe changes with functor ignoring the value.
     void observe(functor_void_type callback);
+    auto observe_scoped(functor_void_type callback);
 
     template<typename TT>
     friend void swap(shared_obe<TT> & lhs, shared_obe<TT> & rhs) noexcept;
@@ -186,6 +187,17 @@ shared_obe<T>::observe(functor_void_type callback)
         callback();
     };
     m_observers.push_back(m_sp->observe(std::move(callback_wrapper)));
+}
+
+template<typename T>
+auto 
+shared_obe<T>::observe_scoped(functor_void_type callback)
+{
+    auto callback_wrapper = [callback](const T & value)
+    {
+        callback();
+    };
+    return m_sp->observe(std::move(callback_wrapper));
 }
 
 template<typename T>
