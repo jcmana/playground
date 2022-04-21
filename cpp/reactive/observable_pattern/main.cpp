@@ -11,6 +11,8 @@
 
 #include "observable.hpp"
 
+#include "basic_obe_storage.hpp"
+
 template<typename ... A>
 using F = std::function<void(A ...)>;
 
@@ -180,7 +182,7 @@ int main()
     }
 
     // shared and unique transaction with non-blocking ctor
-    if (true)
+    if (false)
     {
         shared_obe<int> so;
         unique_txn a(so);
@@ -457,6 +459,12 @@ int main()
         unique_txn a(so);
         unique_txn b(so);   // deadlocks
         shared_txn c(so);   // deadlocks
+    }
+
+    if (true)
+    {
+        basic_obe_storage<int> a;
+        basic_obe_storage<std::shared_ptr<int>> b;
     }
 
     _CrtDumpMemoryLeaks();
