@@ -32,7 +32,7 @@ public:
     {
     }
 
-    /// \brief      Destrctor, notifies observers under `shared_lock` and unlocks after.
+    /// \brief      Destructor, notifies observers under `shared_lock` and unlocks after.
     ~unique_txn()
     {
         if (m_sp)
