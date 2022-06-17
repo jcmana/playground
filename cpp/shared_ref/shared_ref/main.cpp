@@ -4,7 +4,7 @@
 #include "unique_ref.hpp"
 #include "shared_ref.hpp"
 
-void main()
+int main()
 {
     {
         shared_ref<int> sr = 7;
@@ -65,6 +65,6 @@ void main()
     {
         unique_ref<int> ur = 7;
         //unique_ref<int> ur_copy = ur;             // compile error, deleted function
-        unique_ref<int> ur_move = std::move(ur);
+        //unique_ref<int> ur_move = std::move(ur);  // compile error, deleted function
     }
 }
