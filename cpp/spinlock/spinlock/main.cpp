@@ -23,7 +23,7 @@ int main()
     }
 
     // basic concurrency
-    if (true)
+    if (false)
     {
         spinlock l;
         //std::mutex l;
@@ -49,5 +49,22 @@ int main()
         }
 
         volatile char x = 0;
+    }
+
+    // recursive mutex perf
+    if (true)
+    {
+        std::recursive_mutex m;
+
+        m.lock();
+
+        for (unsigned int n = 0; n < 10'000'000; n++)
+        {
+            m.lock();
+            volatile char x = 0;
+            m.unlock();
+        }
+
+        m.unlock();
     }
 }

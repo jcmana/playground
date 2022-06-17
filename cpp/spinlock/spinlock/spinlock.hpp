@@ -7,7 +7,7 @@ class spinlock
 {
 public:
     spinlock() :
-        m_locked()
+        m_locked(false)
     {
     }
 
@@ -17,9 +17,6 @@ public:
         {
             // exchange stricly m_locked false with true (required unlocked before locking)
             if (m_locked.exchange(true, std::memory_order_acquire) == false)
-            //bool expected = false;
-            //if (m_locked.compare_exchange_weak(expected, true, std::memory_order_acquire))
-            //if (m_locked.test_and_set(std::memory_order_acquire) == false)
             {
                 break;
             }
@@ -31,14 +28,23 @@ public:
         }
     }
 
+    bool try_lock() 
+    {
+        // exchange stricly m_locked false with true (required unlocked before locking)
+        if (m_locked.exchange(true, std::memory_order_acquire) == false)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     void unlock()
     {
         m_locked.store(false, std::memory_order_release);
-        //m_locked.clear();
 
     }
 
 private:
     std::atomic<bool> m_locked;
-    //std::atomic_flag m_locked;
 };
