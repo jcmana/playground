@@ -15,10 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="error.h">
+    <ClInclude Include="error.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="error_store.h">
+    <ClInclude Include="error_store.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="error_data.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
