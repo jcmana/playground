@@ -4,6 +4,44 @@
 #include "unique_ref.hpp"
 #include "shared_ref.hpp"
 
+struct T
+{
+    int value = 0;
+
+    T()
+    {
+        std::cout << "T::T()" << std::endl;
+    }
+
+    T(const T & other)
+    {
+        std::cout << "T::T(const T &)" << std::endl;
+    }
+
+    T(T && other) = delete;
+
+    T & operator  =(const T & other)
+    {
+        std::cout << "T::T(T &&)" << std::endl;
+    }
+
+    T & operator  =(T && other) = delete;
+};
+
+T nonmovable_return_test()
+{
+    T local;
+    local.value = 7;
+    return T(local);
+}
+
+shared_ref<int> return_shared_ref()
+{
+    shared_ref<int> sr;
+    (*sr) = 7;
+    return decltype(sr)(sr);
+}
+
 int main()
 {
     {

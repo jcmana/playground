@@ -19,7 +19,7 @@ public:
     shared_ref(const shared_ref & other) noexcept = default;
     shared_ref(shared_ref && other) noexcept = delete;
 
-    shared_ref & operator  =(const shared_ref & other) = delete;
+    shared_ref & operator  =(const shared_ref & other) = default;
     shared_ref & operator  =(shared_ref && other) = delete;
 
     operator std::shared_ptr<T>() const noexcept
@@ -52,7 +52,7 @@ private:
     }
 
 private:
-    std::shared_ptr<T> m_sp;
+    const std::shared_ptr<T> m_sp;
 };
 
 /// \brief          Constructs `shared_ref` from `shared_ptr`.
