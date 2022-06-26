@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <utility>
 
-#include "error.h"
+#include "error.hpp"
 
 /// <summary>Pairs `error` with its description.</summary>
 template<typename T>

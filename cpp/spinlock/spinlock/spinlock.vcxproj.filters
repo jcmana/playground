@@ -15,14 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="error.hpp">
+    <ClInclude Include="spinlock.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="error_store.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="error_data.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

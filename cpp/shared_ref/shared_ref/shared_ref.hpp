@@ -60,7 +60,7 @@ private:
     }
 
 private:
-    std::shared_ptr<T> m_sp;
+    const std::shared_ptr<T> m_sp;
 };
 
 /// \brief          Constructs `shared_ref` from `shared_ptr`.
