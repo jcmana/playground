@@ -11,16 +11,24 @@ class shared_ref
 public:
     /// \brief      Constructor, new `T` using forwarding constructor.
     template<typename ... A>
-    shared_ref(A ... args) noexcept :
+    shared_ref(A ... args) :
         m_sp(new T(std::forward<A>(args) ...))
     {
     }
 
+    /// \brief      Copy constructor.
     shared_ref(const shared_ref & other) noexcept = default;
-    shared_ref(shared_ref && other) noexcept = delete;
 
-    shared_ref & operator  =(const shared_ref & other) = delete;
-    shared_ref & operator  =(shared_ref && other) = delete;
+    /// \brief      Move constructor.
+    shared_ref(shared_ref && other) noexcept :
+        m_sp(other.m_sp)
+    {
+    }
+
+    shared_ref & operator  =(const shared_ref & other) noexcept = default;
+
+    /// \brief      Move constructor.
+    shared_ref & operator  =(shared_ref && other) noexcept = delete;
 
     operator std::shared_ptr<T>() const noexcept
     {
