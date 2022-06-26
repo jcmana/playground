@@ -25,9 +25,9 @@ public:
     {
     }
 
-    shared_ref & operator  =(const shared_ref & other) noexcept = default;
-
-    /// \brief      Move constructor.
+    /// \brief      Copy assignment, deleted.
+    shared_ref & operator  =(const shared_ref & other) noexcept = delete;
+    /// \brief      Move assignment, deleted.
     shared_ref & operator  =(shared_ref && other) noexcept = delete;
 
     operator std::shared_ptr<T>() const noexcept
