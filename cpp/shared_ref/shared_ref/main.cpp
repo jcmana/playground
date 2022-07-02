@@ -14,7 +14,7 @@ shared_ref<int> return_shared_ref()
 int main()
 {
     {
-        shared_ref<int> sr = 7;
+        shared_ref<int> sr(7);
         shared_ref<int> sr_copy = sr;
 
         (*sr)++;
@@ -36,37 +36,37 @@ int main()
     }
 
     {
-        const shared_ref<int> sr = 7;
+        const shared_ref<int> sr(7);
         (*sr)++;
     }
 
     {
-        shared_ref<const int> sr = 7;
+        shared_ref<const int> sr(7);
         //(*sr)++;      // compile error, const expression
     }
 
     {
-        shared_ref<std::string> sr = "asdfasdf";
+        shared_ref<std::string> sr("asdfasdf");
         std::cout << (*sr) << std::endl;
     }
 
     // Construct from a copy
     {
         std::string s = "tuhnhdfgh";
-        shared_ref<std::string> sr = s;
+        shared_ref<std::string> sr(s);
     }
 
     // Construct from a rref
     {
         std::string s("tuhnhdfgh");
-        shared_ref<std::string> sr = std::move(s);
+        shared_ref<std::string> sr(std::move(s));
     }
 
     // Construct from a shared_ptr
     {
         auto sp = std::make_shared<std::string>("xvcbjteyueetu");
-        auto sr = from_shared_ptr(sp);
-        if (false) auto sq = from_shared_ptr<std::string>(nullptr);        // runtime exception
+        auto sr = shared_ref(sp);
+        if (true) auto sq = shared_ref<int>(std::shared_ptr<int>());        // runtime exception
     }
 
     {

@@ -11,7 +11,7 @@ class shared_ref
 public:
     /// \brief      Constructor, new `T` using forwarding constructor.
     template<typename ... A>
-    shared_ref(A ... args) :
+    explicit shared_ref(A ... args) :
         m_sp(new T(std::forward<A>(args) ...))
     {
     }
@@ -23,6 +23,16 @@ public:
     shared_ref(shared_ref && other) noexcept :
         m_sp(other.m_sp)
     {
+    }
+
+    /// \brief      Constructor, copies reference from `sp`.
+    shared_ref(std::shared_ptr<T> sp) :
+        m_sp(std::move(sp))
+    {
+        if (m_sp == nullptr)
+        {
+            throw std::invalid_argument("shared_ptr was nullptr");
+        }
     }
 
     /// \brief      Copy assignment, deleted.
@@ -50,31 +60,6 @@ public:
         return m_sp.get();
     }
 
-    template<typename TF>
-    friend shared_ref<TF> from_shared_ptr(std::shared_ptr<TF> sp);
-
-private:
-    shared_ref(std::shared_ptr<T> sp) noexcept :
-        m_sp(std::move(sp))
-    {
-    }
-
 private:
     const std::shared_ptr<T> m_sp;
 };
-
-/// \brief          Constructs `shared_ref` from `shared_ptr`.
-/// \throws         std::invalid_argument       If `shared_ptr` is `nullptr`.
-/// 
-/// `shared_ref` will refer to the same object as passed `shared_ptr` and will
-/// prolong its lifetime even after the original `shared_ptr` is destroyed.
-template<typename T>
-shared_ref<T> from_shared_ptr(std::shared_ptr<T> sp)
-{
-    if (sp == nullptr)
-    {
-        throw std::invalid_argument("shared_ptr was nullptr");
-    }
-
-    return shared_ref<T>(std::move(sp));
-}
