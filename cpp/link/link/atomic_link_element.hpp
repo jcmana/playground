@@ -4,8 +4,12 @@
 #include <tuple>
 #include <utility>
 
+template<typename M = std::mutex>
 class atomic_link_element
 {
+public:
+    using mutex_type = M;
+
 public:
 	atomic_link_element() noexcept;
     atomic_link_element(const atomic_link_element & other) noexcept = delete;
@@ -18,33 +22,39 @@ public:
 
     bool linked() const noexcept;
 
-    /// \brief      Locks the linked pair if `linked()` or this element.
     void lock() const;
+    bool try_lock() const;
     void unlock() const;
 
 public:
-    friend std::tuple<atomic_link_element, atomic_link_element> make_atomic_link();
-    friend void swap(atomic_link_element & lhs, atomic_link_element & rhs);
+    template<typename FM>
+    friend std::tuple<atomic_link_element<FM>, atomic_link_element<FM>> make_atomic_link();
+
+    template<typename FM>
+    friend void swap(atomic_link_element<FM> & lhs, atomic_link_element<FM> & rhs);
 
 private:
-    mutable std::mutex m_mutex;
+    mutable mutex_type m_mutex;
 	atomic_link_element * m_element_ptr;
 };
 
 #pragma region link_element implementation:
 
-atomic_link_element::atomic_link_element() noexcept :
+template<typename M>
+atomic_link_element<M>::atomic_link_element() noexcept :
 	m_element_ptr(nullptr)
 {
 }
 
-atomic_link_element::atomic_link_element(atomic_link_element && other) noexcept :
+template<typename M>
+atomic_link_element<M>::atomic_link_element(atomic_link_element && other) noexcept :
     atomic_link_element()
 {
     swap(*this, other);
 }
 
-atomic_link_element::~atomic_link_element() noexcept
+template<typename M>
+atomic_link_element<M>::~atomic_link_element()
 {
     // Critical section:
     {
@@ -58,7 +68,9 @@ atomic_link_element::~atomic_link_element() noexcept
     m_element_ptr = nullptr;
 }
 
-atomic_link_element & atomic_link_element::operator  =(atomic_link_element && other) noexcept
+template<typename M>
+atomic_link_element<M> & 
+atomic_link_element<M>::operator  =(atomic_link_element && other) noexcept
 {
     atomic_link_element empty;
     
@@ -69,12 +81,16 @@ atomic_link_element & atomic_link_element::operator  =(atomic_link_element && ot
     return (*this);
 }
 
-bool atomic_link_element::linked() const noexcept
+template<typename M>
+bool 
+atomic_link_element<M>::linked() const noexcept
 {
 	return m_element_ptr != nullptr;
 }
 
-void atomic_link_element::lock() const
+template<typename M>
+void 
+atomic_link_element<M>::lock() const
 {
     while (true)
     {
@@ -99,7 +115,36 @@ void atomic_link_element::lock() const
     }
 }
 
-void atomic_link_element::unlock() const
+template<typename M>
+bool 
+atomic_link_element<M>:: try_lock() const
+{
+    if (m_mutex.try_lock())
+    {
+        if (m_element_ptr == nullptr)
+        {
+            // Link is already broken, we have only local mutex now
+            return true;
+        }
+
+        if (m_element_ptr->m_mutex.try_lock())
+        {
+            // Both mutexes are acquired, we have a lock
+            return true;
+        }
+
+        // THIS IS RACE BETWEEN THE TWO TRY_LOCKS:
+        // 1. both outer try_lock()s succeeds
+        // 2. both inner try_lock()s fails
+        // == one of the concurrent calls has to return true, one false
+    }
+
+    return false;
+}
+
+template<typename M>
+void
+atomic_link_element<M>::unlock() const
 {
     if (m_element_ptr != nullptr)
     {
@@ -109,10 +154,12 @@ void atomic_link_element::unlock() const
     m_mutex.unlock();
 }
 
-std::tuple<atomic_link_element, atomic_link_element> make_atomic_link()
+template<typename M = std::mutex>
+std::tuple<atomic_link_element<M>, atomic_link_element<M>> 
+make_atomic_link()
 {
-    atomic_link_element a;
-    atomic_link_element b;
+    atomic_link_element<M> a;
+    atomic_link_element<M> b;
 
     a.m_element_ptr = &b;
     b.m_element_ptr = &a;
@@ -120,7 +167,9 @@ std::tuple<atomic_link_element, atomic_link_element> make_atomic_link()
     return {std::move(a), std::move(b)};
 }
 
-void swap(atomic_link_element & lhs, atomic_link_element & rhs)
+template<typename M>
+void 
+swap(atomic_link_element<M> & lhs, atomic_link_element<M> & rhs)
 {
     // Case #1:
     //  - pair a: l----r

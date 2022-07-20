@@ -8,6 +8,7 @@
 #include "atomic_callback_store.hpp"
 
 #include "../callback_store/callback_ref.hpp"
+#include "../../spinlock/spinlock/spinlock.hpp"
 
 struct callback_intf
 {
@@ -32,6 +33,13 @@ void function_slow()
 {
     std::cout << "function_slow()" << std::endl;
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+}
+
+static unsigned int counter = 0;
+
+void function_counter()
+{
+    counter++;
 }
 
 int main()
@@ -112,7 +120,7 @@ int main()
         t.join();
     }
 
-    if (true)
+    if (false)
     {
         callback_intf i;
         atomic_callback_store<callback_ref<callback_intf>> cs;
@@ -136,5 +144,20 @@ int main()
     {
         atomic_callback_guard<void> g;
         auto g_moved = std::move(g);
+    }
+
+    // atomic callback with spinlock
+    if (true)
+    {
+        auto [c, g] = make_atomic_callback<void(*)(), spinlock>(function_counter);
+
+        std::cout << counter << std::endl;
+
+        for (unsigned int n = 0; n < 100'000'000; n++)
+        {
+            c.invoke();
+        }
+
+        std::cout << counter << std::endl;
     }
 }

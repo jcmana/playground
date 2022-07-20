@@ -117,11 +117,11 @@ int main()
     {
         for (unsigned int n = 0; n < 100'000; ++n)
         {
-            atomic_link_element a;
-            atomic_link_element b;
+            atomic_link_element<> a;
+            atomic_link_element<> b;
             std::tie(a, b) = make_atomic_link();
 
-            auto thread_proc = [](atomic_link_element l)
+            auto thread_proc = [](atomic_link_element<> l)
             {
                 l.linked();
             };
@@ -140,13 +140,13 @@ int main()
         std::future<void> f;
 
         {
-            atomic_link_element a;
-            atomic_link_element b;
+            atomic_link_element<> a;
+            atomic_link_element<> b;
             std::tie(a, b) = make_atomic_link();
 
-            auto thread_proc = [](atomic_link_element l)
+            auto thread_proc = [](atomic_link_element<> l)
             {
-                std::unique_lock<atomic_link_element> lock(l);
+                std::unique_lock lock(l);
                 std::cout << "l.linked() = " << l.linked() << std::endl;
                 std::this_thread::sleep_for(std::chrono::seconds(1));
                 std::cout << "l.linked() = " << l.linked() << std::endl;
@@ -163,14 +163,14 @@ int main()
 
     if (false)
     {
-        atomic_link_element a;
-        std::unique_lock<atomic_link_element> lock(a);
+        atomic_link_element<> a;
+        std::unique_lock lock(a);
         //auto a_moved = std::move(a);        // deadlock = acquiring already locked mutex
     }
 
     if (false)
     {
-        atomic_link_element a;
+        atomic_link_element<> a;
         auto a_moved = std::move(a);
     }
 
