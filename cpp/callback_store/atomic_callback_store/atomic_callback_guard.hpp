@@ -21,13 +21,13 @@ public:
 
 template<typename T, typename M>
 atomic_callback_guard<T, M>::atomic_callback_guard() :
-    atomic_link_element()
+    atomic_link_element<M>()
 {
 }
 
 template<typename T, typename M>
 atomic_callback_guard<T, M>::atomic_callback_guard(atomic_link_element<M> element) :
-    atomic_link_element(std::move(element))
+    atomic_link_element<M>(std::move(element))
 {
 }
 

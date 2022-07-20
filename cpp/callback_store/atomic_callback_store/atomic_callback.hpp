@@ -11,6 +11,7 @@ template<typename T, typename M = std::mutex>
 class atomic_callback : private atomic_link_element<M>
 {
 public:
+    using callable_type = T;
     using mutex_type = M;
 
 public:
@@ -18,7 +19,7 @@ public:
     atomic_callback();
 
     /// \copydoc        callback<T>::callback(T, link_element)
-    atomic_callback(T callable, atomic_link_element<M> element);
+    atomic_callback(callable_type callable, atomic_link_element<M> element);
 
     bool active() const;
 
@@ -32,7 +33,7 @@ public:
     friend std::tuple<atomic_callback<FT, FM>, atomic_callback_guard<FT, FM>> make_atomic_callback(FT callable);
 
 private:
-    T m_callable;
+    callable_type m_callable;
 };
 
 #pragma region atomic_callback implementation:
@@ -45,7 +46,7 @@ atomic_callback<T, M>::atomic_callback() :
 
 template<typename T, typename M>
 atomic_callback<T, M>::atomic_callback(T callable, atomic_link_element<M> element) :
-    atomic_link_element(std::move(element)),
+    atomic_link_element<M>(std::move(element)),
     m_callable(std::move(callable))
 {
 }
@@ -54,7 +55,7 @@ template<typename T, typename M>
 bool 
 atomic_callback<T, M>::active() const
 {
-    return atomic_link_element::linked();
+    return atomic_link_element<M>::linked();
 }
 
 template<typename T, typename M>
@@ -62,7 +63,7 @@ template<typename ... A>
 void 
 atomic_callback<T, M>::invoke(const A & ... args) const
 {
-    std::unique_lock<const atomic_link_element> lock(*this);
+    std::unique_lock lock(static_cast<const atomic_link_element<M> &>(*this));
 
     if (active())
     {
@@ -70,7 +71,7 @@ atomic_callback<T, M>::invoke(const A & ... args) const
     }
 }
 
-template<typename T, typename M = std::mutex>
+template<typename T, typename M>
 std::tuple<atomic_callback<T, M>, atomic_callback_guard<T, M>> 
 make_atomic_callback(T callable)
 {
