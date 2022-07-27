@@ -398,8 +398,8 @@ int main()
     }
     */
 
-    // tunnel value from one observable to another
-    if (false)
+    // forward value from one observable to another
+    if (true)
     {
         shared_obe<int> soA;
         shared_obe<int> soB;
@@ -418,8 +418,9 @@ int main()
         soB.observe(observer_b);
 
         unique_txn{soA} = 7;
-        connect(soA, soB);
+        forward(soA, soB);
         unique_txn{soA} = 42;
+        unique_txn{soB} = 1;
     }
 
     // benchmarking
@@ -461,7 +462,7 @@ int main()
         shared_txn c(so);   // deadlocks
     }
 
-    if (true)
+    if (false)
     {
         basic_obe_storage<int> a;
         basic_obe_storage<std::shared_ptr<int>> b;
