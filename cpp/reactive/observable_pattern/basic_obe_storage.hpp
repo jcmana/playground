@@ -34,6 +34,34 @@ private:
 };
 
 template<typename T>
+class basic_obe_storage<std::unique_ptr<T>>
+{
+public:
+    basic_obe_storage() :
+        m_up(new T())
+    {
+    }
+
+    basic_obe_storage(std::unique_ptr<T> up) :
+        m_up(std::move(up))
+    {
+    }
+
+    T & get()
+    {
+        return (*m_up);
+    }
+
+    const T & get() const
+    {
+        return (*m_up);
+    }
+
+private:
+    std::unique_ptr<T> m_up;
+};
+
+template<typename T>
 class basic_obe_storage<std::shared_ptr<T>>
 {
 public:

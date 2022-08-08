@@ -144,12 +144,11 @@ auto join(shared_obe<A> & a, shared_obe<B> & b)
 /// \brief      Forwards values written to `source` to `target` observable.
 /// \warning    `target` modifications won't propagate to `source`.
 template<typename T>
-void forward(shared_obe<T> & source, shared_obe<T> & target)
+void forward(shared_obe<T> & source, shared_obe<T> target)
 {
-    auto observer = [target](const T & value) mutable
+    auto observer = [target_captured = std::move(target)](const T & value) mutable
     {
-        unique_txn{target} = value;
+        unique_txn{target_captured} = value;
     };
-
     source.observe(std::move(observer));
 }

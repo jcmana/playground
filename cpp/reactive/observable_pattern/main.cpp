@@ -381,7 +381,6 @@ int main()
         so.notify();
     }
 
-    /*
     // shared observarble of reference
     if (false)
     {
@@ -391,12 +390,13 @@ int main()
         {
             std::cout << ref << std::endl;
         };
+        /*
         o.observe(observer);
-        o.m_sp->notify();
-        *o.m_sp->get() = 5;
-        o.m_sp->notify();
+        o->notify();
+        o.get() = 5;
+        o.notify();
+        */
     }
-    */
 
     // forward value from one observable to another
     if (true)

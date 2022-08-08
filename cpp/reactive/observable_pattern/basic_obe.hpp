@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <tuple>
+#include <type_traits>
 
 #include "../../callback_store/atomic_callback_store/atomic_callback_store.hpp"
 #include "../../concurrency/concurrency/switch_mutex.hpp"
@@ -14,7 +15,7 @@ template<template <typename> typename F, typename T>
 class basic_obe
 {
 public:
-    using value_type = T;
+    using value_type = std::remove_cv_t<T>;
     using store_callback_type = F<T>;
     using store_type = atomic_callback_store<store_callback_type>;
     using guard_type = atomic_callback_guard<store_callback_type>;
