@@ -66,7 +66,7 @@ int main()
     // basic observable (single type)
     if (false)
     {
-        basic_obe<F, int> o{12};
+        basic_obe<int, F> o{12};
 
         auto observer = [](int value)
         {
@@ -86,7 +86,7 @@ int main()
     {
         // free function
         {
-            basic_obe<Fptr, int> o;
+            basic_obe<int, Fptr> o;
 
             auto g = o.observe(cb);     // automatically takes the correct function
             o.notify();
@@ -96,7 +96,7 @@ int main()
 
         // std::function
         {
-            basic_obe<F, int> o;
+            basic_obe<int, F> o;
             o.observe<void(*)(int)>(cb);
         }
     }
@@ -462,10 +462,47 @@ int main()
         shared_txn c(so);   // deadlocks
     }
 
+    // basic observable storage
     if (false)
     {
         basic_obe_storage<int> a;
+        auto a_get = a.get();
+
         basic_obe_storage<std::shared_ptr<int>> b;
+        auto b_get = b.get();
+    }
+
+    // basic observable for shared pointers
+    if (false)
+    {
+        basic_obe<std::shared_ptr<int>, F, basic_obe_storage> o;
+        auto o_value = o.get();
+        std::cout << o_value << std::endl;
+
+        o.get() = 7;
+        std::cout << int(o) << std::endl;
+
+        auto observer = [](int value)
+        {
+            std::cout << value << std::endl;
+        };
+        auto g = o.observe(observer);
+        o.get() = 2;
+        o.notify();
+    }
+
+    // shared observable for smart pointers
+    if (true)
+    {
+        shared_obe<std::shared_ptr<int>> so;
+
+        auto observer = [](int value)
+        {
+            std::cout << value << std::endl;
+        };
+        so.observe(observer);
+
+        unique_txn{so} = 7;
     }
 
     _CrtDumpMemoryLeaks();

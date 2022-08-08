@@ -13,7 +13,7 @@ class unique_obe
 public:
     template<typename TT>
     using functor_type = std::function<void(TT)>;
-    using observable_type = basic_obe<functor_type, T>;
+    using observable_type = basic_obe<T, functor_type>;
     using value_type = typename observable_type::value_type;
     using mutex_type = typename observable_type::mutex_type;
 

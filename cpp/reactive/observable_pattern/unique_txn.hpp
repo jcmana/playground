@@ -10,6 +10,7 @@ public:
     using scoped_observable_type = shared_obe<T>;
     using observable_type = typename scoped_observable_type::observable_type;
     using value_type = typename scoped_observable_type::value_type;
+    using observed_type = typename scoped_observable_type::observed_type;
 
 public:
     unique_txn() :
@@ -47,25 +48,30 @@ public:
         }
     }
 
-    unique_txn & operator  =(value_type value) noexcept
+    unique_txn & operator  =(observed_type value) noexcept
     {
-        (*m_sp) = std::move(value);
+        m_sp->get() = std::move(value);
         return (*this);
     }
 
-    operator value_type() const
+    operator observed_type() const
     {
-        return static_cast<value_type>(*m_sp);
+        return static_cast<observed_type>(*m_sp);
     }
 
-    value_type & get() noexcept
+    observed_type & get() noexcept
     {
         return m_sp->get();
     }
 
-    const value_type & get() const noexcept
+    const observed_type & get() const noexcept
     {
         return m_sp->get();
+    }
+
+    void assign(observed_type value)
+    {
+        m_sp->get() = std::move(value);
     }
 
     /// \returns    `true` if uniquelly locked, `false` otherwise.

@@ -9,33 +9,41 @@ template<typename T>
 class basic_obe_storage
 {
 public:
+    using value_type = T;
+    using observed_type = value_type;
+
+public:
     basic_obe_storage() :
         m_value()
     {
     }
 
-    basic_obe_storage(T value) :
+    basic_obe_storage(value_type value) :
         m_value(std::move(value))
     {
     }
 
-    T & get()
+    observed_type & get()
     {
         return m_value;
     }
 
-    const T & get() const
+    const observed_type & get() const
     {
         return m_value;
     }
 
 private:
-    T m_value;
+    value_type m_value;
 };
 
 template<typename T>
 class basic_obe_storage<std::unique_ptr<T>>
 {
+public:
+    using value_type = T;
+    using observed_type = std::unique_ptr<T>;
+
 public:
     basic_obe_storage() :
         m_up(new T())
@@ -65,26 +73,30 @@ template<typename T>
 class basic_obe_storage<std::shared_ptr<T>>
 {
 public:
+    using value_type = std::shared_ptr<T>;
+    using observed_type = T;
+
+public:
     basic_obe_storage() :
         m_sp(new T())
     {
     }
 
-    basic_obe_storage(std::shared_ptr<T> sp) :
+    basic_obe_storage(value_type sp) :
         m_sp(std::move(sp))
     {
     }
 
-    T & get()
+    observed_type & get()
     {
         return (*m_sp);
     }
 
-    const T & get() const
+    const observed_type & get() const
     {
         return (*m_sp);
     }
 
 private:
-    std::shared_ptr<T> m_sp;
+    value_type m_sp;
 };

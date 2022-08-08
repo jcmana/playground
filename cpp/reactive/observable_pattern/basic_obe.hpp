@@ -6,19 +6,24 @@
 
 #include "../../callback_store/atomic_callback_store/atomic_callback_store.hpp"
 #include "../../concurrency/concurrency/switch_mutex.hpp"
+#include "basic_obe_storage.hpp"
 
-template<template <typename> typename F, typename T>
+template<typename T, template <typename> typename F, template <typename> typename S>
 class basic_obe;
 
 /// \brief      Common base for observable pattern implementation.
-template<template <typename> typename F, typename T>
+template<typename T, template <typename> typename F, template <typename> typename S = basic_obe_storage>
 class basic_obe
 {
 public:
-    using value_type = std::remove_cv_t<T>;
-    using store_callback_type = F<T>;
+    using value_type = T;
+    using value_storage_type = S<T>;
+    using observed_type = typename value_storage_type::observed_type;
+
+    using store_callback_type = F<observed_type>;
     using store_type = atomic_callback_store<store_callback_type>;
     using guard_type = atomic_callback_guard<store_callback_type>;
+
     using mutex_type = switch_mutex;
 
 public:
@@ -66,21 +71,21 @@ public:
     }
 
     /// \brief      Conversion to `value_type`.
-    operator value_type() const
+    operator observed_type() const
     {
-        return m_value;
+        return m_value.get();
     }
 
     /// \returns    Reference to the value.
-    value_type & get() noexcept
+    observed_type & get() noexcept
     {
-        return m_value;
+        return m_value.get();
     }
 
     /// \returns    Const. reference to the value.
-    const value_type & get() const noexcept
+    const observed_type & get() const noexcept
     {
-        return m_value;
+        return m_value.get();
     }
 
     /// \brief      Subscribes `callback` for notifications.
@@ -99,7 +104,7 @@ public:
     /// \brief      Invokes each active `callback` with current value as argument.
     void notify() const
     {
-        m_store.invoke(m_value);
+        m_store.invoke(m_value.get());
     }
 
     friend void swap(basic_obe & lhs, basic_obe & rhs)
@@ -158,6 +163,6 @@ public:
 private:
     mutable store_type m_store;
     mutable mutex_type m_mutex;
-    value_type m_value;
+    value_storage_type m_value;
 };
 

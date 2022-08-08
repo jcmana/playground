@@ -12,6 +12,7 @@
 /// \param      o               `shared_obe` to observe.
 /// \param      predicate       Functor with signature `bool(const T & ... args)`; should return `true`
 ///                             if condition is met, `false` otherwise.
+/// \returns    `shared_txn` to optionally prolong the transaction.
 template<typename F, typename T>
 auto await_if(shared_obe<T> o, F && predicate)
 {
