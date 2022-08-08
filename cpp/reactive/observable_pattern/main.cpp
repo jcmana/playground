@@ -399,7 +399,7 @@ int main()
     }
 
     // forward value from one observable to another
-    if (true)
+    if (false)
     {
         shared_obe<int> soA;
         shared_obe<int> soB;
@@ -505,11 +505,30 @@ int main()
         unique_txn{so} = 7;
     }
 
+    // basic observable with cv qualifiers
+    if (false)
+    {
+        basic_obe<int, F> so;
+        basic_obe<const int, F> so_const;
+    }
+
     // shared observable with cv qualifiers
     if (true)
     {
         shared_obe<int> so;
-        //shared_obe<const int> so_const = so;
+        shared_obe<const int> so_const = so;
+        //unique_txn tx{so_const};      // causes static_assert
+        //unique_txn<const int> a;      // undefined ctor
+        const auto v = shared_txn{so_const}.get();
+
+        auto observer = [](int value)
+        {
+            std::cout << "value changed in shared_obe<const int> = " << value << std::endl;
+        };
+        so_const.observe(observer);
+
+        unique_txn{so} = 7;
+        unique_txn{so} = 2;
     }
 
     _CrtDumpMemoryLeaks();

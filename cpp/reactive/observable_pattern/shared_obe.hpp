@@ -3,22 +3,29 @@
 #include <memory>
 #include <vector>
 #include <functional>
+#include <type_traits>
 
 #include "basic_obe.hpp"
 
 template<typename T>
 class shared_obe;
 
+namespace
+{
+template<typename T>
+using common_functor_type = std::function<void(T)>;
+}
+
 /// \brief      Shared reference to an observable value.
 template<typename T>
 class shared_obe
 {
 public:
-    template<typename TT>
-    using functor_type = std::function<void(TT)>;
+    template<typename FT>
+    using functor_type = common_functor_type<FT>;
     using functor_void_type = std::function<void()>;
 
-    using observable_type = basic_obe<T, functor_type>;
+    using observable_type = typename basic_obe<std::remove_cv_t<T>, common_functor_type>;
     using guard_type = typename observable_type::guard_type;
 
     using value_type = typename observable_type::value_type;
@@ -26,10 +33,12 @@ public:
 
     using mutex_type = typename observable_type::mutex_type;
 
-    template<typename TT>
+    friend class shared_obe<std::remove_cv_t<T>>;
+
+    template<typename FT>
     friend class unique_txn;
 
-    template<typename TT>
+    template<typename FT>
     friend class shared_txn;
 
 public:
@@ -49,13 +58,7 @@ public:
     shared_obe & operator  =(shared_obe && other) noexcept;
 
     /// \brief      Conversion to `const` observable.
-    /*
-    operator shared_obe<const T>() const
-    {
-        // JMTODO: dunno ho to handle types
-        return {};
-    }
-    */
+    operator shared_obe<const T>() const;
 
     /// \brief      Observe changes with functor.
     void observe(functor_type<observed_type> callback) noexcept;
@@ -159,6 +162,15 @@ shared_obe<T>::operator  =(shared_obe && other) noexcept
     swap(*this, empty);
     swap(*this, other);
     return (*this);
+}
+
+template<typename T>
+shared_obe<T>::operator shared_obe<const T>() const
+{
+    shared_obe<const T> so_const;
+    so_const.m_sp = m_sp;
+
+    return so_const;
 }
 
 template<typename T>
