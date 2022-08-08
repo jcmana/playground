@@ -492,7 +492,7 @@ int main()
     }
 
     // shared observable for smart pointers
-    if (true)
+    if (false)
     {
         shared_obe<std::shared_ptr<int>> so;
 
@@ -503,6 +503,13 @@ int main()
         so.observe(observer);
 
         unique_txn{so} = 7;
+    }
+
+    // shared observable with cv qualifiers
+    if (true)
+    {
+        shared_obe<int> so;
+        //shared_obe<const int> so_const = so;
     }
 
     _CrtDumpMemoryLeaks();

@@ -48,6 +48,15 @@ public:
     shared_obe & operator  =(const shared_obe & other) noexcept;
     shared_obe & operator  =(shared_obe && other) noexcept;
 
+    /// \brief      Conversion to `const` observable.
+    /*
+    operator shared_obe<const T>() const
+    {
+        // JMTODO: dunno ho to handle types
+        return {};
+    }
+    */
+
     /// \brief      Observe changes with functor.
     void observe(functor_type<observed_type> callback) noexcept;
     auto observe_scoped(functor_type<observed_type> callback) noexcept;
