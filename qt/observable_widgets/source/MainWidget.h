@@ -1,9 +1,12 @@
 #pragma once
 
+#include <string>
 #include <limits>
 
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QGridLayout>
+
+#include "observable.hpp"
 
 #include "SpinBox.h"
 #include "LineEdit.h"
@@ -18,9 +21,9 @@ class MainWidget :
 
 public:
     MainWidget(
-        shared_observable<int> idModel, 
-        shared_observable<std::string> nameModel,
-        shared_observable<std::string> usernameModel,
+        shared_obe<int> idModel, 
+        shared_obe<std::string> nameModel,
+        shared_obe<std::string> usernameModel,
         QWidget * parent = nullptr) :
         QWidget(parent)
     {

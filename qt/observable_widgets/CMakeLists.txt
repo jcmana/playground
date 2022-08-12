@@ -6,24 +6,23 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(Qt5_DIR $ENV{QTDIR-G4}/lib/cmake/Qt5)
-find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
+set(Qt6_DIR $ENV{QTDIR-G4}/lib/cmake/Qt6)
+find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_AUTOUIC ON)
+link_directories(
+	"../../cpp/concurrency/x64/Debug")
 
-add_executable("mvc_observables" 
-	"source/UserAccountLogic.h"
-	"source/LineEdit.h"
-	"source/SpinBox.h"
-	"source/MainWidget.h"
+add_executable("observable_widgets" 
 	"source/Main.cpp")
 
-target_include_directories("mvc_observables" PRIVATE
+target_include_directories("observable_widgets" PRIVATE
+	"../../cpp/link/link"
+	"../../cpp/callback_store/atomic_callback_store"
+	"../../cpp/concurrency/concurrency"
 	"../../cpp/reactive/observable_pattern")
 
-target_link_libraries("mvc_observables" PRIVATE 
-	Qt5::Core 
-	Qt5::Widgets 
-	Qt5::Gui)
+target_link_libraries("observable_widgets" PRIVATE 
+	concurrency
+	Qt6::Core 
+	Qt6::Widgets 
+	Qt6::Gui)

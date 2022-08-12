@@ -5,7 +5,7 @@
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QSpinBox>
 
-#include "shared_observable.hpp"
+#include "observable.hpp"
 
 namespace GUI
 {
@@ -13,19 +13,17 @@ namespace GUI
 class SpinBox :
     public QSpinBox
 {
-     Q_OBJECT
-
 public:
-    SpinBox(shared_observable<int> model, QWidget * parent = nullptr) :
+    SpinBox(shared_obe<int> model, QWidget * parent = nullptr) :
         QSpinBox(parent),
         m_model(model)
     {
         connect(this, QOverload<int>::of(&QSpinBox::valueChanged), this, &SpinBox::OnViewChanged);
-        m_model.observe(std::bind(&SpinBox::OnModelChanged, this, std::placeholders::_1));
+        m_model.observe(&SpinBox::OnModelChanged, this);
     }
 
 private:
-    void OnModelChanged(int value)
+    void OnModelChanged(const int & value)
     {
         auto functor = [this, value]
         {
@@ -41,7 +39,7 @@ private:
     }
 
 private:
-    shared_observable<int> m_model;
+    shared_obe<int> m_model;
 };
 
 };

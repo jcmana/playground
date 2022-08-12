@@ -7,7 +7,7 @@
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QLineEdit>
 
-#include "shared_observable.hpp"
+#include "observable.hpp"
 
 namespace GUI
 {
@@ -15,18 +15,15 @@ namespace GUI
 class LineEdit :
     public QLineEdit
 {
-    Q_OBJECT
-
 public:
-    LineEdit(shared_observable<std::string> model, QWidget * parent = nullptr) :
-        QLineEdit(parent),
-        m_model(model)
+    LineEdit(QWidget * parent = nullptr) :
+        QLineEdit(parent)
     {
         connect(this, &QLineEdit::textChanged, this, &LineEdit::OnViewChanged);
         m_model.observe(std::bind(&LineEdit::OnModelChanged, this, std::placeholders::_1));
     }
 
-    shared_observable<std::string> model()
+    shared_obe<std::string> model()
     {
         return m_model;
     }
@@ -48,7 +45,7 @@ private:
     }
 
 private:
-    shared_observable<std::string> m_model;
+    shared_obe<std::string> m_model;
 };
 
 };
