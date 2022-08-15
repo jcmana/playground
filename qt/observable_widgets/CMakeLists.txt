@@ -6,8 +6,13 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-set(Qt6_DIR $ENV{QTDIR-G4}/lib/cmake/Qt6)
-find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
+find_package(
+	Qt5 
+	COMPONENTS 
+		Core 
+		Gui 
+		Widgets 
+	REQUIRED)
 
 link_directories(
 	"../../cpp/concurrency/x64/Debug")
@@ -23,6 +28,6 @@ target_include_directories("observable_widgets" PRIVATE
 
 target_link_libraries("observable_widgets" PRIVATE 
 	concurrency
-	Qt6::Core 
-	Qt6::Widgets 
-	Qt6::Gui)
+	Qt5::Core 
+	Qt5::Widgets 
+	Qt5::Gui)
