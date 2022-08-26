@@ -9,6 +9,9 @@ template<typename T>
 class shared_ref
 {
 public:
+    /// \brief      Default constructor, deleted.
+    shared_ref() = delete;
+
     /// \brief      Constructor, new `T` using forwarding constructor.
     template<typename ... A>
     explicit shared_ref(A ... args) :
@@ -26,7 +29,8 @@ public:
     }
 
     /// \brief      Constructor, copies reference from `sp`.
-    shared_ref(std::shared_ptr<T> sp) :
+    /// \throws     `std::invalid_argument`     `sp` was `nullptr`.
+    explicit shared_ref(std::shared_ptr<T> sp) :
         m_sp(std::move(sp))
     {
         if (m_sp == nullptr)
@@ -55,9 +59,10 @@ public:
         return m_sp.get();
     }
 
-    T * get() const noexcept
+    /// \returns    Stored reference.
+    T & get() const noexcept
     {
-        return m_sp.get();
+        return (*m_sp);
     }
 
 private:

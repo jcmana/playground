@@ -6,7 +6,7 @@
 
 shared_ref<int> return_shared_ref()
 {
-    shared_ref<int> sr;
+    shared_ref<int> sr(0);
     (*sr) = 7;
     return sr;
 }
@@ -50,6 +50,11 @@ int main()
         std::cout << (*sr) << std::endl;
     }
 
+    // Missing default ctor
+    {
+        //shared_ref<int> sr;
+    }
+
     // Construct from a copy
     {
         std::string s = "tuhnhdfgh";
@@ -78,5 +83,10 @@ int main()
     // Return shared from a function
     {
         auto sr = return_shared_ref();
+    }
+
+    // From nullptr:
+    {
+        shared_ref<int> sr(nullptr);
     }
 }
