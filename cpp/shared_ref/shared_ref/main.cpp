@@ -80,7 +80,7 @@ int main()
     }
 
     {
-        unique_ref<int> ur = 7;
+        unique_ref ur(7);
         //unique_ref<int> ur_copy = ur;             // compile error, deleted function
         //unique_ref<int> ur_move = std::move(ur);  // compile error, deleted function
     }

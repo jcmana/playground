@@ -1,9 +1,9 @@
 #pragma once
 
 #include <cstddef>
-#include <stdexcept>
 #include <memory>
 #include <utility>
+#include <exception>
 
 /// \brief      `shared_ptr` that cannot be `nullptr`.
 template<typename T>
@@ -22,8 +22,8 @@ public:
     {
     }
 
-    /// \brief      Constructor, from nullptr, deleted.
-    shared_ref(std::nullptr_t) noexcept = delete;
+    /// \brief      Constructor, from `nullptr`, deleted.
+    explicit shared_ref(std::nullptr_t) noexcept = delete;
 
     /// \brief      Constructor, value copy initialization.
     explicit shared_ref(const T & value) :
@@ -69,6 +69,7 @@ public:
         return (*this);
     }
 
+    /// \brief      Conversion to `shared_ptr`.
     operator std::shared_ptr<T>() const noexcept
     {
         return m_sp;
@@ -93,3 +94,4 @@ public:
 private:
     std::shared_ptr<T> m_sp;
 };
+
