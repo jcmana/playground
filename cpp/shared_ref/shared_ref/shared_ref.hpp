@@ -1,23 +1,17 @@
 #pragma once
 
+#include <cstddef>
 #include <stdexcept>
 #include <memory>
 #include <utility>
 
-/// \brief      `shared_ptr` that cannot be `nullptr` or reseated.
+/// \brief      `shared_ptr` that cannot be `nullptr`.
 template<typename T>
 class shared_ref
 {
 public:
     /// \brief      Default constructor, deleted.
     shared_ref() = delete;
-
-    /// \brief      Constructor, new `T` using forwarding constructor.
-    template<typename ... A>
-    explicit shared_ref(A ... args) :
-        m_sp(new T(std::forward<A>(args) ...))
-    {
-    }
 
     /// \brief      Copy constructor.
     shared_ref(const shared_ref & other) noexcept = default;
@@ -26,6 +20,32 @@ public:
     shared_ref(shared_ref && other) noexcept :
         m_sp(other.m_sp)
     {
+    }
+
+    /// \brief      Constructor, from nullptr, deleted.
+    shared_ref(std::nullptr_t) noexcept = delete;
+
+    /// \brief      Constructor, value copy initialization.
+    explicit shared_ref(const T & value) :
+        m_sp(std::make_shared<T>(value))
+    {
+    }
+
+    /// \brief      Constructor, value move initialization.
+    explicit shared_ref(T && value) :
+        m_sp(std::make_shared<T>(std::move(value)))
+    {
+    }
+
+    /// \brief      Constructor, from owning `ptr`.
+    /// \throws     `std::invalid_argument`     `ptr` was `nullptr`.
+    explicit shared_ref(T * ptr) :
+        m_sp(ptr)
+    {
+        if (m_sp == nullptr)
+        {
+            throw std::invalid_argument("shared_ptr was nullptr");
+        }
     }
 
     /// \brief      Constructor, copies reference from `sp`.
@@ -39,10 +59,15 @@ public:
         }
     }
 
-    /// \brief      Copy assignment, deleted.
-    shared_ref & operator  =(const shared_ref & other) noexcept = delete;
-    /// \brief      Move assignment, deleted.
-    shared_ref & operator  =(shared_ref && other) noexcept = delete;
+    /// \brief      Copy assignment.
+    shared_ref & operator  =(const shared_ref & other) noexcept = default;
+
+    /// \brief      Move assignment.
+    shared_ref & operator  =(shared_ref && other) noexcept
+    {
+        m_sp = other.m_sp;
+        return (*this);
+    }
 
     operator std::shared_ptr<T>() const noexcept
     {
@@ -66,5 +91,5 @@ public:
     }
 
 private:
-    const std::shared_ptr<T> m_sp;
+    std::shared_ptr<T> m_sp;
 };
