@@ -1,5 +1,5 @@
 # observable todo list:
-- conversion to const T
+- <s>conversion to const T</s>
 - different assignment strategies
     - move without observers reset
     - assign different observable without observers reset (might be immossible)

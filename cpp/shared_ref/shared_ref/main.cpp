@@ -6,7 +6,7 @@
 
 shared_ref<int> return_shared_ref()
 {
-    shared_ref<int> sr;
+    shared_ref<int> sr(0);
     (*sr) = 7;
     return sr;
 }
@@ -50,6 +50,16 @@ int main()
         std::cout << (*sr) << std::endl;
     }
 
+    // Missing default ctor
+    {
+        //shared_ref<int> sr;
+    }
+
+    // Construct from literal conversion
+    {
+        shared_ref<std::string> sr("asdffgfd");
+    }
+
     // Construct from a copy
     {
         std::string s = "tuhnhdfgh";
@@ -66,11 +76,11 @@ int main()
     {
         auto sp = std::make_shared<std::string>("xvcbjteyueetu");
         auto sr = shared_ref(sp);
-        if (true) auto sq = shared_ref<int>(std::shared_ptr<int>());        // runtime exception
+        if (false) auto sq = shared_ref<int>(std::shared_ptr<int>());        // runtime exception
     }
 
     {
-        unique_ref<int> ur = 7;
+        unique_ref ur(7);
         //unique_ref<int> ur_copy = ur;             // compile error, deleted function
         //unique_ref<int> ur_move = std::move(ur);  // compile error, deleted function
     }
@@ -78,5 +88,19 @@ int main()
     // Return shared from a function
     {
         auto sr = return_shared_ref();
+    }
+
+    // From nullptr:
+    {
+        //shared_ref<int> sr(nullptr);
+    }
+
+    // constness and reseat-ability:
+    {
+        shared_ref sr(7);
+        sr = shared_ref(2);
+
+        const shared_ref const_sr(4);
+        //const_sr = sr;      // cannot assign to const
     }
 }
