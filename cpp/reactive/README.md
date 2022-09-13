@@ -6,3 +6,4 @@
     - maybe more = figure out the requirements
 - mutex customization point for link, callback_store, basic_obe
 - reduce the weight and optimize
+- observe overload for previous and new value
