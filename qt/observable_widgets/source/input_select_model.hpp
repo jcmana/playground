@@ -8,7 +8,7 @@
 #include <string>
 #include <algorithm>
 
-class input_select_state
+class input_select_model
 {
 public:
     using item_label = std::string;
@@ -20,7 +20,31 @@ public:
         bool selected;
     };
 
+    using container = std::vector<item>;
+
 public:
+    bool select(container::const_iterator it)
+    {
+        if (it == m_items.cend())
+        {
+            return false;
+        }
+
+        for (auto it_mutable = m_items.begin(); it_mutable != m_items.end(); ++it_mutable)
+        {
+            if (it_mutable == it)
+            {
+                it_mutable->selected = true;
+            }
+            else
+            {
+                it_mutable->selected = false;
+            }
+        }
+
+        return true;
+    }
+
     bool select(item_label label)
     {
         bool selected = false;
@@ -36,6 +60,15 @@ public:
         }
 
         return selected;
+
+        auto it = std::find_if(m_items.begin(), m_items.end(), [&label](const auto & item) { return item.label == label; });
+
+        if (it == m_items.end())
+        {
+            return false;
+        }
+
+        return select(it);
     }
 
     void select(item_index index)
@@ -117,12 +150,12 @@ public:
         return m_items.size();
     }
 
-    std::vector<item>::const_iterator begin() const
+    container::const_iterator begin() const
     {
         return m_items.cbegin();
     }
 
-    std::vector<item>::const_iterator end() const
+    container::const_iterator end() const
     {
         return m_items.cend();
     }
@@ -133,5 +166,5 @@ public:
     }
 
 private:
-    std::vector<item> m_items;
+    container m_items;
 };

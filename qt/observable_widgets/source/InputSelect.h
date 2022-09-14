@@ -3,7 +3,7 @@
 #include <QtWidgets/QComboBox>
 
 #include "observable.hpp"
-#include "input_select_state.hpp"
+#include "input_select_model.hpp"
 
 class InputSelect :
     public QComboBox
@@ -12,23 +12,23 @@ public:
     InputSelect(QWidget * parent = nullptr) :
         QComboBox(parent)
     {
-        m_soState.observe(&InputSelect::OnStateChanged, this);
+        m_soState.observe(&InputSelect::OnModelChanged, this);
 
-        connect(this, &QComboBox::currentIndexChanged, this, &InputSelect::OnCurrentIndexChanged);
+        connect(this, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &InputSelect::OnCurrentIndexChanged);
     }
 
-    shared_obe<input_select_state> soState()
+    shared_obe<input_select_model> soState()
     {
         return m_soState;
     }
 
-    shared_obe<const input_select_state> soState() const
+    shared_obe<const input_select_model> soState() const
     {
         return m_soState;
     }
 
 private:
-    void OnStateChanged(const input_select_state & state)
+    void OnModelChanged(const input_select_model & state)
     {
         auto update = [this, state]
         {
@@ -55,5 +55,5 @@ private:
     }
 
 private:
-    shared_obe<input_select_state> m_soState;
+    shared_obe<input_select_model> m_soState;
 };

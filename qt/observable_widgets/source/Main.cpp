@@ -9,7 +9,7 @@
 #include "ListWidget.h"
 #include "InputSelect.h"
 
-#include "input_select_state.hpp"
+#include "input_select_model.hpp"
 
 #include "observable.hpp"
 
