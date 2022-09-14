@@ -92,22 +92,22 @@ public:
     using guard_type = atomic_callback_guard<functor_type>;
 
 public:
-    shared_obe() noexcept;
-    shared_obe(const shared_obe & other) noexcept;
-    shared_obe(shared_obe && other) noexcept;
+    inline shared_obe() noexcept;
+    inline shared_obe(const shared_obe & other) noexcept;
+    inline shared_obe(shared_obe && other) noexcept;
 
-    shared_obe & operator  =(const shared_obe & other) noexcept;
-    shared_obe & operator  =(shared_obe && other) noexcept;
+    inline shared_obe & operator  =(const shared_obe & other) noexcept;
+    inline shared_obe & operator  =(shared_obe && other) noexcept;
 
-    void observe(functor_type callback) noexcept;
-    auto observe_scoped(functor_type callback) noexcept;
+    inline void observe(functor_type callback) noexcept;
+    inline auto observe_scoped(functor_type callback) noexcept;
 
     template<typename C>
     void observe(void(C:: * f)(), C * ptr);
     template<typename C>
     auto observe_scoped(void(C:: * f)(), C * ptr);
 
-    void notify() const;
+    inline void notify() const;
 
     friend void swap(shared_obe<void> & lhs, shared_obe<void> & rhs) noexcept;
 
