@@ -16,11 +16,8 @@ public:
     /// \brief      Copy constructor.
     shared_ref(const shared_ref & other) noexcept = default;
 
-    /// \brief      Move constructor.
-    shared_ref(shared_ref && other) noexcept :
-        m_sp(other.m_sp)
-    {
-    }
+    /// \brief      Move constructor, deleted.
+    shared_ref(shared_ref && other) noexcept = delete;
 
     /// \brief      Constructor, from `nullptr`, deleted.
     explicit shared_ref(std::nullptr_t) noexcept = delete;
@@ -63,11 +60,7 @@ public:
     shared_ref & operator  =(const shared_ref & other) noexcept = default;
 
     /// \brief      Move assignment.
-    shared_ref & operator  =(shared_ref && other) noexcept
-    {
-        m_sp = other.m_sp;
-        return (*this);
-    }
+    shared_ref & operator  =(shared_ref && other) noexcept = delete;
 
     /// \brief      Conversion to `shared_ptr`.
     operator std::shared_ptr<T>() const noexcept

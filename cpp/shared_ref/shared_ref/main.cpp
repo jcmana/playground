@@ -6,9 +6,7 @@
 
 shared_ref<int> return_shared_ref()
 {
-    shared_ref<int> sr(0);
-    (*sr) = 7;
-    return sr;
+    return shared_ref<int>(0);
 }
 
 int main()
@@ -98,7 +96,7 @@ int main()
     // constness and reseat-ability:
     {
         shared_ref sr(7);
-        sr = shared_ref(2);
+        sr = static_cast<const shared_ref<int> &>(shared_ref(2));
 
         const shared_ref const_sr(4);
         //const_sr = sr;      // cannot assign to const
