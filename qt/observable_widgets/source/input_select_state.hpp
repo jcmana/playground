@@ -1,3 +1,7 @@
+/// This bind selection together with data. If we take some inspiration from Qt in more complex views and models
+/// the approach is to split these two. This way we allow to have multiple views with different selections which
+/// is kinda cool.
+
 #pragma once
 
 #include <vector>
