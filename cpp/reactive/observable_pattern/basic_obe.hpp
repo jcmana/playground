@@ -20,7 +20,7 @@ public:
     using value_storage_type = S<T>;
     using observed_type = typename value_storage_type::observed_type;
 
-    using store_callback_type = F<observed_type>;
+    using store_callback_type = F<const observed_type &>;
     using store_type = atomic_callback_store<store_callback_type>;
     using guard_type = atomic_callback_guard<store_callback_type>;
 
@@ -83,20 +83,20 @@ public:
     }
 
     /// \returns    Const. reference to the value.
-    const observed_type & get() const noexcept
+    const observed_type & get() const
     {
         return m_value.get();
     }
 
     /// \brief      Subscribes `callback` for notifications.
-    auto observe(store_callback_type callback) const noexcept
+    auto observe(store_callback_type callback) const
     {
         return m_store.subscribe(std::move(callback));
     }
 
     /// \brief      Subscribes `callback` for notifications.
     template<typename C>
-    auto observe(C callback) const noexcept
+    auto observe(C callback) const
     {
         return m_store.subscribe(static_cast<store_callback_type>(callback));
     }

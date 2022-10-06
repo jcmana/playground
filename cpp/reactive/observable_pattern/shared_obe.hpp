@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include <initializer_list>
 #include <functional>
 #include <type_traits>
 
@@ -54,21 +55,37 @@ public:
     /// \brief      Constructor, initializes with copy of `value`.
     explicit shared_obe(T value) noexcept;
 
+    /// \brief      Constructor, initializes `T` from `compatible_value`.
+    template<typename TT>
+    explicit shared_obe(TT compatible_value);
+
     shared_obe & operator  =(const shared_obe & other) noexcept;
     shared_obe & operator  =(shared_obe && other) noexcept;
 
     /// \brief      Conversion to `const` observable.
     operator shared_obe<const T>() const;
 
-    /// \brief      Observe changes with functor.
-    void observe(functor_type<observed_type> callback) noexcept;
-    auto observe_scoped(functor_type<observed_type> callback) noexcept;
+    /// \brief      Observe changes with functor accepting value by const reference.
+    void observe(functor_type<const observed_type &> callback);
+    auto observe_scoped(functor_type<const observed_type &> callback);
 
-    /// \brief      Observe changes with member function.
+    /*
+    /// \brief      Observe changes with functor accepting value by copy.
+    void observe(functor_type<observed_type> callback);
+    auto observe_scoped(functor_type<observed_type> callback);
+    */
+
+    /// \brief      Observe changes with member function by const reference.
     template<typename C>
     void observe(void(C:: * f)(const observed_type &), C * ptr);
     template<typename C>
     auto observe_scoped(void(C:: * f)(const observed_type &), C * ptr);
+
+    /// \brief      Observe changes with member function by value.
+    template<typename C>
+    void observe(void(C:: * f)(observed_type), C * ptr);
+    template<typename C>
+    auto observe_scoped(void(C:: * f)(observed_type), C * ptr);
 
     /// \brief      Observe changes with functor ignoring the value.
     void observe(functor_void_type callback);
@@ -147,6 +164,13 @@ shared_obe<T>::shared_obe(T value) noexcept :
 }
 
 template<typename T>
+template<typename TT>
+shared_obe<T>::shared_obe(TT compatible_value) :
+    shared_obe(T(std::move(compatible_value)))
+{
+}
+
+template<typename T>
 shared_obe<T> &
 shared_obe<T>::operator  =(const shared_obe & other) noexcept
 {
@@ -175,17 +199,41 @@ shared_obe<T>::operator shared_obe<const T>() const
 
 template<typename T>
 void 
-shared_obe<T>::observe(functor_type<observed_type> callback) noexcept
+shared_obe<T>::observe(functor_type<const observed_type &> callback)
 {
     m_observers.push_back(m_sp->observe(std::move(callback)));
 }
 
 template<typename T>
 auto 
-shared_obe<T>::observe_scoped(functor_type<observed_type> callback) noexcept
+shared_obe<T>::observe_scoped(functor_type<const observed_type &> callback)
 {
     return m_sp->observe(std::move(callback));
 }
+
+/*
+template<typename T>
+void 
+shared_obe<T>::observe(functor_type<observed_type> callback)
+{
+    auto callback_wrapper = [callback](const T & value)
+    {
+        callback(value);
+    };
+    m_observers.push_back(m_sp->observe(std::move(callback_wrapper)));
+}
+
+template<typename T>
+auto 
+shared_obe<T>::observe_scoped(functor_type<observed_type> callback)
+{
+    auto callback_wrapper = [callback](const T & value)
+    {
+        callback(value);
+    };
+    m_sp->observe(std::move(callback_wrapper));
+}
+*/
 
 template<typename T>
 template<typename C>
@@ -199,6 +247,22 @@ template<typename T>
 template<typename C>
 auto 
 shared_obe<T>::observe_scoped(void(C:: * f)(const observed_type &), C * ptr)
+{
+    return m_sp->observe(std::bind(f, ptr, std::placeholders::_1));
+}
+
+template<typename T>
+template<typename C>
+void 
+shared_obe<T>::observe(void(C:: * f)(observed_type), C * ptr)
+{
+    m_observers.push_back(m_sp->observe(std::bind(f, ptr, std::placeholders::_1)));
+}
+
+template<typename T>
+template<typename C>
+auto 
+shared_obe<T>::observe_scoped(void(C:: * f)(observed_type), C * ptr)
 {
     return m_sp->observe(std::bind(f, ptr, std::placeholders::_1));
 }

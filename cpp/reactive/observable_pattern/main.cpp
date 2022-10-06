@@ -17,9 +17,14 @@ template<typename ... A>
 using F = std::function<void(A ...)>;
 
 template<typename ... A>
-using Fptr = void(*)(A ...);
+using Fptr = void(*)(const A & ...);
 
 void cb(int value)
+{
+    std::cout << "modification = " << value << std::endl;
+}
+
+void cb(const int & value)
 {
     std::cout << "modification = " << value << std::endl;
 }
@@ -45,9 +50,27 @@ struct ref_specialization<T &>
 
 struct observer
 {
-    void cb(const int & value)
+    void cb(int value)
     {
         std::cout << "modification = " << value << std::endl;
+    }
+};
+
+struct copy_check
+{
+    copy_check()
+    {
+    }
+
+    copy_check(const copy_check & other)
+    {
+        std::cout << "copy constructor" << std::endl;
+    }
+
+    copy_check & operator  =(const copy_check & other)
+    {
+        std::cout << "copy assignment" << std::endl;
+        return (*this);
     }
 };
 
@@ -127,12 +150,14 @@ int main()
     }
 
     // shared observable on member function
-    if (false)
+    if (true)
     {
         observer o;
         
         shared_obe so{7};
         so.observe(&observer::cb, &o);
+
+        unique_txn{so} = 12;
     }
 
     // unique and shared transactions
@@ -513,7 +538,7 @@ int main()
     }
 
     // shared observable with cv qualifiers
-    if (true)
+    if (false)
     {
         shared_obe<int> so;
         shared_obe<const int> so_const = so;
@@ -529,6 +554,20 @@ int main()
 
         unique_txn{so} = 7;
         unique_txn{so} = 2;
+    }
+
+    // copy checking during notification
+    if (true)
+    {
+        shared_obe<copy_check> so;
+
+        auto observer = [](const copy_check & cc)
+        {
+            // nop
+        };
+        so.observe(observer);
+
+        unique_txn{so};
     }
 
     _CrtDumpMemoryLeaks();
