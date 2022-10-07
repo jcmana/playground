@@ -10,8 +10,9 @@
 #include <memory>
 
 #include "observable.hpp"
-
 #include "basic_obe_storage.hpp"
+
+#include "breaking_circular_observers.h"
 
 template<typename ... A>
 using F = std::function<void(A ...)>;
@@ -150,7 +151,7 @@ int main()
     }
 
     // shared observable on member function
-    if (true)
+    if (false)
     {
         observer o;
         
@@ -557,7 +558,7 @@ int main()
     }
 
     // copy checking during notification
-    if (true)
+    if (false)
     {
         shared_obe<copy_check> so;
 
@@ -568,6 +569,12 @@ int main()
         so.observe(observer);
 
         unique_txn{so};
+    }
+
+    // breaking ciruclar observers
+    if (true)
+    {
+        breaking_circular_observers();
     }
 
     _CrtDumpMemoryLeaks();

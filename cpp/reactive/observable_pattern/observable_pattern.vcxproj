@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClInclude Include="algorithm.hpp" />
     <ClInclude Include="basic_obe.hpp" />
+    <ClInclude Include="breaking_circular_observers.h" />
     <ClInclude Include="observable.hpp" />
     <ClInclude Include="shared_obe.hpp" />
     <ClInclude Include="shared_ref_observable.hpp" />
@@ -155,6 +156,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="breaking_circular_observers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\concurrency\concurrency\concurrency.vcxproj">

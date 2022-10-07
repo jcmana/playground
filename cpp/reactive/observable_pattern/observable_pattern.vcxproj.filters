@@ -45,9 +45,15 @@
     <ClInclude Include="basic_obe_storage.hpp">
       <Filter>Header Files\observable</Filter>
     </ClInclude>
+    <ClInclude Include="breaking_circular_observers.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="breaking_circular_observers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
