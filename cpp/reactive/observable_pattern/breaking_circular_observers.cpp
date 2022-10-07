@@ -68,3 +68,70 @@ void breaking_circular_observers()
         std::cout << "-" << std::endl;
     }
 }
+
+void breaking_circular_observers2()
+{
+    class state
+    {
+    public:
+        void change_list(const std::vector<int> & value)
+        {
+            m_list = value;
+            m_selected_index = std::nullopt;
+            m_selected = std::nullopt;
+        }
+
+        void change_selected_index(const std::optional<std::size_t> & selected_index)
+        {
+            m_selected_index = selected_index;
+
+            if (m_selected_index.has_value())
+            {
+                m_selected = m_list.at(m_selected_index.value());
+            }
+        }
+
+        void change_selected(const std::optional<int> & selected)
+        {
+            m_selected = selected;
+
+            if (m_selected.has_value())
+            {
+                m_list.at(m_selected_index.value()) = m_selected.value();
+            }
+        }
+
+        auto selected() const
+        {
+            return m_selected;
+        }
+
+    private:
+        std::vector<int> m_list;
+        std::optional<std::size_t> m_selected_index;
+        std::optional<int> m_selected;
+    };
+
+    shared_obe<state> so_state;
+    shared_obe<std::optional<int>> so_selected;
+
+    auto forward_state_selected = [so_selected](const auto & value) mutable
+    {
+        unique_txn{so_selected} = value.selected();
+    };
+    so_state.observe(forward_state_selected);
+
+    auto consume_selected = [](const auto & value)
+    {
+        if (value.has_value())
+        {
+            std::cout << value.value() << std::endl;
+        }
+    };
+    so_selected.observe(consume_selected);
+
+    unique_txn tx_state{so_state};
+    tx_state.get().change_list({7, 4});
+    tx_state.get().change_selected_index(0);
+    tx_state.get().change_selected_index(1);
+}

@@ -574,7 +574,8 @@ int main()
     // breaking ciruclar observers
     if (true)
     {
-        breaking_circular_observers();
+        //breaking_circular_observers();
+        breaking_circular_observers2();
     }
 
     _CrtDumpMemoryLeaks();
