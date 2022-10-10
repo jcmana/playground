@@ -10,8 +10,8 @@ void breaking_circular_observers()
     shared_obe<std::vector<int>> so_item_list;
     shared_obe<std::optional<std::size_t>> so_selected_item_index;
     shared_obe<std::optional<int>> so_selected_item;
+    shared_obe<std::optional<int>> so_selected_item_wb;
 
-    /*
     auto on_item_list_changed = [so_selected_item_index](const auto & item_list) mutable
     {
         std::optional<std::size_t> selected_item_index;
@@ -28,7 +28,6 @@ void breaking_circular_observers()
         unique_txn{so_selected_item_index} = selected_item_index;
     };
     so_item_list.observe(on_item_list_changed);
-    */
 
     auto on_selected_item_index_changed = [so_item_list, so_selected_item](const auto & selected_item_index) mutable
     {
@@ -42,7 +41,7 @@ void breaking_circular_observers()
     };
     so_selected_item_index.observe(on_selected_item_index_changed);
 
-    auto on_selected_item_changed = [so_item_list, so_selected_item_index](const auto & selected_item) mutable
+    auto on_selected_item_wb_changed = [so_item_list, so_selected_item_index](const auto & selected_item) mutable
     {
         if (selected_item.has_value() == false)
         {
@@ -53,10 +52,11 @@ void breaking_circular_observers()
         shared_txn tx_selected_item_index{so_selected_item_index};
         tx_item_list.get().at(tx_selected_item_index.get().value()) = selected_item.value();
     };
-    so_selected_item.observe(on_selected_item_changed);
+    so_selected_item_wb.observe(on_selected_item_wb_changed);
 
     unique_txn{so_item_list}.get() = {7, 4};
     unique_txn{so_selected_item_index}.get() = 0;
+    unique_txn{so_selected_item_index}.get() = std::nullopt;
 
     shared_txn tx_selected_item{so_selected_item};
     if (tx_selected_item.get().has_value())
@@ -130,8 +130,11 @@ void breaking_circular_observers2()
     };
     so_selected.observe(consume_selected);
 
-    unique_txn tx_state{so_state};
-    tx_state.get().change_list({7, 4});
-    tx_state.get().change_selected_index(0);
-    tx_state.get().change_selected_index(1);
+    {
+        unique_txn tx_state{so_state};
+        tx_state.get().change_list({7, 4});
+        tx_state.get().change_selected_index(0);
+        tx_state.get().change_selected_index(1);
+    }
+    unique_txn{so_selected} = 5;
 }

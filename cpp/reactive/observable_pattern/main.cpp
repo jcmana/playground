@@ -13,6 +13,7 @@
 #include "basic_obe_storage.hpp"
 
 #include "breaking_circular_observers.h"
+#include "circular_break_logic.hpp"
 
 template<typename ... A>
 using F = std::function<void(A ...)>;
@@ -575,7 +576,27 @@ int main()
     if (true)
     {
         //breaking_circular_observers();
-        breaking_circular_observers2();
+        //breaking_circular_observers2();
+
+        shared_obe<int> source;
+        shared_obe<int> target;
+
+        auto source_observer = [](int value)
+        {
+            std::cout << "source value changed = " << value << std::endl;
+        };
+        source.observe(source_observer);
+
+        auto target_observer = [](int value)
+        {
+            std::cout << "target value changed = " << value << std::endl;
+        };
+        target.observe(target_observer);
+
+        circular_break_logic wbl(source, target);
+
+        unique_txn{source} = 7;
+        unique_txn{target} = 2;
     }
 
     _CrtDumpMemoryLeaks();

@@ -48,6 +48,9 @@
     <ClInclude Include="breaking_circular_observers.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="circular_break_logic.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

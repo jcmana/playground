@@ -153,6 +153,7 @@
     <ClInclude Include="basic_obe_storage.hpp" />
     <ClInclude Include="unique_obe.hpp" />
     <ClInclude Include="unique_txn.hpp" />
+    <ClInclude Include="circular_break_logic.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
