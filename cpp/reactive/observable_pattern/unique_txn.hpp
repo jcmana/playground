@@ -15,6 +15,9 @@ public:
     using value_type = typename scoped_observable_type::value_type;
     using observed_type = typename scoped_observable_type::observed_type;
 
+    template<typename FT>
+    friend class shared_txn;
+
 public:
     unique_txn() :
         m_lock(),
@@ -33,6 +36,13 @@ public:
     explicit unique_txn(scoped_observable_type & observable_ref, std::try_to_lock_t) :
         m_lock(unique_lock(*observable_ref.m_sp, std::try_to_lock)),
         m_sp(observable_ref.m_sp)
+    {
+    }
+
+    /// \brief      Constructor, upgrades from `shared_txn` to unique.
+    explicit unique_txn(shared_txn<T> && txn) :
+        m_lock(unique_lock(std::move(txn.m_lock))),
+        m_sp(m_sp.get())
     {
     }
 

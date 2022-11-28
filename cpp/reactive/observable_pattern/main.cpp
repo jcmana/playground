@@ -572,12 +572,24 @@ int main()
         unique_txn{so};
     }
 
-    // breaking ciruclar observers
+    // upgrade from shared to unique txn
     if (true)
+    {
+        shared_obe<int> so;
+        shared_txn txs(so);
+        unique_txn<int> txu(std::move(txs));
+    }
+
+    // breaking ciruclar observers #1
+    if (false)
     {
         //breaking_circular_observers();
         //breaking_circular_observers2();
+    }
 
+    // breaking ciruclar observers #2
+    if (false)
+    {
         shared_obe<int> source;
         shared_obe<int> target;
 

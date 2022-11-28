@@ -11,6 +11,9 @@ public:
     using observable_type = typename scoped_observable_type::observable_type;
     using value_type = typename scoped_observable_type::value_type;
 
+    template<typename FT>
+    friend class unique_txn;
+
 public:
     shared_txn() :
         m_lock(),
