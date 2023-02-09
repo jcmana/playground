@@ -1,3 +1,4 @@
+#include <memory>
 #include "user_type.h"
 #include "forwarding_only.h"
 

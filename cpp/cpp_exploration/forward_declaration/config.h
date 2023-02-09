@@ -1,3 +1,3 @@
 #pragma once
 
-#define DEFINE_PTR
+#define DEFINE_SP

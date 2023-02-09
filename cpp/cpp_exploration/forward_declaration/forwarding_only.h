@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include "config.h"
 
 class user_type;
