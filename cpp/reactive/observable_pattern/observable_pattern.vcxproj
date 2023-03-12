@@ -148,7 +148,6 @@
     <ClInclude Include="breaking_circular_observers.h" />
     <ClInclude Include="observable.hpp" />
     <ClInclude Include="shared_obe.hpp" />
-    <ClInclude Include="shared_ref_observable.hpp" />
     <ClInclude Include="shared_txn.hpp" />
     <ClInclude Include="basic_obe_storage.hpp" />
     <ClInclude Include="unique_obe.hpp" />

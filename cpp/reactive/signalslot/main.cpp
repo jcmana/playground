@@ -6,7 +6,7 @@
 
 void main()
 {
-    if (false)
+    if (true)
     {
         signal<int> signal_a;
         signal<int, int> signal_b;
@@ -46,7 +46,7 @@ void main()
     }
 
     // implementing observables using signal+slot
-    if (true)
+    if (false)
     {
         struct observable : signal<int>
         {

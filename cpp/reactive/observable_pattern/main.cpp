@@ -559,7 +559,7 @@ int main()
     }
 
     // copy checking during notification
-    if (false)
+    if (true)
     {
         shared_obe<copy_check> so;
 
