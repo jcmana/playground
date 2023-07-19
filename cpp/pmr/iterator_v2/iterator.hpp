@@ -2,7 +2,7 @@
 
 #include <type_traits>
 
-#include "iterator_intf.hpp"
+#include "iterator_intf.h"
 
 namespace pmr::iterator
 {

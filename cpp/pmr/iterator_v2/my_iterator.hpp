@@ -27,7 +27,8 @@ struct iterator_intf :
 };
 
 template<typename T, template<typename> typename ... A>
-struct iterator : virtual pmr::iterator::base<iterator_intf<T>>,
+struct iterator : 
+    virtual pmr::iterator::base<iterator_intf<T>>,
     A<iterator_intf<T>> ...
 {
 public:
