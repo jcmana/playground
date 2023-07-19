@@ -14,9 +14,9 @@ int main()
     // Operator change of basis:
     if (false)
     {
-        constexpr frame<> chamber{{1.0, 0.0}, {0.0, 1.0}, {20.0, 20.0}};
-        constexpr frame<> stage{{100.0, 0.0}, {0.0, 100.0}, {300.0, -100.0}};
-        constexpr frame<> waffer{{100.0, 0.0}, {0.0, 100.0}, {450.0, 80.0}};
+        frame<> chamber{{1.0, 0.0}, {0.0, 1.0}, {20.0, 20.0}};
+        frame<> stage{{100.0, 0.0}, {0.0, 100.0}, {300.0, -100.0}};
+        frame<> waffer{{100.0, 0.0}, {0.0, 100.0}, {450.0, 80.0}};
         
         const auto waffer_origin = xy<void>{0.0, 0.0} & waffer;
         const auto waffer_origin_at_chamber = waffer_origin & chamber;
@@ -33,8 +33,8 @@ int main()
         struct space_m {};
         struct space_n {};
 
-        constexpr frame<space_m> a;
-        constexpr frame<space_n> b;
+        frame<space_m> a;
+        frame<space_n> b;
 
         const auto om = xy<void>{0, 0} & a;
         const auto on = xy<void>{0, 0} & b;
@@ -50,17 +50,17 @@ int main()
         struct space_pattern {};
         struct space_DAC {};
 
-        const auto size_nm = 100'000;
-        const auto resolution = 65'536;
-        const auto step = double(size_nm) / double(resolution);
+        auto size_nm = 100'000;
+        auto resolution = 65'536;
+        auto step = double(size_nm) / double(resolution);
 
-        constexpr frame<space_pattern> patternWF
+        frame<space_pattern> patternWF
         {
             {1, 0},
             {0, 1},
             {5, 5},
         };
-        constexpr frame<space_pattern> patternWFDAC
+        frame<space_pattern> patternWFDAC
         {
             {step, 0},
             {0, step},
