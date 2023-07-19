@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{391fffed-0428-4686-9fde-11215733fb26}</ProjectGuid>
-    <RootNamespace>observablepattern</RootNamespace>
+    <ProjectGuid>{7582383d-6f08-42d7-ba40-55f3e454381d}</ProjectGuid>
+    <RootNamespace>sharedatomic</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -143,27 +143,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="algorithm.hpp" />
-    <ClInclude Include="basic_obe.hpp" />
-    <ClInclude Include="basic_shared_obe.hpp" />
-    <ClInclude Include="basic_txn.hpp" />
-    <ClInclude Include="breaking_circular_observers.h" />
-    <ClInclude Include="observable.hpp" />
-    <ClInclude Include="shared_obe.hpp" />
-    <ClInclude Include="shared_txn.hpp" />
-    <ClInclude Include="basic_obe_storage.hpp" />
-    <ClInclude Include="unique_obe.hpp" />
-    <ClInclude Include="unique_txn.hpp" />
-    <ClInclude Include="circular_break_logic.hpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="breaking_circular_observers.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\concurrency\concurrency\concurrency.vcxproj">
-      <Project>{bb76e649-fc4a-4fcb-874c-a8ce08b5368e}</Project>
-    </ProjectReference>
+    <ClInclude Include="shared_atomic.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -2,6 +2,8 @@
 
 #include <memory>
 
+/// \brief      Holds store value in `basic_obe`.
+/// \param      T       Held value type.
 template<typename T>
 class basic_obe_storage;
 

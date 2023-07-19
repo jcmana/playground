@@ -1,11 +1,5 @@
 #pragma once
 
-#include "shared_obe.hpp"
-#include "basic_txn.hpp"
-
-template<typename T>
-class unique_txn;
-
 /// \brief      Unique transaction on `shared_obe`, allows unique read and write.
 template<typename T>
 class unique_txn : public basic_txn<T>
@@ -92,15 +86,4 @@ public:
 private:
     mutable switch_lock<typename basic_txn<T>::observable_type> m_lock;
     std::shared_ptr<typename basic_txn<T>::observable_type> m_sp;
-};
-
-/// \brief      Unique transaction for `const` observables is disabled.
-template<typename T>
-class unique_txn<const T>
-{
-public:
-    explicit unique_txn(shared_obe<const T> so)
-    {
-        static_assert(false, "unique_txn is illegal for shared_obe with const value");
-    }
 };

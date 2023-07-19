@@ -8,6 +8,7 @@
 #include <future>
 #include <functional>
 #include <memory>
+#include <iterator>
 
 #include "observable.hpp"
 #include "basic_obe_storage.hpp"
@@ -159,7 +160,7 @@ int main()
         shared_obe so{7};
         so.observe(&observer::cb, &o);
 
-        unique_txn{so} = 12;
+        unique_txn<int>{so} = 12;
     }
 
     // unique and shared transactions
@@ -271,7 +272,7 @@ int main()
         {
             std::cout << value_c << std::endl;
         };
-        sum.observe(observer_sum);
+        //sum.observe(observer_sum);
 
         unique_txn{a} = 7;
         unique_txn{b} = 4;
@@ -576,15 +577,17 @@ int main()
     if (true)
     {
         shared_obe<int> so;
+
         shared_txn txs(so);
         unique_txn<int> txu(std::move(txs));
+        txu.get() = 7;
     }
 
     // breaking ciruclar observers #1
     if (false)
     {
-        //breaking_circular_observers();
-        //breaking_circular_observers2();
+        breaking_circular_observers();
+        breaking_circular_observers2();
     }
 
     // breaking ciruclar observers #2

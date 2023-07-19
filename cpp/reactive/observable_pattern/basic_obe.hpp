@@ -8,10 +8,10 @@
 #include "../../concurrency/concurrency/switch_mutex.hpp"
 #include "basic_obe_storage.hpp"
 
-template<typename T, template <typename> typename F, template <typename> typename S>
-class basic_obe;
-
 /// \brief      Common base for observable pattern implementation.
+/// \param      T       Stored value type.
+/// \param      F       Notification handler type.
+/// \param      S       Storage type.
 template<typename T, template <typename> typename F, template <typename> typename S = basic_obe_storage>
 class basic_obe
 {
