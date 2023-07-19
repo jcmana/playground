@@ -1,5 +1,9 @@
 #pragma once
 
+#include <optional>
+#include <vector>
+#include <string>
+
 #include <QtWidgets/QComboBox>
 
 namespace Silent
@@ -13,23 +17,38 @@ class ComboBox :
 
 public:
     ComboBox(QWidget * parent = nullptr);
-    int currentIndex() const;
+
+    /// \returns    Index of selected item.
+    /// \note       Index might be out-of-bounds.
+    std::optional<std::size_t> currentIndex() const;
 
 signals:
-    /// \brief      Emitted when user selects an item.
-    void currentIndexChanged(int index);
+    /// \brief      Emitted only when user selects an item.
+    void currentIndexChanged(std::optional<std::size_t> index);
 
 public slots:
-    void clear();
-    void insertItem(int index, const QString & text);
-    void addItem(const QString & text);
-    void setCurrentIndex(int index);
+    /// \brief      Clears all items.
+    /// \note       Doesn't change current index.
+    void clearItems();
+
+    /// \brief      Inserts items with `labels` before `index`.
+    void insertItems(std::size_t index, const std::vector<std::string> & labels);
+    /// \brief      Inserts item with `label` before `index`.
+    void insertItem(std::size_t index, const std::string & label);
+
+    /// \brief      Adds items with `labels` to the end.
+    void addItems(const std::vector<std::string> & labels);
+    /// \brief      Adds item with `labels` to the end.
+    void addItem(const std::string & label);
+
+    /// \brief      Changes selected item `index`.
+    void setCurrentIndex(std::optional<std::size_t> index);
 
 private:
     void onCurrentIndexChanged(int index);
 
 private:
-    int m_currentIndex;
+    std::optional<std::size_t> m_currentIndex;
 };
 
 };

@@ -9,36 +9,64 @@ ComboBox::ComboBox(QWidget * parent) :
     connect(this, &QComboBox::currentIndexChanged, this, &ComboBox::onCurrentIndexChanged);
 }
 
-int ComboBox::currentIndex() const
+std::optional<std::size_t> ComboBox::currentIndex() const
 {
     return m_currentIndex;
 }
 
-void ComboBox::clear()
+void ComboBox::clearItems()
 {
     QSignalBlocker blocker(this);
     QComboBox::clear();
-    QComboBox::setCurrentIndex(m_currentIndex);
+    setCurrentIndex(m_currentIndex);
 }
 
-void ComboBox::insertItem(int index, const QString & text)
+void ComboBox::insertItems(std::size_t index, const std::vector<std::string> & labels)
 {
     QSignalBlocker blocker(this);
-    QComboBox::insertItem(index, text);
-    QComboBox::setCurrentIndex(m_currentIndex);
+    for (const auto & label : labels)
+    {
+        QComboBox::insertItem(static_cast<int>(index++), label.c_str());
+    }
+    setCurrentIndex(m_currentIndex);
 }
 
-void ComboBox::addItem(const QString & text)
+void ComboBox::insertItem(std::size_t index, const std::string & label)
 {
     QSignalBlocker blocker(this);
-    QComboBox::addItem(text);
-    QComboBox::setCurrentIndex(m_currentIndex);
+    QComboBox::insertItem(static_cast<int>(index), label.c_str());
+    setCurrentIndex(m_currentIndex);
 }
 
-void ComboBox::setCurrentIndex(int index)
+void ComboBox::addItems(const std::vector<std::string> & labels)
+{
+    QSignalBlocker blocker(this);
+    for (const auto & label : labels)
+    {
+        QComboBox::addItem(label.c_str());
+    }
+    setCurrentIndex(m_currentIndex);
+}
+
+void ComboBox::addItem(const std::string & label)
+{
+    QSignalBlocker blocker(this);
+    QComboBox::addItem(label.c_str());
+    setCurrentIndex(m_currentIndex);
+}
+
+void ComboBox::setCurrentIndex(std::optional<std::size_t> index)
 {
     m_currentIndex = index;
-    QComboBox::setCurrentIndex(m_currentIndex);
+
+    if (m_currentIndex.has_value())
+    {
+        QComboBox::setCurrentIndex(static_cast<int>(m_currentIndex.value()));
+    }
+    else
+    {
+        QComboBox::setCurrentIndex(-1);
+    }
 }
 
 void ComboBox::onCurrentIndexChanged(int index)
@@ -46,10 +74,17 @@ void ComboBox::onCurrentIndexChanged(int index)
     // Block changing displayed current item
     {
         QSignalBlocker blocker(this);
-        QComboBox::setCurrentIndex(m_currentIndex);
+        setCurrentIndex(m_currentIndex);
     }
 
-    emit currentIndexChanged(index);
+    if (index == -1)
+    {
+        emit currentIndexChanged(std::nullopt);
+    }
+    else
+    {
+        emit currentIndexChanged(static_cast<std::size_t>(index));
+    }
 }
 
 };

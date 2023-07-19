@@ -7,20 +7,28 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(
-	Qt5 
+	Qt6
 	COMPONENTS 
 		Core 
 		Gui 
 		Widgets 
 	REQUIRED)
 
+set(AUTOMOC ON)
+set(AUTOUIC ON)
+set(AUTORCC ON)
+
 link_directories(
 	"../../cpp/concurrency/x64/Debug")
 
+qt_wrap_cpp("source/Silent/ComboBox.cpp")
+
 add_executable("observable_widgets" 
-	"source/Main.cpp")
+	"source/Main.cpp"
+	"source/Silent/ComboBox.cpp")
 
 target_include_directories("observable_widgets" PRIVATE
+	"source"
 	"../../cpp/link/link"
 	"../../cpp/callback_store/atomic_callback_store"
 	"../../cpp/concurrency/concurrency"
@@ -28,6 +36,6 @@ target_include_directories("observable_widgets" PRIVATE
 
 target_link_libraries("observable_widgets" PRIVATE 
 	concurrency
-	Qt5::Core 
-	Qt5::Widgets 
-	Qt5::Gui)
+	Qt6::Core 
+	Qt6::Widgets 
+	Qt6::Gui)
