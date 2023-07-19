@@ -1,12 +1,31 @@
 #include <iostream>
+#include <vector>
 #include <string>
 
 #include "unique_ref.hpp"
 #include "shared_ref.hpp"
 
+struct intf
+{
+    virtual void method() = 0;
+};
+
+struct impl : intf
+{
+    virtual void method() override
+    {
+        std::cout << "impl::method()" << std::endl;
+    };
+};
+
 shared_ref<int> return_shared_ref()
 {
     return shared_ref<int>(0);
+}
+
+shared_ref<intf> cast_and_return_shared_ref()
+{
+    return shared_ref(impl());
 }
 
 int main()
@@ -100,5 +119,19 @@ int main()
 
         const shared_ref const_sr(4);
         //const_sr = sr;      // cannot assign to const
+    }
+
+    // implicit conversion to interface in ctor:
+    {
+        shared_ref<intf> sr(std::make_shared<impl>());
+    }
+
+    // implicit conversion to interface in cast:
+    {
+        auto sr_impl = shared_ref(impl());
+        auto sr_intf_1 = static_cast<shared_ref<intf>>(sr_impl);
+        shared_ref<intf> sr_intf_2{sr_impl};
+
+        auto sr_from_fn = cast_and_return_shared_ref();
     }
 }
