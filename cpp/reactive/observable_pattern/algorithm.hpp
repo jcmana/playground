@@ -153,3 +153,26 @@ void forward(shared_obe<T> & source, shared_obe<T> target)
     };
     source.observe(std::move(observer));
 }
+
+/// \brief      Assigns `source` value `T` into `target` `member_ptr` when changed.
+template<typename T, typename C>
+void compose(shared_obe<T> & source, shared_obe<C> target, T C:: * member_ptr)
+{
+    auto observer = [target_captured = std::move(target), member_ptr](const T & value) mutable
+    {
+        unique_txn txn{target_captured};
+        txn.get().*member_ptr = value;
+    };
+    source.observe(std::move(observer));
+}
+
+template<typename T, typename C>
+void decompose(shared_obe<C> & source, T C:: * member_ptr, shared_obe<T> target)
+{
+    auto observer = [target_captured = std::move(target), member_ptr](const C & value) mutable
+    {
+        unique_txn txn{target_captured};
+        txn.get() = value.*member_ptr;
+    };
+    source.observe(std::move(observer));
+}

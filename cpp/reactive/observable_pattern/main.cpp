@@ -614,5 +614,40 @@ int main()
         unique_txn{target} = 2;
     }
 
+    // observable composition
+    if (true)
+    {
+        struct s
+        {
+            int number;
+            std::string text;
+        };
+
+        shared_obe<int> a;
+        shared_obe<s> b;
+        shared_obe<int> c;
+        
+        auto observer_b = [](const auto & value)
+        {
+            std::cout << "b.number = " << value.number << std::endl;
+            std::cout << "b.text   = " << value.text << std::endl;
+            std::cout << std::endl;
+        };
+        b.observe(observer_b);
+
+        auto observer_c = [](const auto & value)
+        {
+            std::cout << "c = " << value << std::endl;
+            std::cout << std::endl;
+        };
+        c.observe(observer_c);
+
+        compose(a, b, &s::number);
+        decompose(b, &s::number, c);
+
+        unique_txn{a}.get() = 7;
+        unique_txn{b}.get().text = "asdfsadf";
+    }
+
     _CrtDumpMemoryLeaks();
 }
