@@ -166,6 +166,7 @@ void compose(shared_obe<T> & source, shared_obe<C> target, T C:: * member_ptr)
     source.observe(std::move(observer));
 }
 
+/// \brief      Assigns value from `member_ptr` in `source` into `target`.
 template<typename T, typename C>
 void decompose(shared_obe<C> & source, T C:: * member_ptr, shared_obe<T> target)
 {
