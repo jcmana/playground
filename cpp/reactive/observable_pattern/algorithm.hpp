@@ -4,6 +4,8 @@
 #include <condition_variable>
 #include <tuple>
 
+#include "../shared_atomic/shared_atomic.hpp"
+
 #include "shared_obe.hpp"
 #include "unique_txn.hpp"
 #include "shared_txn.hpp"
@@ -142,8 +144,7 @@ auto join(shared_obe<A> & a, shared_obe<B> & b)
     return composite;
 }
 
-/// \brief      Forwards values written to `source` to `target` observable.
-/// \warning    `target` modifications won't propagate to `source`.
+/// \brief      Forwards changes in `source` to `target` observable.
 template<typename T>
 void forward(shared_obe<T> & source, shared_obe<T> target)
 {
@@ -152,6 +153,37 @@ void forward(shared_obe<T> & source, shared_obe<T> target)
         unique_txn{target_captured} = value;
     };
     source.observe(std::move(observer));
+}
+
+/// \brief      Synchronizes values between `first` and `second` observable.
+template<typename T>
+void synchronize(shared_obe<T> & first, shared_obe<T> & second)
+{
+    // JMTODO: works but leaking as shit; circular obe dependencies require some
+    // sort of weak_ptr approach
+
+    auto sp_forward = std::make_shared<std::mutex>();
+
+    auto conditional_forward = [](auto & sp_forward, auto & so, const T & value)
+    {
+        std::unique_lock lock(*sp_forward, std::try_to_lock);
+        if (lock)
+        {
+            unique_txn{so} = value;
+        }
+    };
+
+    auto observer_first = [conditional_forward, second, sp_forward](const T & value) mutable
+    {
+        conditional_forward(sp_forward, second, value);
+    };
+    first.observe(std::move(observer_first));
+
+    auto observer_second = [conditional_forward, first, sp_forward](const T & value) mutable
+    {
+        conditional_forward(sp_forward, first, value);
+    };
+    second.observe(std::move(observer_second));
 }
 
 /// \brief      Assigns `source` value `T` into `target` `member_ptr` when changed.

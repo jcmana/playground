@@ -614,8 +614,8 @@ int main()
         unique_txn{target} = 2;
     }
 
-    // observable composition
-    if (true)
+    // observable algorithms - compose, decompose
+    if (false)
     {
         struct s
         {
@@ -647,6 +647,31 @@ int main()
 
         unique_txn{a}.get() = 7;
         unique_txn{b}.get().text = "asdfsadf";
+    }
+
+    // observable algorithms - synchronize
+    if (true)
+    {
+        shared_obe<int> a;
+        shared_obe<int> b;
+
+        synchronize(a, b);
+
+        auto observer_a = [](const auto & value)
+        {
+            std::cout << "a = " << value << std::endl;
+        };
+        a.observe(observer_a);
+
+        auto observer_b = [](const auto & value)
+        {
+            std::cout << "b = " << value << std::endl;
+        };
+        b.observe(observer_b);
+
+        unique_txn{a} = 7;
+        unique_txn{b} = 3;
+        unique_txn{a} = 4;
     }
 
     _CrtDumpMemoryLeaks();
