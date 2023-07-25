@@ -60,22 +60,26 @@ Transactional approach to reading, writing and notifying `shared_obe`s.
 ```
 
 # raii
+Each copy of `shared_obe` holds its observers and deleting the copy will
+reset local observers.
 
 ```cpp
+auto observer = [](const std::string & value)
+{
+    std::cout << value << std::endl;
+};
+
 shared_obe so = std::string("initial string value");
+so.observe(observer);
+
 {
     shared_obe local_so = so;
+    local_so.observe(observer);
 
-    auto observer = [](const std::string & value)
-    {
-        std::cout << value << std::endl;
-    };
-    so.observe(observer);
-
-    unique_txn tx(so) = "changed string value";
+    unique_txn(local_so) = "changed string value";
 }
 
-unique_txn tx(so) = "another changed string value";
+unique_txn(so) = "another changed string value";
 ```
 
 # algorithms
