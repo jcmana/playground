@@ -91,6 +91,9 @@ unique_txn tx(so) = "another changed string value";
 `forward`
 - forwards value to another `shared_obe` when changed
 
+`synchronize`
+- synchronizes values between `shared_obe`s without causing an infinite loop
+
 `compose`
 - assigns value of `shared_obe` into a member of `struct` when changed
 
