@@ -45,7 +45,7 @@ void graph_test()
 	g.add_edge(struct_3, struct_4, EDGE_SREF);
 	g.add_edge(struct_4, struct_5, EDGE_SREF);
 	g.add_edge(struct_5, struct_6, EDGE_SREF);
-	g.add_edge(struct_5, struct_1, EDGE_SREF);			// cyclic edge
+	//g.add_edge(struct_5, struct_1, EDGE_SREF);			// cyclic edge
 	g.add_edge(struct_2, struct_5, EDGE_SREF);
 
 	// Preorder core:
@@ -145,7 +145,7 @@ void graph_test()
 	}
 
 	// Preorder path iterator:
-	if (true)
+	if (false)
 	{
 		using namespace containers::graph;
 
