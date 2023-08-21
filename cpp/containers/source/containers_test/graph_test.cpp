@@ -9,7 +9,7 @@
 
 #include "../../generic/generic/bidirectional_map.hpp"
 
-#include "containers/graph/adjacency.hpp"
+#include "containers/graph/node_centric.hpp"
 #include "containers/graph/cursors/path_cursor.hpp"
 #include "containers/graph/iterators/preorder_edge_iterator.hpp"
 #include "containers/graph/iterators/preorder_node_iterator.hpp"
@@ -23,7 +23,7 @@ void graph_test()
 {
 	std::cout << "graph test:" << std::endl;
 
-	using graph = containers::graph::adjacency<std::string, int>;
+	using graph = containers::graph::node_centric<std::string, int>;
 
 	// Graph container
 	graph g;
