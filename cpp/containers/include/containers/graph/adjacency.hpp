@@ -6,13 +6,13 @@
 namespace containers::graph
 {
 
-template <typename N, typename E>
-class node_centric
+template <typename N, typename E, template<typename> typename C = std::vector>
+class adjacency
 {
 public:
 	/// \brief		Base container type for storing graph elements.
 	template<typename I>
-	using container = std::vector<I>;
+	using container = C<I>;
 
 public:
 	/// \brief		Node identification.
