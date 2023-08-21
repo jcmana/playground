@@ -73,6 +73,11 @@ public:
 		}
 	}
 
+    bool cycle() const
+    {
+        return m_cursor.cycle();
+    }
+
 private:
 	path_cursor<G> m_cursor;
 };

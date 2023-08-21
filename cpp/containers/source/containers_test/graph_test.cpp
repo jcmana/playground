@@ -48,7 +48,7 @@ void graph_test()
 	g.add_edge(struct_3, struct_4, EDGE_SREF);
 	g.add_edge(struct_4, struct_5, EDGE_SREF);
 	g.add_edge(struct_5, struct_6, EDGE_SREF);
-	//g.add_edge(struct_5, struct_1, EDGE_SREF);			// cyclic edge
+	g.add_edge(struct_5, struct_1, EDGE_SREF);			// cyclic edge
 	g.add_edge(struct_2, struct_5, EDGE_SREF);
 
 	// Preorder core:
@@ -158,11 +158,17 @@ void graph_test()
 		for (; it != it_end; ++it)
 		{
 			std::cout << g[g[it->back()].source].property << " -> " << g[g[it->back()].target].property << std::endl;
+
+            if (it.cycle())
+            {
+                std::cout << "cycle" << std::endl;
+                break;
+            }
 		}
 	}
 
 	// Preorder path iterator with skipping:
-	if (true)
+	if (false)
 	{
 		using namespace containers::graph;
 
@@ -181,7 +187,7 @@ void graph_test()
 	}
 
 	// Postorder path iterator:
-	if (true)
+	if (false)
 	{
 		using namespace containers::graph;
 

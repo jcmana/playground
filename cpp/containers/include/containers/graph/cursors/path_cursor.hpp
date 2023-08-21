@@ -51,21 +51,6 @@ public:
 			m_stack_down.push_back(*it);
 		}
 
-#ifndef NDEBUG
-        /*
-		// Check if adding current edge creates a cycle
-		{
-			const auto pred = [](typename G::edge edge)
-			{
-				return edge.offset == edge.offset;
-			};
-			const auto it = std::find_if(m_stack_path.begin(), m_stack_path.end(), pred);
-
-			assert(it == m_stack_path.end() && "Graph cycle detected.");
-		}
-        */
-#endif
-
 		// Push the expanded edge onto path stack
 		m_stack_path.push_back(edge);
 	}
@@ -154,6 +139,18 @@ public:
 	{
 		return m_stack_down.back().offset == m_stack_path.back().offset;
 	}
+
+    /// \brief        Expansion and path stack last nodes creates a cycle.
+    bool cycle() const
+    {
+        auto pred = [down_edge = m_stack_down.back()](const typename G::edge & path_edge)
+        {
+            return down_edge.offset == path_edge.offset;
+        };
+        const auto it = std::find_if(m_stack_path.begin(), m_stack_path.end(), pred);
+
+        return it != m_stack_path.end();
+    }
 
 	/// \brief			Path stack depth.
 	std::size_t depth() const

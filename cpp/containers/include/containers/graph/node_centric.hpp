@@ -3,8 +3,8 @@
 #include <vector>
 #include <utility>
 
-namespace containers {
-namespace graph {
+namespace containers::graph
+{
 
 template <typename N, typename E>
 class node_centric
@@ -30,7 +30,7 @@ public:
 	/// \brief		Storage for the node property and edges.
 	struct node_storage
 	{
-		container<edge> outgoing;
+		container<edge> outgoing; 
 		container<edge> incoming;
 
 		N property;
@@ -45,22 +45,20 @@ public:
 		E property;
 	};
 
-	/// \brief		Adds a node with property.
-	template <typename ... A>
-	node add_node(A && ... node_property_args)
+	/// \brief		Adds a `node` with `node_property`.
+	node add_node(N node_property)
 	{
-		node_storage ns = {{}, {}, node_property_args ...};
+		node_storage ns = {{}, {}, std::move(node_property)};
 		m_nodes.emplace_back(std::move(ns));
-		node n = {m_nodes.size() - 1};
-
-		return n;
+        node n = {m_nodes.size() - 1};
+		
+        return n;
 	}
 
-	/// \brief		Adds an edge with property between nodes.
-	template <typename ... A>
-	edge add_edge(node source_node, node target_node, A && ... edge_property_args)
+	/// \brief		Adds an `edge` with `edge_property` from `source_node` to `target_node`.
+	edge add_edge(node source_node, node target_node, E edge_property)
 	{
-		edge_storage es = {source_node.offset, target_node.offset, edge_property_args ...};
+		edge_storage es = {source_node.offset, target_node.offset, std::move(edge_property)};
 		m_edges.emplace_back(std::move(es));
 		edge e = {m_edges.size() - 1};
 
@@ -70,14 +68,36 @@ public:
 		return e;
 	}
 
+    /// \brief		Access node's data with boundary check.
+    const auto & at(node n) const
+    {
+        if (n >= m_nodes.size())
+        {
+            throw std::out_of_range("node out of bounds");
+        }
+
+        return m_nodes[n.offset];
+    }
+
+    /// \brief		Access edge's data.
+    const auto & at(edge e) const
+    {
+        if (e >= m_edges.size())
+        {
+            throw std::out_of_range("edge out of bounds");
+        }
+
+        return m_edges[e.offset];
+    }
+
 	/// \brief		Access node's data.
-	const node_storage & operator [](node n) const
+	const auto & operator [](node n) const
 	{
 		return m_nodes[n.offset];
 	}
 
 	/// \brief		Access edge's data.
-	const edge_storage & operator [](edge e) const
+	const auto & operator [](edge e) const
 	{
 		return m_edges[e.offset];
 	}
@@ -97,5 +117,4 @@ private:
 	container<edge_storage> m_edges;
 };
 
-} // namespace graph
-} // namespace containers
+} // namespace containers::graph
