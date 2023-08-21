@@ -10,14 +10,11 @@
 #include "../../generic/generic/bidirectional_map.hpp"
 
 #include "containers/graph/adjacency.hpp"
+
 #include "containers/graph/cursors/path_cursor.hpp"
-#include "containers/graph/iterators/preorder_edge_iterator.hpp"
-#include "containers/graph/iterators/preorder_node_iterator.hpp"
+
 #include "containers/graph/iterators/preorder_path_iterator.hpp"
-#include "containers/graph/iterators/postorder_edge_iterator.hpp"
 #include "containers/graph/iterators/postorder_path_iterator.hpp"
-#include "containers/graph/search/dijkstra.hpp"
-#include "containers/graph/ordering/preordered.hpp"
 
 void graph_test()
 {
