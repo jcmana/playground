@@ -3,25 +3,35 @@
 
 struct simple
 {
-	void method() const
-	{
-		std::cout << "A::method()" << std::endl;
-	}
+    void method() const
+    {
+        std::cout << "simple::method()" << std::endl;
+    }
+
+    void method(int n) const
+    {
+        std::cout << "simple::method(int)" << std::endl;
+    }
+
+    static void function()
+    {
+        std::cout << "simple::function()" << std::endl;
+    }
 };
 
 struct intf
 {
     virtual void method() = 0;
-	virtual void method_const() const = 0;
+    virtual void method_const() const = 0;
     virtual void method_parameteric(int n) = 0;
 };
 
 struct impl_a : intf
 {
-	virtual void method() override
-	{
-		std::cout << "impl_a::method()" << std::endl;
-	}
+    virtual void method() override
+    {
+        std::cout << "impl_a::method()" << std::endl;
+    }
 
     virtual void method_const() const override
     {
@@ -36,10 +46,10 @@ struct impl_a : intf
 
 struct impl_b : intf
 {
-	virtual void method() override
-	{
-		std::cout << "impl_b::method()" << std::endl;
-	}
+    virtual void method() override
+    {
+        std::cout << "impl_b::method()" << std::endl;
+    }
 
     virtual void method_const() const override
     {
@@ -66,39 +76,69 @@ constexpr auto pointer_to_member_id(F pointer_to_member)
 
 int main()
 {
-	// pointer to normal class method
-	{
-		simple a;
+    // pointer to normal class method
+    {
+        simple a;
 
-		//auto ptr = &simple::method;
-		void(simple:: * ptr)() const = &simple::method;
-		(a.*ptr)();
-	}
+        void(simple:: * ptr)() const = &simple::method;
+        (a.*ptr)();
 
-	// pointer to polymorphic class method
-	{
-		intf * ia_ptr = new impl_a;
-		intf * ib_ptr = new impl_b;
+        void(simple:: * ptr_overload)(int) const = &simple::method;
+        (a.*ptr_overload)(7);
+    }
+
+    // pointer to polymorphic class method
+    {
+        intf * ia_ptr = new impl_a;
+        intf * ib_ptr = new impl_b;
 
         void(intf:: * ptr_method)() = &intf::method;
-		void(intf:: * ptr_method_const)() const = &intf::method_const;
+        void(intf:: * ptr_method_const)() const = &intf::method_const;
         void(intf:: * ptr_method_parameteric)(int) = &intf::method_parameteric;
 
-		(ia_ptr->*ptr_method_const)();
-		(ib_ptr->*ptr_method_const)();
+        (ia_ptr->*ptr_method_const)();
+        (ib_ptr->*ptr_method_const)();
 
-		delete ia_ptr;
-		delete ib_ptr;
-	}
+        delete ia_ptr;
+        delete ib_ptr;
+    }
+
+    const auto intf_method_id = pointer_to_member_id(&intf::method);
+    const auto intf_method_const_id = pointer_to_member_id(&intf::method_const);
+    const auto intf_method_parametric_id = pointer_to_member_id(&intf::method_parameteric);
 
     // member function identification:
     {
-        std::cout << std::hex << "0x" << pointer_to_member_id(&intf::method) << std::endl;
-        std::cout << std::hex << "0x" << pointer_to_member_id(&intf::method_const) << std::endl;
-        std::cout << std::hex << "0x" << pointer_to_member_id(&intf::method_parameteric) << std::endl;
+        std::cout << std::hex << "0x" << intf_method_id << std::endl;
+        std::cout << std::hex << "0x" << intf_method_const_id << std::endl;
+        std::cout << std::hex << "0x" << intf_method_parametric_id << std::endl;
     }
 
-	// WHAT IN THE ACTUAL FUCK?!
+    // WHAT IN THE ACTUAL FUCK?!
 
-	return 0;
+    // cast the id back to member pointer:
+    {
+        using method_ptr_t = void (intf:: *)();
+
+        method_ptr_t intf_method_ptr;
+        *reinterpret_cast<std::ptrdiff_t *>(&intf_method_ptr) = intf_method_id;
+
+        intf * ia_ptr = new impl_a;
+        intf * ib_ptr = new impl_b;
+
+        (ia_ptr->*intf_method_ptr)();
+        (ib_ptr->*intf_method_ptr)();
+
+        delete ia_ptr;
+        delete ib_ptr;
+    }
+
+    // static function:
+    {
+        void * s = nullptr;
+        const auto static_member_fn = &simple::function;
+        (*s.*static_member_fn)();
+    }
+
+    return 0;
 }

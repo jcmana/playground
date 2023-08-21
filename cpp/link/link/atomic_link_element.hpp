@@ -1,122 +1,217 @@
 #pragma once
 
 #include <mutex>
-#include <memory>
 #include <tuple>
+#include <utility>
 
-/// \brief      Thread-safe `link_element` implementation.
+template<typename M = std::mutex>
 class atomic_link_element
 {
 public:
-    /// \copydoc    link_element::link_element() noexcept
-    inline atomic_link_element() noexcept;
-
-    /// \copydoc    link_element::link_element(atomic_link_element && other) noexcept
-    inline atomic_link_element(atomic_link_element && other) noexcept;
-
-    inline ~atomic_link_element();
-
-    inline atomic_link_element & operator  =(atomic_link_element && other) noexcept;
-
-    /// \copydoc    link_element::linked()
-    inline bool linked() const noexcept;
+    using mutex_type = M;
 
 public:
-    // BasicLockable concept implementation:
+	atomic_link_element() noexcept;
+    atomic_link_element(const atomic_link_element & other) noexcept = delete;
+    atomic_link_element(atomic_link_element && other) noexcept;
 
-    /// \brief      Locks the mutex, blocks if the mutex is not available.
-    inline void lock() const;
+    ~atomic_link_element();
 
-    /// \brief      Unlocks the mutex.
-    inline void unlock() const;
+    atomic_link_element & operator  =(const atomic_link_element & other) noexcept = delete;
+    atomic_link_element & operator  =(atomic_link_element && other) noexcept;
+
+    bool linked() const noexcept;
+
+    void lock() const;
+    bool try_lock() const;
+    void unlock() const;
 
 public:
-    /// \copydoc    make_link()
-    friend inline std::tuple<atomic_link_element, atomic_link_element> make_atomic_link();
+    template<typename FM>
+    friend std::tuple<atomic_link_element<FM>, atomic_link_element<FM>> make_atomic_link();
 
-    /// \copydoc    swap(link_element &, link_element &)
-    friend inline void swap(atomic_link_element & lhs, atomic_link_element & rhs);
+    template<typename FM>
+    friend void swap(atomic_link_element<FM> & lhs, atomic_link_element<FM> & rhs);
 
 private:
-    std::shared_ptr<std::mutex> m_sp_mutex;
+    mutable mutex_type m_mutex;
+	atomic_link_element * m_element_ptr;
 };
 
-#pragma region atomic_link_element implementation:
+#pragma region link_element implementation:
 
-atomic_link_element::atomic_link_element() noexcept :
-    m_sp_mutex(new std::mutex)
+template<typename M>
+atomic_link_element<M>::atomic_link_element() noexcept :
+	m_element_ptr(nullptr)
 {
 }
 
-atomic_link_element::atomic_link_element(atomic_link_element && other) noexcept :
+template<typename M>
+atomic_link_element<M>::atomic_link_element(atomic_link_element && other) noexcept :
     atomic_link_element()
 {
     swap(*this, other);
 }
 
-atomic_link_element::~atomic_link_element()
+template<typename M>
+atomic_link_element<M>::~atomic_link_element()
 {
-    // Synchronize after all currently running operations are done and clear
-    std::unique_lock<std::mutex> lock(*m_sp_mutex);
+    // Critical section:
+    {
+        std::unique_lock l(*this);
+        if (linked())
+        {
+            m_element_ptr->m_element_ptr = nullptr;
+        }
+    }
+
+    m_element_ptr = nullptr;
 }
 
-atomic_link_element & atomic_link_element::operator  =(atomic_link_element && other) noexcept
+template<typename M>
+atomic_link_element<M> & 
+atomic_link_element<M>::operator  =(atomic_link_element && other) noexcept
 {
-    // Swap other for a default element, which means:
-    // 1. calling a destructor, unlinking potentionally linked element
-    // 2. making this element default unlinked
-    auto empty = atomic_link_element();
-    swap(*this, empty);
-
-    // Swap this now default and therefore unlinked element for `other`
+    atomic_link_element empty;
+    
+    using std::swap;
     swap(*this, other);
+    swap(other, empty);
 
     return (*this);
 }
 
-bool atomic_link_element::linked() const noexcept
+template<typename M>
+bool 
+atomic_link_element<M>::linked() const noexcept
 {
-    // Elements are considered linked iff 2 are synchronized on a common mutex
-    return m_sp_mutex.use_count() == 2;
+	return m_element_ptr != nullptr;
 }
 
-void atomic_link_element::lock() const
+template<typename M>
+void 
+atomic_link_element<M>::lock() const
 {
-    m_sp_mutex->lock();
+    while (true)
+    {
+        m_mutex.lock();
+
+        if (m_element_ptr == nullptr)
+        {
+            // Link is already broken, we have only local mutex now
+            return;
+        }
+
+        if (m_element_ptr->m_mutex.try_lock())
+        {
+            // Both mutexes are acquired, we have a lock
+            return;
+        }
+
+        m_mutex.unlock();
+
+        // Somebody works on this pair and locked faster, let him finish the work
+        std::this_thread::yield();
+    }
 }
 
-void atomic_link_element::unlock() const
+template<typename M>
+bool 
+atomic_link_element<M>:: try_lock() const
 {
-    m_sp_mutex->unlock();
+    if (m_mutex.try_lock())
+    {
+        if (m_element_ptr == nullptr)
+        {
+            // Link is already broken, we have only local mutex now
+            return true;
+        }
+
+        if (m_element_ptr->m_mutex.try_lock())
+        {
+            // Both mutexes are acquired, we have a lock
+            return true;
+        }
+
+        // THIS IS RACE BETWEEN THE TWO TRY_LOCKS:
+        // 1. both outer try_lock()s succeeds
+        // 2. both inner try_lock()s fails
+        // == one of the concurrent calls has to return true, one false
+    }
+
+    return false;
 }
 
-std::tuple<atomic_link_element, atomic_link_element> make_atomic_link()
+template<typename M>
+void
+atomic_link_element<M>::unlock() const
 {
-    // Create two default unlinked elements
-    atomic_link_element a;
-    atomic_link_element b;
+    if (m_element_ptr != nullptr)
+    {
+        m_element_ptr->m_mutex.unlock();
+    }
 
-    // Link them together by sharing common mutex in shared_ptr
-    // 1. default mutex from 'b' is destroyed
-    // 2. default mutex from 'a' is assigned to 'b'
-    // == both share and synchronize on common mutex
-    a.m_sp_mutex = b.m_sp_mutex;
-
-    return std::make_tuple(std::move(a), std::move(b));
+    m_mutex.unlock();
 }
 
-void swap(atomic_link_element & lhs, atomic_link_element & rhs)
+template<typename M = std::mutex>
+std::tuple<atomic_link_element<M>, atomic_link_element<M>> 
+make_atomic_link()
 {
-    // Avoid recursive locking if we are swapping two linked elements by no-op
-    if (lhs.m_sp_mutex == rhs.m_sp_mutex)
+    atomic_link_element<M> a;
+    atomic_link_element<M> b;
+
+    a.m_element_ptr = &b;
+    b.m_element_ptr = &a;
+
+    return {std::move(a), std::move(b)};
+}
+
+template<typename M>
+void 
+swap(atomic_link_element<M> & lhs, atomic_link_element<M> & rhs)
+{
+    // Case #1:
+    //  - pair a: l----r
+    //  - pair b: l----r
+    //  - swapping between pairs
+    //
+    // Case #2:
+    //  - pair a: l----r
+    //  - swapping in one pair
+    //
+    // Case #3:
+    //  - pair a: l----r
+    //  - pair b: l-   x
+    //  - swapping linked with unlinked
+    //
+    // Case #4:
+    //  - pair a: l-   x
+    //  - pair b: l-   x
+    //  - swapping unlinked with unlinked
+
+    std::unique_lock ll(lhs);
+
+    if (lhs.m_element_ptr == &rhs && rhs.m_element_ptr == &lhs)
     {
         return;
     }
 
-    std::unique_lock<std::mutex> lhs_lock(*lhs.m_sp_mutex);
-    std::unique_lock<std::mutex> rhs_lock(*rhs.m_sp_mutex);
+    std::unique_lock lr(rhs);
 
-    std::swap(lhs.m_sp_mutex, rhs.m_sp_mutex);
+    using std::swap;
+    swap(lhs.m_element_ptr, rhs.m_element_ptr);
+
+    if (lhs.linked())
+    {
+        lhs.m_element_ptr->m_element_ptr = &lhs;
+    }
+
+    if (rhs.linked())
+    {
+        rhs.m_element_ptr->m_element_ptr = &rhs;
+    }
 }
 
 #pragma endregion
+

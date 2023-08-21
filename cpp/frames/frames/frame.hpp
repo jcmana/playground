@@ -1,9 +1,10 @@
 #pragma once
 
 #include "xy.hpp"
-#include "frame_default.hpp"
+#include "space_default.hpp"
 
-template<typename F = frame_default>
+/// \brief      Defines frame of reference in a space `S`.
+template<typename S = space_default>
 struct frame
 {
     struct basis
@@ -12,23 +13,63 @@ struct frame
         double y;
     };
 
-    constexpr frame() :
+    frame() :
         base_x{1.0, 0.0},
         base_y{0.0, 1.0},
         origin{0.0, 0.0}
     {
     }
 
-    constexpr frame(basis base_x, basis base_y, basis origin) :
+    frame(basis base_x, basis base_y, basis origin) :
         base_x(base_x),
         base_y(base_y),
         origin(origin)
     {
     }
 
+    /// \returns        Local `xy` of `coordinate` with respect to this `frame`.
+    xy<void> localize(const xy<S> & coordinate) const
+    {
+        return 
+        {
+            base_x.x * (coordinate.x - origin.x) + base_y.x * (coordinate.y - origin.y),
+            base_x.y * (coordinate.x - origin.x) + base_y.y * (coordinate.y - origin.y)
+        };
+    }
+
+    /// \returns        `xy` of local `coordinate` from `frame` in space `S`.
+    xy<S> generalize(const xy<void> & coordinate) const
+    {
+        // Matrix inversion:
+        //
+        //       1
+        // A = ----- adjugate(A)
+        //     | A |
+        //
+        //         ( a  b )   ( +d -b )
+        // adjugate(      ) = (       )
+        //         ( c  d )   ( -c +d )
+
+        const auto base_determinant = base_x.x * base_y.y - base_x.y * base_y.x;
+
+        const frame<S>::basis base_x_adjugate = {+base_y.y, -base_x.y};
+        const frame<S>::basis base_y_adjugate = {-base_y.x, +base_x.x};
+
+        const auto base_x = coordinate.x / base_determinant;
+        const auto base_y = coordinate.y / base_determinant;
+
+        const auto coordinate_x = (base_x_adjugate.x * base_x + base_y_adjugate.x * base_y) + origin.x;
+        const auto coordinate_y = (base_x_adjugate.y * base_x + base_y_adjugate.y * base_y) + origin.y;
+
+        return 
+        {
+            coordinate_x, 
+            coordinate_y
+        };
+    }
+
     /// \brief      Basis vector defining X-axis.
     basis base_x;
-
     /// \brief      Basis vector defining Y-axis.
     basis base_y;
 
@@ -36,44 +77,14 @@ struct frame
     basis origin;
 };
 
-/// \brief      Computes `xy` in standard `frame` from local coordinates.
-template<typename F>
-xy<F> make_xy(double local_x, double local_y, const frame<F> & local_frame)
+template<typename S>
+constexpr xy<void> operator  &(const xy<S> & coordinate, const frame<S> & source)
 {
-    // Matrix inversion:
-    //
-    //       1
-    // A = ----- adjugate(A)
-    //     | A |
-    //
-    //         ( a  b )   ( +d -b )
-    // adjugate(      ) = (       )
-    //         ( c  d )   ( -c +d )
-
-    const auto base_determinant = local_frame.base_x.x * local_frame.base_y.y - local_frame.base_x.y * local_frame.base_y.x;
-
-    const auto base_x_adjugate = frame<F>::basis{+local_frame.base_y.y, -local_frame.base_x.y};
-    const auto base_y_adjugate = frame<F>::basis{-local_frame.base_y.x, +local_frame.base_x.x};
-
-    local_x = local_x / base_determinant;
-    local_y = local_y / base_determinant;
-
-    const auto coordinate_x = (base_x_adjugate.x * local_x + base_y_adjugate.x * local_y) + local_frame.origin.x;
-    const auto coordinate_y = (base_x_adjugate.y * local_x + base_y_adjugate.y * local_y) + local_frame.origin.y;
-
-    return {coordinate_x, coordinate_y};
+    return source.localize(coordinate);
 }
 
-/// \brief      Computes `frame` local `x` coordinate from `xy`.
-template<typename F>
-double get_x(const xy<F> & coordinate, const frame<F> & frame)
+template<typename S>
+constexpr xy<S> operator  &(const xy<void> & coordinate, const frame<S> & target)
 {
-    return frame.base_x.x * (coordinate.x - frame.origin.x) + frame.base_y.x * (coordinate.y - frame.origin.y);
-}
-
-/// \brief      Computes `frame` local `y` coordinate from `xy`.
-template<typename F>
-double get_y(const xy<F> & coordinate, const frame<F> & frame)
-{
-    return frame.base_x.y * (coordinate.x - frame.origin.x) + frame.base_y.y * (coordinate.y - frame.origin.y);
+    return target.generalize(coordinate);
 }

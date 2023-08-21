@@ -5,6 +5,9 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{b51d07ba-2c1d-4179-975e-eeaed04b6ad8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="barrier.hpp">
@@ -19,19 +22,16 @@
     <ClInclude Include="utility.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="executor_ordered.hpp">
+    <ClInclude Include="immediate_executor.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="executor_immediate.hpp">
+    <ClInclude Include="parallel_executor.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="executor_ordered_pool.hpp">
+    <ClInclude Include="atomic_queue.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="executor_queue.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="executor_thread.hpp">
+    <ClInclude Include="basic_executor.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="memory.hpp">
@@ -40,5 +40,19 @@
     <ClInclude Include="memory_guard.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="executor.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="switch_mutex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="switch_mutex.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="switch_mutex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

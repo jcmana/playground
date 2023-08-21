@@ -4,76 +4,84 @@
 #include <utility>
 
 #include "../../link/link/atomic_link_element.hpp"
-
-template<typename T>
-class atomic_callback_guard;
+#include "atomic_callback_guard.hpp"
 
 /// \brief      Thread-safe scope-guarded callback.
-template<typename T>
-class atomic_callback : private atomic_link_element
+template<typename T, typename M = std::mutex>
+class atomic_callback : private atomic_link_element<M>
 {
 public:
-    friend class atomic_callback_guard<T>;
+    using callable_type = T;
+    using mutex_type = M;
 
 public:
     /// \copydoc        callback<T>::callback()
     atomic_callback();
 
-    /// \copydoc        callback<T>::callback(T &, link_element &&)
-    atomic_callback(T & interface_ref, atomic_link_element && link_element_rref);
+    /// \copydoc        callback<T>::callback(T, link_element)
+    atomic_callback(callable_type callable, atomic_link_element<M> element);
+
+    bool active() const;
 
     /// \copydoc        callback<T>::invoke(F, A && ...)
-    template<typename F, typename ... A>
-    void invoke(F method_ptr, A && ... args) const;
+    template<typename ... A>
+    void invoke(const A & ... args) const;
 
     /// \brief      Creates active `atomic_callback` and appropriate `atomic_callback_guard`.
     /// \relates    atomic_callback<T>
-    template<typename T>
-    friend std::tuple<atomic_callback<T>, atomic_callback_guard<T>> make_atomic_callback(T & interface_ref);
+    template<typename FT, typename FM>
+    friend std::tuple<atomic_callback<FT, FM>, atomic_callback_guard<FT, FM>> make_atomic_callback(FT callable);
 
 private:
-    T * m_interface_ptr;
+    callable_type m_callable;
 };
 
 #pragma region atomic_callback implementation:
 
-template<typename T>
-atomic_callback<T>::atomic_callback() :
-    atomic_link_element(),
-    m_interface_ptr(nullptr)
+template<typename T, typename M>
+atomic_callback<T, M>::atomic_callback() :
+    m_callable()
 {
 }
 
-template<typename T>
-atomic_callback<T>::atomic_callback(T & interface_ref, atomic_link_element && link_element_rref) :
-    atomic_link_element(std::move(link_element_rref)),
-    m_interface_ptr(&interface_ref)
+template<typename T, typename M>
+atomic_callback<T, M>::atomic_callback(T callable, atomic_link_element<M> element) :
+    atomic_link_element<M>(std::move(element)),
+    m_callable(std::move(callable))
 {
 }
 
-template<typename T>
-template<typename F, typename ... A>
+template<typename T, typename M>
+bool 
+atomic_callback<T, M>::active() const
+{
+    return atomic_link_element<M>::linked();
+}
+
+template<typename T, typename M>
+template<typename ... A>
 void 
-atomic_callback<T>::invoke(F method_ptr, A && ... args) const
+atomic_callback<T, M>::invoke(const A & ... args) const
 {
-    std::unique_lock<const atomic_link_element> lock(*this);
+    std::unique_lock lock(static_cast<const atomic_link_element<M> &>(*this));
 
-    if (atomic_link_element::linked())
+    if (active())
     {
-        (m_interface_ptr->*method_ptr)(std::forward<A>(args) ...);
+        m_callable(std::forward<const A &>(args) ...);
     }
 }
 
-template<typename T>
-std::tuple<atomic_callback<T>, atomic_callback_guard<T>> 
-make_atomic_callback(T & interface_ref)
+template<typename T, typename M>
+std::tuple<atomic_callback<T, M>, atomic_callback_guard<T, M>> 
+make_atomic_callback(T callable)
 {
-    auto link = make_atomic_link();
+    auto [link_a, link_b] = make_atomic_link<M>();
 
-    atomic_callback<T> callback(interface_ref, std::move(std::get<0>(link)));
-    atomic_callback_guard<T> callback_guard(std::move(std::get<1>(link)));
-
-    return std::make_tuple(std::move(callback), std::move(callback_guard));
+    return std::tuple 
+    {
+        atomic_callback<T, M>(std::move(callable), std::move(link_a)),
+        atomic_callback_guard<T, M>(std::move(link_b))
+    };
 }
 
 #pragma endregion

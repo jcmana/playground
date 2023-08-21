@@ -7,6 +7,9 @@
 #include "atomic_callback.hpp"
 #include "atomic_callback_store.hpp"
 
+#include "../callback_store/callback_ref.hpp"
+#include "../../spinlock/spinlock/spinlock.hpp"
+
 struct callback_intf
 {
     void method()
@@ -32,53 +35,95 @@ void function_slow()
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 }
 
-void main()
+static unsigned int counter = 0;
+
+void function_counter()
+{
+    counter++;
+}
+
+int main()
 {
     // Simple atomic_callback_store test:
     if (false)
     {
         callback_intf i;
 
-        auto callback_pair = make_atomic_callback(i);
-        auto callback = std::move(std::get<0>(callback_pair));
-        auto callback_guard = std::move(std::get<1>(callback_pair));
-
-        callback.invoke(&callback_intf::method);
+        auto [c, g] = make_atomic_callback(callback_ref(i));
+        c.invoke(&callback_intf::method);
     }
 
-    // Multi-thread atomic_callback_store test:
+    // Multi-thread atomic_callback test:
     if (false)
     {
         callback_intf i;
 
-        atomic_callback<callback_intf> callback;
-        atomic_callback_guard<callback_intf> callback_guard;
+        atomic_callback<callback_ref<callback_intf>> callback;
+        atomic_callback_guard<callback_ref<callback_intf>> callback_guard;
 
-        std::tie(callback, callback_guard) = make_atomic_callback(i);
+        std::tie(callback, callback_guard) = make_atomic_callback(callback_ref(i));
 
-        std::thread t([&]
+        auto proc = [&]
         {
-            auto g = std::move(callback_guard);
-            callback.invoke(&callback_intf::method_slow);
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            callback.invoke(&callback_intf::method_slow);
+            while (callback.active())
+            {
+                callback.invoke(&callback_intf::method_slow);
+            }
+        };
 
-            auto g_move = std::move(g);
+        std::thread t(proc);
 
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            callback.invoke(&callback_intf::method_slow);
-        });
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
 
-        auto c_move = std::move(callback);
-        //callback = std::move(c_move);
+        // Depending on the scheduling of this thread and t, following instruction
+        // disconnects the link and callback becomes inactive, therefore only limited
+        // number of invokes will go through
+        callback_guard = {};
 
         t.join();
     }
 
-    if (true)
+    // Multi-thread atomic_callback test (inlined):
+    if (false)
+    {
+        std::shared_ptr<std::mutex> sp_mutex = std::make_shared<std::mutex>();
+
+        auto proc = [&sp_mutex]
+        {
+            auto sp_mutex_local = sp_mutex;
+
+            while (sp_mutex_local.use_count() == 2)
+            {
+                std::unique_lock lock(*sp_mutex_local);
+                function_slow();
+            }
+        };
+
+        std::thread t(proc);
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(300));
+
+        // Depending on the scheduling of this thread and t, following instruction
+        // releases the shared_ptr, therefore only limited number of invokes will go through
+        {
+            std::unique_lock lock(*sp_mutex);
+
+            if (sp_mutex.use_count() == 2)
+            {
+                sp_mutex.reset();
+            }
+        }
+
+        // This loops almost endlessly, most likely starvation caused by scheduler. There is a
+        // race on mutex locking because function_slow() is called under lock.
+
+        t.join();
+    }
+
+    if (false)
     {
         callback_intf i;
-        atomic_callback_store<callback_intf> cs;
+        atomic_callback_store<callback_ref<callback_intf>> cs;
         cs.invoke(&callback_intf::method);
         auto cg = cs.subscribe(i);
         cs.invoke(&callback_intf::method);
@@ -86,5 +131,33 @@ void main()
         auto ch = cs.subscribe(i);
         cs.invoke(&callback_intf::method);
         cs.invoke(&callback_intf::method_slow);
+
+        auto cs_moved = std::move(cs);
+        cs.invoke(&callback_intf::method);
+        cs_moved.invoke(&callback_intf::method);
+
+        cs = {};
+        cg = {};
+    }
+
+    if (false)
+    {
+        atomic_callback_guard<void> g;
+        auto g_moved = std::move(g);
+    }
+
+    // atomic callback with spinlock
+    if (true)
+    {
+        auto [c, g] = make_atomic_callback<void(*)(), spinlock>(function_counter);
+
+        std::cout << counter << std::endl;
+
+        for (unsigned int n = 0; n < 100'000'000; n++)
+        {
+            c.invoke();
+        }
+
+        std::cout << counter << std::endl;
     }
 }

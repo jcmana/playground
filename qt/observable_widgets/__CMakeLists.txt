@@ -1,0 +1,41 @@
+cmake_minimum_required(VERSION 3.1.0)
+
+project("observable_widgets")
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+find_package(
+	Qt6
+	COMPONENTS 
+		Core 
+		Gui 
+		Widgets 
+	REQUIRED)
+
+set(AUTOMOC ON)
+set(AUTOUIC ON)
+set(AUTORCC ON)
+
+link_directories(
+	"../../cpp/concurrency/x64/Debug")
+
+qt_wrap_cpp("source/Silent/ComboBox.cpp")
+
+add_executable("observable_widgets" 
+	"source/Main.cpp"
+	"source/Silent/ComboBox.cpp")
+
+target_include_directories("observable_widgets" PRIVATE
+	"source"
+	"../../cpp/link/link"
+	"../../cpp/callback_store/atomic_callback_store"
+	"../../cpp/concurrency/concurrency"
+	"../../cpp/reactive/observable_pattern")
+
+target_link_libraries("observable_widgets" PRIVATE 
+	concurrency
+	Qt6::Core 
+	Qt6::Widgets 
+	Qt6::Gui)

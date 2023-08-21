@@ -61,13 +61,13 @@
     <ClInclude Include="..\..\include\containers\graph\search\astar.hpp">
       <Filter>Header Files\search</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\containers\graph\iterators\postorder_edge_iterator.hpp">
-      <Filter>Header Files\graph\iterators</Filter>
+    <ClInclude Include="..\..\include\containers\graph\cursors\path_cursor.hpp">
+      <Filter>Header Files\graph\cursors</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\containers\graph\iterators\postorder_path_iterator.hpp">
       <Filter>Header Files\graph\iterators</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\containers\graph\cursors\path_cursor.hpp">
+    <ClInclude Include="..\..\include\containers\graph\cursors\path_cursor_generic.hpp">
       <Filter>Header Files\graph\cursors</Filter>
     </ClInclude>
   </ItemGroup>

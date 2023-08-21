@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Target Name="IncludeReferenceProprty">
+        <Import Project="" />
+    </Target>
+    <Target Name="Build">
+        <PropertyGroup>
+            <BuildProperty>x</BuildProperty>
+        </PropertyGroup>
+        <Message Text="Running Build: $(BuildProperty)" />
+    </Target>
+    <Target Name="CustomBuild" DependsOnTargets="IncludeReferenceProprty; Build">
+        <Message Text="Running CustomBuild: $(BuildProperty)" />
+    </Target>
+</Project>
