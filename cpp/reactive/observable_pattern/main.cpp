@@ -574,7 +574,7 @@ int main()
     }
 
     // upgrade from shared to unique txn
-    if (false)
+    if (true)
     {
         shared_obe<int> so;
 
@@ -614,29 +614,6 @@ int main()
         unique_txn{target} = 2;
     }
 
-    // observable algorithms - transform
-    if (true)
-    {
-        shared_obe<int> a;
-        shared_obe<double> b;
-
-        auto functor = [](const int & value)
-        {
-            return double(value + 5);
-        };
-
-        transform(a, b, std::function(functor));
-
-        auto observer = [](const auto & value)
-        {
-            std::cout << "b = " << value << std::endl;
-        };
-        b.observe(observer);
-
-        unique_txn{a} = 2;
-        unique_txn{a} = 8;
-    }
-
     // observable algorithms - compose, decompose
     if (false)
     {
@@ -673,7 +650,7 @@ int main()
     }
 
     // observable algorithms - synchronize
-    if (false)
+    if (true)
     {
         shared_obe<int> a;
         shared_obe<int> b;
