@@ -31,7 +31,7 @@
     <ClInclude Include="..\..\include\containers\proxy.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\containers\graph\node_centric.hpp">
+    <ClInclude Include="..\..\include\containers\graph\adjacency.hpp">
       <Filter>Header Files\graph</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\containers\queue\limited_queue.hpp">
