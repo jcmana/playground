@@ -9,12 +9,13 @@ template<typename G>
 class postorder_path_iterator
 {
 public:
-	postorder_path_iterator()
+	postorder_path_iterator(G & graph) :
+		m_cursor(graph)
 	{
 	}
 
-	postorder_path_iterator(typename G::node * node_ptr) :
-		m_cursor({node_ptr->outgoing.rbegin(), node_ptr->outgoing.rend()})
+	postorder_path_iterator(G & graph, typename G::node node) :
+		m_cursor(graph, std::vector<typename G::edge>(graph[node].outgoing.rbegin(), graph[node].outgoing.rend()))
 	{
 		while (m_cursor.match() == false)
 		{
@@ -22,8 +23,8 @@ public:
 		}
 	}
 
-	postorder_path_iterator(typename G::edge * edge_ptr) :
-		m_cursor({edge_ptr})
+	postorder_path_iterator(G & graph, typename G::edge edge) :
+		m_cursor(graph, edge)
 	{
 		while (m_cursor.match() == false)
 		{
@@ -58,12 +59,12 @@ public:
 		return m_cursor != other.m_cursor;
 	}
 
-	const std::vector<typename G::edge *> & operator  *() const
+	const std::vector<typename G::edge> & operator  *() const
 	{
 		return *m_cursor;
 	}
 
-	const std::vector<typename G::edge *> * operator ->() const
+	const std::vector<typename G::edge> * operator ->() const
 	{
 		return &*m_cursor;
 	}

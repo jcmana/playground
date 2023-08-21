@@ -9,18 +9,18 @@ template<typename G>
 class preorder_path_iterator
 {
 public:
-	preorder_path_iterator()
+	preorder_path_iterator(G & graph) :
+		m_cursor(graph)
 	{
 	}
 
-	preorder_path_iterator(typename G::node * node_ptr) :
-		m_cursor({node_ptr->outgoing.rbegin(), node_ptr->outgoing.rend()})
+	preorder_path_iterator(G & graph, typename G::node node) :
+		m_cursor(graph, std::vector<typename G::edge>(graph[node].outgoing.rbegin(), graph[node].outgoing.rend()))
 	{
-
 	}
 
-	preorder_path_iterator(typename G::edge * edge_ptr) :
-		m_cursor({edge_ptr})
+	preorder_path_iterator(G & graph, typename G::edge edge) :
+		m_cursor(graph, edge)
 	{
 	}
 
@@ -52,12 +52,12 @@ public:
 		return m_cursor != other.m_cursor;
 	}
 
-	const std::vector<typename G::edge *> & operator  *() const
+	const std::vector<typename G::edge> & operator  *() const
 	{
 		return *m_cursor;
 	}
 
-	const std::vector<typename G::edge *> * operator ->() const
+	const std::vector<typename G::edge> * operator ->() const
 	{
 		return &*m_cursor;
 	}
@@ -72,6 +72,11 @@ public:
 			m_cursor.skip();
 		}
 	}
+
+    bool cycle() const
+    {
+        return m_cursor.cycle();
+    }
 
 private:
 	path_cursor<G> m_cursor;

@@ -11,11 +11,13 @@ template<typename G>
 class path_cursor
 {
 public:
-	path_cursor()
+	path_cursor(G & graph) :
+		m_graph(graph)
 	{
 	}
 
-	path_cursor(std::vector<typename G::edge *> edges) :
+	path_cursor(G & graph, std::vector<typename G::edge> edges) :
+		m_graph(graph),
 		m_stack_down(edges)
 	{
 		expand();
@@ -37,34 +39,29 @@ public:
 	/// \brief		Expands last node from expansion stack.
 	void expand()
 	{
-		auto * edge_ptr = m_stack_down.back();
-		auto * node_ptr = edge_ptr->target;
+		const auto edge = m_stack_down.back();
+		const auto node = m_graph[edge].target;
+
+		const auto & edge_storage = m_graph[edge];
+		const auto & node_storage = m_graph[node];
 
 		// Expand in reverse order (to visit leftmost subtrees first)
-		for (auto it = node_ptr->outgoing.rbegin(); it < node_ptr->outgoing.rend(); ++it)
+		for (auto it = node_storage.outgoing.rbegin(); it < node_storage.outgoing.rend(); ++it)
 		{
 			m_stack_down.push_back(*it);
 		}
 
-#ifndef NDEBUG
-		// Check if adding current edge creates a cycle
-		{
-			const auto pred = [edge_ptr](typename G::edge * stack_edge_ptr)
-			{
-				return edge_ptr == stack_edge_ptr;
-			};
-			const auto it = std::find_if(m_stack_path.begin(), m_stack_path.end(), pred);
-
-			assert(it == m_stack_path.end() && "Graph cycle detected.");
-		}
-#endif
-
 		// Push the expanded edge onto path stack
-		m_stack_path.push_back(edge_ptr);
+		m_stack_path.push_back(edge);
 	}
 
 	bool operator ==(const path_cursor & other) const
 	{
+		if (&m_graph != &other.m_graph)
+		{
+			return false;
+		}
+
 		if (m_stack_down.size() != other.m_stack_down.size())
 		{
 			return false;
@@ -92,7 +89,7 @@ public:
 
 			for (; it_down_this != m_stack_down.end(); ++it_down_this, ++it_down_that)
 			{
-				if (*it_down_this != *it_down_that)
+				if (it_down_this->offset != it_down_that->offset)
 				{
 					return false;
 				}
@@ -106,7 +103,7 @@ public:
 
 			for (; it_path_this != m_stack_path.end(); ++it_path_this, ++it_path_that)
 			{
-				if (*it_path_this != *it_path_that)
+				if (it_path_this->offset != it_path_that->offset)
 				{
 					return false;
 				}
@@ -121,12 +118,12 @@ public:
 		return !((*this) == other);
 	}
 
-	const std::vector<typename G::edge *> & operator  *() const
+	const std::vector<typename G::edge> & operator  *() const
 	{
 		return m_stack_path;
 	}
 
-	const std::vector<typename G::edge *> * operator ->() const
+	const std::vector<typename G::edge> * operator ->() const
 	{
 		return &m_stack_path;
 	}
@@ -140,8 +137,20 @@ public:
 	/// \brief			Expansion and path stack last nodes match.
 	bool match() const
 	{
-		return m_stack_down.back() == m_stack_path.back();
+		return m_stack_down.back().offset == m_stack_path.back().offset;
 	}
+
+    /// \brief        Expansion and path stack last nodes creates a cycle.
+    bool cycle() const
+    {
+        auto pred = [down_edge = m_stack_down.back()](const typename G::edge & path_edge)
+        {
+            return down_edge.offset == path_edge.offset;
+        };
+        const auto it = std::find_if(m_stack_path.begin(), m_stack_path.end(), pred);
+
+        return it != m_stack_path.end();
+    }
 
 	/// \brief			Path stack depth.
 	std::size_t depth() const
@@ -150,8 +159,10 @@ public:
 	}
 
 private:
-	std::vector<typename G::edge *> m_stack_down;
-	std::vector<typename G::edge *> m_stack_path;
+	G & m_graph;
+
+	std::vector<typename G::edge> m_stack_down;
+	std::vector<typename G::edge> m_stack_path;
 };
 
 } // namespace graph
