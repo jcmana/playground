@@ -52,20 +52,22 @@ public:
 		}
 
 #ifndef NDEBUG
+        /*
 		// Check if adding current edge creates a cycle
 		{
-			const auto pred = [e](typename G::edge edge)
+			const auto pred = [](typename G::edge edge)
 			{
-				return e.offset == edge.offset;
+				return edge.offset == edge.offset;
 			};
 			const auto it = std::find_if(m_stack_path.begin(), m_stack_path.end(), pred);
 
 			assert(it == m_stack_path.end() && "Graph cycle detected.");
 		}
+        */
 #endif
 
 		// Push the expanded edge onto path stack
-		m_stack_path.push_back(e);
+		m_stack_path.push_back(edge);
 	}
 
 	bool operator ==(const path_cursor & other) const
