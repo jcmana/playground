@@ -144,6 +144,16 @@ auto join(shared_obe<A> & a, shared_obe<B> & b)
     return composite;
 }
 
+template<typename A, typename B>
+void transform(shared_obe<A> & source, shared_obe<B> target, std::function<B(const A &)> functor)
+{
+    auto observer = [target_captured = std::move(target), functor_captured = std::move(functor)](const A & value) mutable
+    {
+        unique_txn{target_captured} = functor_captured(value);
+    };
+    source.observe(observer);
+}
+
 /// \brief      Forwards changes in `source` to `target` observable.
 template<typename T>
 void forward(shared_obe<T> & source, shared_obe<T> target)

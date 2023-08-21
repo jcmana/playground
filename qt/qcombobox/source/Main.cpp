@@ -12,6 +12,7 @@ int main(int argc, char * argv[])
     auto * pComboBox = new QComboBox();
     pComboBox->show();
 
+    /*
     auto procedure = [pComboBox]
     {
         std::this_thread::sleep_for(std::chrono::seconds(3));
@@ -42,6 +43,7 @@ int main(int argc, char * argv[])
                 pComboBox->addItem("a");
                 pComboBox->addItem("b");
                 pComboBox->addItem("d");
+                pComboBox->addItem("d");
             };
             QMetaObject::invokeMethod(pComboBox, update);
         }
@@ -53,6 +55,16 @@ int main(int argc, char * argv[])
         qDebug("current index changed = %d", index);
     };
     QObject::connect(pComboBox, &QComboBox::currentIndexChanged, change);
+    */
+
+    pComboBox->addItem("a");
+    pComboBox->addItem("b");
+    pComboBox->addItem("c");
+    pComboBox->addItem("d");
+
+    pComboBox->setPlaceholderText("x");
+    pComboBox->setCurrentIndex(-1);
+    pComboBox->setStyleSheet("
 
     return application.exec();
 }

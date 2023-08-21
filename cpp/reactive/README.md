@@ -92,6 +92,9 @@ unique_txn(so) = "another changed string value";
 - joins two `shared_obe`s into a single `std::tuple`
 - invoked when either value changed
 
+`transform`
+- trasnforms value and forwards to another `share_obe` when changed
+
 `forward`
 - forwards value to another `shared_obe` when changed
 

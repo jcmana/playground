@@ -4,7 +4,7 @@
 
 #include <QtWidgets/QApplication>
 
-//#include "ComboBox.h"
+#include "ComboBox.h"
 //#include "SpinBox.h"
 //#include "ListWidget.h"
 //#include "InputSelect.h"
@@ -71,15 +71,15 @@ int main(int argc, char * argv[])
     auto wtf = std::async(fill);
     */
 
-    /*
+    shared_obe<ComboBox::Items> soItems;
+    shared_obe<ComboBox::ItemsIndex> soItemsIndex;
+
     ComboBox combo;
+    combo.reset(soItems);
     combo.show();
 
-    auto soItems = combo.soItems();
     unique_txn{soItems} = {"a", "b", "c", "d"};
-    auto soSelected = combo.soSelectedItem();
-    unique_txn{soSelected} = 5;
-    */
+    unique_txn{soItemsIndex} = 5;
 
     /*
     InputSelect is;
@@ -154,6 +154,7 @@ int main(int argc, char * argv[])
     widget->show();
     */
 
+/*
     Silent::ComboBox combo;
     combo.show();
 
@@ -167,6 +168,7 @@ int main(int argc, char * argv[])
         combo.setCurrentIndex(index);
     };
     QObject::connect(&combo, &Silent::ComboBox::currentIndexChanged, updateCurrentIndex);
+    */
 
     return application.exec();
 }
