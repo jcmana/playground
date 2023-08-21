@@ -20,23 +20,33 @@ public:
     ComboBox(QWidget * parent = nullptr) :
         QComboBox(parent)
     {
-        connect(this, &QComboBox::currentIndexChanged, this, &ComboBox::onCurrentIndexChanged);
+        m_soItems.observe(&ComboBox::OnItemsChanged, this);
+        m_soSelected.observe(&ComboBox::OnSelectedItemChanged, this);
+
     }
 
-    void reset(shared_obe<Items> soItems)
+    shared_obe<Items> soItems()
     {
-        m_soItems = std::move(soItems);
-        m_soItems.observe(&ComboBox::onItemsChanged, this);
+        return m_soItems;
     }
 
-    void reset(shared_obe<ItemsIndex> soItemsIndex)
+    shared_obe<const Items> soItems() const
     {
-        m_soItemsIndex = std::move(soItemsIndex);
-        m_soItemsIndex.observe(&ComboBox::onItemsIndexChanged, this);
+        return m_soItems;
+    }
+
+    shared_obe<ItemsIndex> soSelectedItem()
+    {
+        return m_soSelected;
+    }
+
+    shared_obe<const ItemsIndex> soSelectedItem() const
+    {
+        return m_soSelected;
     }
 
 private:
-    void onItemsChanged(const Items & items)
+    void OnItemsChanged(const Items & items)
     {
         auto update = [this, items]
         {
@@ -51,7 +61,7 @@ private:
         QMetaObject::invokeMethod(this, update);
     }
 
-    void onItemsIndexChanged(const ItemsIndex & selected)
+    void OnSelectedItemChanged(const ItemsIndex & selected)
     {
         auto update = [this, selected]
         {
@@ -62,11 +72,13 @@ private:
         QMetaObject::invokeMethod(this, update);
     }
 
-    void onCurrentIndexChanged(int index)
+    void OnCurrentIndexChanged(int index)
     {
+
+        
     }
 
 private:
     shared_obe<Items> m_soItems;
-    shared_obe<ItemsIndex> m_soItemsIndex;
+    shared_obe<ItemsIndex> m_soSelected;
 };
