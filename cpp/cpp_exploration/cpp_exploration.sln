@@ -112,6 +112,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "forward_declaration", "forw
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "call_operator", "call_operator\call_operator.vcxproj", "{D22BBE2E-FAC3-424F-ACBC-1665FA508F62}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "enum_class", "enum_class\enum_class.vcxproj", "{A1F66E63-3F37-48AB-91C7-760AD0BAE965}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -556,6 +558,14 @@ Global
 		{D22BBE2E-FAC3-424F-ACBC-1665FA508F62}.Release|x64.Build.0 = Release|x64
 		{D22BBE2E-FAC3-424F-ACBC-1665FA508F62}.Release|x86.ActiveCfg = Release|Win32
 		{D22BBE2E-FAC3-424F-ACBC-1665FA508F62}.Release|x86.Build.0 = Release|Win32
+		{A1F66E63-3F37-48AB-91C7-760AD0BAE965}.Debug|x64.ActiveCfg = Debug|x64
+		{A1F66E63-3F37-48AB-91C7-760AD0BAE965}.Debug|x64.Build.0 = Debug|x64
+		{A1F66E63-3F37-48AB-91C7-760AD0BAE965}.Debug|x86.ActiveCfg = Debug|Win32
+		{A1F66E63-3F37-48AB-91C7-760AD0BAE965}.Debug|x86.Build.0 = Debug|Win32
+		{A1F66E63-3F37-48AB-91C7-760AD0BAE965}.Release|x64.ActiveCfg = Release|x64
+		{A1F66E63-3F37-48AB-91C7-760AD0BAE965}.Release|x64.Build.0 = Release|x64
+		{A1F66E63-3F37-48AB-91C7-760AD0BAE965}.Release|x86.ActiveCfg = Release|Win32
+		{A1F66E63-3F37-48AB-91C7-760AD0BAE965}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
