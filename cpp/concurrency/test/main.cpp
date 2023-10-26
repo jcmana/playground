@@ -23,7 +23,7 @@
 
 #include "../concurrency/utility.hpp"
 
-#include "../concurrency/switch_mutex.hpp"
+#include "../concurrency/switch_mutex_lock.hpp"
 
 barrier barr_a;
 barrier barr_b;
@@ -247,7 +247,7 @@ int main()
         auto e_moved = std::move(e);
     }
 
-    if (true)
+    if (false)
     {   
         std::vector l = {print, print_slow, print};
         auto e = basic_executor(execute_tasklist<decltype(l)>, std::move(l));
@@ -406,6 +406,7 @@ int main()
         auto t_moved = std::move(t);
     }
 
+    // swith_mutex - blocking locking with 2 threads
     if (false)
     {
         switch_mutex m;
@@ -435,7 +436,7 @@ int main()
         t.join();
     }
 
-    // non-blocking locking 
+    // swith_mutex - non-blocking locking single thread
     if (false)
     {
         switch_mutex m;
@@ -459,6 +460,7 @@ int main()
         std::cout << "noice" << std::endl;
     }
 
+    // swith_mutex -
     if (false)
     {
         switch_mutex m;
@@ -496,6 +498,7 @@ int main()
         t.join();
     }
 
+    // switch_mutex 
     if (false)
     {
         switch_mutex m;
@@ -516,5 +519,52 @@ int main()
         std::cout << "main shared unlocked" << std::endl;
 
         t.join();
+    }
+
+    // switch_mutex - shared_lock with 2 thread and 1 unique lock
+    if (true)
+    {
+        switch_mutex m;
+        m.lock();
+
+        auto proc_a = [&m]
+        {
+            m.lock_shared();
+            std::cout << "a shared locked" << std::endl;
+
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+
+            m.unlock_shared();
+            std::cout << "a shared unlocked" << std::endl;
+        };
+        std::thread ta(proc_a);
+
+        auto proc_b = [&m]
+        {
+            m.lock_shared();
+            std::cout << "b shared locked" << std::endl;
+
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+
+            m.unlock_shared();
+            std::cout << "b shared unlocked" << std::endl;
+        };
+        std::thread tb(proc_b);
+
+        m.unlock();
+
+        tb.join();
+        ta.join();
+
+        m.lock();
+        m.unlock();
+    }
+
+    // switch_mutex - copy and move
+    if (false)
+    {
+        switch_mutex m;
+        //auto m_copy = m;              // deleted error
+        //auto m_move = std::move(m);   // deleted error
     }
 }

@@ -137,7 +137,7 @@
     <ClInclude Include="latch.hpp" />
     <ClInclude Include="memory.hpp" />
     <ClInclude Include="memory_guard.hpp" />
-    <ClInclude Include="switch_mutex.hpp" />
+    <ClInclude Include="switch_mutex_lock.hpp" />
     <ClInclude Include="switch_mutex.h" />
     <ClInclude Include="utility.hpp" />
   </ItemGroup>
