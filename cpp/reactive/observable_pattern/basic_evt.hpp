@@ -14,10 +14,32 @@ public:
     using guard_type = atomic_callback_guard<store_callback_type>;
 
 public:
-    /// \brief      Default constructor, creates un-observerd event.
+    /// \brief      Default constructor, creates un-observed event.
     basic_evt() :
         m_store()
     {
+    }
+
+    /// \brief      Copy constructor, deleted.
+    basic_evt(const basic_evt & other) = delete;
+
+    /// \brief      Move contructor.
+    basic_evt(basic_evt && other) :
+        m_store(std::move(other.m_store))
+    {
+        other.m_store = {};
+    }
+
+    /// \brief      Copy assignment, deleted.
+    basic_evt & operator  =(const basic_evt & other) = delete;
+
+    /// \brief      Move assignemnt.
+    basic_evt & operator  =(basic_evt && other) noexcept
+    {
+        auto empty = basic_evt();
+        swap(*this, empty);
+        swap(*this, other);
+        return (*this);
     }
 
     /// \brief      Subscribes `callback` for notifications.
@@ -26,17 +48,15 @@ public:
         return m_store.subscribe(std::move(callback));
     }
 
-    /// \brief      Subscribes `callback` for notifications.
-    template<typename C>
-    auto observe(C callback)
-    {
-        return m_store.subscribe(static_cast<store_callback_type>(callback));
-    }
-
-    /// \brief      Invokes each active `callback` with current value as argument.
+    /// \brief      Invokes each active `callback` with `value` as argument.
     void notify(const T & value) const
     {
         m_store.invoke(value);
+    }
+
+    friend void swap(basic_evt & lhs, basic_evt & rhs)
+    {
+        swap(lhs.m_store, rhs.m_store);
     }
 
 private:

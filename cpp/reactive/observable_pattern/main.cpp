@@ -9,6 +9,8 @@
 #include <functional>
 #include <memory>
 #include <iterator>
+#include <string>
+#include <string_view>
 
 #include "observable.hpp"
 #include "event.hpp"
@@ -675,6 +677,63 @@ int main()
         unique_txn{a} = 4;
     }
 
+    // basic event - ctor, copy, move, assignment
+    if (false)
+    {
+        basic_evt<int, F> e;
+        //const auto e_copy = e;
+        auto e_move = std::move(e);
+        
+        basic_evt<int, F> e_ctor;
+        e_ctor = std::move(e_move);
+    }
+
+    // basic event - callback overloading (const ref vs. value)
+    if (true)
+    {
+        basic_evt<int, F> e;
+        
+        auto observer_a = [](int value)
+        {
+            std::cout << "notified value (int) = " << value << std::endl;
+        };
+        auto guard_a = e.observe(observer_a);
+
+        auto observer_b = [](const int & value)
+        {
+            std::cout << "notified value (const int &) = " << value << std::endl;
+        };
+        auto guard_b = e.observe(observer_b);
+
+        e.notify(7);
+    }
+
+    // basic event - callback overloading (compatible types)
+    if (false)
+    {
+        basic_evt<const char *, F> e;
+
+        auto observer_a = [](const char * value)
+        {
+            std::cout << "notified value (const char *) = " << value << std::endl;
+        };
+        auto guard_a = e.observe(observer_a);
+
+        auto observer_b = [](const std::string & value)
+        {
+            std::cout << "notified value (const std::string &) = " << value << std::endl;
+        };
+        auto guard_b = e.observe(observer_b);
+
+        auto observer_c = [](std::string_view value)
+        {
+            std::cout << "notified value (std::string_view) = " << value << std::endl;
+        };
+        auto guard_c = e.observe(observer_c);
+
+        e.notify("test");
+    }
+
     // shared event - basic notification
     if (false)
     {
@@ -689,7 +748,7 @@ int main()
     }
 
     // shared event - notification from multiple threads
-    if (true)
+    if (false)
     {
         shared_evt<int> se;
 
@@ -711,11 +770,13 @@ int main()
         };
         std::thread tb(proc_tb);
 
-        auto observer = [](const int & value)
+        auto observer = [](int value)
         {
             std::cout << "notified value = " << value << std::endl;
         };
         se.observe(observer);
+
+        se.notify(0);
 
         tb.join();
         ta.join();

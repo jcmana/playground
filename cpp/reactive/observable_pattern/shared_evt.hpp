@@ -31,6 +31,12 @@ public:
     {
     }
 
+    shared_evt(shared_evt && other) :
+        shared_obe()
+    {
+        swap(*this, other);
+    }
+
     void observe(functor_type<const T &> callback)
     {
         m_observers.push_back(m_sp->observe(std::move(callback)));
@@ -44,6 +50,16 @@ public:
     void notify(const T & value) const
     {
         m_sp->notify(value);
+    }
+
+    template<typename TT>
+    friend void swap(shared_evt<TT> & lhs, shared_evt<TT> & rhs) noexcept
+    {
+        using std::swap;
+        swap(lhs.m_sp, rhs.m_sp);
+
+        lhs.m_observers.clear();
+        rhs.m_observers.clear();
     }
 
 private:
