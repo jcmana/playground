@@ -5,7 +5,9 @@
 #include <type_traits>
 
 #include "../../callback_store/atomic_callback_store/atomic_callback_store.hpp"
-#include "../../concurrency/concurrency/switch_mutex.hpp"
+#include "../../concurrency/concurrency/switch_mutex.h"
+#include "../../concurrency/concurrency/switch_mutex_lock.hpp"
+
 #include "basic_obe_storage.hpp"
 
 /// \brief      Common base for observable pattern implementation.
