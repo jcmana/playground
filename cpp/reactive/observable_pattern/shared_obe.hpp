@@ -201,7 +201,7 @@ template<typename T>
 void 
 shared_obe<T>::observe(functor_type<const observed_type &> callback)
 {
-    m_observers.push_back(m_sp->observe(std::move(callback)));
+    m_observers.push_back(observe_scoped(std::move(callback)));
 }
 
 template<typename T>
@@ -240,7 +240,7 @@ template<typename C>
 void 
 shared_obe<T>::observe(void(C:: * f)(const observed_type &), C * ptr)
 {
-    m_observers.push_back(m_sp->observe(std::bind(f, ptr, std::placeholders::_1)));
+    m_observers.push_back(observe_scoped(f, ptr));
 }
 
 template<typename T>
@@ -256,7 +256,7 @@ template<typename C>
 void 
 shared_obe<T>::observe(void(C:: * f)(observed_type), C * ptr)
 {
-    m_observers.push_back(m_sp->observe(std::bind(f, ptr, std::placeholders::_1)));
+    m_observers.push_back(observe_scoped(f, ptr));
 }
 
 template<typename T>
@@ -271,11 +271,7 @@ template<typename T>
 void 
 shared_obe<T>::observe(functor_void_type callback)
 {
-    auto callback_wrapper = [callback](const T & value)
-    {
-        callback();
-    };
-    m_observers.push_back(m_sp->observe(std::move(callback_wrapper)));
+    m_observers.push_back(observe_scoped(std::move(callback)));
 }
 
 template<typename T>

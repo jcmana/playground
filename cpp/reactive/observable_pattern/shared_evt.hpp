@@ -39,12 +39,24 @@ public:
 
     void observe(functor_type<const T &> callback)
     {
-        m_observers.push_back(m_sp->observe(std::move(callback)));
+        m_observers.push_back(observe_scoped(std::move(callback)));
     }
 
     auto observe_scoped(functor_type<const T &> callback)
     {
         return m_sp->observe(std::move(callback));
+    }
+
+    template<typename C>
+    void observe(void(C:: * f)(const T &), C * ptr)
+    {
+        m_observers.push_back(observe_scoped(f, ptr));
+    }
+
+    template<typename C>
+    auto observe_scoped(void(C:: * f)(const T &), C * ptr)
+    {
+        return m_sp->observe(std::bind(f, ptr, std::placeholders::_1));
     }
 
     void notify(const T & value) const
