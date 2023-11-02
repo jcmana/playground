@@ -144,11 +144,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="algorithm.hpp" />
+    <ClInclude Include="basic_evt.hpp" />
     <ClInclude Include="basic_obe.hpp" />
     <ClInclude Include="basic_shared_obe.hpp" />
     <ClInclude Include="basic_txn.hpp" />
     <ClInclude Include="breaking_circular_observers.h" />
+    <ClInclude Include="event.hpp" />
     <ClInclude Include="observable.hpp" />
+    <ClInclude Include="shared_evt.hpp" />
     <ClInclude Include="shared_obe.hpp" />
     <ClInclude Include="shared_txn.hpp" />
     <ClInclude Include="basic_obe_storage.hpp" />

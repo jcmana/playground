@@ -16,6 +16,9 @@
     <Filter Include="Header Files\observable">
       <UniqueIdentifier>{00c91f64-94ad-461e-9de4-3ff38d3af427}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\event">
+      <UniqueIdentifier>{b9a1c75a-05ef-4e6a-bfc2-29197ccd6399}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="basic_obe.hpp">
@@ -53,6 +56,15 @@
     </ClInclude>
     <ClInclude Include="basic_shared_obe.hpp">
       <Filter>Header Files\observable</Filter>
+    </ClInclude>
+    <ClInclude Include="event.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="shared_evt.hpp">
+      <Filter>Header Files\event</Filter>
+    </ClInclude>
+    <ClInclude Include="basic_evt.hpp">
+      <Filter>Header Files\event</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

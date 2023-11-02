@@ -11,6 +11,7 @@
 #include <iterator>
 
 #include "observable.hpp"
+#include "event.hpp"
 #include "basic_obe_storage.hpp"
 
 #include "breaking_circular_observers.h"
@@ -650,7 +651,7 @@ int main()
     }
 
     // observable algorithms - synchronize
-    if (true)
+    if (false)
     {
         shared_obe<int> a;
         shared_obe<int> b;
@@ -672,6 +673,52 @@ int main()
         unique_txn{a} = 7;
         unique_txn{b} = 3;
         unique_txn{a} = 4;
+    }
+
+    // shared event - basic notification
+    if (false)
+    {
+        shared_evt<int> se;
+
+        auto observer = [](const int & value)
+        {
+            std::cout << "notified value = " << value << std::endl;
+        };
+        se.observe(observer);
+        se.notify(7);
+    }
+
+    // shared event - notification from multiple threads
+    if (true)
+    {
+        shared_evt<int> se;
+
+        auto proc_ta = [se_local = se]
+        {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            se_local.notify(7);
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+            se_local.notify(3);
+        };
+        std::thread ta(proc_ta);
+
+        auto proc_tb = [se_local = se]
+        {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            se_local.notify(42);
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            se_local.notify(38);
+        };
+        std::thread tb(proc_tb);
+
+        auto observer = [](const int & value)
+        {
+            std::cout << "notified value = " << value << std::endl;
+        };
+        se.observe(observer);
+
+        tb.join();
+        ta.join();
     }
 
     _CrtDumpMemoryLeaks();
