@@ -6,6 +6,7 @@
 namespace containers::graph
 {
 
+/// \brief      Adjacency list graph.
 template <typename N, typename E, template<typename> typename C = std::vector>
 class adjacency
 {
