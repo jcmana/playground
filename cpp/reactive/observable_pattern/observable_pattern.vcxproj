@@ -144,7 +144,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="algorithm.hpp" />
-    <ClInclude Include="basic_evt.hpp" />
     <ClInclude Include="basic_obe.hpp" />
     <ClInclude Include="basic_shared_obe.hpp" />
     <ClInclude Include="basic_txn.hpp" />

@@ -63,9 +63,6 @@
     <ClInclude Include="shared_evt.hpp">
       <Filter>Header Files\event</Filter>
     </ClInclude>
-    <ClInclude Include="basic_evt.hpp">
-      <Filter>Header Files\event</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
