@@ -104,6 +104,27 @@ unique_txn(so) = "another changed string value";
 `decompose`
 - assigns value of `struct` member into `shared_obe`
 
+# abstractions
+Reactive library is built upon following abstractions, ordered from the most primitive to the most abstract:
+
+`atomic_link_element`
+- binds thread execution stacks together
+
+`atomic_callback` 
+- 1:1 notification
+
+`atomic_callback` + `atomic_callback_guard`
+- 1:1 notification with scope safety
+
+`atomic_callback_store`
+- 1:N notification with scope safety
+ 
+ `shared_evt`
+ - 1:N notification subscription with scope-local copy-move semantics
+
+ `shared_obe`
+ - 1:N notification subscription with value and transactions
+
 # todo
 - <s>conversion to `const T`</s>
 - different assignment strategies

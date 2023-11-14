@@ -22,18 +22,21 @@ public:
     using guard_type = typename atomic_callback_guard<functor_type>;
 
 public:
+    /// \brief      Default constructor, creates un-observed event.
     shared_evt() :
         m_sp(new store_type()),
         m_observers()
     {
     }
 
+    /// \brief      Copy constructor, clears observers.
     shared_evt(const shared_evt & other) :
         m_sp(other.m_sp),
         m_observers()
     {
     }
 
+    /// \brief      Move constructor, clears observers.
     shared_evt(shared_evt && other) :
         shared_evt()
     {
