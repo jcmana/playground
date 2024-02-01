@@ -42,6 +42,9 @@ public:
     template<typename FT>
     friend class shared_txn;
 
+    template<typename FT>
+    friend class shared_obe_weak;
+
 public:
     /// \brief      Constructor, creates shared observable with default value.
     shared_obe() noexcept;
@@ -130,6 +133,58 @@ public:
 
 private:
     std::shared_ptr<observable_type> m_sp;
+    std::vector<guard_type> m_observers;
+};
+
+template<typename T>
+class shared_obe_weak
+{
+public:
+    template<typename FT>
+    using functor_type = common_functor_type<FT>;
+
+    using observable_type = typename basic_obe<std::remove_cv_t<T>, common_functor_type>;
+    using guard_type = typename observable_type::guard_type;
+
+    using value_type = typename observable_type::value_type;
+    using observed_type = typename observable_type::observed_type;
+
+    template<typename FT>
+    friend class shared_obe;
+
+public:
+    /// \brief      Default constructor, initilizes expired weak shared observable.
+    shared_obe_weak() :
+        m_wp(),
+        m_observers()
+    {
+    }
+
+    shared_obe_weak(shared_obe<T> so) :
+        m_wp(so.m_sp),
+        m_observers()
+    {
+    }
+
+    auto observe_scoped(functor_type<const observed_type &> callback)
+    {
+        auto sp = m_wp.lock();
+
+        if (sp == nullptr)
+        {
+            return guard_type();
+        }
+
+        return sp->observe(std::move(callback));
+    }
+
+    void observe(functor_type<const observed_type &> callback)
+    {
+        m_observers.push_back(observe_scoped(std::move(callback)));
+    }
+
+private:
+    std::weak_ptr<observable_type> m_wp;
     std::vector<guard_type> m_observers;
 };
 
