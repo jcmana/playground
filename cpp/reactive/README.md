@@ -136,3 +136,9 @@ Reactive library is built upon following abstractions, ordered from the most pri
 - observe overload for previous and new value (not a part of API, just how-to)
 - weak observable reference - `shared_obe_weak` - to break circular dependency leaks
 - extend algorithms library
+
+# ideas
+- `atomic_callback_store` might be similar redundancy as deprecated implicit `std::tuple` observable type
+    - build `shared_obe` upon simple `atomic_callback` and provide 1:N notification as a different
+      class used as a `atomic_callback` template (something like `atomic_callback<std::vector<observers>>`) 
+- use `shared_evt` as a building block for `shared_obe` - needs refactoring first
