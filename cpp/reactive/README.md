@@ -134,7 +134,7 @@ Reactive library is built upon following abstractions, ordered from the most pri
 - `mutex` customization point for `link`, `callback_store`, `basic_obe`
 - reduce the weight and optimize
 - observe overload for previous and new value (not a part of API, just how-to)
-- weak observable reference - `shared_obe_weak` - to break circular dependency leaks
+- <s>weak observable reference - `shared_obe_weak` - to break circular dependency leaks</s>
 - extend algorithms library
 
 # ideas
