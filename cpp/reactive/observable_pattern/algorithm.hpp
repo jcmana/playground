@@ -164,24 +164,25 @@ void synchronize(shared_obe<T> & first, shared_obe<T> & second)
 
     auto sp_forward = std::make_shared<std::mutex>();
 
-    auto conditional_forward = [](auto & sp_forward, auto & so, const T & value)
+    auto conditional_forward = [](auto & sp_forward, auto & so_weak, const T & value)
     {
         std::unique_lock lock(*sp_forward, std::try_to_lock);
         if (lock)
         {
+            auto so = so_weak.lock();
             unique_txn{so} = value;
         }
     };
 
-    auto observer_first = [conditional_forward, second, sp_forward](const T & value) mutable
+    auto observer_first = [conditional_forward, second_weak = shared_obe_weak(second), sp_forward](const T & value) mutable
     {
-        conditional_forward(sp_forward, second, value);
+        conditional_forward(sp_forward, second_weak, value);
     };
     first.observe(std::move(observer_first));
 
-    auto observer_second = [conditional_forward, first, sp_forward](const T & value) mutable
+    auto observer_second = [conditional_forward, first_weak = shared_obe_weak(first), sp_forward](const T & value) mutable
     {
-        conditional_forward(sp_forward, first, value);
+        conditional_forward(sp_forward, first_weak, value);
     };
     second.observe(std::move(observer_second));
 }

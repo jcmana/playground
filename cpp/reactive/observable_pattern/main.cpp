@@ -133,7 +133,7 @@ int main()
     // unique observable
     if (false)
     {
-        unique_obe o{4};
+        unique_obe<int> o;
 
         auto observer = [](int i)
         {
@@ -653,39 +653,13 @@ int main()
     }
 
     // observable algorithms - synchronize
-    if (false)
+    if (true)
     {
         shared_obe<int> a;
         shared_obe<int> b;
 
-        //synchronize(a, b);
+        synchronize(a, b);
 
-        auto sp_forward = std::make_shared<std::mutex>();
-
-        auto conditional_forward = [](auto & sp_forward, auto & so, const int & value)
-        {
-            std::unique_lock lock(*sp_forward, std::try_to_lock);
-            if (lock)
-            {
-                unique_txn{so} = value;
-            }
-        };
-
-        auto observer_a = [conditional_forward, b, sp_forward](const int & value) mutable
-        {
-            std::cout << "a = " << value << std::endl;
-            //conditional_forward(sp_forward, b, value);
-        };
-        a.observe(std::move(observer_a));
-
-        auto observer_b = [conditional_forward, a, sp_forward](const int & value) mutable
-        {
-            std::cout << "b = " << value << std::endl;
-            //conditional_forward(sp_forward, a, value);
-        };
-        b.observe(std::move(observer_b));
-
-        /*
         auto observer_a = [](const auto & value)
         {
             std::cout << "a = " << value << std::endl;
@@ -701,7 +675,6 @@ int main()
         unique_txn{a} = 7;
         unique_txn{b} = 3;
         unique_txn{a} = 4;
-        */
     }
 
     // shared event - basic notification
@@ -766,8 +739,8 @@ int main()
         se.notify();
     }
 
-    // shared_obe_weak
-    if (true)
+    // shared_obe_weak - observing
+    if (false)
     {
         shared_obe_weak<int> sow;
         
@@ -792,6 +765,12 @@ int main()
 
             unique_txn{so} = 48;
         }
+    }
+
+    // shared_obe_weak - transactions
+    if (false)
+    {
+        // JMTODO:
     }
 
     _CrtDumpMemoryLeaks();

@@ -62,6 +62,10 @@ public:
     template<typename TT>
     explicit shared_obe(TT compatible_value);
 
+#ifndef NDEBUG
+    ~shared_obe();
+#endif
+
     shared_obe & operator  =(const shared_obe & other) noexcept;
     shared_obe & operator  =(shared_obe && other) noexcept;
 
@@ -160,10 +164,42 @@ public:
     {
     }
 
-    shared_obe_weak(shared_obe<T> so) :
+    shared_obe_weak(const shared_obe_weak & other) :
+        m_wp(other.m_wp),
+        m_observers()
+    {
+    }
+
+    shared_obe_weak(shared_obe_weak && other) :
+        m_wp(std::move(other.m_wp)),
+        m_observers()
+    {
+    }
+
+    shared_obe_weak(const shared_obe<T> & so) :
         m_wp(so.m_sp),
         m_observers()
     {
+    }
+
+    shared_obe_weak & operator  =(const shared_obe_weak & other)
+    {
+        m_wp = other.m_wp;
+        return (*this);
+    }
+
+    shared_obe_weak & operator  =(shared_obe_weak && other)
+    {
+        m_wp = std::move(other.m_wp);
+        return (*this);
+    }
+
+    /// \brief      Creates `shared_obe` which manages the value but no observers.
+    shared_obe<T> lock() const
+    {
+        shared_obe<T> so;
+        so.m_sp = m_wp.lock();
+        return so;
     }
 
     auto observe_scoped(functor_type<const observed_type &> callback)
@@ -224,6 +260,13 @@ shared_obe<T>::shared_obe(TT compatible_value) :
     shared_obe(T(std::move(compatible_value)))
 {
 }
+
+#ifndef NDEBUG
+template<typename T>
+shared_obe<T>::~shared_obe()
+{
+}
+#endif
 
 template<typename T>
 shared_obe<T> &
