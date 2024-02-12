@@ -159,9 +159,6 @@ void forward(shared_obe<T> & source, shared_obe<T> target)
 template<typename T>
 void synchronize(shared_obe<T> & first, shared_obe<T> & second)
 {
-    // JMTODO: works but leaking as shit; circular obe dependencies require some
-    // sort of weak_ptr approach
-
     auto sp_forward = std::make_shared<std::mutex>();
 
     auto conditional_forward = [](auto & sp_forward, auto & so_weak, const T & value)

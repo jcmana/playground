@@ -140,6 +140,7 @@ private:
     std::vector<guard_type> m_observers;
 };
 
+/// \brief      Shared weak reference to an observable value.
 template<typename T>
 class shared_obe_weak
 {
