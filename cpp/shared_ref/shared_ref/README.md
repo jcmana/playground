@@ -16,10 +16,8 @@
   - initialize by `shared_ptr`
   - throws if `nullptr`
 
-  `operator  *()`
-  `operator ->()`
-  `get()`
-  - access stored reference without checking for `nullptr`
+  `operator  *()`, `operator ->()`, `get()`
+  - access stored reference
 
 # utilize in dependency-injection
 Instead of using `shared_ptr` for passing dependencies into a `class` where you have to handle `nullptr` states:
