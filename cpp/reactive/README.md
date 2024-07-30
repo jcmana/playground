@@ -142,3 +142,6 @@ Reactive library is built upon following abstractions, ordered from the most pri
     - build `shared_obe` upon simple `atomic_callback` and provide 1:N notification as a different
       class used as a `atomic_callback` template (something like `atomic_callback<std::vector<observers>>`) 
 - use `shared_evt` as a building block for `shared_obe` - needs refactoring first
+
+# issues
+- having implicit notification invocation in `unique_txn` dtor is a problem because the code making a change has no idea how much reaction is registered by observers and it is supposed to execute them; this could be solved by another layer of abstraction (what can't be, right) which forces indirect observation by always queuing callback into another thread (ideally an executor concept)
