@@ -4,13 +4,13 @@
 #include "space_default.hpp"
 
 /// \brief      Defines frame of reference in a space `S`.
-template<typename S = space_default>
+template<typename Space = space_default, typename Scalar = double>
 struct frame
 {
     struct basis
     {
-        double x;
-        double y;
+        Scalar x;
+        Scalar y;
     };
 
     frame() :
@@ -28,7 +28,7 @@ struct frame
     }
 
     /// \returns        Local `xy` of `coordinate` with respect to this `frame`.
-    xy<void> localize(const xy<S> & coordinate) const
+    xy<void, Scalar> localize(const xy<Space, Scalar> & coordinate) const
     {
         return 
         {
@@ -38,7 +38,7 @@ struct frame
     }
 
     /// \returns        `xy` of local `coordinate` from `frame` in space `S`.
-    xy<S> generalize(const xy<void> & coordinate) const
+    xy<Space, Scalar> generalize(const xy<void, Scalar> & coordinate) const
     {
         // Matrix inversion:
         //
@@ -52,8 +52,8 @@ struct frame
 
         const auto base_determinant = base_x.x * base_y.y - base_x.y * base_y.x;
 
-        const frame<S>::basis base_x_adjugate = {+base_y.y, -base_x.y};
-        const frame<S>::basis base_y_adjugate = {-base_y.x, +base_x.x};
+        const frame<Space, Scalar>::basis base_x_adjugate = {+base_y.y, -base_x.y};
+        const frame<Space, Scalar>::basis base_y_adjugate = {-base_y.x, +base_x.x};
 
         const auto base_x = coordinate.x / base_determinant;
         const auto base_y = coordinate.y / base_determinant;
@@ -77,14 +77,14 @@ struct frame
     basis origin;
 };
 
-template<typename S>
-constexpr xy<void> operator  &(const xy<S> & coordinate, const frame<S> & source)
+template<typename Space, typename Scalar>
+constexpr xy<void, Scalar> operator  &(const xy<Space, Scalar> & coordinate, const frame<Space, Scalar> & source)
 {
     return source.localize(coordinate);
 }
 
-template<typename S>
-constexpr xy<S> operator  &(const xy<void> & coordinate, const frame<S> & target)
+template<typename Space, typename Scalar>
+constexpr xy<Space, Scalar> operator  &(const xy<void, Scalar> & coordinate, const frame<Space, Scalar> & target)
 {
     return target.generalize(coordinate);
 }
