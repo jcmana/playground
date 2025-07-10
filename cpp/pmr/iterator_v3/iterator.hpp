@@ -31,24 +31,24 @@ public:
 	{
 	}
 
-    const typename T::value_type & operator  *() const requires std::is_base_of_v<output_intf<typename T::value_type>, T>
+    const typename T::value_type & operator  *() const requires std::is_base_of_v<input_intf<typename T::value_type>, T>
     {
         return m_up_iterator->const_value_reference();
     }
 
-    typename T::value_type & operator  *() requires std::is_base_of_v<input_intf<typename T::value_type>, T>
+    typename T::value_type & operator  *() requires std::is_base_of_v<output_intf<typename T::value_type>, T>
     {
         return m_up_iterator->value_reference();
     }
 
-    const typename T::value_type * operator ->() const requires std::is_base_of_v<output_intf<typename T::value_type>, T>
+    const typename T::value_type * operator ->() const requires std::is_base_of_v<input_intf<typename T::value_type>, T>
     {
         return &m_up_iterator->const_value_reference();
     }
 
-    typename T::value_type * operator ->() requires std::is_base_of_v<input_intf<typename T::value_type>, T>
+    typename T::value_type * operator ->() requires std::is_base_of_v<output_intf<typename T::value_type>, T>
     {
-        return &m_up_iterator->const_value_reference();
+        return &m_up_iterator->value_reference();
     }
 
     iterator & operator ++() requires std::is_base_of_v<forward_intf<typename T::value_type>, T>

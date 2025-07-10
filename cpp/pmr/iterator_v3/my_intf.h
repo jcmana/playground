@@ -20,8 +20,4 @@ class my_intf::iterator_intf :
     public pmr::iterator_v3::output_intf<int>,
     public pmr::iterator_v3::forward_intf<int>
 {
-public:
-	using value_type = int;
-	using pointer = value_type *;
-	using reference = value_type &;
 };

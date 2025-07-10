@@ -47,7 +47,7 @@ my_impl::iterator::storage_type my_impl::iterator::move()
     return std::make_unique<iterator>(std::move(m_it));
 }
 
-const int & my_impl::iterator::const_value_reference() const
+int & my_impl::iterator::value_reference()
 {
     return (*m_it);
 }

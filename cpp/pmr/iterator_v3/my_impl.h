@@ -33,7 +33,7 @@ public:
     
     virtual std::unique_ptr<base_intf> copy() const override;
     virtual std::unique_ptr<base_intf> move() override;
-    virtual const int & const_value_reference() const override;
+    virtual int & value_reference() override;
     virtual void increment() override;
 
 
