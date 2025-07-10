@@ -2,8 +2,6 @@
 #include <string>
 #include <memory>
 
-#include <windows.h>
-
 class IClass
 {
 	public:
@@ -30,22 +28,10 @@ class CClass : public IClass
 		}
 };
 
-void handler(LONG_PTR obj)
-{
-	IClass * iptr = (IClass *)(obj);
-	iptr->OnEvent();
-
-}
-
 int main()
 {
 	CClass c;
 	c.Initialize();
-
-	LONG_PTR cptr = NULL;
-	cptr = (LONG_PTR)(&c);
-
-	handler(cptr);
 
 	return 0;
 }
