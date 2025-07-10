@@ -9,8 +9,13 @@ int main()
 	auto it_end = mi.end();
 
 	++it;
+	it++;
 	//--it;
-	const auto v = *it;
+	//it--;
+	auto & ref = *it;
+	//ref = 7;
+	auto * ptr = it.operator->();
+	//(*ptr) = 8;
 
 	if (it == it_end)
 	{
@@ -24,4 +29,6 @@ int main()
 	{
 		std::cout << n << std::endl;
 	}
+
+	//pmr::iterator_v3::iterator<int> pit;
 }

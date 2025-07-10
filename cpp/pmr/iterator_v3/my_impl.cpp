@@ -4,6 +4,8 @@ my_impl::my_impl()
 {
     m_items.push_back(7);
     m_items.push_back(2);
+    m_items.push_back(42);
+    m_items.push_back(15);
 }
 
 pmr::iterator_v3::iterator<my_intf::iterator_intf> my_impl::begin()

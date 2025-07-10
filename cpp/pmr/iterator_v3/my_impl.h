@@ -31,8 +31,8 @@ public:
     // iterator_intf implementation:
     virtual bool equals(const base_intf& other) const override;
     
-    virtual storage_type copy() const override;
-    virtual storage_type move() override;
+    virtual std::unique_ptr<base_intf> copy() const override;
+    virtual std::unique_ptr<base_intf> move() override;
     virtual const int & const_value_reference() const override;
     virtual void increment() override;
 
