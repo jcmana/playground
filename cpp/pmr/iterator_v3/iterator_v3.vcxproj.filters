@@ -15,8 +15,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="iterator_intf.h">
+    <ClInclude Include="iterator_intf.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="my_intf.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="my_impl.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="my_impl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
