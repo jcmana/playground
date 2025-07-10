@@ -24,6 +24,9 @@
     <ClInclude Include="my_impl.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="iterator.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

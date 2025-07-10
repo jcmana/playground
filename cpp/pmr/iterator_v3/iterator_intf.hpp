@@ -13,6 +13,7 @@ struct base_intf
     virtual ~base_intf() = default;
 
     virtual bool equals(const base_intf & other) const = 0;
+
     virtual storage_type copy() const = 0;
     virtual storage_type move() = 0;
 };
