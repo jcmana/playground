@@ -29,13 +29,10 @@ public:
 
 public:
     // iterator_intf implementation:
-    virtual bool equals(const base_intf& other) const override;
-    
-    virtual std::unique_ptr<base_intf> copy() const override;
-    virtual std::unique_ptr<base_intf> move() override;
+    virtual bool equal(const base_intf & other) const override;
+    virtual base_intf * copy() const override;
     virtual int & value_reference() override;
     virtual void increment() override;
-
 
 private:
     std::vector<int>::iterator m_it;

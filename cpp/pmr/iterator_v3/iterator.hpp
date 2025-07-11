@@ -22,14 +22,24 @@ public:
     }
 
 	iterator(const iterator & other) :
-		m_up_iterator()
+		m_up_iterator(static_cast<T *>(other.m_up_iterator->copy()))
 	{
 	}
 
 	iterator(iterator && other) :
-		m_up_iterator()
+		m_up_iterator(std::move(other.m_up_iterator))
 	{
 	}
+
+    iterator & operator  =(const iterator & other)
+    {
+        m_up_iterator.reset(other.m_up_iterator->copy());
+    }
+
+    iterator & operator  =(iterator && other)
+    {
+        m_up_iterator = std::move(other.m_up_iterator);
+    }
 
     const typename T::value_type & operator  *() const requires std::is_base_of_v<input_intf<typename T::value_type>, T>
     {
@@ -70,6 +80,13 @@ public:
         return (*this);
     }
 
+    iterator operator --(int) requires std::is_base_of_v<backward_intf<typename T::value_type>, T>
+    {
+        auto copy = (*this);
+        m_up_iterator->decrement();
+        return copy;
+    }
+
 	template<typename TF>
 	friend bool operator ==(const iterator<TF> & lhs, const iterator<TF> & rhs);
 
@@ -83,10 +100,20 @@ private:
 template<typename T>
 bool operator ==(const iterator<T> & lhs, const iterator<T> & rhs)
 {
+    if (lhs.m_up_iterator == nullptr)
+    {
+        return false;
+    }
+
+    if (rhs.m_up_iterator == nullptr)
+    {
+        return false;
+    }
+
 	const auto & lhs_base = static_cast<base_intf<typename T::value_type> &>(*lhs.m_up_iterator);
 	const auto & rhs_base = static_cast<base_intf<typename T::value_type> &>(*rhs.m_up_iterator);
 
-	return lhs_base.equals(rhs_base);
+	return lhs_base.equal(rhs_base);
 }
 
 template<typename T>

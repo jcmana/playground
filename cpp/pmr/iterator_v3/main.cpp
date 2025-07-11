@@ -9,6 +9,9 @@ int main()
 	auto it = mi.begin(); 
 	auto it_end = mi.end();
 
+	auto it_copy = it;
+	std::cout << *it_copy << std::endl;
+
 	++it;
 
 	auto & ref = *it;
@@ -21,10 +24,12 @@ int main()
 
 	if (it == it_end)
 	{
+		std::cout << "it == it_end" << std::endl;
 	}
 
 	if (it != it_end)
 	{
+		std::cout << "it != it_end" << std::endl;
 	}
 
 	for (const auto & n : mi)

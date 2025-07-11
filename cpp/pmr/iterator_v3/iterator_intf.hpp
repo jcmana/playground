@@ -9,14 +9,13 @@ template<typename T>
 struct base_intf
 {
     using value_type = T;
-    using storage_type = std::unique_ptr<base_intf>;
 
     virtual ~base_intf() = default;
 
-    virtual bool equals(const base_intf & other) const = 0;
+    virtual bool equal(const base_intf & other) const = 0;
 
-    virtual storage_type copy() const = 0;
-    virtual storage_type move() = 0;
+    /// \returns        Owning raw pointer of a copy.
+    virtual base_intf * copy() const = 0;
 };
 
 template<typename T>
@@ -49,8 +48,8 @@ struct random_access_intf
     virtual void increment(std::size_t n) = 0;
     virtual void decrement(std::size_t n) = 0;
 
-    virtual bool less(random_access_intf & other) const = 0;
-    virtual bool more(random_access_intf & other) const = 0;
+    virtual bool less(const base_intf<T> & other) const = 0;
+    virtual bool more(const base_intf<T> & other) const = 0;
 };
 
 }

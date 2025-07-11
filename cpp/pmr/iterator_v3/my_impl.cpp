@@ -32,19 +32,14 @@ my_impl::iterator::iterator(std::vector<int>::iterator it) :
 {
 }
 
-bool my_impl::iterator::equals(const base_intf & other) const
+bool my_impl::iterator::equal(const base_intf & other) const
 {
     return (static_cast<const iterator &>(other).m_it == m_it);
 }
 
-my_impl::iterator::storage_type my_impl::iterator::copy() const
+my_impl::iterator::base_intf * my_impl::iterator::copy() const
 {
-    return std::make_unique<iterator>(m_it);
-}
-
-my_impl::iterator::storage_type my_impl::iterator::move()
-{
-    return std::make_unique<iterator>(std::move(m_it));
+    return new iterator(m_it);
 }
 
 int & my_impl::iterator::value_reference()
