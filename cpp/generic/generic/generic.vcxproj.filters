@@ -24,6 +24,9 @@
     <ClInclude Include="bidirectional_map_base.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="bidirectional_map_constexpr.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="scrope_guard.cpp">

@@ -7,7 +7,7 @@
 
 #include "../generic/scope_guard.h"
 #include "../generic/bidirectional_map.hpp"
-
+#include "../generic/bidirectional_map_constexpr.hpp"
 
 void cleanup()
 {
@@ -25,7 +25,8 @@ int main()
 
 	auto func = std::function<void()>(cleanup);
 
-	/* generic::bidirectional_map example */
+	/*
+	// generic::bidirectional_map example
 
 	generic::bidirectional_map<int, std::string> m(
 	{
@@ -66,6 +67,9 @@ int main()
 	std::cout << n.btoa("nashledanou") << std::endl;
 
 	//std::cout << n.btoa("unknown") << std::endl;		// read-access violation due to invalid index
+	*/
+
+	const auto d = Map<0.7>::value;
 
 	return 0;
 }
