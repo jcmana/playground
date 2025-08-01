@@ -23,6 +23,9 @@
     <ClInclude Include="space_default.hpp" />
     <ClInclude Include="xy.hpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="xyf.hpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

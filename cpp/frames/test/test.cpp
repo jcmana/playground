@@ -2,6 +2,7 @@
 
 #include "../frames/frame.hpp"
 #include "../frames/xy.hpp"
+#include "../frames/xyf.hpp"
 
 template<typename Space, typename Scalar>
 std::ostream & operator <<(std::ostream & stream, xy<Space, Scalar> coordinate)
@@ -45,7 +46,7 @@ int main()
     }
 
     // Practical usage:
-    if (true)
+    if (false)
     {
         struct space_pattern {};
         struct space_DAC {};
@@ -72,4 +73,43 @@ int main()
 
         std::cout << b << std::endl;
     }
+
+    // Different types in different spaces:
+    // JMTODO:
+    if (false)
+    {
+        struct space_pattern {};
+        struct space_DAC {};
+
+        xy<space_pattern, double> coordinatePattern;
+        xy<space_DAC, std::int64_t> coordinateDAC;
+    }
+
+    // Strongly-typed concrete frames:
+    if (false)
+    {
+        // From above test, pattern and DAC are both the same space, the coordinates can be converted
+        // between them, so having different space doesn't make sense. 
+        //
+        // What we need is having the same space but strongly-typed frames to enforce conversion but keep
+        // them compatible.
+        //
+        // Or maybe not, maybe the name space is just confusing and that's why I'm trying to add frame 
+        // as well.
+
+        struct frame_pattern;
+        struct frame_DAC;
+
+        xy_frameful<space_default, frame_pattern, double> coordinatePattern;
+        xy_frameful<space_default, frame_DAC, double> coordinateDAC;
+
+        // JMTODO: does it make sense or is space enough?
+        // JMTODO: how to convert between them?
+    }
+
+    // `frame` impl. should be just one the ways to move between different but compatible frames of 
+    // reference. User has to be able to implement their own methods to do that in situations like:
+    // - having different base `Scalar` types
+    // - having a scale or skew relation (affine) between compatible frames
+    // - non-linear frames
 }

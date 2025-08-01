@@ -36,5 +36,9 @@ Similarly to quantity units libraries (Au, mp-units, ...) the motivation is to r
 
 
 ### todo
-...
+- supplied `frame` implementation hadling rotation and offset between frames of reference is just one possible implementation and user needs a way to provide his own for situations where the relation is more complex:
+    - different `Scalar` types
+    - more complicated transformation, affine for example with scale and skew
+    - non-linear transformation
+    - am I trying to define Hilbert space?
 
