@@ -98,13 +98,13 @@ public:
 public:
     shared_evt() :
         m_sp(new store_type()),
-        m_observers()
+        m_observer()
     {
     }
 
     shared_evt(const shared_evt & other) :
         m_sp(other.m_sp),
-        m_observers()
+        m_observer()
     {
     }
 
@@ -117,23 +117,25 @@ public:
     auto observe_scoped(functor_type callback)
     {
         return m_sp->subscribe(std::move(callback));
+        //return atomic_callback_guard<functor_type>();
     }
 
     void observe(functor_type callback)
     {
-        m_observers.push_back(observe_scoped(std::move(callback)));
+        m_observer = observe_scoped(std::move(callback));
     }
 
     template<typename C>
     auto observe_scoped(void(C:: * f)(), C * ptr)
     {
-        return m_sp->subscribe(std::bind(f, ptr, std::placeholders::_1));
+        return m_sp->subscribe(std::bind_front(f, ptr));
+        //return atomic_callback_guard<functor_type>();
     }
 
     template<typename C>
     void observe(void(C:: * f)(), C * ptr)
     {
-        m_observers.push_back(observe_scoped(f, ptr));
+        m_observer = observe_scoped(f, ptr);
     }
 
     void notify() const
@@ -146,11 +148,11 @@ public:
         using std::swap;
         swap(lhs.m_sp, rhs.m_sp);
 
-        lhs.m_observers.clear();
-        rhs.m_observers.clear();
+        lhs.m_observer = {};
+        rhs.m_observer = {};
     }
 
 private:
     std::shared_ptr<store_type> m_sp;
-    std::vector<guard_type> m_observers;
+    guard_type m_observer;
 };

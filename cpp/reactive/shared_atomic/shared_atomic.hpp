@@ -9,7 +9,10 @@ class shared_atomic;
 
 // Design questions:
 // - does it have to implement BasicLockable
-// - copy/move API or use transaction system from shared observable?
+// - copy/move API or use transaction system from shared observable? both:
+//     - copy/move when entire value is read/written, no access to reference 
+//     - transactions when you need to work with a reference, accessible 
+//       only through transaction
 
 template<typename T>
 class shared_atomic

@@ -653,7 +653,7 @@ int main()
     }
 
     // observable algorithms - synchronize
-    if (true)
+    if (false)
     {
         shared_obe<int> a;
         shared_obe<int> b;
@@ -771,6 +771,11 @@ int main()
     if (false)
     {
         // JMTODO:
+    }
+
+    if (true)
+    {
+        atomic_callback<atomic_callback_store<int>> cb;
     }
 
     _CrtDumpMemoryLeaks();

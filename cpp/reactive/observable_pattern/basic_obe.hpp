@@ -14,6 +14,9 @@
 /// \param      T       Stored value type.
 /// \param      F       Notification handler type.
 /// \param      S       Storage type.
+///
+/// This is a building-block to ease implementation of case-specific types, like `shared_obe` which would
+/// dictate the `F` and `S` typenames and handle the returned `atomic_callback_guard`s.
 template<typename T, template <typename> typename F, template <typename> typename S = basic_obe_storage>
 class basic_obe
 {

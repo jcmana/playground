@@ -104,3 +104,7 @@ public:
         static_assert(false, "unique_txn is illegal for shared_obe with const value");
     }
 };
+
+template<typename T> 
+unique_txn(typename basic_txn<T>::scoped_observable_type & observable_ref) ->
+    unique_txn<typename basic_txn<T>::value_type::value_type>;
