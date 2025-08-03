@@ -2,7 +2,6 @@
 
 #include "../frames/frame.hpp"
 #include "../frames/xy.hpp"
-#include "../frames/xyf.hpp"
 
 struct space_pattern;
 struct space_DAC;
@@ -13,9 +12,13 @@ std::ostream & operator <<(std::ostream & stream, xy<Space, Scalar> coordinate)
     return stream << "[" << coordinate.x << ", " << coordinate.y << "]";
 }
 
+xy<space_DAC, double> transform(const xy<space_pattern, double> & source)
+{
+    return {};
+}
+
 template<>
-template<>
-xy<space_pattern, double>::operator xy<space_DAC, double>() const
+xy<space_DAC, double> transform_implicit(const xy<space_pattern, double> & source)
 {
     return {};
 }
@@ -49,7 +52,7 @@ int main()
 
         const auto om = xy<void, double>{0, 0} & a;
         const auto on = xy<void, double>{0, 0} & b;
-        const auto ov = xy<void, double>{};
+        const auto ov = xy<void, double>{0, 0};
 
         //om = ov;      // error: no operator = matches
         //om = on;      // error: no operator = matches
@@ -85,12 +88,12 @@ int main()
     // JMTODO:
     if (false)
     {
-        xy<space_pattern, double> coordinatePattern;
-        xy<space_DAC, std::int64_t> coordinateDAC;
+        xy<space_pattern, double> coordinatePattern = {0, 0};
+        xy<space_DAC, std::int64_t> coordinateDAC = {0, 0};
     }
 
     // Strongly-typed concrete frames:
-    if (false)
+    if (true)
     {
         // From above test, pattern and DAC are both the same space, the coordinates can be converted
         // between them, so having different space doesn't make sense. 
@@ -101,8 +104,8 @@ int main()
         // Or maybe not, maybe the name space is just confusing and that's why I'm trying to add frame 
         // as well.
 
-        xy<space_pattern, double> coordinatePattern;
-        xy<space_DAC, double> coordinateDAC;
+        xy<space_pattern, double> coordinatePattern = {0, 0};
+        xy<space_DAC, double> coordinateDAC = {0, 0};
 
         // JMTODO: does it make sense or is space enough?
         // JMTODO: how to convert between them?
@@ -116,7 +119,7 @@ int main()
         {
             auto patternToDAC = [](xy<space_pattern, double> coordinatePattern)
             {
-                xy<space_DAC, double> coordinateDAC;
+                xy<space_DAC, double> coordinateDAC = {0, 0};
                 return coordinateDAC;
             };
 
@@ -125,6 +128,13 @@ int main()
 
         // Conversion definition at compile-time:
         {
+            // Explicit
+            function(transform(coordinatePattern));
+
+            // Implicit
+            coordinateDAC = coordinatePattern;
+            coordinateDAC = transform_implicit<space_pattern, double, space_DAC, double>(coordinatePattern);
+            
             function(coordinatePattern);
         }
     }

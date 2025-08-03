@@ -36,6 +36,14 @@ Similarly to quantity units libraries (Au, mp-units, ...) the motivation is to r
 
 
 ### todo
+- rethink the approach implemented so far:
+    - the problem is that `frames` is more `concept`ual library than implementation
+    - maybe fallback to building `concept`s using C++20 and then building sample implementation library
+    - current impl. is said sample implementation but is missing the conceptual approach behind it:
+        - mathematical scalars
+        - mathematical vectors
+        - mathematical space with metrics and everything
+        - coordinate systems built on space, support (not implement) non-linear and all the physics craziness
 - supplied `frame` implementation hadling rotation and offset between frames of reference is just one possible implementation and user needs a way to provide his own for situations where the relation is more complex:
     - different `Scalar` types
     - more complicated transformation, affine for example with scale and skew
