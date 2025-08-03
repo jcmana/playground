@@ -4,10 +4,20 @@
 #include "../frames/xy.hpp"
 #include "../frames/xyf.hpp"
 
+struct space_pattern;
+struct space_DAC;
+
 template<typename Space, typename Scalar>
 std::ostream & operator <<(std::ostream & stream, xy<Space, Scalar> coordinate)
 {
     return stream << "[" << coordinate.x << ", " << coordinate.y << "]";
+}
+
+template<>
+template<>
+xy<space_pattern, double>::operator xy<space_DAC, double>() const
+{
+    return {};
 }
 
 int main()
@@ -48,9 +58,6 @@ int main()
     // Practical usage:
     if (false)
     {
-        struct space_pattern {};
-        struct space_DAC {};
-
         auto size_nm = 100'000;
         auto resolution = 65'536;
         auto step = double(size_nm) / double(resolution);
@@ -78,9 +85,6 @@ int main()
     // JMTODO:
     if (false)
     {
-        struct space_pattern {};
-        struct space_DAC {};
-
         xy<space_pattern, double> coordinatePattern;
         xy<space_DAC, std::int64_t> coordinateDAC;
     }
@@ -97,14 +101,32 @@ int main()
         // Or maybe not, maybe the name space is just confusing and that's why I'm trying to add frame 
         // as well.
 
-        struct frame_pattern;
-        struct frame_DAC;
-
-        xy_frameful<space_default, frame_pattern, double> coordinatePattern;
-        xy_frameful<space_default, frame_DAC, double> coordinateDAC;
+        xy<space_pattern, double> coordinatePattern;
+        xy<space_DAC, double> coordinateDAC;
 
         // JMTODO: does it make sense or is space enough?
         // JMTODO: how to convert between them?
+
+        auto function = [](xy<space_DAC, double> coordinate)
+        {
+            std::cout << coordinate << std::endl;
+        };
+
+        // Conversion definition at runtime:
+        {
+            auto patternToDAC = [](xy<space_pattern, double> coordinatePattern)
+            {
+                xy<space_DAC, double> coordinateDAC;
+                return coordinateDAC;
+            };
+
+            function(patternToDAC(coordinatePattern));
+        }
+
+        // Conversion definition at compile-time:
+        {
+            function(coordinatePattern);
+        }
     }
 
     // `frame` impl. should be just one the ways to move between different but compatible frames of 

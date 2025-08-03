@@ -9,6 +9,14 @@ struct xy;
 template<typename Space, typename Scalar>
 struct xy
 {
+    template<typename OtherSpace, typename OtherScalar>
+    operator xy<OtherSpace, OtherScalar>() const;
+    /*
+    {
+        static_assert(false, "operator not implemented");
+    }
+    */
+
     Scalar x;
     Scalar y;
 };
