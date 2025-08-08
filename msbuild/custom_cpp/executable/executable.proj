@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="..\msbuild\Cpp.Application.props" />
+    <Import Project="..\msbuild\Cpp.targets" />
+
+    <ItemGroup>
+        <Source Include="*.cpp" />
+    </ItemGroup>
+
+    <Target Name="CompileDebug">
+        <Message Text="Target: CompileDebug" />
+        <Message Text="@(Source)" />
+        <CL Sources="@(Source)" />
+    </Target>
+
+    <Target Name="LinkDebug" DependsOnTargets="CompileDebug">
+        <Message Text="Target: LinkDebug" />
+        <Message Text="%(Source.Filename).obj" />
+        <Link Sources="%(Source.Filename).obj" />
+    </Target>
+
+    <Target Name="BuildDebug" DependsOnTargets="LinkDebug">
+        <Message Text="Target: BuildDebug" />
+    </Target>
+</Project>
