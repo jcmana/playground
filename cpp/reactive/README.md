@@ -136,12 +136,16 @@ Reactive library is built upon following abstractions, ordered from the most pri
 - observe overload for previous and new value (not a part of API, just how-to)
 - <s>weak observable reference - `shared_obe_weak` - to break circular dependency leaks</s>
 - extend algorithms library
+- 
 
 # ideas
 - `atomic_callback_store` might be similar redundancy as deprecated implicit `std::tuple` observable type
     - build `shared_obe` upon simple `atomic_callback` and provide 1:N notification as a different
       class used as a `atomic_callback` template (something like `atomic_callback<std::vector<observers>>`) 
 - use `shared_evt` as a building block for `shared_obe` - needs refactoring first
+- could the key difference between `observable` and `continuation` be this:
+    - `observable` notifies observers and the handler runs on different thread, ideally specified by the observer
+    - `continuation` continues on the same thread as the main task
 
 # issues
 - having implicit notification invocation in `unique_txn` dtor is a problem because the code making a change has no idea how much reaction is registered by observers and it is supposed to execute them; this could be solved by another layer of abstraction (what can't be, right) which forces indirect observation by always queuing callback into another thread (ideally an executor concept)
