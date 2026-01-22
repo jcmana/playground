@@ -1,7 +1,9 @@
 #pragma once
 
 #include <vector>
+#include <optional>
 #include <utility>
+#include <stdexcept>
 
 namespace containers::graph
 {
@@ -46,6 +48,12 @@ public:
 		E property;
 	};
 
+	/// \brief		Adds a `node` with default-constructed `node_property`.
+	node add_node()
+	{
+		return add_node(N());
+	}
+
 	/// \brief		Adds a `node` with `node_property`.
 	node add_node(N node_property)
 	{
@@ -54,6 +62,12 @@ public:
         node n = {m_nodes.size() - 1};
 		
         return n;
+	}
+
+	/// \brief		Adds an `edge` with default-constructed `edge_property` from `source_node` to `target_node`.
+	edge add_edge(node source_node, node target_node)
+	{
+		return add_edge(source_node, target_node, E());
 	}
 
 	/// \brief		Adds an `edge` with `edge_property` from `source_node` to `target_node`.
@@ -69,10 +83,20 @@ public:
 		return e;
 	}
 
+	auto & at(node n)
+	{
+		if (n.offset >= m_nodes.size())
+		{
+			throw std::out_of_range("node out of bounds");
+		}
+
+		return m_nodes[n.offset];
+	}
+
     /// \brief		Access node's data with boundary check.
     const auto & at(node n) const
     {
-        if (n >= m_nodes.size())
+        if (n.offset >= m_nodes.size())
         {
             throw std::out_of_range("node out of bounds");
         }
@@ -80,10 +104,10 @@ public:
         return m_nodes[n.offset];
     }
 
-    /// \brief		Access edge's data.
+    /// \brief		Access edge's data with boundary check.
     const auto & at(edge e) const
     {
-        if (e >= m_edges.size())
+        if (e.offset >= m_edges.size())
         {
             throw std::out_of_range("edge out of bounds");
         }
