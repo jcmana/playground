@@ -21,7 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{919b79c8-5d13-475c-95e5-9f9f8e748cd0}</ProjectGuid>
+    <ProjectGuid>{6074d7c2-e1a5-40d4-8ff7-63cfd69b6643}</ProjectGuid>
+    <RootNamespace>bidirectionalmap</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
