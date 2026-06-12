@@ -128,6 +128,11 @@ public:
 		return &m_stack_path;
 	}
 
+	const std::vector<typename G::edge> & path() const
+	{
+		return m_stack_path;
+	}
+
 	/// \brief			Expansion stack is empty.
 	bool empty() const
 	{
@@ -143,6 +148,7 @@ public:
     /// \brief        Expansion and path stack last nodes creates a cycle.
     bool cycle() const
     {
+		/*
         auto pred = [down_edge = m_stack_down.back()](const typename G::edge & path_edge)
         {
             return down_edge.offset == path_edge.offset;
@@ -150,6 +156,17 @@ public:
         const auto it = std::find_if(m_stack_path.begin(), m_stack_path.end(), pred);
 
         return it != m_stack_path.end();
+		*/
+
+		for (const auto path_edge : m_stack_path)
+		{
+			if (path_edge.offset == m_stack_down.back().offset)
+			{
+				return true;
+			}
+		}
+
+		return false;
     }
 
 	/// \brief			Path stack depth.

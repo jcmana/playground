@@ -137,6 +137,16 @@ public:
 		return m_edges;
 	}
 
+	friend bool operator ==(const node & lhs, const node & rhs)
+	{
+		return (lhs.offset == rhs.offset);
+	}
+
+	friend bool operator !=(const node & lhs, const node & rhs)
+	{
+		return (lhs.offset != rhs.offset);
+	}
+
 private:
 	container<node_storage> m_nodes;
 	container<edge_storage> m_edges;

@@ -53,12 +53,6 @@ void graph_test()
 	{
 		using namespace std;
 
-		enum 
-		{
-			No,
-			Lo,
-		};
-
 		using stack_node = graph::edge;
 		using stack = vector<stack_node>;
 
@@ -85,12 +79,6 @@ void graph_test()
 	if (false)
 	{
 		using namespace std;
-
-		enum
-		{
-			No,
-			Lo,
-		};
 
 		using stack_node = graph::edge;
 		using stack = vector<stack_node>;
@@ -145,7 +133,7 @@ void graph_test()
 	}
 
 	// Preorder path iterator:
-	if (false)
+	if (true)
 	{
 		using namespace containers::graph;
 
@@ -154,7 +142,15 @@ void graph_test()
 
 		for (; it != it_end; ++it)
 		{
-			std::cout << g[g[it->back()].source].property << " -> " << g[g[it->back()].target].property << std::endl;
+			//std::cout << g[g[it->back()].source].property << " -> " << g[g[it->back()].target].property << std::endl;
+			auto path_it = it->begin();
+
+			std::cout << g.at(g.at(*path_it).source).property << "/";
+			for (; path_it != it->end(); ++path_it)
+			{
+				std::cout << g.at(g.at(*path_it).target).property << "/";
+			}
+			std::cout << std::endl;
 
             if (it.cycle())
             {

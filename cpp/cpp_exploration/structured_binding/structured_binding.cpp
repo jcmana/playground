@@ -19,8 +19,6 @@ void main()
         // Modifies `t`
         auto x = std::move(a);
         b = "n";
-
-        __asm nop;
     }
 
     // ref

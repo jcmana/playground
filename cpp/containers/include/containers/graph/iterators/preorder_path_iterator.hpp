@@ -54,12 +54,12 @@ public:
 
 	const std::vector<typename G::edge> & operator  *() const
 	{
-		return *m_cursor;
+		return m_cursor.path();
 	}
 
 	const std::vector<typename G::edge> * operator ->() const
 	{
-		return &*m_cursor;
+		return &m_cursor.path();
 	}
 
 	/// \brief		Skips entire subtree.

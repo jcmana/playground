@@ -42,10 +42,52 @@ void test_empty_virtual_method()
 	vc.execute();
 }
 
+class unused_member_class
+{
+public:
+	using type = int;
+
+public:
+	unused_member_class() :
+		m_()
+	{
+	}
+
+	type execute() const
+	{
+		return m_;
+	}
+
+	void modify(type value)
+	{
+		m_ = value;
+	}
+
+private:
+	type m_;
+	type m_unused;
+
+	std::string m_padding;
+};
+
+
+void test_unused_member()
+{
+	volatile unused_member_class c;
+//	c.modify(6);
+//	volatile auto x = c.execute();
+//	c.modify(x + 12);
+//	volatile auto y = c.execute();
+}
+
 int main()
 {
-//	test_math_duplicities();
-	test_empty_virtual_method();
+	//test_math_duplicities();
+	//test_empty_virtual_method();
+	//test_unused_member();
+	volatile unused_member_class c;
+
+	constexpr auto s = sizeof(unused_member_class);
 
 	return 0;
 }

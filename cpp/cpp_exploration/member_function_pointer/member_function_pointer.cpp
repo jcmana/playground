@@ -137,7 +137,7 @@ int main()
     {
         void * s = nullptr;
         const auto static_member_fn = &simple::function;
-        (*s.*static_member_fn)();
+        (*static_member_fn)();
     }
 
     return 0;
