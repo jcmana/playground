@@ -13,17 +13,15 @@ public:
     virtual service_intf * get(const char * id) const = 0;
     virtual service_intf * try_get(const char * id) const = 0;
 
-    /*
     template<typename T>
     T * get_facade(const char * id)
     {
-        return static_cast<T *>(get(id));
+        return static_cast<T *>(get(id)->facade());
     }
 
     template<typename T>
     T * try_get_facade(const char * id)
     {
-        return static_cast<T *>(try_get(id));
+        return static_cast<T *>(try_get(id)->facade());
     }
-    */
 };

@@ -21,4 +21,6 @@ int main(int argc, const char ** argv)
         const auto module_ptr = pCreate();
         module_ptr->load(services);
     }
+
+    return 0;
 }
