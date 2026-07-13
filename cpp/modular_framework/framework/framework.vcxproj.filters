@@ -29,5 +29,17 @@
     <ClInclude Include="service_store_intf.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="module_store.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="module_library.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="module_library_create.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="service_store.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

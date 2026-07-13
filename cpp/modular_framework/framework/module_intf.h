@@ -6,5 +6,7 @@ class module_intf
 {
 public:
     virtual ~module_intf() = default;
+
     virtual void load(service_store_intf & ref) = 0;
+    virtual void unload(service_store_intf & ref) = 0;
 };
