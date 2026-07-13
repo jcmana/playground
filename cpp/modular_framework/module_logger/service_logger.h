@@ -9,6 +9,9 @@
 class service_logger : public service_intf
 {
 public:
+    static constexpr auto id = "std-out";
+
+public:
     service_logger()
     {
         m_up = std::make_unique<logger>();

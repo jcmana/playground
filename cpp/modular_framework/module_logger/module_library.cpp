@@ -1,6 +1,8 @@
 #include "../framework/module_library.h"
 
+#include "module_logger.h"
+
 module_intf * create()
 {
-    return nullptr;
+    return new module_logger();
 }
